@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:contex="com.parabola.newtone.ui.fragment.start.StartFragment">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorTabBackground"
+            android:elevation="24dp"
+            app:tabBackground="@drawable/tab_bg_color"
+            app:tabIndicatorHeight="0dp"
+            app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/tab_ic_mic"
+                android:text="@string/tab_artists" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/tab_ic_album"
+                android:text="@string/tab_albums" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/tab_ic_clef"
+                android:text="@string/tab_tracks" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/tab_ic_playlist"
+                android:text="@string/tab_playlists" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/fragment_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/black" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/requestPermissionPanel"
+        layout="@layout/request_permission_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</FrameLayout>

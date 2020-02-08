@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:longClickable="true"
+    app:cardBackgroundColor="@color/colorItemBG">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:textSize="20dp"
+            tools:ignore="SpUsage"
+            tools:text="Black Sabbath - 13 (2013)" />
+
+        <TextView
+            android:id="@+id/path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textSize="16dp"
+            tools:ignore="SpUsage"
+            tools:text="/Music/Black Sabbath" />
+
+        <TextView
+            android:id="@+id/tracks_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textSize="14dp"
+            tools:ignore="SpUsage"
+            tools:text="8 tracks" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

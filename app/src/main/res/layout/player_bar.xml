@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="68dp"
+    android:background="@drawable/player_bar_background">
+
+    <ProgressBar
+        android:id="@+id/pb_scan"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminateOnly="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/player_toggle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:background="@color/colorAccent"
+        android:contentDescription="@string/player_toggle_content_desc"
+        android:foreground="?android:selectableItemBackground"
+        android:scaleType="center"
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:tint="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_play" />
+
+
+    <TextView
+        android:id="@+id/track_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="start"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintLeft_toRightOf="@+id/player_toggle"
+        app:layout_constraintRight_toLeftOf="@id/divider"
+        tools:ignore="SpUsage"
+        tools:text="Larks' Tongues In Aspic (Part IV)" />
+
+
+    <TextView
+        android:id="@+id/song_artist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toRightOf="@id/player_toggle"
+        app:layout_constraintRight_toLeftOf="@id/divider"
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        tools:ignore="SpUsage"
+        tools:text="King Crimson" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toStartOf="@id/menu_button"
+        app:layout_constraintStart_toStartOf="@id/menu_button" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/menu_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/main_menu_button_content_desc"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/divider"
+        app:layout_constraintStart_toEndOf="@id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_plus" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

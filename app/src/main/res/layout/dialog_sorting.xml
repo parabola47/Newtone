@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingTop="16dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="8dp"
+    tools:context=".ui.dialog.SortingDialog">
+
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/RtlOverlay.DialogWindowTitle.AppCompat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_title" />
+
+    <RadioGroup
+        android:id="@+id/sorting_radio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <CheckBox
+        android:id="@+id/reverseCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_reverse" />
+
+    <LinearLayout
+        android:id="@+id/cancel_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|end">
+
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/TextViewDialogAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_cancel" />
+
+        <TextView
+            android:id="@+id/ok"
+            style="@style/TextViewDialogAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:text="@string/dialog_ok" />
+    </LinearLayout>
+
+</LinearLayout>

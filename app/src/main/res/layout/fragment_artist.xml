@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.ArtistFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/all_tracks_bar"
+            style="@style/CustomActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/custom_action_bar_height"
+            android:background="@color/colorArtistAllTrackBg"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/all_artist_tracks"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tracks_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                tools:text="11 tracks" />
+        </LinearLayout>
+
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+            android:id="@+id/albums_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnWidth="100dp"
+            android:horizontalSpacing="10dp"
+            android:nestedScrollingEnabled="false"
+            android:splitMotionEvents="false"
+            app:fastScrollThumbColor="@color/colorAccent"
+            app:fastScrollThumbInactiveColor="@color/colorAccent"
+            app:fastScrollTrackColor="@color/colorScrollbarBg"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/item_album" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

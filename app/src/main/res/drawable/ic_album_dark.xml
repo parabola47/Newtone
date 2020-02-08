@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorUnselectedTabIconBg" />
+            <size
+                android:width="48dp"
+                android:height="48dp" />
+        </shape>
+    </item>
+    <item
+        android:bottom="4dp"
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/colorTabIconMainUnselected" />
+        </shape>
+    </item>
+
+    <item
+        android:bottom="16dp"
+        android:left="16dp"
+        android:right="16dp"
+        android:top="16dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/colorUnselectedTabIconBg" />
+        </shape>
+    </item>
+
+    <item
+        android:bottom="22dp"
+        android:left="22dp"
+        android:right="22dp"
+        android:top="22dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/colorTabIconMainUnselected" />
+        </shape>
+    </item>
+
+
+</layer-list>

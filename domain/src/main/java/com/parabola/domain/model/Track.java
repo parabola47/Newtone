@@ -1,0 +1,56 @@
+package com.parabola.domain.model;
+
+import java.io.File;
+
+public interface Track {
+    int getId();
+    String getTitle();
+
+    long getDateAddingTimestamp();
+
+    int getAlbumId();
+    String getAlbumTitle();
+    String getArtLink();
+
+    int getArtistId();
+    String getArtistName();
+
+    long getDurationMs();
+
+    int getPositionInCd();
+
+    String getFilePath();
+
+    boolean isFavourite();
+    Long getFavouriteTimestamp();
+
+
+    default boolean equals(Track o) {
+        return getId() == o.getId();
+    }
+
+    default String getFolderPath() {
+        return getFolderPath(getFilePath());
+    }
+
+    static String getFolderPath(String trackPath) {
+        int lastSlashIndex = trackPath.lastIndexOf(File.separator);
+
+        return trackPath.substring(0, lastSlashIndex);
+    }
+
+    default String getFileName() {
+        int lastSlashIndex = getFilePath().lastIndexOf(File.separator);
+
+        return getFilePath().substring(lastSlashIndex + 1);
+    }
+
+    String FILE_TYPE_DIVIDER = ".";
+
+    default String getFileNameWithoutExtension() {
+        int lastDotIndex = getFileName().lastIndexOf(FILE_TYPE_DIVIDER);
+
+        return getFileName().substring(0, lastDotIndex);
+    }
+
+}

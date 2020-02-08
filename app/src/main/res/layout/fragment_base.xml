@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    tools:context=".ui.base.BaseSwipeToBackFragment">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorActivityBackground"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/action_bar"
+                style="@style/CustomActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/custom_action_bar_height"
+                android:background="@color/colorActionBarBg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingLeft="4dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/back_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/back_btn_content_desc"
+                    app:srcCompat="@drawable/ic_arrow_left"
+                    tools:targetApi="lollipop" />
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:contentDescription="@string/album_cover_desc"
+                    android:visibility="gone"
+                    tools:srcCompat="@drawable/album_holder"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textSize="20sp"
+                        tools:text="Main info" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/additional_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toStartOf="@id/otherInfo"
+                            android:layout_toLeftOf="@+id/otherInfo"
+                            android:textSize="14sp"
+                            tools:text="Additional info" />
+
+                        <TextView
+                            android:id="@+id/otherInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:textSize="14sp"
+                            tools:text="Other info" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

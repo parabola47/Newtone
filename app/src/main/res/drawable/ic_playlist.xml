@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <group>
+        <path
+            android:fillColor="@color/colorSelectedTabIconBg"
+            android:pathData="H96 V96 H0z"
+            android:strokeWidth="1" />
+
+        <group
+            android:translateX="12"
+            android:translateY="16">
+            <path
+                android:fillColor="@color/colorTabIconMainSelected"
+                android:pathData="v14 l 12,-7 z"
+                android:strokeWidth="1" />
+            <path
+                android:fillColor="@color/colorTabIconMainSelected"
+                android:pathData="M22,0 v14h50 v-14"
+                android:strokeWidth="1" />
+        </group>
+
+        <group
+            android:translateX="12"
+            android:translateY="41">
+            <path
+                android:fillColor="@color/colorTabIconMainSelected"
+                android:pathData="M0,0 v14h14 v-14"
+                android:strokeWidth="1" />
+            <path
+                android:fillColor="@color/colorTabIconMainSelected"
+                android:pathData="M22,0 v14h50 v-14"
+                android:strokeWidth="1" />
+        </group>
+
+        <group
+            android:translateX="12"
+            android:translateY="66">
+            <path
+                android:fillColor="@color/colorTabIconMainSelected"
+                android:pathData="v14h14 v-14"
+                android:strokeWidth="1" />
+            <path
+                android:fillColor="@color/colorTabIconMainSelected"
+                android:pathData="M22,0 v14h50 v-14"
+                android:strokeWidth="1" />
+        </group>
+    </group>
+
+</vector>

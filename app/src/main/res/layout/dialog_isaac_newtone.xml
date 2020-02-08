@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:background="@drawable/dialog_bg"
+    android:gravity="center"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingTop="16dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="8dp"
+    tools:context=".ui.dialog.IsaacNewtoneDialog">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        android:src="@drawable/isaac_newtone" />
+
+    <LinearLayout
+        android:id="@+id/cancel_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/TextViewDialogAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>

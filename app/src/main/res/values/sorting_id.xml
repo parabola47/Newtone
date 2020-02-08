@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="sort_tracks_id">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </integer-array>
+    <integer-array name="sort_albums_id">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </integer-array>
+    <integer-array name="sort_artists_id">
+        <item>10</item>
+        <item>20</item>
+    </integer-array>
+</resources>

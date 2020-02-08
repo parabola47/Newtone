@@ -1,0 +1,185 @@
+<resources>
+    <string name="app_name">Newtone</string>
+
+
+    <!--TABS BY_NAME-->
+    <string name="tab_artists">Artists</string>
+    <string name="tab_albums">Albums</string>
+    <string name="tab_tracks">Tracks</string>
+    <string name="tab_playlists">Playlists</string>
+
+    <!--PERMISSION REQUEST SCREEN-->
+    <string name="request_permission_button">Request</string>
+    <string name="request_permission_desc">App needs storage permission to access media</string>
+    <string name="request_permission_toast">Grant storage access in \"Permissions\" menu</string>
+
+    <!--SYSTEM PLAYLISTS -->
+    <string name="playlist_recently_added">Recently Added</string>
+    <string name="playlist_favourites">Favourites</string>
+    <string name="playlist_queue">Queue</string>
+    <string name="playlist_folders">Folders</string>
+
+    <!--PLAYER SCREEN-->
+    <string name="toast_time_to_end_player_screen">%1$s left until to end: </string>
+
+
+    <!--IMAGE DESCRIPTIONS-->
+    <string name="album_cover_desc">Album Cover</string>
+    <string name="add_playlist_desc">Create new playlist</string>
+
+
+    <!--NULL OBJECTS-->
+    <string name="unknown_artist">Unknown Artist</string>
+    <string name="unknown_album">Unknown Album</string>
+
+
+    <!--MAIN MENU-->
+    <string name="menu_sorting_by">Sort by…</string>
+    <string name="menu_add_playlist">Add playlist</string>
+    <string name="menu_settings">Settings</string>
+
+    <!--TRACK MENU-->
+    <string name="track_menu_play">Play</string>
+    <string name="track_menu_add_to_playlist">Add to playlist…</string>
+    <string name="track_menu_remove_from_playlist">Remove from playlist</string>
+    <string name="track_menu_add_to_favourites">Add to Favourites</string>
+    <string name="track_menu_remove_from_favourites">Remove from Favourites</string>
+    <string name="track_menu_share_track">Share</string>
+    <string name="track_menu_share_track_intent_title">Share audio file</string>
+    <string name="track_menu_delete">Delete</string>
+    <string name="track_menu_delete_dialog_title">Delete track?</string>
+    <string name="track_menu_delete_dialog_message">This track will be deleted from the storage</string>
+
+    <!--PLAYLIST MENU-->
+    <string name="playlist_menu_rename">Rename</string>
+    <string name="playlist_menu_delete">Delete</string>
+
+    <!--PLAYER MENU-->
+    <string name="player_menu_add_to_playlist">Add to playlist</string>
+    <string name="player_menu_lyrics">Lyrics</string>
+    <string name="player_menu_delete">Delete</string>
+    <string name="player_menu_share">Share</string>
+
+    <!--               !!!!                 -->
+    <!--          BLOCK OF SORTING          -->
+    <!--               !!!!                 -->
+    <string name="sort_title">Sorting</string>
+    <string name="sort_reverse">Reverse</string>
+    <string-array name="sort_tracks">
+        <item>Title</item>
+        <item>Artist</item>
+        <item>Duration</item>
+        <item>Adding date</item>
+        <item>Position in album</item>
+    </string-array>
+    <string-array name="sort_albums">
+        <item>Title</item>
+        <item>Artist</item>
+        <item>Year</item>
+    </string-array>
+    <string-array name="sort_artists">
+        <item>Title</item>
+        <item>Tracks count</item>
+    </string-array>
+
+
+    <!--PLURALS-->
+    <plurals name="tracks_count">
+        <item quantity="zero">no tracks</item>
+        <item quantity="one">%1$d track</item>
+        <item quantity="two">%1$d tracks</item>
+        <item quantity="few">%1$d tracks</item>
+        <item quantity="many">%1$d tracks</item>
+        <item quantity="other">%1$d tracks</item>
+    </plurals>
+    <plurals name="albums_count">
+        <item quantity="zero">no albums</item>
+        <item quantity="one">%1$d album</item>
+        <item quantity="other">%1$d albums</item>
+    </plurals>
+    <plurals name="folders_count">
+        <item quantity="zero">no folders</item>
+        <item quantity="one">%1$d folder</item>
+        <item quantity="two">%1$d folders</item>
+        <item quantity="few">%1$d folders</item>
+        <item quantity="many">%1$d folders</item>
+        <item quantity="other">%1$d folders</item>
+    </plurals>
+
+    <!--ARTIST FRAGMENT-->
+    <string name="all_artist_tracks">All tracks</string>
+
+    <!--DIALOGUE DEFAULT-->
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_create">Create</string>
+    <string name="dialog_rename">Rename</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_reset">Reset</string>
+    <string name="dialog_donate">Donate</string>
+
+    <!--CREATE PLAYLIST DIALOG SCREEN-->
+    <string name="create_playlist_title">Create new playlist</string>
+    <string name="error_playlist_title_is_empty">Playlist name can not be empty</string>
+    <string name="toast_playlist_already_exist">Playlist with same name already exists</string>
+    <string name="toast_playlist_created" formatted="true">Playlist \"%1$s\" created</string>
+
+    <!--RENAME PLAYLIST DIALOG SCREEN-->
+    <string name="rename_playlist_title">Rename playlist</string>
+    <string name="rename_toast_playlist_already_exist">Playlist with same name already exists</string>
+
+    <!--DELETE PLAYLIST DIALOG SCREEN-->
+    <string name="delete_playlist_title">Delete playlist?</string>
+    <string name="delete_playlist_desc">The list will be deleted</string>
+
+
+    <!--SLEEP TIMER DIALOG SCREEN-->
+    <string name="sleep_timer_dialog_title">Select time</string>
+    <string name="min5">5 min</string>
+    <string name="min10">10 min</string>
+    <string name="min15">15 min</string>
+    <string name="min20">20 min</string>
+    <string name="min30">30 min</string>
+    <string name="min45">45 min</string>
+    <string name="hour1">1 hour</string>
+    <string name="hour2">2 hours</string>
+    <string name="hour4">4 hours</string>
+
+    <!--TIME TO SLEEP INFO DIALOG SCREEN-->
+    <string name="title_sleep_info_dialog">Timer Info</string>
+    <string name="time_to_end_sleep_info_dialog">Time to end: %1$s</string>
+
+    <!--CHOOSE PLAYLIST DIALOG SCREEN-->
+    <string name="choose_playlist_dialog_title">Select playlist</string>
+    <string name="choose_playlist_dialog_create_playlist">Create new playlist</string>
+
+    <!--AUDIO EFFECTS DIALOG-->
+    <!--TAB EQUALIZER SETTING-->
+    <string name="equalizer">Equalizer</string>
+    <!--TAB AUDIO SETTING-->
+    <string name="fx_tempo">Tempo</string>
+    <string name="fx_pitch">Pitch</string>
+    <string name="fx_bassBoost">Bass boost</string>
+    <string name="fx_virtualizer">Virtualizer</string>
+
+    <!--SETTING-->
+    <string name="setting_title">Settings</string>
+
+    <string name="setting_notification_color_title">Notification color</string>
+    <string name="setting_notification_color_desc">Change color depending on the cover</string>
+
+    <string name="setting_notification_artwork_show_title">Notification artwork</string>
+    <string name="setting_notification_artwork_show_desc">Show album artwork in notification</string>
+
+    <string name="setting_privacy_policy_title">Privacy Policy</string>
+
+    <!--CONTENT DESCRIPTION-->
+    <string name="back_btn_content_desc">Back</string>
+    <string name="queue_item_burger_content_desc">Move track</string>
+    <string name="queue_item_remove_content_desc">Exclude track</string>
+    <string name="player_toggle_content_desc">Play/pause playback</string>
+    <string name="main_menu_button_content_desc">Main menu</string>
+    <string name="tracks_list_content_desc">Tracks list</string>
+    <string name="playlist_title_content_desc">Playlist title</string>
+
+</resources>

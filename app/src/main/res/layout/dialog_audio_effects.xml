@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="460dp"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingTop="16dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="8dp"
+    tools:context=".ui.dialog.fx.AudioEffectsDialog">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:tabBackground="@drawable/tab_bg_color"
+        app:tabIndicatorHeight="0dp"
+        app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:icon="@drawable/fx_eq_icon" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:icon="@drawable/ic_play" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/audio_effects_pager"
+        android:layout_width="match_parent"
+        android:layout_height="364dp"
+        android:background="@android:color/transparent" />
+
+    <LinearLayout
+        android:id="@+id/cancel_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/TextViewDialogAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_cancel" />
+    </LinearLayout>
+
+</LinearLayout>

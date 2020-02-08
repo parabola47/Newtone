@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/play"
+        android:title="@string/track_menu_play" />
+
+    <item
+        android:id="@+id/add_to_playlist"
+        android:title="@string/track_menu_add_to_playlist" />
+
+    <item
+        android:id="@+id/remove_from_playlist"
+        android:title="@string/track_menu_remove_from_playlist"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/add_to_favorites"
+        android:title="@string/track_menu_add_to_favourites" />
+
+    <item
+        android:id="@+id/remove_from_favourites"
+        android:title="@string/track_menu_remove_from_favourites" />
+
+    <item
+        android:id="@+id/share_track"
+        android:title="@string/track_menu_share_track" />
+
+    <item
+        android:id="@+id/delete_track"
+        android:title="@string/track_menu_delete" />
+
+</menu>

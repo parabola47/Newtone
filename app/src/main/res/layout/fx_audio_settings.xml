@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    tools:context=".ui.dialog.fx.FxAudioSettingsFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/playbackSpeedSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:progress="50" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playbackSpeedSeekBar"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="@string/fx_tempo" />
+
+        <TextView
+            android:id="@+id/playbackSpeedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playbackSpeedSeekBar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:gravity="center"
+            tools:text="x1.00" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/playbackPitchSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:progress="50" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/playbackPitchSeekBar"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="@string/fx_pitch" />
+
+        <TextView
+            android:id="@+id/playbackPitchTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playbackPitchSeekBar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:gravity="center"
+            tools:text="x1.00" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bassBoostPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/bassBoostSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:max="1000"
+            tools:progress="100" />
+
+        <TextView
+            android:id="@+id/bassBoostTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bassBoostSeekBar"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="@string/fx_bassBoost" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/bassBoostSwitchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bassBoostSeekBar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/virtualizerPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/virtualizerSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:max="1000"
+            tools:progress="100" />
+
+        <TextView
+            android:id="@+id/virtualizerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/virtualizerSeekBar"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="@string/fx_virtualizer" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/virtualizerSwitchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/virtualizerSeekBar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp" />
+    </RelativeLayout>
+
+</LinearLayout>

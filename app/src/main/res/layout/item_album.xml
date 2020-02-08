@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginBottom="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center">
+
+
+    <ImageView
+        android:id="@+id/album_image"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:contentDescription="@string/album_cover_desc"
+        android:padding="8dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/album_holder" />
+
+
+    <TextView
+        android:id="@+id/album_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/album_image"
+        android:layout_alignStart="@+id/album_image"
+        android:layout_alignLeft="@+id/album_image"
+        android:layout_alignEnd="@id/album_image"
+        android:layout_alignRight="@id/album_image"
+        android:gravity="center"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="18dp"
+        tools:ignore="SpUsage"
+        tools:text="Happy With What You Have To Be Happy With" />
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/album_title"
+        android:layout_alignStart="@id/album_image"
+        android:layout_alignLeft="@id/album_image"
+        android:layout_alignEnd="@id/album_image"
+        android:layout_alignRight="@id/album_image"
+        android:gravity="center"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="14dp"
+        tools:ignore="SpUsage"
+        tools:text="King Crimson" />
+
+</RelativeLayout>

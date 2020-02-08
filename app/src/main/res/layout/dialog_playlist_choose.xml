@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/dialog_bg"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingTop="16dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="8dp"
+    tools:context=".ui.dialog.ChoosePlaylistDialog">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/RtlOverlay.DialogWindowTitle.AppCompat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/choose_playlist_dialog_title" />
+
+    <View
+        android:id="@+id/div_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent" />
+
+    <LinearLayout
+        android:id="@+id/create_new_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/add_playlist_desc"
+            app:srcCompat="@drawable/ic_add" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_playlist_dialog_create_playlist"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/div_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent" />
+
+    <ListView
+        android:id="@+id/playlist"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:divider="@drawable/list_view_divider"
+        android:dividerHeight="1px"
+        tools:listitem="@layout/item_playlist_lv" />
+
+    <LinearLayout
+        android:id="@+id/cancel_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|end">
+
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/TextViewDialogAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="75dp"
+    android:height="75dp"
+    android:viewportWidth="75"
+    android:viewportHeight="75">
+
+    <path
+        android:fillColor="@color/colorSelectedTabIconBg"
+        android:pathData="H75 V75 H0z"
+        android:strokeWidth="1" />
+
+    <group android:translateX="15">
+        <path
+            android:fillColor="#202020"
+            android:pathData="M15.73 63.35c-0.4 2.11 1.81 6.5 6.25 6.64 5.36 0.18 8.79-3.93 7.19-10.62l-8-36.95c-0.96-4.4-0.24-6.78 0.27 -8.2 1.35-3.8 4.74-5.36 5.57-4.15 0.47 0.7 1.61 3.94-1.63 9.75-2.53 4.52-14.3 10.46-15.17 21.09-0.75 9.24 8.92 16.06 17.27 13.38 5.54-1.78 8.4-10.2 4.97-14.53-9.05-11.45-23.57 6.07-9.5 10.87-1.54-1.2-2.58-2.13-2.77-3.27-1.9-11.1 14.78-8.16 10.29 2.36-1.85 4.32-9.31 5.16-13.56 1.3-3.56-3.23-5.14-9.46-1.18-13.93 5.37-6.06 11.7-11.5 13.38-19.78 2-9.8-4.5-17.45-8.61-7.8-1.38 3.23-1.9 6.48-0.57 12.7l8 37.73c0.57 2.7 0.19 6.42-2.34 8.13-1.24 0.85 -5.66 1.43-6.74-0.59"
+            android:strokeWidth="0.101028"
+            android:strokeColor="@color/colorTabIconMainSelected" />
+        <path
+            android:fillColor="#202020"
+            android:pathData="M15.67 63.66a3.77 3.84 1.08 1 1 7.54 0.15 3.77 3.84 1.08 1 1-7.54-0.15z"
+            android:strokeWidth="0.0986823"
+            android:strokeColor="@color/colorTabIconMainSelected" />
+
+    </group>
+</vector>

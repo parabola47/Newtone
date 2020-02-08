@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="48dp"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/eq_hz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        tools:text="30" />
+
+    <TextView
+        android:id="@+id/eq_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="0 dB" />
+
+    <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+        android:layout_width="wrap_content"
+        android:layout_height="150dp">
+
+        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+            android:id="@+id/eq_seek_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clickable="false"
+            android:splitTrack="false"
+            app:seekBarRotation="CW270"
+            tools:max="30"
+            tools:progress="15" />
+    </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+
+</LinearLayout>

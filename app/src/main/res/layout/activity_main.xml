@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_slider"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:gravity="bottom"
+    sothree:umanoDragView="@id/bottom_panel"
+    sothree:umanoPanelHeight="68dp"
+    sothree:umanoParallaxOffset="72dp"
+    sothree:umanoShadowHeight="4dp"
+    tools:context=".ui.activity.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/nav_host_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:id="@+id/bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/player_bar"
+            layout="@layout/player_bar"
+            android:layout_width="match_parent"
+            android:layout_height="68dp" />
+
+        <fragment
+            android:id="@+id/player_fragment"
+            android:name="com.parabola.newtone.ui.fragment.PlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_player" />
+
+    </RelativeLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
