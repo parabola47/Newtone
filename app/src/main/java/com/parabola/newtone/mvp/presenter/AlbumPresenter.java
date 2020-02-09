@@ -3,7 +3,6 @@ package com.parabola.newtone.mvp.presenter;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactors.AlbumInteractor;
 import com.parabola.domain.interactors.TrackInteractor;
 import com.parabola.domain.interactors.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
@@ -103,7 +102,7 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
                 .subscribe(album -> {
                     getViewState().setAlbumTitle(album.getTitle());
                     getViewState().setAlbumArtist(album.getArtistName());
-                    getViewState().setAlbumArt(album.getId(), album.getArtLink());
+                    getViewState().setAlbumArt(album.getArtImage());
                 });
     }
 

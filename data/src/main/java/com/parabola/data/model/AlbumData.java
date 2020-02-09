@@ -1,13 +1,17 @@
 package com.parabola.data.model;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.Nullable;
 
 import com.parabola.domain.model.Album;
 
+import java8.util.function.Function;
+
 public final class AlbumData implements Album {
     public int id;
     public String title;
-    public String artLink;
+    public Function<AlbumData, Bitmap> getArtFunction;
 
     public int year;
 
@@ -28,8 +32,8 @@ public final class AlbumData implements Album {
     }
 
     @Override
-    public String getArtLink() {
-        return artLink;
+    public Bitmap getArtImage() {
+        return getArtFunction.apply(this);
     }
 
     @Override

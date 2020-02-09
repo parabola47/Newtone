@@ -20,7 +20,7 @@ public interface AlbumRepository {
         return getByArtist(artistId, null);
     }
 
-    String getArtLink(int albumId);
+    <ArtImage> ArtImage getArtImage(int albumId);
 
     enum Sorting {
         BY_TITLE, BY_TITLE_DESC,

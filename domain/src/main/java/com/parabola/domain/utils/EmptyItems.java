@@ -26,8 +26,8 @@ public final class EmptyItems {
         }
 
         @Override
-        public String getArtLink() {
-            return "";
+        public Object getArtImage() {
+            return null;
         }
 
         public int getArtistId() {

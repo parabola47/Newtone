@@ -10,7 +10,7 @@ public interface Track {
 
     int getAlbumId();
     String getAlbumTitle();
-    String getArtLink();
+    <ArtImage> ArtImage getArtImage();
 
     int getArtistId();
     String getArtistName();

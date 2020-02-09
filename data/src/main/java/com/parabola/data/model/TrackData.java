@@ -1,5 +1,7 @@
 package com.parabola.data.model;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.Nullable;
 
 import com.parabola.domain.model.Track;
@@ -27,7 +29,7 @@ public final class TrackData implements Track {
 
     public Predicate<TrackData> isFavouriteCondition;
     public Function<TrackData, Long> favouriteTimeStampFunction;
-    public Function<TrackData, String> getArtLinkFunction;
+    public Function<TrackData, Bitmap> getArtFunction;
 
 
     @Override
@@ -56,8 +58,8 @@ public final class TrackData implements Track {
     }
 
     @Override
-    public String getArtLink() {
-        return getArtLinkFunction.apply(this);
+    public Bitmap getArtImage() {
+        return getArtFunction.apply(this);
     }
 
     @Override

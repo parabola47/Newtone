@@ -167,25 +167,11 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
     }
 
     @Override
-    public void setAlbumArt(int albumId, String artLink) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId);
-                Size size = new Size(150, 150);
-
-                Bitmap albumArt = requireContext().getContentResolver()
-                        .loadThumbnail(uri, size, null);
-
-                albumCover.setImageBitmap(albumArt);
-            } catch (Exception e) {
-                albumCover.setImageResource(R.drawable.album_holder);
-            }
-        } else {
-            Glide.with(this)
-                    .load(artLink)
-                    .placeholder(R.drawable.album_holder)
-                    .into(albumCover);
-        }
+    public void setAlbumArt(Object artCover) {
+        Glide.with(this)
+                .load((Bitmap) artCover)
+                .placeholder(R.drawable.album_holder)
+                .into(albumCover);
     }
 
     @Override

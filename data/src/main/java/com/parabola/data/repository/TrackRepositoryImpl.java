@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -179,9 +180,10 @@ public final class TrackRepositoryImpl implements TrackRepository {
             return favouriteTrackHelper.getFavouriteTimeStamp(trackData.getId());
         }
     };
-    private final Function<TrackData, String> getArtCoverFunction = new Function<TrackData, String>() {
-        public String apply(TrackData trackData) {
-            return albumRepo.getArtLink(trackData.getAlbumId());
+    private final Function<TrackData, Bitmap> getArtFunction = new Function<TrackData, Bitmap>() {
+        @Override
+        public Bitmap apply(TrackData trackData) {
+            return (Bitmap) albumRepo.getArtImage(trackData.albumId);
         }
     };
 
@@ -208,7 +210,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
             track.positionInCd = cursor.getInt(cursor.getColumnIndexOrThrow(TRACK));
             track.isFavouriteCondition = this.isFavouriteCondition;
             track.favouriteTimeStampFunction = this.favouriteTimestampFunction;
-            track.getArtLinkFunction = this.getArtCoverFunction;
+            track.getArtFunction = this.getArtFunction;
 
             result.add(track);
         } while (cursor.moveToNext());

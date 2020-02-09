@@ -1,17 +1,13 @@
 package com.parabola.player_feature;
 
 import android.app.PendingIntent;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
-import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -518,26 +514,11 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             }
 
             Track track = getCurrentTrack(player);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                try {
-                    Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, track.getAlbumId());
-                    Size size = new Size(500, 500);
-
-                    return context.getContentResolver()
-                            .loadThumbnail(uri, size, null);
-                } catch (Exception e) {
-                    return getDefaultBitmap();
-                }
-            } else {
-                String artLink = track.getArtLink();
-                if (artLink != null && !artLink.isEmpty()) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(track.getArtLink());
-                    return bitmap != null ? bitmap : getDefaultBitmap();
-                } else {
-                    return getDefaultBitmap();
-                }
+            Bitmap image = track.getArtImage();
+            if (image == null) {
+                image = getDefaultBitmap();
             }
+            return image;
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 public interface AlbumView extends MvpView {
     void setAlbumTitle(String albumTitle);
     void setAlbumArtist(String artistName);
-    void setAlbumArt(int albumId, String artLink);
+    void setAlbumArt(Object artCover);
 
     void refreshTracks(List<Track> tracks);
 

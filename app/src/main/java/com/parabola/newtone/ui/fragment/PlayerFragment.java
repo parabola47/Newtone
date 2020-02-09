@@ -1,12 +1,7 @@
 package com.parabola.newtone.ui.fragment;
 
-import android.content.ContentUris;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -354,24 +349,10 @@ public final class PlayerFragment extends MvpAppCompatFragment
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ImageView albumCover = new ImageView(container.getContext());
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                try {
-                    Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, tracks.get(position).getAlbumId());
-                    Size size = new Size(1000, 1000);
-
-                    Bitmap albumArt = requireContext().getContentResolver()
-                            .loadThumbnail(uri, size, null);
-
-                    albumCover.setImageBitmap(albumArt);
-                } catch (Exception e) {
-                    albumCover.setImageResource(R.drawable.album_holder);
-                }
-            } else {
-                Glide.with(albumCover)
-                        .load(tracks.get(position).getArtLink())
-                        .placeholder(R.drawable.album_holder)
-                        .into(albumCover);
-            }
+            Glide.with(albumCover)
+                    .load((Bitmap) tracks.get(position).getArtImage())
+                    .placeholder(R.drawable.album_holder)
+                    .into(albumCover);
 
             container.addView(albumCover, 0);
 

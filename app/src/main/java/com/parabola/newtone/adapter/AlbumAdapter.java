@@ -1,11 +1,6 @@
 package com.parabola.newtone.adapter;
 
-import android.content.ContentUris;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
-import android.util.Size;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,8 +13,6 @@ import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Album;
 import com.parabola.newtone.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,25 +44,11 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.Al
 
         holder.albumArtist.setText(
                 getOrDefault(albumItem.getArtistName(), holder.albumArtist.getContext().getString(R.string.unknown_artist)));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumItem.getId());
-                Size size = new Size(500, 500);
-
-                Bitmap albumArt = holder.itemView.getContext().getContentResolver()
-                        .loadThumbnail(uri, size, null);
-
-                holder.albumImage.setImageBitmap(albumArt);
-            } catch (IOException ignored) {
-            }
-        } else {
-            Glide.with(holder.albumImage)
-                    .load(albumItem.getArtLink())
-                    .placeholder(R.drawable.album_holder)
-                    .into(holder.albumImage);
-        }
-
+        ;
+        Glide.with(holder.albumImage)
+                .load((Bitmap) albumItem.getArtImage())
+                .placeholder(R.drawable.album_holder)
+                .into(holder.albumImage);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.parabola.domain.model;
 public interface Album {
     int getId();
     String getTitle();
-    String getArtLink();
+    <ArtImage> ArtImage getArtImage();
 
     int getYear();
     int getArtistId();

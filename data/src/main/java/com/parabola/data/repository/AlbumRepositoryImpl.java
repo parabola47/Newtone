@@ -1,9 +1,15 @@
 package com.parabola.data.repository;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 
 import com.parabola.data.model.AlbumData;
 import com.parabola.domain.model.Album;
@@ -11,11 +17,13 @@ import com.parabola.domain.repository.AccessRepository;
 import com.parabola.domain.repository.AccessRepository.AccessType;
 import com.parabola.domain.repository.AlbumRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Single;
+import java8.util.function.Function;
 
 import static android.provider.BaseColumns._ID;
 import static android.provider.MediaStore.Audio.AlbumColumns.ALBUM;
@@ -41,11 +49,13 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
             _ID,
             ARTIST_ID,
             ALBUM,
-            ALBUM_ART,
             LAST_YEAR,
             NUMBER_OF_SONGS,
             ARTIST,
     };
+
+
+    private final Function<AlbumData, Bitmap> getArtFunction = albumData -> getArtImage(albumData.id);
 
     private static final String SELECTION_BY_ID = _ID + "=?";
 
@@ -109,7 +119,26 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     }
 
     @Override
-    public String getArtLink(int albumId) {
+    public Bitmap getArtImage(int albumId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId);
+                Size size = new Size(700, 700);
+
+                return contentResolver
+                        .loadThumbnail(uri, size, null);
+
+            } catch (IOException ignored) {
+                return null;
+            }
+        } else {
+            String artLink = getArtLink(albumId);
+            return BitmapFactory.decodeFile(artLink);
+        }
+    }
+
+    //работает только в Android P и ниже
+    private String getArtLink(int albumId) {
         try (Cursor cursor = contentResolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 new String[]{ALBUM_ART},
@@ -139,7 +168,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
             album.id = cursor.getInt(cursor.getColumnIndex(_ID));
             album.title = cursor.getString(cursor.getColumnIndex(ALBUM));
             album.artistId = cursor.getInt(cursor.getColumnIndex(ARTIST_ID));
-            album.artLink = cursor.getString(cursor.getColumnIndex(ALBUM_ART));
+            album.getArtFunction = this.getArtFunction;
             album.year = cursor.getInt(cursor.getColumnIndex(LAST_YEAR));
             album.tracksCount = cursor.getInt(cursor.getColumnIndex(NUMBER_OF_SONGS));
             album.artistName = cursor.getString(cursor.getColumnIndex(ARTIST));

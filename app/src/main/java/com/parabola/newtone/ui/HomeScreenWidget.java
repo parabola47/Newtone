@@ -4,15 +4,11 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
-import android.util.Size;
 import android.widget.RemoteViews;
 
 import com.parabola.domain.interactors.player.PlayerInteractor;
@@ -67,23 +63,10 @@ public class HomeScreenWidget extends AppWidgetProvider {
         artist = currentTrack.getArtistName();
         album = currentTrack.getAlbumTitle();
 
-        Bitmap albumArt = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, currentTrack.getAlbumId());
-                Size size = new Size(500, 500);
-
-                albumArt = context.getContentResolver()
-                        .loadThumbnail(uri, size, null);
-            } catch (Exception ignore) {
-            }
-        } else {
-            albumArt = BitmapFactory.decodeFile(currentTrack.getArtLink());
-        }
-
-        if (albumArt == null)
+        Bitmap albumArt = currentTrack.getArtImage();
+        if (albumArt == null) {
             albumArt = BitmapFactory.decodeResource(context.getResources(), R.drawable.album_holder);
-
+        }
         for (int widgetId : allWidgetIds) {
             setupWidget(context, appWidgetManager, widgetId, title, artist, album,
                     albumArt, isNowPlaying, loopEnabled, shuffleEnabled);
