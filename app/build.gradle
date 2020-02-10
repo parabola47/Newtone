@@ -7,8 +7,8 @@ android {
         applicationId "com.parabola.newtone"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "0.0.1"
+        versionCode 2
+        versionName "0.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -68,6 +68,7 @@ dependencies {
 
     //    RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     //    MOXY
     implementation 'tech.schoolhelper:moxy-x:1.7.0'

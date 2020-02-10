@@ -25,7 +25,6 @@ import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
 import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter;
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
-import com.parabola.newtone.ui.AudioPlayerService;
 import com.parabola.newtone.ui.activity.MainActivity;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 
@@ -72,5 +71,4 @@ public interface AppComponentInjects {
     //    FXs
     void inject(TabEqualizerPresenter presenter);
     void inject(FxAudioSettingsPresenter presenter);
-    void inject(AudioPlayerService service);
 }

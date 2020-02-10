@@ -37,6 +37,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
@@ -349,10 +352,14 @@ public final class PlayerFragment extends MvpAppCompatFragment
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ImageView albumCover = new ImageView(container.getContext());
 
-            Glide.with(albumCover)
-                    .load((Bitmap) tracks.get(position).getArtImage())
-                    .placeholder(R.drawable.album_holder)
-                    .into(albumCover);
+            Single.fromCallable(() -> (Bitmap) tracks.get(position).getArtImage())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe((bitmap, error) ->
+                            Glide.with(albumCover)
+                                    .load(bitmap)
+                                    .placeholder(R.drawable.album_holder)
+                                    .into(albumCover));
 
             container.addView(albumCover, 0);
 

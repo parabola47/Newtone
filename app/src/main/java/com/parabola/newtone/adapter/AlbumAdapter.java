@@ -14,8 +14,13 @@ import com.parabola.domain.model.Album;
 import com.parabola.newtone.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import java.util.concurrent.Callable;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.parabola.domain.utils.StringTool.getOrDefault;
 
@@ -44,11 +49,14 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.Al
 
         holder.albumArtist.setText(
                 getOrDefault(albumItem.getArtistName(), holder.albumArtist.getContext().getString(R.string.unknown_artist)));
-        ;
-        Glide.with(holder.albumImage)
-                .load((Bitmap) albumItem.getArtImage())
-                .placeholder(R.drawable.album_holder)
-                .into(holder.albumImage);
+        Single.fromCallable((Callable<Bitmap>) albumItem::getArtImage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((bitmap, error) ->
+                        Glide.with(holder.albumImage)
+                                .load(bitmap)
+                                .placeholder(R.drawable.album_holder)
+                                .into(holder.albumImage));
     }
 
     @Override

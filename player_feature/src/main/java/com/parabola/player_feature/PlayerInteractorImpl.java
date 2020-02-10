@@ -1,11 +1,13 @@
 package com.parabola.player_feature;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
@@ -49,6 +51,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+
 
 public class PlayerInteractorImpl implements PlayerInteractor {
     private static final String LOG_TAG = PlayerInteractorImpl.class.getSimpleName();
@@ -129,6 +132,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         trackRepo.getByIds(settingSaver.getSavedPlaylist())
                 .subscribe(tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()));
 
+        PlayerService.playerInteractor = this;
+
         long endTime = System.currentTimeMillis();
         Log.d(LOG_TAG, "PLAYER INTERACTOR CONSTRUCTOR END EXECUTION WITH " + (endTime - startTime) + " MS");
     }
@@ -150,7 +155,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         PlayerNotificationManager notificationManager = PlayerNotificationManager
                 .createWithNotificationChannel(
                         context, NOTIFICATION_CHANNEL_ID, R.string.app_name, R.string.app_name, NOTIFICATION_ID,
-                        mediaDescriptionAdapter);
+                        mediaDescriptionAdapter, playerNotificationListener);
 
         notificationManager.setPlayer(exoPlayer);
         notificationManager.setMediaSessionToken(mediaSession.getSessionToken());
@@ -162,6 +167,41 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         notificationManager.setRewindIncrementMs(0);
 
         return notificationManager;
+    }
+
+    private PlayerNotificationManager.NotificationListener playerNotificationListener = new PlayerNotificationManager.NotificationListener() {
+        @Override
+        public void onNotificationStarted(int notificationId, Notification notification) {
+        }
+
+        @Override
+        public void onNotificationCancelled(int notificationId) {
+        }
+
+        @Override
+        public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
+            if (newtonePlayerListener != null) {
+                newtonePlayerListener.onNotificationCancelled(notificationId, dismissedByUser);
+            }
+        }
+
+        @Override
+        public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
+            if (newtonePlayerListener != null) {
+                newtonePlayerListener.onNotificationPosted(notificationId, notification, ongoing);
+            }
+        }
+    };
+
+    private NewtonePlayerListener newtonePlayerListener;
+
+    void setNewtonePlayerListener(NewtonePlayerListener listener) {
+        newtonePlayerListener = listener;
+    }
+
+    interface NewtonePlayerListener {
+        void onNotificationPosted(int notificationId, Notification notification, boolean ongoing);
+        void onNotificationCancelled(int notificationId, boolean dismissedByUser);
     }
 
 
@@ -335,8 +375,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     @Override
     public Flowable<Long> onChangePlaybackPosition() {
         return Flowable.interval(0, PLAYBACK_UPDATE_TIME_MS, TimeUnit.MILLISECONDS, AndroidSchedulers.from(exoPlayer.getApplicationLooper()))
-                .filter(aLong -> lastPlaybackPosition != exoPlayer.getCurrentPosition())
-                .doOnNext(aLong -> lastPlaybackPosition = exoPlayer.getCurrentPosition())
+                .filter(count -> lastPlaybackPosition != exoPlayer.getCurrentPosition())
+                .doOnNext(count -> lastPlaybackPosition = exoPlayer.getCurrentPosition())
                 .map(count -> exoPlayer.getCurrentPosition());
     }
 
@@ -428,6 +468,16 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         public void onIsPlayingChanged(boolean isPlaying) {
             isPlayingObserver.onNext(isPlaying);
             settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
+            runServiceIfNeeded(isPlaying);
+        }
+
+        private void runServiceIfNeeded(boolean isPlaying) {
+            if (isPlaying && !PlayerService.isRunning) {
+                Intent intent = new Intent(context, PlayerService.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    context.startForegroundService(intent);
+                else context.startService(intent);
+            }
         }
 
         @Override

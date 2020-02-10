@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.parabola.newtone">
 
     <!--for reading media files and deleting them from file storage -->
@@ -50,7 +51,7 @@
         </provider>
 
         <service
-            android:name="com.parabola.newtone.ui.AudioPlayerService"
+            android:name="com.parabola.player_feature.PlayerService"
             android:foregroundServiceType="mediaPlayback" />
     </application>
 
