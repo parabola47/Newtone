@@ -182,4 +182,7 @@
     <string name="tracks_list_content_desc">Tracks list</string>
     <string name="playlist_title_content_desc">Playlist title</string>
 
+    <!--CRASH REPORT-->
+    <string name="toast_text_on_crash"></string>
+
 </resources>
