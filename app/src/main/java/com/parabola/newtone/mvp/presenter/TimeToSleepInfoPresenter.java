@@ -34,7 +34,7 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
     protected void onFirstViewAttach() {
         disposables.addAll(
                 observeRemainingTime(),
-                observeTimerState());
+                closeScreenWhenTimerFinished());
     }
 
 
@@ -42,6 +42,7 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
     public void onDestroy() {
         disposables.dispose();
     }
+
 
     private Disposable observeRemainingTime() {
         return timerInteractor.observeRemainingTimeToEnd()
@@ -53,20 +54,18 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
                 });
     }
 
-    private Disposable observeTimerState() {
-        return timerInteractor.observeState()
-                .subscribe(state -> {
-                    if (state != SleepTimerInteractor.State.RUNNING)
-                        getViewState().closeScreen();
-                });
-    }
 
+    private Disposable closeScreenWhenTimerFinished() {
+        return timerInteractor.onTimerFinished()
+                .subscribe(irrelevant -> getViewState().closeScreen());
+    }
 
 
     public void onClickReset() {
         timerInteractor.reset()
                 .subscribe(getViewState()::closeScreen);
     }
+
 
     public void onClickCancel() {
         getViewState().closeScreen();

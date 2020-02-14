@@ -129,12 +129,10 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     private Disposable observeTimerState() {
-        return timerInteractor.observeState()
-                .subscribe(timerState -> {
-                    switch (timerState) {
-                        case RUNNING: getViewState().setTimerColored(); break;
-                        default: getViewState().setTimerNotColored(); break;
-                    }
+        return timerInteractor.observeIsTimerRunning()
+                .subscribe(isTimerRunning -> {
+                    if (isTimerRunning) getViewState().setTimerColored();
+                    else getViewState().setTimerNotColored();
                 });
     }
 
@@ -164,23 +162,23 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     public void onClickTimerButton() {
-        timerInteractor.launched()
-                .subscribe(isTimerLaunched -> {
-                    if (isTimerLaunched) router.openSleepTimerInfoDialog();
-                    else router.openStartSleepTimerDialog();
-                });
+        if (timerInteractor.launched())
+            router.openSleepTimerInfoDialog();
+        else
+            router.openStartSleepTimerDialog();
     }
 
 
     public void onLongClickTimerButton() {
-        timerInteractor.launched()
-                .filter(isTimerLaunched -> isTimerLaunched)
-                .map(isTimerLaunched -> timerInteractor.remainingTimeToEnd().onErrorReturnItem(0L).blockingGet())
-                .subscribe(remainingTimeToEndMs -> {
-                    String timeToEndStr = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeToEndMs);
-                    String toastMessage = resourceRepo.getString(R.string.toast_time_to_end_player_screen, timeToEndStr);
-                    getViewState().showToast(toastMessage);
-                });
+        if (timerInteractor.launched()) {
+            timerInteractor.remainingTimeToEnd()
+                    .onErrorReturnItem(0L)
+                    .subscribe(remainingTimeToEndMs -> {
+                        String timeToEndStr = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeToEndMs);
+                        String toastMessage = resourceRepo.getString(R.string.toast_time_to_end_player_screen, timeToEndStr);
+                        getViewState().showToast(toastMessage);
+                    });
+        }
     }
 
     public void onClickPlayButton() {

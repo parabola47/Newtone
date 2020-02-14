@@ -2,6 +2,7 @@ package com.parabola.newtone.di.app;
 
 import android.content.Intent;
 
+import com.parabola.domain.interactors.SleepTimerInteractor;
 import com.parabola.domain.interactors.player.PlayerInteractor;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.MainApplication;
@@ -50,6 +51,7 @@ public interface AppComponent extends AppComponentInjects {
     }
 
     PlayerInteractor providePlayerInteractor();
+    SleepTimerInteractor provideSleepTimerInteractor();
     TrackRepository provideTrackRepo();
 
 

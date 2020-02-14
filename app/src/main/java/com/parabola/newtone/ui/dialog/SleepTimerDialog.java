@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,6 +75,11 @@ public final class SleepTimerDialog extends BaseDialogFragment
     @ProvidePresenter
     SleepTimerPresenter providePresenter() {
         return new SleepTimerPresenter(MainApplication.getComponent());
+    }
+
+    @Override
+    public void showToast(String toastText) {
+        Toast.makeText(requireContext(), toastText, Toast.LENGTH_SHORT).show();
     }
 
     @Override

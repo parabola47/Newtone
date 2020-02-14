@@ -1,5 +1,7 @@
 package com.parabola.domain.interactors;
 
+import com.parabola.domain.interactors.type.Irrelevant;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -10,19 +12,15 @@ public interface SleepTimerInteractor {
 
     Completable reset();
 
-    Single<Boolean> launched();
+    boolean launched();
 
     Single<Long> remainingTimeToEnd();
 
     Observable<Long> observeRemainingTimeToEnd();
 
-    Single<State> state();
+    Observable<Boolean> observeIsTimerRunning();
+    Observable<Irrelevant> onTimerFinished();
 
-    Observable<State> observeState();
-
-    enum State {
-        NOT_RUNNING, RUNNING, FINISHED
-    }
 
     class TimerNotLaunchedException extends IllegalStateException {
     }

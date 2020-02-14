@@ -20,7 +20,7 @@
     <string name="playlist_folders">Folders</string>
 
     <!--PLAYER SCREEN-->
-    <string name="toast_time_to_end_player_screen">%1$s left until to end: </string>
+    <string name="toast_time_to_end_player_screen">%1$s left until end</string>
 
 
     <!--IMAGE DESCRIPTIONS-->
@@ -135,6 +135,8 @@
 
     <!--SLEEP TIMER DIALOG SCREEN-->
     <string name="sleep_timer_dialog_title">Select time</string>
+    <string name="toast_sleep_timer_already_launched">Sleep timer already launched</string>
+    <string name="toast_sleep_timer_on_start">Music will stop in %s</string>
     <string name="min5">5 min</string>
     <string name="min10">10 min</string>
     <string name="min15">15 min</string>
@@ -183,6 +185,6 @@
     <string name="playlist_title_content_desc">Playlist title</string>
 
     <!--CRASH REPORT-->
-    <string name="toast_text_on_crash"></string>
+    <string name="toast_text_on_crash" />
 
 </resources>
