@@ -52,11 +52,11 @@ public interface BaseAdapter<T> {
     }
 
     interface RemoveClickListener {
-        void onClickRemoveItem(int oldPosition);
+        void onClickRemoveItem(int position);
     }
 
     interface DragListener {
-        void onSwipeItem(int oldPosition);
+        void onSwipeItem(int position);
         void onMoveItem(int oldPosition, int newPosition);
     }
 

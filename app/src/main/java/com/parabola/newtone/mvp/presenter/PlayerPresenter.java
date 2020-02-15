@@ -149,6 +149,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
     private Disposable observeTrackMoving() {
         return playerInteractor.onMoveTrack()
+                .observeOn(schedulers.ui())
                 .subscribe(oldNewPositionEntry -> {
                     getViewState().moveTrack(oldNewPositionEntry.getKey(), oldNewPositionEntry.getValue());
                     getViewState().setAlbumImagePosition(playerInteractor.currentTrackPosition(), enableSlideScrolling);

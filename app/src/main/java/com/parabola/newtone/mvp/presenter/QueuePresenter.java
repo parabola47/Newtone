@@ -22,6 +22,8 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
 
     @Inject MainRouter router;
 
+    private boolean isFirstTracklistUpdate = true;
+
     @Inject PlayerInteractor playerInteractor;
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
@@ -58,7 +60,10 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
                     getViewState().refreshTracks(tracks);
                     getViewState().setTrackCount(tracks.size());
                     getViewState().setCurrentTrackPosition(playerInteractor.currentTrackPosition());
-                    getViewState().goToItem(playerInteractor.currentTrackPosition());
+                    if (isFirstTracklistUpdate) {
+                        getViewState().goToItem(playerInteractor.currentTrackPosition());
+                        isFirstTracklistUpdate = false;
+                    }
                 });
     }
 
@@ -70,6 +75,7 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
 
     private Disposable observeTrackRemoving() {
         return playerInteractor.onRemoveTrack()
+                .observeOn(schedulers.ui())
                 .subscribe(idPositionEntry -> {
                     getViewState().removeTrackByPosition(idPositionEntry.getValue());
                     getViewState().setTrackCount(playerInteractor.tracksCount());
@@ -79,6 +85,7 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
 
     private Disposable observeTrackMoving() {
         return playerInteractor.onMoveTrack()
+                .observeOn(schedulers.ui())
                 .subscribe(oldNewPositionEntry -> getViewState().setCurrentTrackPosition(playerInteractor.currentTrackPosition()));
     }
 
@@ -104,13 +111,16 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
     }
 
     public void onRemoveItem(int position) {
-        playerInteractor.remove(position);
+        if (position >= 0 && position < playerInteractor.tracksCount()) {
+            playerInteractor.remove(position)
+                    .subscribeOn(schedulers.io()).subscribe();
+        }
     }
 
     public void onMoveItem(int oldPosition, int newPosition) {
-        if (oldPosition == newPosition) {
-            return;
+        if (oldPosition != newPosition) {
+            playerInteractor.moveTrack(oldPosition, newPosition)
+                    .subscribeOn(schedulers.io()).subscribe();
         }
-        playerInteractor.moveTrack(oldPosition, newPosition);
     }
 }

@@ -61,8 +61,8 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         queueAdapter.setRemoveClickListener(presenter::onRemoveItem);
         queueAdapter.setDragListener(new BaseAdapter.DragListener() {
             @Override
-            public void onSwipeItem(int oldPosition) {
-                presenter.onRemoveItem(oldPosition);
+            public void onSwipeItem(int position) {
+                presenter.onRemoveItem(position);
             }
 
             @Override
@@ -96,7 +96,20 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @Override
     public void refreshTracks(List<Track> tracks) {
-        queueAdapter.replaceAll(tracks);
+        if (!isNewTracksIdenticalWithAdapter(tracks)) {
+            queueAdapter.replaceAll(tracks);
+        }
+    }
+
+    private boolean isNewTracksIdenticalWithAdapter(List<Track> tracks) {
+        if (tracks.size() != queueAdapter.size()) {
+            return false;
+        }
+        for (int i = 0; i < tracks.size(); i++) {
+            if (tracks.get(i).getId() != queueAdapter.get(i).getId())
+                return false;
+        }
+        return true;
     }
 
     @Override

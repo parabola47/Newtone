@@ -13,6 +13,8 @@ public interface QueueView extends MvpView {
     void refreshTracks(List<Track> tracks);
     void setTrackCount(int tracksCount);
     void setCurrentTrackPosition(int currentTrackPosition);
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void removeTrackByPosition(int position);
 
     @StateStrategyType(OneExecutionStateStrategy.class)

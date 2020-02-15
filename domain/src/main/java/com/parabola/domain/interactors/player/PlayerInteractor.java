@@ -5,6 +5,7 @@ import com.parabola.domain.model.Track;
 import java.util.List;
 import java.util.Map.Entry;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 
@@ -40,10 +41,10 @@ public interface PlayerInteractor {
     int currentTrackId();
     //ключ - старая позиция трека, значение - новая позиция трека в плейлисте
     Observable<Entry<Integer, Integer>> onMoveTrack();
-    void moveTrack(int oldPosition, int newPosition);
+    Completable moveTrack(int oldPosition, int newPosition);
     //ключ - id удалённого трека, значение - позиция трека в плейлисте
     Observable<Entry<Integer, Integer>> onRemoveTrack();
-    void remove(int trackPosition);
+    Completable remove(int trackPosition);
 
 
     void seekTo(long playbackPositionMs);

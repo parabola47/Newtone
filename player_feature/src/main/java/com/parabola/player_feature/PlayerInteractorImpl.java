@@ -46,6 +46,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -299,14 +300,16 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     }
 
     @Override
-    public void moveTrack(int oldPosition, int newPosition) {
-        concatenatedSource.moveMediaSource(oldPosition, newPosition);
+    public Completable moveTrack(int oldPosition, int newPosition) {
+        return Completable.fromAction(() -> {
+            concatenatedSource.moveMediaSource(oldPosition, newPosition);
 
-        Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(oldPosition, newPosition);
-        onMoveTrackObserver.onNext(entry);
-        currentTracklistUpdate.onNext(getTrackIds());
+            Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(oldPosition, newPosition);
+            onMoveTrackObserver.onNext(entry);
+            currentTracklistUpdate.onNext(getTrackIds());
 
-        settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
+            settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
+        });
     }
 
 
@@ -318,15 +321,17 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     }
 
     @Override
-    public void remove(int trackPosition) {
-        Integer trackId = (Integer) concatenatedSource.getMediaSource(trackPosition).getTag();
-        concatenatedSource.removeMediaSource(trackPosition);
+    public Completable remove(int trackPosition) {
+        return Completable.fromAction(() -> {
+            Integer trackId = (Integer) concatenatedSource.getMediaSource(trackPosition).getTag();
+            concatenatedSource.removeMediaSource(trackPosition);
 
-        Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(trackId, trackPosition);
-        onRemoveTrackObserver.onNext(entry);
-        currentTracklistUpdate.onNext(getTrackIds());
+            Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(trackId, trackPosition);
+            onRemoveTrackObserver.onNext(entry);
+            currentTracklistUpdate.onNext(getTrackIds());
 
-        settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
+            settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
+        });
     }
 
 
