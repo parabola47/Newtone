@@ -17,6 +17,8 @@ public class PlayerService extends Service {
     public static final String ACTION_TOGGLE_REPEAT_MODE = "com.parabola.newtone.TOGGLE_REPEAT_MODE";
     public static final String ACTION_TOGGLE_SHUFFLE_MODE = "com.parabola.newtone.TOGGLE_SHUFFLE_MODE";
 
+    private static final String ACTION_STOP_SERVICE = "com.parabola.newtone.STOP_SERVICE";
+
 
     static PlayerInteractorImpl playerInteractor;
     static boolean isRunning = false;
@@ -25,21 +27,20 @@ public class PlayerService extends Service {
     @Override
     public void onCreate() {
         isRunning = true;
-        super.onCreate();
         playerInteractor.setNewtonePlayerListener(new PlayerInteractorImpl.NewtonePlayerListener() {
             @Override
             public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-                if (ongoing) {
+                if (ongoing)
                     startForeground(notificationId, notification);
-                } else {
+                else
                     stopForeground(false);
-                }
             }
 
             @Override
             public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                stopForeground(true);
-                stopSelf();
+                Intent intent = new Intent(PlayerService.this, PlayerService.class);
+                intent.setAction(ACTION_STOP_SERVICE);
+                startService(intent);
             }
         });
     }
@@ -68,6 +69,10 @@ public class PlayerService extends Service {
                 break;
             case ACTION_TOGGLE_SHUFFLE_MODE:
                 playerInteractor.toggleShuffleMode();
+                break;
+            case ACTION_STOP_SERVICE:
+                stopForeground(true);
+                stopSelf();
                 break;
             default: throw new IllegalArgumentException(action);
         }

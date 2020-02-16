@@ -51,7 +51,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         albumsList.setAdapter((RecyclerView.Adapter) albumsAdapter);
         albumsList.post(() -> {
             int widthPx = albumsList.getWidth();
-            float widthDp = AndroidTool.convertPixelsToDp(widthPx, requireContext());
+            float widthDp = AndroidTool.convertPixelsToDp(widthPx, layout.getContext());
             int columnsCount = 2;
             if (widthDp > 500) {
                 columnsCount = ((int) widthDp / 200);
