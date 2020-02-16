@@ -185,6 +185,9 @@
     <string name="playlist_title_content_desc">Playlist title</string>
 
     <!--CRASH REPORT-->
-    <string name="toast_text_on_crash" />
+    <string name="dialog_on_crash_title">Newtone was crashed</string>
+    <string name="dialog_on_crash_comment_prompt">You can add a comment here</string>
+    <string name="dialog_on_crash_text">Sorry, the application crashed.
+        \nPlease send a report to the developers via email, it helps us to resolve the problem.</string>
 
 </resources>

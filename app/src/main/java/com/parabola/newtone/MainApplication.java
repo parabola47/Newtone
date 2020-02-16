@@ -12,14 +12,21 @@ import com.parabola.newtone.ui.HomeScreenWidget;
 
 import org.acra.ACRA;
 import org.acra.annotation.AcraCore;
+import org.acra.annotation.AcraDialog;
 import org.acra.annotation.AcraMailSender;
-import org.acra.annotation.AcraToast;
 
 import io.reactivex.Observable;
 
-@AcraCore(buildConfigClass = BuildConfig.class)
+@AcraCore(
+        buildConfigClass = BuildConfig.class,
+        deleteUnapprovedReportsOnApplicationStart = false,
+        sendReportsInDevMode = false)
 @AcraMailSender(mailTo = "zizik.zizik@gmail.com")
-@AcraToast(resText = R.string.toast_text_on_crash)
+@AcraDialog(
+        resTitle = R.string.dialog_on_crash_title,
+        resText = R.string.dialog_on_crash_text,
+        resTheme = R.style.AppTheme,
+        resCommentPrompt = R.string.dialog_on_crash_comment_prompt)
 public final class MainApplication extends Application {
     private static final String LOG_TAG = "Newtone Application";
 
