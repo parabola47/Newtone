@@ -95,7 +95,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
 
     @Override
     public void moveItem(int from, int to) {
-        items.add(to, items.remove(from));
+        items.move(from, to);
         notifyItemMoved(from, to);
     }
 

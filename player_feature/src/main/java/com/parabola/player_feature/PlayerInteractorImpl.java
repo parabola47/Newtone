@@ -479,9 +479,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         private void runServiceIfNeeded(boolean isPlaying) {
             if (isPlaying && !PlayerService.isRunning) {
                 Intent intent = new Intent(context, PlayerService.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    context.startForegroundService(intent);
-                else context.startService(intent);
+                context.startService(intent);
             }
         }
 

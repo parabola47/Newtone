@@ -47,6 +47,10 @@ public final class SelectableList<E> {
         selectedItemIndex = -1;
     }
 
+    public void move(int from, int to) {
+        add(to, remove(from));
+    }
+
     public E remove(int index) {
         E removedItem = elements.remove(index);
 
