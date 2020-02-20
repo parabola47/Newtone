@@ -102,7 +102,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                 .setUsage(C.USAGE_MEDIA)
                 .build();
 
-        exoPlayer.setAudioAttributes(audioAttributes);
+        exoPlayer.setAudioAttributes(audioAttributes, true);
         exoPlayer.setHandleAudioBecomingNoisy(true);    // приостанавливаем воспроизведении при отключении наушников
 
 
