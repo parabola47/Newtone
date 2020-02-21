@@ -8,7 +8,7 @@ import com.parabola.domain.repository.AccessRepository.AccessType;
 
 public class PermissionChangeReceiver extends BroadcastReceiver {
 
-    public static final String ACTION_FILE_STORAGE_PERMISSION_UPDATE = "com.nokia.data.FILE_STORAGE_PERMISSION";
+    public static final String ACTION_FILE_STORAGE_PERMISSION_UPDATE = "com.parabola.data.FILE_STORAGE_PERMISSION";
 
     private PermissionChangeListener listener;
 
@@ -21,11 +21,9 @@ public class PermissionChangeReceiver extends BroadcastReceiver {
         if (intent.getAction() == null)
             return;
 
-        switch (intent.getAction()) {
-            case ACTION_FILE_STORAGE_PERMISSION_UPDATE:
-                if (listener != null)
-                    listener.onPermissionUpdate(AccessType.FILE_STORAGE);
-                break;
+        if (ACTION_FILE_STORAGE_PERMISSION_UPDATE.equals(intent.getAction())) {
+            if (listener != null)
+                listener.onPermissionUpdate(AccessType.FILE_STORAGE);
         }
     }
 

@@ -116,7 +116,6 @@
     <string name="dialog_delete">Delete</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_reset">Reset</string>
-    <string name="dialog_donate">Donate</string>
 
     <!--CREATE PLAYLIST DIALOG SCREEN-->
     <string name="create_playlist_title">Create new playlist</string>
@@ -183,6 +182,10 @@
     <string name="main_menu_button_content_desc">Main menu</string>
     <string name="tracks_list_content_desc">Tracks list</string>
     <string name="playlist_title_content_desc">Playlist title</string>
+    <string name="repeat_mode_content_desc">Repeat mode</string>
+    <string name="shuffle_mode_content_desc">Shuffle mode</string>
+    <string name="start_prev_content_desc">Start previous track</string>
+    <string name="start_next_content_desc">Start next track</string>
 
     <!--CRASH REPORT-->
     <string name="dialog_on_crash_title">Newtone was crashed</string>

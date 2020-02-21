@@ -4,7 +4,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactors.ArtistInteractor;
-import com.parabola.domain.repository.AccessRepository;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
@@ -16,7 +15,6 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Predicate;
 
 @InjectViewState
 public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
@@ -31,7 +29,7 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
 
     @Inject SchedulerProvider schedulers;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public TabArtistPresenter(AppComponent appComponent) {
         appComponent.inject(this);

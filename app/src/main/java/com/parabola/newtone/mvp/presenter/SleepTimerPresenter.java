@@ -11,18 +11,27 @@ import com.parabola.newtone.util.TimeFormatterTool;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 @InjectViewState
 public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
 
     @Inject SleepTimerInteractor timerInteractor;
     @Inject ResourceRepository resourceRepo;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     public SleepTimerPresenter(AppComponent appComponent) {
         appComponent.inject(this);
     }
 
+    @Override
+    public void onDestroy() {
+        disposables.dispose();
+    }
+
     public void startTimer(long timeToSleepMs) {
-        timerInteractor.start(timeToSleepMs)
+        disposables.add(timerInteractor.start(timeToSleepMs)
                 .subscribe(
                         () -> {
                             String sleepTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(timeToSleepMs);
@@ -38,7 +47,7 @@ public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
                             } else {
                                 throw new RuntimeException(error);
                             }
-                        });
+                        }));
     }
 
     public void onClickCancel() {

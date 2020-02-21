@@ -129,8 +129,8 @@ class PlayerSettingSaver {
         String[] idsStr = savedString.split(SAVED_PLAYLIST_DELIMITER);
         List<Integer> ids = new ArrayList<>();
 
-        for (int i = 0; i < idsStr.length; i++) {
-            ids.add(Integer.parseInt(idsStr[i]));
+        for (String s : idsStr) {
+            ids.add(Integer.parseInt(s));
         }
 
         long endTime = System.currentTimeMillis();

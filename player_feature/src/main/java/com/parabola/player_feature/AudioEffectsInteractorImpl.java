@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.audio.AudioListener;
 import com.parabola.domain.interactors.player.AudioEffectsInteractor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -56,18 +57,33 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
         this.exoPlayer.addAudioListener(new AudioListener() {
             @Override
             public void onAudioSessionId(int audioSessionId) {
-                bassBoost = new BassBoost(0, audioSessionId);
-                bassBoost.setEnabled(settings.getSavedBassBoostEnabled());
-                bassBoost.setStrength(settings.getSavedBassBoostStrength());
+                try {
+                    bassBoost = new BassBoost(0, audioSessionId);
+                } catch (RuntimeException ignored) {
+                }
+                if (bassBoost != null) {
+                    bassBoost.setEnabled(settings.getSavedBassBoostEnabled());
+                    bassBoost.setStrength(settings.getSavedBassBoostStrength());
+                }
 
-                virtualizer = new Virtualizer(0, audioSessionId);
-                virtualizer.setEnabled(settings.getSavedVirtualizerEnabled());
-                virtualizer.setStrength(settings.getSavedVirtualizerStrength());
+                try {
+                    virtualizer = new Virtualizer(0, audioSessionId);
+                } catch (RuntimeException ignored) {
+                }
+                if (virtualizer != null) {
+                    virtualizer.setEnabled(settings.getSavedVirtualizerEnabled());
+                    virtualizer.setStrength(settings.getSavedVirtualizerStrength());
+                }
 
-                equalizer = new Equalizer(0, audioSessionId);
-                equalizer.setEnabled(settings.getSavedIsEqEnabled());
-                for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
-                    equalizer.setBandLevel(i, (short) (settings.getSavedBandLevel(i) * 100));
+                try {
+                    equalizer = new Equalizer(0, audioSessionId);
+                } catch (RuntimeException ignored) {
+                }
+                if (equalizer != null) {
+                    equalizer.setEnabled(settings.getSavedIsEqEnabled());
+                    for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
+                        equalizer.setBandLevel(i, (short) (settings.getSavedBandLevel(i) * 100));
+                    }
                 }
             }
         });
@@ -123,24 +139,25 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     //    BASS BOOST
     @Override
     public boolean isBassBoostAvailable() {
-        return bassBoost.getStrengthSupported();
+        return bassBoost != null && bassBoost.getStrengthSupported();
     }
 
     @Override
     public boolean isBassBoostEnabled() {
-        return bassBoost.getEnabled();
+        return bassBoost != null && bassBoost.getEnabled();
     }
 
     @Override
     public void setBassBoostEnable(boolean enable) {
-        bassBoost.setEnabled(enable);
+        if (bassBoost != null)
+            bassBoost.setEnabled(enable);
 
         settings.setBassBoostEnabled(enable);
     }
 
     @Override
     public short getBassBoostCurrentLevel() {
-        return bassBoost.getRoundedStrength();
+        return bassBoost != null ? bassBoost.getRoundedStrength() : 0;
     }
 
     @Override
@@ -150,7 +167,8 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
     @Override
     public void setBassBoostLevel(short strength) {
-        bassBoost.setStrength(strength);
+        if (bassBoost != null)
+            bassBoost.setStrength(strength);
 
         settings.setBassBoostStrength(strength);
     }
@@ -159,24 +177,25 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     //    VIRTUALIZER
     @Override
     public boolean isVirtualizerAvailable() {
-        return virtualizer.getStrengthSupported();
+        return virtualizer != null && virtualizer.getStrengthSupported();
     }
 
     @Override
     public boolean isVirtualizerEnabled() {
-        return virtualizer.getEnabled();
+        return virtualizer != null && virtualizer.getEnabled();
     }
 
     @Override
     public void setVirtualizerEnable(boolean enable) {
-        virtualizer.setEnabled(enable);
+        if (virtualizer != null)
+            virtualizer.setEnabled(enable);
 
         settings.setVirtualizerEnabled(enable);
     }
 
     @Override
     public short getVirtualizerCurrentLevel() {
-        return virtualizer.getRoundedStrength();
+        return virtualizer != null ? virtualizer.getRoundedStrength() : 0;
     }
 
     @Override
@@ -186,7 +205,8 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
     @Override
     public void setVirtualizerLevel(short strength) {
-        virtualizer.setStrength(strength);
+        if (virtualizer != null)
+            virtualizer.setStrength(strength);
 
         settings.setVirtualizerStrength(strength);
     }
@@ -194,35 +214,40 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     //    EQ
     @Override
     public void setEqEnable(boolean enable) {
-        equalizer.setEnabled(enable);
+        if (equalizer != null)
+            equalizer.setEnabled(enable);
 
         settings.setEqEnabled(enable);
     }
 
     @Override
     public boolean isEqEnabled() {
-        return equalizer.getEnabled();
+        return equalizer != null && equalizer.getEnabled();
     }
 
     @Override
     public short getMaxEqBandLevel() {
-        return (short) ((equalizer.getBandLevelRange()[1]) / 100);
+        return equalizer != null ? (short) ((equalizer.getBandLevelRange()[1]) / 100) : 0;
     }
 
     @Override
     public short getMinEqBandLevel() {
-        return (short) (equalizer.getBandLevelRange()[0] / 100);
+        return equalizer != null ? (short) (equalizer.getBandLevelRange()[0] / 100) : 0;
     }
 
     @Override
     public void setBandLevel(int bandId, short bandLevel) {
-        equalizer.setBandLevel((short) bandId, (short) (bandLevel * 100));
+        if (equalizer != null)
+            equalizer.setBandLevel((short) bandId, (short) (bandLevel * 100));
 
         settings.setBandLevel((short) bandId, bandLevel);
     }
 
     @Override
     public List<EqBand> getBands() {
+        if (equalizer == null)
+            return Collections.emptyList();
+
         List<EqBand> bands = new ArrayList<>(equalizer.getNumberOfBands());
 
         for (short i = 0; i < equalizer.getNumberOfBands(); i++) {

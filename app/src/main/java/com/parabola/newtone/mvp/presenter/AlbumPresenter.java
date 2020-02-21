@@ -50,8 +50,8 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
 
     @Override
     protected void onFirstViewAttach() {
-        loadAlbum();
         disposables.addAll(
+                loadAlbum(),
                 observeCurrentTrack(), observeSortingUpdates(),
                 observeTrackDeleting());
     }
@@ -97,8 +97,8 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
                 });
     }
 
-    private void loadAlbum() {
-        albumRepo.getById(albumId)
+    private Disposable loadAlbum() {
+        return albumRepo.getById(albumId)
                 .subscribe(album -> {
                     getViewState().setAlbumTitle(album.getTitle());
                     getViewState().setAlbumArtist(album.getArtistName());

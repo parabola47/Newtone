@@ -2,6 +2,7 @@ package com.parabola.newtone.mvp.presenter;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactors.player.PlayerInteractor;
 import com.parabola.domain.repository.AccessRepository;
 import com.parabola.domain.repository.TrackRepository;
@@ -23,6 +24,7 @@ public final class MainPresenter extends MvpPresenter<MainView> {
     @Inject TrackRepository trackRepo;
 
     @Inject MainRouter router;
+    @Inject SchedulerProvider schedulers;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -65,6 +67,7 @@ public final class MainPresenter extends MvpPresenter<MainView> {
 
     private Disposable observeState() {
         return playerInteractor.onChangePlayingState()
+                .observeOn(schedulers.ui())
                 .subscribe(isPlaying -> {
                     if (isPlaying) getViewState().setPlaybackButtonAsPause();
                     else getViewState().setPlaybackButtonAsPlay();

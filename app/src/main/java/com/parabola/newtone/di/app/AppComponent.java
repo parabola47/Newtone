@@ -21,8 +21,6 @@ import dagger.Component;
 import static com.parabola.newtone.di.app.modules.IntentModule.GO_NEXT_TRACK_INTENT;
 import static com.parabola.newtone.di.app.modules.IntentModule.GO_PREVIOUS_TRACK_INTENT;
 import static com.parabola.newtone.di.app.modules.IntentModule.OPEN_ACTIVITY_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.PAUSE_PLAYER_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.RESUME_PLAYER_INTENT;
 import static com.parabola.newtone.di.app.modules.IntentModule.TOGGLE_PLAYER_STATE_INTENT;
 import static com.parabola.newtone.di.app.modules.IntentModule.TOGGLE_REPEAT_MODE_INTENT;
 import static com.parabola.newtone.di.app.modules.IntentModule.TOGGLE_SHUFFLE_MODE_INTENT;

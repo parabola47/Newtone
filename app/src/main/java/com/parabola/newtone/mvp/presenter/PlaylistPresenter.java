@@ -44,21 +44,8 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     @Override
     protected void onFirstViewAttach() {
-        playlistRepo.getById(playlistId)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(playlist -> getViewState().setPlaylistTitle(playlist.getTitle()));
-
-        trackInteractor.getByPlaylist(playlistId)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(tracks -> {
-                    getViewState().refreshTracks(tracks);
-                    getViewState().setTracksCount(tracks.size());
-                    getViewState().setCurrentTrack(currentTrackId);
-                });
-
         disposables.addAll(
+                refreshPlaylistInfo(),
                 observePlaylistUpdates(),
                 observeCurrentTrackUpdates(),
                 observeTrackDeleting());
@@ -67,6 +54,13 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
     @Override
     public void onDestroy() {
         disposables.dispose();
+    }
+
+    private Disposable refreshPlaylistInfo() {
+        return playlistRepo.getById(playlistId)
+                .subscribeOn(schedulers.io())
+                .observeOn(schedulers.ui())
+                .subscribe(playlist -> getViewState().setPlaylistTitle(playlist.getTitle()));
     }
 
     private Disposable observePlaylistUpdates() {

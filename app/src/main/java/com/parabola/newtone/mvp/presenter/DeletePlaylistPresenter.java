@@ -8,6 +8,8 @@ import com.parabola.newtone.mvp.view.DeletePlaylistView;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 @InjectViewState
 public final class DeletePlaylistPresenter extends MvpPresenter<DeletePlaylistView> {
 
@@ -15,9 +17,16 @@ public final class DeletePlaylistPresenter extends MvpPresenter<DeletePlaylistVi
 
     @Inject PlaylistRepository playlistRepo;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     public DeletePlaylistPresenter(AppComponent appComponent, int playlistId) {
         this.playlistId = playlistId;
         appComponent.inject(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        disposables.dispose();
     }
 
     public void onClickCancel() {
@@ -25,7 +34,7 @@ public final class DeletePlaylistPresenter extends MvpPresenter<DeletePlaylistVi
     }
 
     public void onClickDelete() {
-        playlistRepo.remove(playlistId)
-                .subscribe(getViewState()::closeScreen);
+        disposables.add(playlistRepo.remove(playlistId)
+                .subscribe(getViewState()::closeScreen));
     }
 }

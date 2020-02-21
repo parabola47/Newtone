@@ -28,7 +28,7 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     @Inject SchedulerProvider schedulers;
     @Inject PlayerInteractor playerInteractor;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private volatile int currentTrackId = EmptyItems.NO_TRACK.getId();
 
@@ -38,10 +38,10 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
 
     @Override
     public void onFirstViewAttach() {
-        refreshPlaylists();
         disposables.addAll(
-                observeCurrentTrack(), observeTrackDeleting()
-        );
+                refreshPlaylists(),
+                observeCurrentTrack(),
+                observeTrackDeleting());
     }
 
     @Override
@@ -81,8 +81,8 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     }
 
 
-    private void refreshPlaylists() {
-        trackInteractor.getRecentlyAddedTracks()
+    private Disposable refreshPlaylists() {
+        return trackInteractor.getRecentlyAddedTracks()
                 // ожидаем пока прогрузится анимация входа
                 .doOnSuccess(tracks -> {while (!enterSlideAnimationEnded) ;})
                 .subscribeOn(schedulers.io())

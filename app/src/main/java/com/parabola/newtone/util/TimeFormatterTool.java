@@ -18,7 +18,7 @@ public final class TimeFormatterTool {
      */
     public static String formatSecondsToMinutes(long s) {
         if (s < 0) {
-            throw new IllegalArgumentException("Parameter s must be bigger than 0");
+            throw new IllegalArgumentException("Parameter s must be larger than or equal to 0. Value: " + s);
         }
         long hours = s / (3600);
         long minutes = (s - (hours * 3600)) / 60;

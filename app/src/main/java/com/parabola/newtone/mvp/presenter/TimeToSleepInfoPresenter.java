@@ -22,7 +22,7 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
 
     @Inject ResourceRepository resourceRepo;
 
-    @Inject SchedulerProvider schedulerProvider;
+    @Inject SchedulerProvider schedulers;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -46,7 +46,7 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
 
     private Disposable observeRemainingTime() {
         return timerInteractor.observeRemainingTimeToEnd()
-                .observeOn(schedulerProvider.ui())
+                .observeOn(schedulers.ui())
                 .subscribe(remainingTimeMs -> {
                     String newTime = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeMs);
                     String timeToEndText = resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, newTime);
@@ -57,13 +57,14 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
 
     private Disposable closeScreenWhenTimerFinished() {
         return timerInteractor.onTimerFinished()
+                .observeOn(schedulers.ui())
                 .subscribe(irrelevant -> getViewState().closeScreen());
     }
 
 
     public void onClickReset() {
-        timerInteractor.reset()
-                .subscribe(getViewState()::closeScreen);
+        disposables.add(timerInteractor.reset()
+                .subscribe(getViewState()::closeScreen));
     }
 
 

@@ -4,7 +4,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.repository.AccessRepository;
-import com.parabola.domain.repository.AccessRepository.AccessType;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.di.app.AppComponent;
@@ -26,7 +25,7 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
     @Inject MainRouter router;
 
     @Inject SchedulerProvider schedulers;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public TabPlaylistPresenter(AppComponent appComponent) {
         appComponent.inject(this);

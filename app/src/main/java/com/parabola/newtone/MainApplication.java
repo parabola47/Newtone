@@ -3,6 +3,8 @@ package com.parabola.newtone;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.parabola.domain.interactors.SleepTimerInteractor;
 import com.parabola.domain.interactors.player.PlayerInteractor;
 import com.parabola.domain.interactors.type.Irrelevant;
@@ -37,6 +39,9 @@ public final class MainApplication extends Application {
         super.attachBaseContext(base);
         //инициализация отправки сообщений об ошибке
         ACRA.init(this);
+        //устанавливает флаг для отображения xml-ресурсов с типом <selector>
+        //на android версиях ниже LOLLIPOP
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
     @Override

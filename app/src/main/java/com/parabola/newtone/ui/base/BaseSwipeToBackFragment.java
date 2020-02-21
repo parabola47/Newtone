@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.arellomobile.mvp.MvpAppCompatFragment;
@@ -22,6 +23,7 @@ public abstract class BaseSwipeToBackFragment extends MvpAppCompatFragment {
     private SlidrInterface slidrInterface;
 
     @Override
+    @NonNull
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {

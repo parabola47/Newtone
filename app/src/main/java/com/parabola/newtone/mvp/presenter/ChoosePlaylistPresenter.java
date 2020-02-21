@@ -10,7 +10,7 @@ import com.parabola.newtone.ui.router.MainRouter;
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 
 @InjectViewState
 public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistView> {
@@ -21,7 +21,7 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
     @Inject MainRouter router;
 
     private final int trackId;
-    private Disposable playlistObserver;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public ChoosePlaylistPresenter(AppComponent appComponent, int trackId) {
         appComponent.inject(this);
@@ -30,21 +30,16 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
 
     @Override
     protected void onFirstViewAttach() {
-        playlistRepo.getAll()
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshPlaylists);
-
-        playlistObserver = playlistRepo.observePlaylistsUpdates()
+        disposables.add(playlistRepo.observePlaylistsUpdates()
                 .flatMapSingle(o -> playlistRepo.getAll())
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshPlaylists);
+                .subscribe(getViewState()::refreshPlaylists));
     }
 
     @Override
     public void onDestroy() {
-        playlistObserver.dispose();
+        disposables.dispose();
     }
 
     public void onClickCreateNewPlaylist() {
@@ -52,8 +47,8 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
     }
 
     public void onClickPlaylistItem(int playlistId) {
-        playlistRepo.addTrackToPlaylist(playlistId, trackId)
-                .subscribe(getViewState()::closeScreen);
+        disposables.add(playlistRepo.addTrackToPlaylist(playlistId, trackId)
+                .subscribe(getViewState()::closeScreen));
     }
 
     public void onClickCancel() {

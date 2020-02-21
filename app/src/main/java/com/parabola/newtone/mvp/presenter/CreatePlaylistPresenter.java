@@ -11,6 +11,8 @@ import com.parabola.newtone.mvp.view.CreatePlaylistView;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 @InjectViewState
 public final class CreatePlaylistPresenter extends MvpPresenter<CreatePlaylistView> {
 
@@ -18,8 +20,15 @@ public final class CreatePlaylistPresenter extends MvpPresenter<CreatePlaylistVi
 
     @Inject ResourceRepository resourceRepo;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     public CreatePlaylistPresenter(AppComponent appComponent) {
         appComponent.inject(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        disposables.dispose();
     }
 
     public void onClickCreatePlaylist(String newPlaylistTitle) {
@@ -30,7 +39,7 @@ public final class CreatePlaylistPresenter extends MvpPresenter<CreatePlaylistVi
             return;
         }
 
-        playlistRepo.addNew(newPlaylistTitle)
+        disposables.add(playlistRepo.addNew(newPlaylistTitle)
                 .subscribe((playlist, error) -> {
                     if (playlist != null) {
                         String toastText = resourceRepo.getString(R.string.toast_playlist_created, playlist.getTitle());
@@ -40,9 +49,10 @@ public final class CreatePlaylistPresenter extends MvpPresenter<CreatePlaylistVi
                         String toastText = resourceRepo.getString(R.string.toast_playlist_already_exist);
                         getViewState().showToast(toastText);
                     } else if (error != null) {
-//                        TODO обозначить неизвестную ошибку
+                        throw new RuntimeException(error);
                     }
-                });
+                })
+        );
     }
 
     public void onClickCancel() {

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="16dp"
+    tools:context=".ui.fragment.PlayerFragment">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/queue"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="#AAFFFFFF"
+        android:tintMode="src_in"
+        app:layout_constraintBottom_toBottomOf="@id/drop_down"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/drop_down"
+        app:srcCompat="@drawable/ic_queue"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/audio_effects"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="#AAFFFFFF"
+        android:tintMode="src_in"
+        app:layout_constraintBottom_toBottomOf="@id/drop_down"
+        app:layout_constraintLeft_toRightOf="@id/queue"
+        app:layout_constraintTop_toTopOf="@id/drop_down"
+        app:srcCompat="@drawable/ic_eq"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/drop_down"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_drop"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/favourite"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="@id/drop_down"
+        app:layout_constraintRight_toLeftOf="@id/timer"
+        app:layout_constraintTop_toTopOf="@id/drop_down"
+        app:srcCompat="@drawable/ic_favourite"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/timer"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@id/drop_down"
+        app:layout_constraintRight_toLeftOf="@+id/track_settings"
+        app:layout_constraintTop_toTopOf="@id/drop_down"
+        app:srcCompat="@drawable/ic_timer"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/track_settings"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@id/drop_down"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/drop_down"
+        app:srcCompat="@drawable/ic_setting"
+        tools:targetApi="lollipop" />
+
+    <com.parabola.newtone.view.LockableViewPager
+        android:id="@+id/album_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="12dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/drop_down"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:background="@drawable/album_holder" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/artist"
+        style="@style/PlayerTextView"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:drawableLeftCompat="@drawable/ic_mic_colored"
+        app:drawableStartCompat="@drawable/ic_mic_colored"
+        app:layout_constraintBottom_toTopOf="@+id/album"
+        app:layout_constraintLeft_toRightOf="@+id/album_container"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/album_container"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="King Crimson" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/album"
+        style="@style/PlayerTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableLeftCompat="@drawable/ic_album_colored"
+        app:drawableStartCompat="@drawable/ic_album_colored"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toRightOf="@id/album_container"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/artist"
+        tools:text="Happy With What You Have To Be Happy With" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        style="@style/PlayerTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableLeftCompat="@drawable/ic_clef_colored"
+        app:drawableStartCompat="@drawable/ic_clef_colored"
+        app:layout_constraintBottom_toTopOf="@+id/player_toggle"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toRightOf="@id/album_container"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/album"
+        tools:text="Larks' Tongues in Aspic (Part IV)" />
+
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/loop"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="@+id/player_toggle"
+        app:layout_constraintEnd_toStartOf="@+id/prev_track"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/album_container"
+        app:layout_constraintTop_toTopOf="@+id/player_toggle"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/ic_loop"
+        tools:targetApi="lollipop" />
+
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/prev_track"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="@+id/player_toggle"
+        app:layout_constraintEnd_toStartOf="@+id/player_toggle"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/loop"
+        app:layout_constraintTop_toTopOf="@+id/player_toggle"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/ic_prev"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/player_toggle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toTopOf="@+id/song_duration"
+        app:layout_constraintEnd_toStartOf="@+id/next_track"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/prev_track"
+        app:srcCompat="@drawable/ic_play"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/next_track"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="@+id/player_toggle"
+        app:layout_constraintEnd_toStartOf="@+id/shuffle"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_toggle"
+        app:layout_constraintTop_toTopOf="@+id/player_toggle"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/ic_next"
+        tools:targetApi="lollipop" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/shuffle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="@+id/player_toggle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/next_track"
+        app:layout_constraintTop_toTopOf="@+id/player_toggle"
+        app:srcCompat="@drawable/ic_shuffled"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/song_duration"
+        app:layout_constraintLeft_toLeftOf="@+id/seek_player"
+        app:layout_constraintTop_toTopOf="@+id/song_duration"
+        tools:text="3:01" />
+
+    <TextView
+        android:id="@+id/song_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="end"
+        app:layout_constraintBottom_toTopOf="@+id/seek_player"
+        app:layout_constraintRight_toRightOf="@+id/seek_player"
+        tools:text="10:26" />
+
+    <SeekBar
+        android:id="@+id/seek_player"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:progressBackgroundTint="@color/colorSeekBG"
+        android:progressTint="@color/colorProgress"
+        android:thumb="@drawable/song_progress_thumb"
+        app:layout_constraintBottom_toBottomOf="@id/album_container"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toRightOf="@id/album_container"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:max="626"
+        tools:progress="181"
+        tools:targetApi="lollipop" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

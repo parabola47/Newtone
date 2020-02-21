@@ -163,7 +163,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                     try (Cursor cursor = contentResolver.query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, null,
                             SELECTION, new String[]{newTitle, String.valueOf(playlistId)}, // ищем есть ли плейлист с таким именем, не учитывая текущий
                             null)) {
-                        return cursor.getCount() > 0;
+                        return cursor != null && cursor.getCount() > 0;
                     }
                 })
                 .flatMapCompletable(playlistAlreadyExists -> {
@@ -222,7 +222,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                 SELECTION_BY_NAME, new String[]{playlistTitle},
                 null)) {
 
-            return cursor.getCount() > 0;
+            return cursor != null && cursor.getCount() > 0;
         }
     }
 
@@ -236,7 +236,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                     try (Cursor cursor = contentResolver.query(Members.getContentUri("external", playlistId), null,
                             SELECTION, new String[]{String.valueOf(trackId)},
                             null)) {
-                        return cursor.getCount() > 0;
+                        return cursor != null && cursor.getCount() > 0;
                     }
                 })
                 .flatMapCompletable(trackAlreadyInPlaylist -> {

@@ -22,7 +22,7 @@ public final class FoldersListPresenter extends MvpPresenter<FoldersListView> {
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public FoldersListPresenter(AppComponent component) {
         component.inject(this);

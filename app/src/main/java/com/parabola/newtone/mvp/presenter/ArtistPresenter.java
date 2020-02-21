@@ -4,7 +4,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactors.AlbumInteractor;
-import com.parabola.domain.interactors.ArtistInteractor;
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
@@ -36,7 +35,7 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
 
     @Inject SchedulerProvider schedulers;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public ArtistPresenter(AppComponent appComponent, int artistId) {
         this.artistId = artistId;
@@ -46,11 +45,10 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
 
     @Override
     protected void onFirstViewAttach() {
-        loadArtist();
         disposables.addAll(
+                loadArtist(),
                 observeArtistAlbumsSorting(),
-                 observeTrackDeleting()
-        );
+                observeTrackDeleting());
     }
 
     @Override
@@ -84,7 +82,6 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
     }
 
 
-
     public void onClickAllTracks() {
         router.openArtistTracks(artistId);
     }
@@ -100,8 +97,8 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
         enterSlideAnimationEnded = true;
     }
 
-    private void loadArtist() {
-        artistRepo.getById(artistId)
+    private Disposable loadArtist() {
+        return artistRepo.getById(artistId)
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(artist -> {

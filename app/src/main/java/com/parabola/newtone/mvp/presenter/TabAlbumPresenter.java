@@ -28,7 +28,7 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
 
     @Inject SchedulerProvider schedulers;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public TabAlbumPresenter(AppComponent appComponent) {
         appComponent.inject(this);

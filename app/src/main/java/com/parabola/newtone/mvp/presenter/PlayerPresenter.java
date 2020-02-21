@@ -112,6 +112,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
     private Disposable observePlayerState() {
         return playerInteractor.onChangePlayingState()
+                .observeOn(schedulers.ui())
                 .subscribe(isPlaying -> {
                     if (isPlaying) getViewState().setPlaybackButtonAsPause();
                     else getViewState().setPlaybackButtonAsPlay();
@@ -130,6 +131,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
     private Disposable observeTimerState() {
         return timerInteractor.observeIsTimerRunning()
+                .observeOn(schedulers.ui())
                 .subscribe(isTimerRunning -> {
                     if (isTimerRunning) getViewState().setTimerColored();
                     else getViewState().setTimerNotColored();
@@ -172,13 +174,13 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
     public void onLongClickTimerButton() {
         if (timerInteractor.launched()) {
-            timerInteractor.remainingTimeToEnd()
+            disposables.add(timerInteractor.remainingTimeToEnd()
                     .onErrorReturnItem(0L)
                     .subscribe(remainingTimeToEndMs -> {
                         String timeToEndStr = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeToEndMs);
                         String toastMessage = resourceRepo.getString(R.string.toast_time_to_end_player_screen, timeToEndStr);
                         getViewState().showToast(toastMessage);
-                    });
+                    }));
         }
     }
 
@@ -248,23 +250,23 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     public void onClickArtist() {
-        trackRepo.getById(currentTrackId)
+        disposables.add(trackRepo.getById(currentTrackId)
                 .subscribe(track -> {
                     router.backToRoot();
                     router.goToTab(0, false);
                     router.openArtist(track.getArtistId());
                     router.collapseBottomSlider();
-                });
+                }));
     }
 
     public void onClickAlbum() {
-        trackRepo.getById(currentTrackId)
+        disposables.add(trackRepo.getById(currentTrackId)
                 .subscribe(track -> {
                     router.backToRoot();
                     router.goToTab(1, false);
                     router.openAlbum(track.getAlbumId());
                     router.collapseBottomSlider();
-                });
+                }));
     }
 
     public void onClickTrackTitle() {
@@ -285,8 +287,8 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
 
     public void onClickMenuLyrics() {
-        trackRepo.getById(currentTrackId)
-                .subscribe(track -> router.openLyricsSearch(track));
+        disposables.add(trackRepo.getById(currentTrackId)
+                .subscribe(track -> router.openLyricsSearch(track)));
     }
 
     public void onClickMenuDelete() {
@@ -294,7 +296,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     public void onClickMenuShareTrack() {
-        trackRepo.getById(currentTrackId)
-                .subscribe(track -> router.openShareTrack(track.getFilePath()));
+        disposables.add(trackRepo.getById(currentTrackId)
+                .subscribe(track -> router.openShareTrack(track.getFilePath())));
     }
 }

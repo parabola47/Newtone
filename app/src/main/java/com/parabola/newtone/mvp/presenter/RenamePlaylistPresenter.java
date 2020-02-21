@@ -11,6 +11,8 @@ import com.parabola.newtone.mvp.view.RenamePlaylistView;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 @InjectViewState
 public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistView> {
 
@@ -19,6 +21,8 @@ public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistVi
 
     @Inject ResourceRepository resourceRepo;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     public RenamePlaylistPresenter(AppComponent appComponent, int playlistId) {
         appComponent.inject(this);
         this.playlistId = playlistId;
@@ -26,11 +30,11 @@ public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistVi
 
     @Override
     protected void onFirstViewAttach() {
-        playlistRepo.getById(playlistId)
+        disposables.add(playlistRepo.getById(playlistId)
                 .subscribe(playlist -> {
                     getViewState().setPlaylistTitle(playlist.getTitle());
                     getViewState().setTitleSelected();
-                });
+                }));
     }
 
     public void onClickCancel() {
@@ -44,15 +48,13 @@ public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistVi
             return;
         }
 
-        playlistRepo.rename(playlistId, newPlaylistTitle)
+        disposables.add(playlistRepo.rename(playlistId, newPlaylistTitle)
                 .subscribe(getViewState()::closeScreen,
                         error -> {
                             if (error instanceof AlreadyExistsException) {
                                 String toastText = resourceRepo.getString(R.string.rename_toast_playlist_already_exist);
                                 getViewState().showToast(toastText);
                             }
-                        });
-
-
+                        }));
     }
 }

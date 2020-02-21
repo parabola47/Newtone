@@ -3,7 +3,6 @@ package com.parabola.newtone.mvp.presenter;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactors.ArtistInteractor;
 import com.parabola.domain.interactors.TrackInteractor;
 import com.parabola.domain.interactors.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
@@ -54,8 +53,8 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
 
     @Override
     protected void onFirstViewAttach() {
-        loadArtist();
         disposables.addAll(
+                loadArtist(),
                 observeCurrentTrack(),
                 observeSortingUpdates(),
                 observeTrackDeleting());
@@ -66,8 +65,8 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
         disposables.dispose();
     }
 
-    private void loadArtist() {
-        artistRepository.getById(artistId)
+    private Disposable loadArtist() {
+        return artistRepository.getById(artistId)
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(artist -> {
