@@ -50,6 +50,10 @@ public interface Track {
     default String getFileNameWithoutExtension() {
         int lastDotIndex = getFileName().lastIndexOf(FILE_TYPE_DIVIDER);
 
+        //если в расширении нет точки, то возвращаем полное имя файла
+        if (lastDotIndex == -1)
+            return getFileName();
+
         return getFileName().substring(0, lastDotIndex);
     }
 
