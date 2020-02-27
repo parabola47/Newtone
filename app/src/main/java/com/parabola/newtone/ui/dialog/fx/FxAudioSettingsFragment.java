@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,8 +18,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.view.fx.FxAudioSettingsView;
 import com.parabola.newtone.util.SeekBarChangeAdapter;
-
-import java.util.Locale;
+import com.parabola.newtone.view.Croller;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,11 +30,8 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
     @InjectPresenter FxAudioSettingsPresenter presenter;
 
-    @BindView(R.id.playbackSpeedSeekBar) SeekBar playbackSpeedSeekBar;
-    @BindView(R.id.playbackSpeedTextView) TextView playbackSpeedTextView;
-
-    @BindView(R.id.playbackPitchSeekBar) SeekBar playbackPitchSeekBar;
-    @BindView(R.id.playbackPitchTextView) TextView playbackPitchTextView;
+    @BindView(R.id.playbackSpeedCroller) Croller playbackSpeedCroller;
+    @BindView(R.id.playbackPitchCroller) Croller playbackPitchCroller;
 
     @BindView(R.id.bassBoostPanel) ViewGroup bassBoostPanel;
     @BindView(R.id.bassBoostSeekBar) SeekBar bassBoostSeekBar;
@@ -52,18 +47,8 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
         View layout = inflater.inflate(R.layout.fx_audio_settings, container, false);
         ButterKnife.bind(this, layout);
 
-        playbackSpeedSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                presenter.onPlaybackSpeedProgressChanged(progress);
-            }
-        });
-        playbackPitchSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                presenter.onPlaybackPitchProgressChanged(progress);
-            }
-        });
+        playbackSpeedCroller.setOnProgressChangedListener(presenter::onPlaybackSpeedProgressChanged);
+        playbackPitchCroller.setOnProgressChangedListener(presenter::onPlaybackPitchProgressChanged);
         bassBoostSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -96,31 +81,28 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
         return new FxAudioSettingsPresenter(MainApplication.getComponent());
     }
 
-    private static final String FORMAT_PLAYBACK_SPEED = "x%.2f";   //x0.50 x1.00 x2.00
-    private static final String FORMAT_PLAYBACK_PITCH = "x%.2f";   //x0.50 x1.00 x2.00
-    private static final String FORMAT_VOLUME = "%d";
 
     @Override
     public void setPlaybackSpeedSeekbar(int progress) {
-        playbackSpeedSeekBar.setProgress(progress);
+        playbackSpeedCroller.setProgress(progress);
     }
 
 
     @Override
     public void setPlaybackSpeedText(float speed) {
-        String tempoString = String.format(Locale.getDefault(), FORMAT_PLAYBACK_SPEED, speed);
-        playbackSpeedTextView.setText(tempoString);
+        String tempoString = getString(R.string.fx_tempo, speed);
+        playbackSpeedCroller.setLabel(tempoString);
     }
 
     @Override
     public void setPlaybackPitchSeekbar(int progress) {
-        playbackPitchSeekBar.setProgress(progress);
+        playbackPitchCroller.setProgress(progress);
     }
 
     @Override
     public void setPlaybackPitchText(float pitch) {
-        String pitchString = String.format(Locale.getDefault(), FORMAT_PLAYBACK_PITCH, pitch);
-        playbackPitchTextView.setText(pitchString);
+        String pitchString = getString(R.string.fx_pitch, pitch);
+        playbackPitchCroller.setLabel(pitchString);
     }
 
     @Override

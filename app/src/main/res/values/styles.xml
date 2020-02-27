@@ -42,4 +42,16 @@
         <item name="elevation" tools:targetApi="lollipop">8dp</item>
     </style>
 
+    <style name="FxSettingCroller">
+        <item name="indicator_color">@color/colorAccent</item>
+        <item name="indicator_disable_color">@android:color/darker_gray</item>
+        <item name="is_continuous">true</item>
+        <item name="progress_primary_color">@android:color/transparent</item>
+        <item name="progress_primary_disable_color">@android:color/transparent</item>
+        <item name="progress_primary_stroke_width">0</item>
+        <item name="progress_secondary_color">@android:color/transparent</item>
+        <item name="progress_secondary_disable_color">@android:color/transparent</item>
+        <item name="progress_secondary_stroke_width">0</item>
+    </style>
+
 </resources>
