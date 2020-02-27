@@ -21,8 +21,7 @@ import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.parabola.domain.utils.StringTool.getOrDefault;
+import java8.util.Optional;
 
 public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.AlbumViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -44,11 +43,14 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.Al
 
         Album albumItem = get(holder.getAdapterPosition());
 
-        holder.albumTitle.setText(
-                getOrDefault(albumItem.getTitle(), holder.albumTitle.getContext().getString(R.string.unknown_album)));
+        String albumTitle = Optional.ofNullable(albumItem.getTitle())
+                .orElse(holder.albumTitle.getContext().getString(R.string.unknown_album));
+        holder.albumTitle.setText(albumTitle);
 
-        holder.albumArtist.setText(
-                getOrDefault(albumItem.getArtistName(), holder.albumArtist.getContext().getString(R.string.unknown_artist)));
+        String artistName = Optional.ofNullable(albumItem.getArtistName())
+                .orElse(holder.albumArtist.getContext().getString(R.string.unknown_artist));
+
+        holder.albumArtist.setText(artistName);
         Single.fromCallable((Callable<Bitmap>) albumItem::getArtImage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -62,9 +64,10 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.Al
     @Override
     public char getSection(int position) {
         Album album = get(position);
-        String albumName = getOrDefault(album.getTitle(), recyclerView.getContext().getString(R.string.unknown_album));
+        String albumTitle = Optional.ofNullable(album.getTitle())
+                .orElse(recyclerView.getContext().getString(R.string.unknown_album));
 
-        return Character.toUpperCase(albumName.charAt(0));
+        return Character.toUpperCase(albumTitle.charAt(0));
     }
 
     @NonNull

@@ -27,6 +27,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
+import com.parabola.newtone.util.TimeFormatterTool;
 import com.parabola.newtone.view.LockableViewPager;
 
 import java.util.ArrayList;
@@ -80,7 +81,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
         seekPlayer.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                presenter.onChangeSeekbarProgress(progress);
+                String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(progress);
+                currentTime.setText(currentTimeFormatted);
             }
 
             @Override
@@ -286,13 +288,11 @@ public final class PlayerFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setCurrentTimeText(String currentTimeFormatted) {
-        currentTime.setText(currentTimeFormatted);
-    }
-
-    @Override
     public void setCurrentTimeMs(int currentTimeMs) {
         seekPlayer.setProgress(currentTimeMs);
+
+        String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(currentTimeMs);
+        currentTime.setText(currentTimeFormatted);
     }
 
     @Override

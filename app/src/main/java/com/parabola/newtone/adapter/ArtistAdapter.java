@@ -13,8 +13,8 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import java8.util.Optional;
 
-import static com.parabola.domain.utils.StringTool.getOrDefault;
 
 public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter.ArtistViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -34,8 +34,9 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
 
         Artist artistItem = get(holder.getAdapterPosition());
 
-        holder.artistTxt.setText(
-                getOrDefault(artistItem.getName(), holder.artistTxt.getContext().getString(R.string.unknown_artist)));
+        String artistName = Optional.ofNullable(artistItem.getName())
+                .orElse(holder.artistTxt.getContext().getString(R.string.unknown_artist));
+        holder.artistTxt.setText(artistName);
 
         holder.artistInfo.setText(getTracksAndAlbumsCount(artistItem));
     }

@@ -5,10 +5,6 @@ public final class StringTool {
         throw new AssertionError();
     }
 
-    //возвращает значение checkedString если оно не null, если null, то возвращается второе значение
-    public static String getOrDefault(String checkedString, String defaultString) {
-        return checkedString != null ? checkedString : defaultString;
-    }
 
     private static final String EMPTY = "";
     private static final char COMMA = ',';

@@ -16,13 +16,13 @@ public final class AccessRepositoryImpl implements AccessRepository {
 
     private final Context context;
 
-    private final BehaviorSubject<Boolean> locationAccessObservable;
+    private final BehaviorSubject<Boolean> fileStorageAccessObservable;
 
 
     public AccessRepositoryImpl(Context context) {
         this.context = context;
 
-        locationAccessObservable = BehaviorSubject.createDefault(hasExternalStorageAccess());
+        fileStorageAccessObservable = BehaviorSubject.createDefault(hasExternalStorageAccess());
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(PermissionChangeReceiver.ACTION_FILE_STORAGE_PERMISSION_UPDATE);
@@ -33,8 +33,8 @@ public final class AccessRepositoryImpl implements AccessRepository {
                 return;
 
             boolean hasExternalStorageAccess = hasExternalStorageAccess();
-            if (locationAccessObservable.getValue() != hasExternalStorageAccess) {
-                locationAccessObservable.onNext(hasExternalStorageAccess);
+            if (fileStorageAccessObservable.getValue() != hasExternalStorageAccess) {
+                fileStorageAccessObservable.onNext(hasExternalStorageAccess);
             }
         });
         context.registerReceiver(receiver, filter);
@@ -53,7 +53,7 @@ public final class AccessRepositoryImpl implements AccessRepository {
     @Override
     public Observable<Boolean> observeAccessUpdates(AccessType accessType) {
         switch (accessType) {
-            case FILE_STORAGE: return locationAccessObservable;
+            case FILE_STORAGE: return fileStorageAccessObservable;
             default: throw new IllegalArgumentException();
         }
     }

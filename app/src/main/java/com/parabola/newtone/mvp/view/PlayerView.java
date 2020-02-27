@@ -22,7 +22,6 @@ public interface PlayerView extends MvpView {
     void setLoopEnabling(Boolean enable);
     void setShuffleEnabling(Boolean enable);
 
-    void setCurrentTimeText(String currentTimeFormatted);
     void setCurrentTimeMs(int currentTimeMs);
 
     void setTimerColored();

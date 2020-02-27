@@ -196,7 +196,17 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
                 updateVisibility(newState);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         updateVisibility(bottomSlider.getPanelState());
+        if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            updateVisibility(1.0f);
+        } else if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+            updateVisibility(0.0f);
+        }
     }
 
     private void updateVisibility(float slidePanelOffset) {

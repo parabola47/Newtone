@@ -16,8 +16,7 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.parabola.domain.utils.StringTool.getOrDefault;
+import java8.util.Optional;
 
 public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.TrackViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -38,8 +37,12 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
 
         Track trackItem = get(holder.getAdapterPosition());
 
-        holder.trackTitle.setText(getOrDefault(trackItem.getTitle(), trackItem.getFileNameWithoutExtension()));
-        holder.artist.setText(getOrDefault(trackItem.getArtistName(), context.getString(R.string.unknown_artist)));
+        String trackTitle = Optional.ofNullable(trackItem.getTitle())
+                .orElse(trackItem.getFileNameWithoutExtension());
+        holder.trackTitle.setText(trackTitle);
+        String artistName = Optional.ofNullable(trackItem.getArtistName())
+                .orElse(context.getString(R.string.unknown_artist));
+        holder.artist.setText(artistName);
         holder.duration.setText(
                 TimeFormatterTool.formatMillisecondsToMinutes(trackItem.getDurationMs()));
 
@@ -59,7 +62,8 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
     @Override
     public char getSection(int position) {
         Track track = get(position);
-        String title = getOrDefault(track.getTitle(), track.getFileNameWithoutExtension());
+        String title = Optional.ofNullable(track.getTitle())
+                .orElse(track.getFileNameWithoutExtension());
 
         return Character.toUpperCase(title.charAt(0));
     }

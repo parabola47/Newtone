@@ -18,8 +18,7 @@ import com.parabola.newtone.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.parabola.domain.utils.StringTool.getOrDefault;
+import java8.util.Optional;
 
 public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.ViewHolder> {
 
@@ -45,8 +44,12 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
 
         Track trackItem = get(holder.getAdapterPosition());
 
-        holder.trackTitle.setText(getOrDefault(trackItem.getTitle(), trackItem.getFileNameWithoutExtension()));
-        holder.artist.setText(getOrDefault(trackItem.getArtistName(), context.getString(R.string.unknown_artist)));
+        String trackTitle = Optional.ofNullable(trackItem.getTitle()).orElse(trackItem.getFileNameWithoutExtension());
+        holder.trackTitle.setText(trackTitle);
+
+        String artistName = Optional.ofNullable(trackItem.getArtistName())
+                .orElse(context.getString(R.string.unknown_artist));
+        holder.artist.setText(artistName);
 
         if (isSelected(holder.getAdapterPosition())) {
             holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrack));

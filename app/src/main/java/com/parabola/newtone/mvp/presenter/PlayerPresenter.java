@@ -122,11 +122,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     private Disposable observePlaybackPosition() {
         return playerInteractor.onChangePlaybackPosition()
                 .filter(currentTimeMs -> !isSeekbarPressed)
-                .subscribe(currentTimeMs -> {
-                    String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(currentTimeMs);
-                    getViewState().setCurrentTimeText(currentTimeFormatted);
-                    getViewState().setCurrentTimeMs(currentTimeMs.intValue());
-                });
+                .subscribe(currentTimeMs -> getViewState().setCurrentTimeMs(currentTimeMs.intValue()));
     }
 
     private Disposable observeTimerState() {
@@ -220,10 +216,6 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         router.collapseBottomSlider();
     }
 
-    public void onChangeSeekbarProgress(int progress) {
-        String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(progress);
-        getViewState().setCurrentTimeText(currentTimeFormatted);
-    }
 
     public void onStartSeekbarPressed() {
         isSeekbarPressed = true;
