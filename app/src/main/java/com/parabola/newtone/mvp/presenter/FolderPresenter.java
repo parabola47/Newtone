@@ -133,4 +133,8 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }
+
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
 }

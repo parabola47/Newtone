@@ -19,7 +19,19 @@ public interface Track {
 
     int getPositionInCd();
 
+    int getGenreId();
+    String getGenreName();
+
+    int getYear();
+
     String getFilePath();
+    int getFileSize(); //в байтах
+    default int getFileSizeKilobytes() {
+        return getFileSize() / 1024;
+    }
+
+    int getBitrate();
+    int getSampleRate();
 
     boolean isFavourite();
     Long getFavouriteTimestamp();

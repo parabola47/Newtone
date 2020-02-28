@@ -142,4 +142,8 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }
+
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
 }

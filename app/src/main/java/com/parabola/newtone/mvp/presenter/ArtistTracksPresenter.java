@@ -154,4 +154,8 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }
+
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
 }

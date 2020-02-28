@@ -133,4 +133,8 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }
+
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
 }

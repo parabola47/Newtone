@@ -291,4 +291,8 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         disposables.add(trackRepo.getById(currentTrackId)
                 .subscribe(track -> router.openShareTrack(track.getFilePath())));
     }
+
+    public void onClickMenuAdditionalInfo() {
+        router.openTrackAdditionInfo(currentTrackId);
+    }
 }

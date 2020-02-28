@@ -118,4 +118,8 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }
+
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
 }

@@ -52,7 +52,7 @@ public final class TimeToSleepInfoDialog extends BaseDialogFragment
 
 
     @ProvidePresenter
-    TimeToSleepInfoPresenter provideTimeToSleepPresenter() {
+    TimeToSleepInfoPresenter providePresenter() {
         return new TimeToSleepInfoPresenter(MainApplication.getComponent());
     }
 

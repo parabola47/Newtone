@@ -142,6 +142,9 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 case R.id.share:
                     presenter.onClickMenuShareTrack();
                     return true;
+                case R.id.additional_info:
+                    presenter.onClickMenuAdditionalInfo();
+                    return true;
                 default:
                     return false;
             }

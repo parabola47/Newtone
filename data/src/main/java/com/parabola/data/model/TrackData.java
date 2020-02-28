@@ -26,10 +26,19 @@ public final class TrackData implements Track {
     public int positionInCd;
 
     public String filePath;
+    public int fileSize;    //в байтах
+
+    public int year;
 
     public Predicate<TrackData> isFavouriteCondition;
     public Function<TrackData, Long> favouriteTimeStampFunction;
     public Function<TrackData, Bitmap> getArtFunction;
+
+    public Function<TrackData, Integer> getGenreIdFunction;
+    public Function<TrackData, String> getGenreNameFunction;
+
+    public Function<TrackData, Integer> getBitrateFunction;
+    public Function<TrackData, Integer> getSampleRateFunction;
 
 
     @Override
@@ -83,8 +92,38 @@ public final class TrackData implements Track {
     }
 
     @Override
+    public int getGenreId() {
+        return getGenreIdFunction.apply(this);
+    }
+
+    @Override
+    public String getGenreName() {
+        return getGenreNameFunction.apply(this);
+    }
+
+    @Override
     public String getFilePath() {
         return filePath;
+    }
+
+    @Override
+    public int getFileSize() {
+        return fileSize;
+    }
+
+    @Override
+    public int getBitrate() {
+        return getBitrateFunction.apply(this);
+    }
+
+    @Override
+    public int getSampleRate() {
+        return getSampleRateFunction.apply(this);
+    }
+
+    @Override
+    public int getYear() {
+        return year;
     }
 
     @Override

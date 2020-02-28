@@ -86,7 +86,7 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
     }
 
     @ProvidePresenter
-    FoldersListPresenter provideFoldersListPresenter() {
+    FoldersListPresenter providePresenter() {
         return new FoldersListPresenter(MainApplication.getComponent());
     }
 

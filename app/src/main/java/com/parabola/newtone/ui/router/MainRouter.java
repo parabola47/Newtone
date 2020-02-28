@@ -49,6 +49,7 @@ public interface MainRouter {
     void openSleepTimerInfoDialog();
     void openAddToPlaylistDialog(int trackId);
     void openSortingDialog(String sortingListType);
+    void openTrackAdditionInfo(int trackId);
     void openAudioEffectsDialog();
     void openNewtoneDialog();
 

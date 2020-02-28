@@ -25,7 +25,6 @@ public final class EmptyItems {
             return "";
         }
 
-        @Override
         public Object getArtImage() {
             return null;
         }
@@ -43,6 +42,30 @@ public final class EmptyItems {
         }
 
         public int getPositionInCd() {
+            return 0;
+        }
+
+        public int getGenreId() {
+            return -1;
+        }
+
+        public String getGenreName() {
+            return "<unknown>";
+        }
+
+        public int getYear() {
+            return 1970;
+        }
+
+        public int getFileSize() {
+            return 0;
+        }
+
+        public int getBitrate() {
+            return 0;
+        }
+
+        public int getSampleRate() {
             return 0;
         }
 
