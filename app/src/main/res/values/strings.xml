@@ -160,8 +160,8 @@
     <!--TAB EQUALIZER SETTING-->
     <string name="equalizer">Equalizer</string>
     <!--TAB AUDIO SETTING-->
-    <string name="fx_tempo">Tempo x%.2f</string>
-    <string name="fx_pitch">Pitch x%.2f</string>
+    <string name="fx_tempo">Tempo</string>
+    <string name="fx_pitch">Pitch</string>
     <string name="fx_bassBoost">Bass boost</string>
     <string name="fx_virtualizer">Virtualizer</string>
 

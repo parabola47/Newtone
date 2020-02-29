@@ -20,8 +20,10 @@ import io.reactivex.subjects.BehaviorSubject;
 public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     private static final String LOG_TAG = AudioEffectsInteractorImpl.class.getSimpleName();
 
-    private final BehaviorSubject<Float> playbackSpeed;
-    private final BehaviorSubject<Float> playbackPitch;
+    private final BehaviorSubject<Boolean> playbackSpeedEnabledUpdates;
+    private final BehaviorSubject<Float> savedPlaybackSpeed;
+    private final BehaviorSubject<Boolean> playbackPitchEnabledUpdates;
+    private final BehaviorSubject<Float> savedPlaybackPitch;
 
     private final SimpleExoPlayer exoPlayer;
     private final PlayerSettingSaver settings;
@@ -32,24 +34,33 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     private BassBoost bassBoost;
     private Virtualizer virtualizer;
 
+    private static final float DEFAULT_PLAYBACK_SPEED = 1.0f;
+    private static final float DEFAULT_PLAYBACK_PITCH = 1.0f;
+
     AudioEffectsInteractorImpl(SimpleExoPlayer exoPlayer, PlayerSettingSaver settings) {
         this.exoPlayer = exoPlayer;
         this.settings = settings;
 
-        PlaybackParameters playbackParameters = new PlaybackParameters(settings.getSavedPlaybackSpeed(), settings.getSavedPlaybackPitch());
+        float speed = settings.getSavedPlaybackSpeedEnabled() ? settings.getSavedPlaybackSpeed() : DEFAULT_PLAYBACK_SPEED;
+        float pitch = settings.getSavedPlaybackPitchEnabled() ? settings.getSavedPlaybackPitch() : DEFAULT_PLAYBACK_PITCH;
+
+        PlaybackParameters playbackParameters = new PlaybackParameters(speed, pitch);
         this.exoPlayer.setPlaybackParameters(playbackParameters);
 
-        playbackSpeed = BehaviorSubject.createDefault(exoPlayer.getPlaybackParameters().speed);
-        playbackPitch = BehaviorSubject.createDefault(exoPlayer.getPlaybackParameters().pitch);
+        savedPlaybackSpeed = BehaviorSubject.createDefault(settings.getSavedPlaybackSpeed());
+        savedPlaybackPitch = BehaviorSubject.createDefault(settings.getSavedPlaybackPitch());
+
+        playbackSpeedEnabledUpdates = BehaviorSubject.createDefault(settings.getSavedPlaybackSpeedEnabled());
+        playbackPitchEnabledUpdates = BehaviorSubject.createDefault(settings.getSavedPlaybackPitchEnabled());
 
         this.exoPlayer.addListener(new Player.EventListener() {
             @Override
             public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-                if (playbackSpeed.getValue() != playbackParameters.speed) {
-                    playbackSpeed.onNext(playbackParameters.speed);
+                if (savedPlaybackSpeed.getValue() != playbackParameters.speed && settings.getSavedPlaybackSpeedEnabled()) {
+                    savedPlaybackSpeed.onNext(playbackParameters.speed);
                 }
-                if (playbackPitch.getValue() != playbackParameters.pitch) {
-                    playbackPitch.onNext(playbackParameters.pitch);
+                if (savedPlaybackPitch.getValue() != playbackParameters.pitch && settings.getSavedPlaybackPitchEnabled()) {
+                    savedPlaybackPitch.onNext(playbackParameters.pitch);
                 }
             }
         });
@@ -92,47 +103,83 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
     //    SPEED
     @Override
-    public float getPlaybackSpeed() {
-        return exoPlayer.getPlaybackParameters().speed;
+    public Observable<Boolean> observeIsPlaybackSpeedEnabled() {
+        return playbackSpeedEnabledUpdates;
+    }
+
+    @Override
+    public void setPlaybackSpeedEnabled(boolean enable) {
+        settings.setSavedPlaybackSpeedEnabled(enable);
+        playbackSpeedEnabledUpdates.onNext(enable);
+
+        float speed = enable ? settings.getSavedPlaybackSpeed() : DEFAULT_PLAYBACK_SPEED;
+
+        PlaybackParameters playbackParameters = new PlaybackParameters(
+                speed, exoPlayer.getPlaybackParameters().pitch, exoPlayer.getPlaybackParameters().skipSilence);
+        this.exoPlayer.setPlaybackParameters(playbackParameters);
+    }
+
+    @Override
+    public float getSavedPlaybackSpeed() {
+        return savedPlaybackSpeed.getValue();
     }
 
     @Override
     public Observable<Float> observePlaybackSpeed() {
-        return playbackSpeed;
+        return savedPlaybackSpeed;
     }
 
     @Override
-    public void setPlaybackSpeed(float speed) {
-        PlaybackParameters playbackParameters = new PlaybackParameters(
-                speed, exoPlayer.getPlaybackParameters().pitch,
-                exoPlayer.getPlaybackParameters().skipSilence);
-
-        exoPlayer.setPlaybackParameters(playbackParameters);
-
+    public void setSavedPlaybackSpeed(float speed) {
         settings.setPlaybackSpeed(speed);
+
+        if (settings.getSavedPlaybackSpeedEnabled()) {
+            PlaybackParameters playbackParameters = new PlaybackParameters(
+                    speed, exoPlayer.getPlaybackParameters().pitch, exoPlayer.getPlaybackParameters().skipSilence);
+
+            exoPlayer.setPlaybackParameters(playbackParameters);
+        }
     }
 
 
     //    PITCH
     @Override
-    public float getPlaybackPitch() {
-        return exoPlayer.getPlaybackParameters().pitch;
+    public Observable<Boolean> observeIsPlaybackPitchEnabled() {
+        return playbackPitchEnabledUpdates;
+    }
+
+    @Override
+    public void setPlaybackPitchEnabled(boolean enabled) {
+        settings.setSavedPlaybackPitchEnabled(enabled);
+        playbackPitchEnabledUpdates.onNext(enabled);
+
+        float pitch = enabled ? settings.getSavedPlaybackPitch() : DEFAULT_PLAYBACK_PITCH;
+
+        PlaybackParameters playbackParameters = new PlaybackParameters(
+                exoPlayer.getPlaybackParameters().speed, pitch, exoPlayer.getPlaybackParameters().skipSilence);
+        this.exoPlayer.setPlaybackParameters(playbackParameters);
+    }
+
+    @Override
+    public float getSavedPlaybackPitch() {
+        return savedPlaybackPitch.getValue();
     }
 
     @Override
     public Observable<Float> observePlaybackPitch() {
-        return playbackPitch;
+        return savedPlaybackPitch;
     }
 
     @Override
-    public void setPlaybackPitch(float pitch) {
-        PlaybackParameters playbackParameters = new PlaybackParameters(
-                exoPlayer.getPlaybackParameters().speed, pitch,
-                exoPlayer.getPlaybackParameters().skipSilence);
-
-        exoPlayer.setPlaybackParameters(playbackParameters);
-
+    public void setSavedPlaybackPitch(float pitch) {
         settings.setPlaybackPitch(pitch);
+
+        if (settings.getSavedPlaybackPitchEnabled()) {
+            PlaybackParameters playbackParameters = new PlaybackParameters(
+                    exoPlayer.getPlaybackParameters().speed, pitch, exoPlayer.getPlaybackParameters().skipSilence);
+
+            exoPlayer.setPlaybackParameters(playbackParameters);
+        }
     }
 
 

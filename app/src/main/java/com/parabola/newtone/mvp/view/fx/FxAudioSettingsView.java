@@ -8,6 +8,10 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface FxAudioSettingsView extends MvpView {
 
+    void setPlaybackSpeedSwitch(boolean enabled);
+    void setPlaybackPitchSwitch(boolean enabled);
+
+
     @StateStrategyType(OneExecutionStateStrategy.class)
     void setPlaybackSpeedSeekbar(int progress);
     void setPlaybackSpeedText(float speed);

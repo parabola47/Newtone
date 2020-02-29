@@ -100,7 +100,7 @@
         app:srcCompat="@drawable/ic_setting"
         tools:targetApi="lollipop" />
 
-    <com.parabola.newtone.view.LockableViewPager
+    <com.parabola.newtone.ui.view.LockableViewPager
         android:id="@+id/album_container"
         android:layout_width="0dp"
         android:layout_height="0dp"

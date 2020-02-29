@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/add_to_playlist"
-        android:title="@string/player_menu_add_to_playlist"
-        app:showAsAction="never" />
+        android:title="@string/player_menu_add_to_playlist" />
+
     <item
         android:id="@+id/lyrics"
         android:title="@string/player_menu_lyrics" />
+
+    <item
+        android:id="@+id/additional_info"
+        android:title="@string/player_menu_additional_info" />
 
     <item
         android:id="@+id/delete"
@@ -17,9 +20,5 @@
     <item
         android:id="@+id/share"
         android:title="@string/player_menu_share" />
-
-    <item
-        android:id="@+id/additional_info"
-        android:title="@string/player_menu_additional_info" />
 
 </menu>

@@ -1,4 +1,4 @@
-package com.parabola.newtone.view;
+package com.parabola.newtone.ui.view;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -67,9 +67,7 @@ public class Croller extends View {
 
     private boolean isAntiClockwise = false;
 
-    private boolean startEventSent = false;
-
-    RectF oval;
+    private RectF oval;
 
     private onProgressChangedListener mProgressChangeListener;
     private OnCrollerChangeListener mCrollerChangeListener;
@@ -446,7 +444,6 @@ public class Croller extends View {
 
             if (mCrollerChangeListener != null) {
                 mCrollerChangeListener.onStartTrackingTouch(this);
-                startEventSent = true;
             }
 
             return true;
@@ -508,7 +505,6 @@ public class Croller extends View {
         if (e.getAction() == MotionEvent.ACTION_UP) {
             if (mCrollerChangeListener != null) {
                 mCrollerChangeListener.onStopTrackingTouch(this);
-                startEventSent = false;
             }
             return true;
         }

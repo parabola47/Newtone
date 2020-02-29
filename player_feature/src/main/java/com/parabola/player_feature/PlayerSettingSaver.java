@@ -33,7 +33,9 @@ class PlayerSettingSaver {
     private static final String SAVED_PLAYBACK_POSITION_KEY = "com.parabola.player_feature.SAVED_PLAYBACK_POSITION_KEY";
 
 
+    private static final String SAVED_PLAYBACK_SPEED_ENABLED_KEY = "com.parabola.player_feature.SAVED_PLAYBACK_SPEED_ENABLED_KEY";
     private static final String SAVED_PLAYBACK_SPEED_KEY = "com.parabola.player_feature.SAVED_PLAYBACK_SPEED_KEY";
+    private static final String SAVED_PLAYBACK_PITCH_ENABLED_KEY = "com.parabola.player_feature.SAVED_PLAYBACK_PITCH_ENABLED_KEY";
     private static final String SAVED_PLAYBACK_PITCH_KEY = "com.parabola.player_feature.SAVED_PLAYBACK_PITCH_KEY";
     private static final String SAVED_BASS_BOOST_ENABLED_KEY = "com.parabola.player_feature.SAVED_BASS_BOOST_ENABLED_KEY";
     private static final String SAVED_BASS_BOOST_STRENGTH_KEY = "com.parabola.player_feature.SAVED_BASS_BOOST_STRENGTH_KEY";
@@ -155,6 +157,16 @@ class PlayerSettingSaver {
     }
 
 
+    boolean getSavedPlaybackSpeedEnabled() {
+        return prefs.getBoolean(SAVED_PLAYBACK_SPEED_ENABLED_KEY, false);
+    }
+
+    void setSavedPlaybackSpeedEnabled(boolean enable) {
+        prefs.edit()
+                .putBoolean(SAVED_PLAYBACK_SPEED_ENABLED_KEY, enable)
+                .apply();
+    }
+
     float getSavedPlaybackSpeed() {
         return prefs.getFloat(SAVED_PLAYBACK_SPEED_KEY, 1.0f);
     }
@@ -162,6 +174,16 @@ class PlayerSettingSaver {
     void setPlaybackSpeed(float speed) {
         prefs.edit()
                 .putFloat(SAVED_PLAYBACK_SPEED_KEY, speed)
+                .apply();
+    }
+
+    boolean getSavedPlaybackPitchEnabled() {
+        return prefs.getBoolean(SAVED_PLAYBACK_PITCH_ENABLED_KEY, false);
+    }
+
+    void setSavedPlaybackPitchEnabled(boolean enable) {
+        prefs.edit()
+                .putBoolean(SAVED_PLAYBACK_PITCH_ENABLED_KEY, enable)
                 .apply();
     }
 

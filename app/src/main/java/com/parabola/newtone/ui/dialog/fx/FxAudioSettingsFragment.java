@@ -17,8 +17,10 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.view.fx.FxAudioSettingsView;
+import com.parabola.newtone.ui.view.Croller;
 import com.parabola.newtone.util.SeekBarChangeAdapter;
-import com.parabola.newtone.view.Croller;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +33,9 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
     @InjectPresenter FxAudioSettingsPresenter presenter;
 
     @BindView(R.id.playbackSpeedCroller) Croller playbackSpeedCroller;
+    @BindView(R.id.playbackSpeedSwitch) SwitchCompat playbackSpeedSwitch;
     @BindView(R.id.playbackPitchCroller) Croller playbackPitchCroller;
+    @BindView(R.id.playbackPitchSwitch) SwitchCompat playbackPitchSwitch;
 
     @BindView(R.id.bassBoostPanel) ViewGroup bassBoostPanel;
     @BindView(R.id.bassBoostSeekBar) SeekBar bassBoostSeekBar;
@@ -61,10 +65,23 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
                 presenter.onVirtualizerProgressChange(progress);
             }
         });
+        playbackSpeedSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> playbackSpeedCroller.setEnabled(isChecked));
+        playbackPitchSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> playbackPitchCroller.setEnabled(isChecked));
 
         return layout;
     }
 
+    @OnClick(R.id.playbackSpeedSwitch)
+    public void onClickPlaybackSpeedSwitch() {
+        presenter.onPlaybackSpeedSwitchCheck(playbackSpeedSwitch.isChecked());
+    }
+
+    @OnClick(R.id.playbackPitchSwitch)
+    public void onClickPlaybackPitchSwitch() {
+        presenter.onPlaybackPitchSwitchCheck(playbackPitchSwitch.isChecked());
+    }
 
     @OnClick(R.id.bassBoostSwitchButton)
     public void onClickBassBoostSwitch() {
@@ -83,6 +100,18 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
 
     @Override
+    public void setPlaybackSpeedSwitch(boolean enabled) {
+        playbackSpeedSwitch.setChecked(enabled);
+        playbackSpeedCroller.setEnabled(enabled);
+    }
+
+    @Override
+    public void setPlaybackPitchSwitch(boolean enabled) {
+        playbackPitchSwitch.setChecked(enabled);
+        playbackPitchCroller.setEnabled(enabled);
+    }
+
+    @Override
     public void setPlaybackSpeedSeekbar(int progress) {
         playbackSpeedCroller.setProgress(progress);
     }
@@ -90,8 +119,7 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
     @Override
     public void setPlaybackSpeedText(float speed) {
-        String tempoString = getString(R.string.fx_tempo, speed);
-        playbackSpeedCroller.setLabel(tempoString);
+        playbackSpeedCroller.setLabel(String.format(Locale.getDefault(), "x%.2f", speed));
     }
 
     @Override
@@ -101,8 +129,7 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
     @Override
     public void setPlaybackPitchText(float pitch) {
-        String pitchString = getString(R.string.fx_pitch, pitch);
-        playbackPitchCroller.setLabel(pitchString);
+        playbackPitchCroller.setLabel(String.format(Locale.getDefault(), "x%.2f", pitch));
     }
 
     @Override

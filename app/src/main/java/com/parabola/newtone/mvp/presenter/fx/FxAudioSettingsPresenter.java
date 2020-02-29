@@ -20,12 +20,16 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
 
     public FxAudioSettingsPresenter(AppComponent appComponent) {
         appComponent.inject(this);
+    }
 
-        float realSpeed = fxInteractor.getPlaybackSpeed();
-        getViewState().setPlaybackSpeedSeekbar((int) ((realSpeed * 100f) - 50));
 
-        float realPitch = fxInteractor.getPlaybackPitch();
-        getViewState().setPlaybackPitchSeekbar((int) ((realPitch * 100f) - 50));
+    @Override
+    protected void onFirstViewAttach() {
+        float savedSpeed = fxInteractor.getSavedPlaybackSpeed();
+        getViewState().setPlaybackSpeedSeekbar((int) ((savedSpeed * 100f) - 50));
+
+        float savedPitch = fxInteractor.getSavedPlaybackPitch();
+        getViewState().setPlaybackPitchSeekbar((int) ((savedPitch * 100f) - 50));
 
         //BASS BOOST
         if (fxInteractor.isBassBoostAvailable()) {
@@ -50,8 +54,8 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
         }
 
         disposables.addAll(
-                observePlaybackSpeed(),
-                observePlaybackPitch());
+                observePlaybackSpeed(), observePlaybackSpeedEnabling(),
+                observePlaybackPitch(), observerPlaybackPitchEnabling());
     }
 
     @Override
@@ -64,22 +68,42 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
                 .subscribe(getViewState()::setPlaybackSpeedText);
     }
 
+    private Disposable observePlaybackSpeedEnabling() {
+        return fxInteractor.observeIsPlaybackSpeedEnabled()
+                .subscribe(getViewState()::setPlaybackSpeedSwitch);
+    }
+
     private Disposable observePlaybackPitch() {
         return fxInteractor.observePlaybackPitch()
                 .subscribe(getViewState()::setPlaybackPitchText);
     }
 
+    private Disposable observerPlaybackPitchEnabling() {
+        return fxInteractor.observeIsPlaybackPitchEnabled()
+                .subscribe(getViewState()::setPlaybackPitchSwitch);
+    }
+
+
+    public void onPlaybackSpeedSwitchCheck(boolean enable) {
+        fxInteractor.setPlaybackSpeedEnabled(enable);
+    }
+
+
+    public void onPlaybackPitchSwitchCheck(boolean enable) {
+        fxInteractor.setPlaybackPitchEnabled(enable);
+    }
+
     public void onPlaybackSpeedProgressChanged(int progress) {
         float realSpeed = (progress + 50) / 100f;
-        if (realSpeed != fxInteractor.getPlaybackSpeed()) {
-            fxInteractor.setPlaybackSpeed(realSpeed);
+        if (realSpeed != fxInteractor.getSavedPlaybackSpeed()) {
+            fxInteractor.setSavedPlaybackSpeed(realSpeed);
         }
     }
 
     public void onPlaybackPitchProgressChanged(int progress) {
         float realPitch = (progress + 50) / 100f;
-        if (realPitch != fxInteractor.getPlaybackPitch()) {
-            fxInteractor.setPlaybackPitch(realPitch);
+        if (realPitch != fxInteractor.getSavedPlaybackPitch()) {
+            fxInteractor.setSavedPlaybackPitch(realPitch);
         }
     }
 

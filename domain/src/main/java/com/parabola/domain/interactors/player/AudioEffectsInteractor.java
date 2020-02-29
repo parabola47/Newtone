@@ -6,20 +6,25 @@ import io.reactivex.Observable;
 
 public interface AudioEffectsInteractor {
 
-    float getPlaybackSpeed();
+    Observable<Boolean> observeIsPlaybackSpeedEnabled();
+    void setPlaybackSpeedEnabled(boolean enable);
+    //результат отличается от реальной скорости проигрывания в случае, если отключено изменение скорости
+    float getSavedPlaybackSpeed();
     Observable<Float> observePlaybackSpeed();
     default void setDefaultPlaybackSpeed() {
-        setPlaybackSpeed(1.0f);
+        setSavedPlaybackSpeed(1.0f);
     }
-    void setPlaybackSpeed(float speed);
+    void setSavedPlaybackSpeed(float speed);
 
 
-    float getPlaybackPitch();
+    Observable<Boolean> observeIsPlaybackPitchEnabled();
+    void setPlaybackPitchEnabled(boolean enabled);
+    float getSavedPlaybackPitch();
     Observable<Float> observePlaybackPitch();
     default void setDefaultPlaybackPitch() {
-        setPlaybackSpeed(1.0f);
+        setSavedPlaybackSpeed(1.0f);
     }
-    void setPlaybackPitch(float pitch);
+    void setSavedPlaybackPitch(float pitch);
 
     boolean isBassBoostAvailable();
     boolean isBassBoostEnabled();

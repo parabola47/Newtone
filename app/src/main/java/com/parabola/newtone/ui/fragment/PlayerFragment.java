@@ -28,7 +28,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
 import com.parabola.newtone.util.TimeFormatterTool;
-import com.parabola.newtone.view.LockableViewPager;
+import com.parabola.newtone.ui.view.LockableViewPager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,9 +63,9 @@ public final class PlayerFragment extends MvpAppCompatFragment
     @BindView(R.id.timer) ImageButton timerButton;
     @BindView(R.id.track_settings) ImageButton trackSettings;
 
+    @BindView(R.id.album_container) LockableViewPager albumCoverPager;
 
     private AlbumCoverPagerAdapter albumCoverAdapter = new AlbumCoverPagerAdapter();
-    @BindView(R.id.album_container) LockableViewPager albumCoverPager;
 
     public PlayerFragment() {
         // Required empty public constructor
