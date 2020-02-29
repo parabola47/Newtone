@@ -81,7 +81,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     }
 
     @ProvidePresenter
-    public ArtistPresenter provideArtistPresenter() {
+    public ArtistPresenter providePresenter() {
         int artistId = requireArguments().getInt("artistId");
 
         return new ArtistPresenter(MainApplication.getComponent(), artistId);

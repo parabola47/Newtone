@@ -20,6 +20,7 @@ import com.parabola.newtone.ui.dialog.RenamePlaylistDialog;
 import com.parabola.newtone.ui.dialog.SleepTimerDialog;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.dialog.TimeToSleepInfoDialog;
+import com.parabola.newtone.ui.dialog.TrackAdditionalInfoDialog;
 import com.parabola.newtone.ui.dialog.fx.AudioEffectsDialog;
 import com.parabola.newtone.ui.fragment.AlbumFragment;
 import com.parabola.newtone.ui.fragment.ArtistFragment;
@@ -296,6 +297,12 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void openSortingDialog(String sortingListType) {
         SortingDialog dialogFragment = SortingDialog.newInstance(sortingListType);
+        dialogFragment.show(activity.getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void openTrackAdditionInfo(int trackId) {
+        TrackAdditionalInfoDialog dialogFragment = TrackAdditionalInfoDialog.newInstance(trackId);
         dialogFragment.show(activity.getSupportFragmentManager(), null);
     }
 

@@ -52,7 +52,7 @@ public final class RenamePlaylistDialog extends BaseDialogFragment
 
 
     @ProvidePresenter
-    RenamePlaylistPresenter provideRenamePlaylistPresenter() {
+    RenamePlaylistPresenter providePresenter() {
         int playlistId = requireArguments().getInt(PLAYLIST_BUNDLE_KEY);
 
         return new RenamePlaylistPresenter(MainApplication.getComponent(), playlistId);

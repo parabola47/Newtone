@@ -18,4 +18,8 @@
         android:id="@+id/share"
         android:title="@string/player_menu_share" />
 
+    <item
+        android:id="@+id/additional_info"
+        android:title="@string/player_menu_additional_info" />
+
 </menu>

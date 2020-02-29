@@ -104,6 +104,10 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
         router.openShareTrack(track.getFilePath());
     }
 
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
+
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }

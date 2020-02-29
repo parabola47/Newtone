@@ -45,6 +45,7 @@
     <string name="track_menu_add_to_favourites">Add to Favourites</string>
     <string name="track_menu_remove_from_favourites">Remove from Favourites</string>
     <string name="track_menu_share_track">Share</string>
+    <string name="track_menu_additional_info">Additional Info</string>
     <string name="track_menu_share_track_intent_title">Share audio file</string>
     <string name="track_menu_delete">Delete</string>
     <string name="track_menu_delete_dialog_title">Delete track?</string>
@@ -59,6 +60,7 @@
     <string name="player_menu_lyrics">Lyrics</string>
     <string name="player_menu_delete">Delete</string>
     <string name="player_menu_share">Share</string>
+    <string name="player_menu_additional_info">Additional Info</string>
 
     <!--               !!!!                 -->
     <!--          BLOCK OF SORTING          -->
@@ -162,6 +164,22 @@
     <string name="fx_pitch">Pitch x%.2f</string>
     <string name="fx_bassBoost">Bass boost</string>
     <string name="fx_virtualizer">Virtualizer</string>
+
+    <!--TRACK ADDITIONAL INFO DIALOG-->
+    <string name="track_add_info_artist">Artist</string>
+    <string name="track_add_info_album">Album</string>
+    <string name="track_add_info_album_position">Position</string>
+    <string name="track_add_info_title">Title</string>
+    <string name="track_add_info_duration">Duration</string>
+    <string name="track_add_info_genre">Genre</string>
+    <string name="track_add_info_year">Year</string>
+    <string name="track_add_info_filepath">Filepath</string>
+    <string name="track_add_info_fileSize">Size</string>
+    <string name="track_add_info_bitrate">Bitrate</string>
+    <string name="track_add_info_sample_rate">Sample rate</string>
+    <string name="track_add_info_file_size_format">%d kB</string>
+    <string name="track_add_info_bitrate_format">%d kbps</string>
+    <string name="track_add_info_sample_rate_format">%d Hz</string>
 
     <!--SETTING-->
     <string name="setting_title">Settings</string>

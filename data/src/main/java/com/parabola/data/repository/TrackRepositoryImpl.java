@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -19,10 +21,12 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.StringTool;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -40,10 +44,12 @@ import static android.provider.MediaStore.Audio.AudioColumns.ALBUM_ID;
 import static android.provider.MediaStore.Audio.AudioColumns.ARTIST;
 import static android.provider.MediaStore.Audio.AudioColumns.ARTIST_ID;
 import static android.provider.MediaStore.Audio.AudioColumns.TRACK;
+import static android.provider.MediaStore.Audio.AudioColumns.YEAR;
 import static android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 import static android.provider.MediaStore.MediaColumns.DATA;
 import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
 import static android.provider.MediaStore.MediaColumns.DURATION;
+import static android.provider.MediaStore.MediaColumns.SIZE;
 import static android.provider.MediaStore.MediaColumns.TITLE;
 
 public final class TrackRepositoryImpl implements TrackRepository {
@@ -80,7 +86,9 @@ public final class TrackRepositoryImpl implements TrackRepository {
             ARTIST_ID,
             ARTIST,
             DURATION,
-            TRACK
+            TRACK,
+            YEAR,
+            SIZE
     };
 
 
@@ -181,9 +189,63 @@ public final class TrackRepositoryImpl implements TrackRepository {
         }
     };
     private final Function<TrackData, Bitmap> getArtFunction = new Function<TrackData, Bitmap>() {
-        @Override
         public Bitmap apply(TrackData trackData) {
             return (Bitmap) albumRepo.getArtImage(trackData.albumId);
+        }
+    };
+    private final Function<TrackData, Integer> getGenreIdFunction = new Function<TrackData, Integer>() {
+        public Integer apply(TrackData trackData) {
+            String[] genresProjection = {_ID};
+
+            Cursor cursor = contentResolver.query(
+                    MediaStore.Audio.Genres.getContentUriForAudioId("external", trackData.id),
+                    genresProjection, null, null, null);
+            if (Objects.requireNonNull(cursor).getCount() == 0)
+                return 0;
+
+            cursor.moveToFirst();
+            int genreId = cursor.getInt(0);
+            cursor.close();
+
+            return genreId;
+        }
+    };
+    private final Function<TrackData, String> getGenreNameFunction = new Function<TrackData, String>() {
+        public String apply(TrackData trackData) {
+            Cursor cursor = contentResolver.query(
+                    MediaStore.Audio.Genres.getContentUri("external"),
+                    new String[]{MediaStore.Audio.GenresColumns.NAME},
+                    _ID + "=?",
+                    new String[]{String.valueOf(trackData.getGenreId())}, null);
+            if (Objects.requireNonNull(cursor).getCount() == 0)
+                return "";
+            cursor.moveToFirst();
+            String genreName = cursor.getString(0);
+            cursor.close();
+
+            return genreName;
+        }
+    };
+    private final Function<TrackData, Integer> getBitrateFunction = trackData -> {
+        try {
+            MediaExtractor mediaExtractor = new MediaExtractor();
+            mediaExtractor.setDataSource(trackData.filePath);
+
+            return mediaExtractor.getTrackFormat(0)
+                    .getInteger(MediaFormat.KEY_BIT_RATE) / 1000;
+        } catch (IOException e) {
+            return 0;
+        }
+    };
+    private final Function<TrackData, Integer> getSampleRateFunction = track -> {
+        try {
+            MediaExtractor mediaExtractor = new MediaExtractor();
+            mediaExtractor.setDataSource(track.filePath);
+
+            return mediaExtractor.getTrackFormat(0)
+                    .getInteger(MediaFormat.KEY_SAMPLE_RATE);
+        } catch (IOException e) {
+            return 0;
         }
     };
 
@@ -207,10 +269,16 @@ public final class TrackRepositoryImpl implements TrackRepository {
             track.artistName = cursor.getString(cursor.getColumnIndexOrThrow(ARTIST));
             track.durationMs = cursor.getLong(cursor.getColumnIndexOrThrow(DURATION));
             track.filePath = cursor.getString(cursor.getColumnIndexOrThrow(DATA));
+            track.year = cursor.getInt(cursor.getColumnIndexOrThrow(YEAR));
             track.positionInCd = cursor.getInt(cursor.getColumnIndexOrThrow(TRACK));
+            track.fileSize = cursor.getInt(cursor.getColumnIndexOrThrow(SIZE));
             track.isFavouriteCondition = this.isFavouriteCondition;
             track.favouriteTimeStampFunction = this.favouriteTimestampFunction;
             track.getArtFunction = this.getArtFunction;
+            track.getGenreIdFunction = this.getGenreIdFunction;
+            track.getGenreNameFunction = this.getGenreNameFunction;
+            track.getBitrateFunction = this.getBitrateFunction;
+            track.getSampleRateFunction = this.getSampleRateFunction;
 
             result.add(track);
         } while (cursor.moveToNext());

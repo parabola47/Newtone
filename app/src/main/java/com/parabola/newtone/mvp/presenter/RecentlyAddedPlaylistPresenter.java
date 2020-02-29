@@ -126,4 +126,8 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     public void onClickMenuDeleteTrack(int trackId) {
         trackRepo.deleteTrack(trackId);
     }
+
+    public void onClickMenuAdditionalInfo(int trackId) {
+        router.openTrackAdditionInfo(trackId);
+    }
 }

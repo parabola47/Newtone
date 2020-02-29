@@ -139,6 +139,9 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
                 case R.id.share_track:
                     presenter.onClickMenuShareTrack(selectedTrack);
                     return true;
+                case R.id.additional_info:
+                    presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
+                    return true;
                 case R.id.delete_track:
                     AlertDialog dialog = new AlertDialog.Builder(requireContext())
                             .setTitle(R.string.track_menu_delete_dialog_title)

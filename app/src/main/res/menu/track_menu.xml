@@ -27,6 +27,10 @@
         android:title="@string/track_menu_share_track" />
 
     <item
+        android:id="@+id/additional_info"
+        android:title="@string/track_menu_additional_info" />
+
+    <item
         android:id="@+id/delete_track"
         android:title="@string/track_menu_delete" />
 

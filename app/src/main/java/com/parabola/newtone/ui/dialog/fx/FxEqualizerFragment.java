@@ -62,7 +62,7 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
 
 
     @ProvidePresenter
-    TabEqualizerPresenter provideTabEqualizerPresenter() {
+    TabEqualizerPresenter providePresenter() {
         return new TabEqualizerPresenter(MainApplication.getComponent());
     }
 
