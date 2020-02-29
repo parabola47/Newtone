@@ -40,7 +40,7 @@ public final class AudioEffectsDialog extends BaseDialogFragment {
 
 
         tabLayout.getTabAt(0).setIcon(R.drawable.fx_eq_icon);
-//        tabLayout.getTabAt(1).setIcon(R.drawable.);
+        tabLayout.getTabAt(1).setIcon(R.drawable.fx_ic_tune);
 
         return layout;
     }
