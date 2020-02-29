@@ -24,7 +24,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/ic_play_background"
         android:contentDescription="@string/player_toggle_content_desc"
         android:foreground="?android:selectableItemBackground"
         android:scaleType="center"

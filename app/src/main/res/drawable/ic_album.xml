@@ -1,43 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/colorSelectedTabIconBg" />
-            <size
-                android:width="48dp"
-                android:height="48dp" />
-        </shape>
-    </item>
-    <item
-        android:bottom="4dp"
-        android:left="4dp"
-        android:right="4dp"
-        android:top="4dp">
-        <shape android:shape="oval">
-            <solid android:color="@color/colorTabIconMainSelected" />
-        </shape>
-    </item>
-
-    <item
-        android:bottom="16dp"
-        android:left="16dp"
-        android:right="16dp"
-        android:top="16dp">
-        <shape android:shape="oval">
-            <solid android:color="@color/colorSelectedTabIconBg" />
-        </shape>
-    </item>
-
-    <item
-        android:bottom="22dp"
-        android:left="22dp"
-        android:right="22dp"
-        android:top="22dp">
-        <shape android:shape="oval">
-            <solid android:color="@color/colorTabIconMainSelected" />
-        </shape>
-    </item>
+    <path
+        android:fillColor="@color/colorSelectedTabIconBg"
+        android:pathData="M0,4 v16 s0,4 4,4 h16 s4,0 4,-4 v-16 s0,-4 -4,-4 h-16 s-4,0 -4,4" />
 
 
-</layer-list>
+    <path
+        android:fillColor="@color/colorTabIconMainSelected"
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,16.5c-2.49,0 -4.5,-2.01 -4.5,-4.5S9.51,7.5 12,7.5s4.5,2.01 4.5,4.5 -2.01,4.5 -4.5,4.5zM12,11c-0.55,0 -1,0.45 -1,1s0.45,1 1,1 1,-0.45 1,-1 -0.45,-1 -1,-1z" />
+
+</vector>

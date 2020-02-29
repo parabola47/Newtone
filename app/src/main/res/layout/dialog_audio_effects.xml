@@ -29,7 +29,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:icon="@drawable/ic_play" />
+            android:icon="@drawable/fx_ic_tune" />
 
     </com.google.android.material.tabs.TabLayout>
 

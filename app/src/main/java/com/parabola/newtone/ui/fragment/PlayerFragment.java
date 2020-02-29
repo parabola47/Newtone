@@ -297,12 +297,12 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void setTimerColored() {
-        timerButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorAccent));
+        timerButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_timer_colored));
     }
 
     @Override
     public void setTimerNotColored() {
-        timerButton.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
+        timerButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_timer));
     }
 
     @Override
