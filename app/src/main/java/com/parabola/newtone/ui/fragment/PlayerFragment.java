@@ -27,8 +27,8 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
-import com.parabola.newtone.util.TimeFormatterTool;
 import com.parabola.newtone.ui.view.LockableViewPager;
+import com.parabola.newtone.util.TimeFormatterTool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +40,7 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.observers.BiConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
@@ -275,19 +276,15 @@ public final class PlayerFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setLoopEnabling(Boolean enable) {
-        if (enable)
-            loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorAccent));
-        else
-            loopButton.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
+    public void setLoopEnabling(boolean enable) {
+        int colorResId = enable ? R.color.colorPlayerActionIconActive : R.color.colorPlayerActionIconDefault;
+        loopButton.setColorFilter(ContextCompat.getColor(requireContext(), colorResId));
     }
 
     @Override
-    public void setShuffleEnabling(Boolean enable) {
-        if (enable)
-            shuffleButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorAccent));
-        else
-            shuffleButton.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
+    public void setShuffleEnabling(boolean enable) {
+        int colorResId = enable ? R.color.colorPlayerActionIconActive : R.color.colorPlayerActionIconDefault;
+        shuffleButton.setColorFilter(ContextCompat.getColor(requireContext(), colorResId));
     }
 
     @Override
@@ -300,12 +297,12 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void setTimerColored() {
-        timerButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_timer_colored));
+        timerButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
     }
 
     @Override
     public void setTimerNotColored() {
-        timerButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_timer));
+        timerButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
     }
 
     @Override
@@ -358,11 +355,11 @@ public final class PlayerFragment extends MvpAppCompatFragment
             Single.fromCallable(() -> (Bitmap) tracks.get(position).getArtImage())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe((bitmap, error) ->
-                            Glide.with(albumCover)
+                    .subscribe(new BiConsumerSingleObserver<>(
+                            (bitmap, throwable) -> Glide.with(albumCover)
                                     .load(bitmap)
                                     .placeholder(R.drawable.album_holder)
-                                    .into(albumCover));
+                                    .into(albumCover)));
 
             container.addView(albumCover, 0);
 

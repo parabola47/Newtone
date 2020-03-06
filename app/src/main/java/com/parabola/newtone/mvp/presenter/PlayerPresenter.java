@@ -194,10 +194,9 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
 
     public void onClickQueue() {
-        router.backToRoot();
-        router.goToTab(3, false);
-        router.openQueue();
+        router.openQueueFromBackStackIfAvailable();
         router.collapseBottomSlider();
+        router.goToTab(3, false);
     }
 
     public void onClickAudioEffects() {
@@ -210,10 +209,9 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
 
     public void onLongClickFavorite() {
-        router.backToRoot();
-        router.goToTab(3, false);
-        router.openFavourites();
+        router.openFavouritesFromBackStackIfAvailable();
         router.collapseBottomSlider();
+        router.goToTab(3, false);
     }
 
 
@@ -244,20 +242,20 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     public void onClickArtist() {
         disposables.add(trackRepo.getById(currentTrackId)
                 .subscribe(track -> {
-                    router.backToRoot();
-                    router.goToTab(0, false);
-                    router.openArtist(track.getArtistId());
+                    router.openArtistFromBackStackIfAvailable(track.getArtistId());
                     router.collapseBottomSlider();
+                    router.goToTab(0, false);
+                    router.goToArtistInTab(track.getArtistId());
                 }));
     }
 
     public void onClickAlbum() {
         disposables.add(trackRepo.getById(currentTrackId)
                 .subscribe(track -> {
-                    router.backToRoot();
-                    router.goToTab(1, false);
-                    router.openAlbum(track.getAlbumId());
+                    router.openAlbumFromBackStackIfAvailable(track.getAlbumId());
                     router.collapseBottomSlider();
+                    router.goToTab(1, false);
+                    router.goToAlbumInTab(track.getAlbumId());
                 }));
     }
 

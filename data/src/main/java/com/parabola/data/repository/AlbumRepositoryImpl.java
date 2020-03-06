@@ -13,9 +13,9 @@ import android.util.Size;
 
 import com.parabola.data.model.AlbumData;
 import com.parabola.domain.model.Album;
-import com.parabola.domain.repository.AccessRepository;
-import com.parabola.domain.repository.AccessRepository.AccessType;
 import com.parabola.domain.repository.AlbumRepository;
+import com.parabola.domain.repository.PermissionHandler;
+import com.parabola.domain.repository.PermissionHandler.Type;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     private static final String TAG = AlbumRepositoryImpl.class.getSimpleName();
 
     private final ContentResolver contentResolver;
-    private final AccessRepository accessRepo;
+    private final PermissionHandler accessRepo;
 
-    public AlbumRepositoryImpl(ContentResolver contentResolver, AccessRepository accessRepo) {
+    public AlbumRepositoryImpl(ContentResolver contentResolver, PermissionHandler accessRepo) {
         this.contentResolver = contentResolver;
         this.accessRepo = accessRepo;
     }
@@ -76,7 +76,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
 
     @Override
     public Single<List<Album>> getAll(Sorting sorting) {
-        if (!accessRepo.hasAccess(AccessType.FILE_STORAGE)) {
+        if (!accessRepo.hasPermission(Type.FILE_STORAGE)) {
             return Single.just(Collections.emptyList());
         }
 

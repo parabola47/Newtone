@@ -4,10 +4,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 
 import com.parabola.data.executor.SchedulerProviderImpl;
-import com.parabola.data.repository.AccessRepositoryImpl;
+import com.parabola.data.repository.PermissionHandlerImpl;
 import com.parabola.data.repository.ResourceRepositoryImpl;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.AccessRepository;
+import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.newtone.MainApplication;
 
@@ -45,8 +45,8 @@ public final class AndroidAppModule {
 
     @Singleton
     @Provides
-    AccessRepository permissionService(Context context) {
-        return new AccessRepositoryImpl(context);
+    PermissionHandler permissionService(Context context) {
+        return new PermissionHandlerImpl(context);
     }
 
     @Singleton

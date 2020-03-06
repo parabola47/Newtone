@@ -52,6 +52,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
+import static java.util.Objects.requireNonNull;
+
 
 public class PlayerInteractorImpl implements PlayerInteractor {
     private static final String LOG_TAG = PlayerInteractorImpl.class.getSimpleName();
@@ -513,7 +515,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             } else {
                 int currentTrackIndex = exoPlayer.getCurrentWindowIndex();
                 Integer trackId = (Integer) concatenatedSource.getMediaSource(currentTrackIndex).getTag();
-                currentTrackIdObserver.onNext(Objects.requireNonNull(trackId));
+                currentTrackIdObserver.onNext(requireNonNull(trackId));
 
                 settingSaver.setCurrentWindowIndex(currentTrackIndex);
                 settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());

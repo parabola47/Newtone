@@ -28,7 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import java8.util.stream.StreamSupport;
+import io.reactivex.Observable;
 
 public final class ChoosePlaylistDialog extends BaseDialogFragment
         implements ChoosePlaylistView {
@@ -130,12 +130,15 @@ public final class ChoosePlaylistDialog extends BaseDialogFragment
             ImageView playlistHasTrackImg = row.findViewById(R.id.playlistHasTrackImg);
 
             title.setText(playlist.getTitle());
-            String trackCountStr = getResources().getQuantityString(R.plurals.tracks_count, playlist.getPlaylistTracks().size(), playlist.getPlaylistTracks().size());
+            String trackCountStr = getResources().getQuantityString(R.plurals.tracks_count, playlist.size(), playlist.size());
             tracksCount.setText(trackCountStr);
 
-            boolean playlistContainThisTrack = StreamSupport.stream(playlist.getPlaylistTracks())
+
+            boolean playlistContainThisTrack = Observable.fromIterable(playlist.getPlaylistTracks())
                     .map(Playlist.TrackItem::getTrackId)
-                    .anyMatch(trackId -> ChoosePlaylistDialog.this.trackId == trackId);
+                    .any(trackId -> ChoosePlaylistDialog.this.trackId == trackId)
+                    .blockingGet();
+
             playlistHasTrackImg.setVisibility(playlistContainThisTrack ? View.VISIBLE : View.GONE);
 
             return row;

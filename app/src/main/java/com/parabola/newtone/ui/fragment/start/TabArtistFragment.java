@@ -66,6 +66,15 @@ public final class TabArtistFragment extends MvpAppCompatFragment
         return new TabArtistPresenter(MainApplication.getComponent());
     }
 
+    public void scrollTo(int artistId) {
+        for (int i = 0; i < artistsAdapter.size(); i++) {
+            if (artistsAdapter.get(i).getId() == artistId) {
+                artistsList.scrollToPosition(i);
+                return;
+            }
+        }
+    }
+
     @Override
     public void refreshArtists(List<Artist> artists) {
         artistsAdapter.replaceAll(artists);

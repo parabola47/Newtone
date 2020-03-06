@@ -31,9 +31,10 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
 
         holder.folderNameTxt.setText(item.getFolderName());
         holder.pathToFolder.setText(item.getPathToParent());
-        holder.tracksCount.setText(
-                holder.tracksCount.getContext().getResources().getQuantityString(R.plurals.tracks_count,
-                        item.getTracksCount(), item.getTracksCount()));
+
+        String tracksCountText = holder.itemView.getResources()
+                .getQuantityString(R.plurals.tracks_count, item.getTracksCount(), item.getTracksCount());
+        holder.tracksCount.setText(tracksCountText);
     }
 
     @Override
@@ -41,13 +42,13 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
         return get(position).getFolderName().charAt(0);
     }
 
-    public class FolderViewHolder extends RecyclerView.ViewHolder {
+    static class FolderViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.folder) TextView folderNameTxt;
         @BindView(R.id.path) TextView pathToFolder;
         @BindView(R.id.tracks_count) TextView tracksCount;
 
-        public FolderViewHolder(View itemView) {
+        private FolderViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

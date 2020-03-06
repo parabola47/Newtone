@@ -19,8 +19,8 @@ public interface PlayerView extends MvpView {
 
     void setPlaybackButtonAsPause();
     void setPlaybackButtonAsPlay();
-    void setLoopEnabling(Boolean enable);
-    void setShuffleEnabling(Boolean enable);
+    void setLoopEnabling(boolean enable);
+    void setShuffleEnabling(boolean enable);
 
     void setCurrentTimeMs(int currentTimeMs);
 

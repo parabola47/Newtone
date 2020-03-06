@@ -16,10 +16,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -32,6 +32,9 @@ import com.parabola.newtone.ui.fragment.SettingFragment;
 import com.parabola.newtone.ui.fragment.Sortable;
 import com.parabola.newtone.ui.fragment.start.TabPlaylistFragment;
 import com.parabola.newtone.ui.router.MainRouter;
+import com.skydoves.powermenu.MenuAnimation;
+import com.skydoves.powermenu.PowerMenu;
+import com.skydoves.powermenu.PowerMenuItem;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import javax.inject.Inject;
@@ -46,6 +49,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @BindView(R.id.bottom_slider) SlidingUpPanelLayout bottomSlider;
     @BindView(R.id.player_bar) ViewGroup playerBar;
     @BindView(R.id.track_settings) ImageButton playerSetting;
+    @BindView(R.id.duration) RoundCornerProgressBar durationSeekbar;
 
     @BindView(R.id.track_title) TextView trackTitleTxt;
     @BindView(R.id.song_artist) TextView artistTxt;
@@ -100,44 +104,53 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @OnClick(R.id.menu_button)
     public void onClickMenuButton(ImageView menuButton) {
-        PopupMenu menu = new PopupMenu(this, menuButton);
-        menu.inflate(R.menu.main_menu);
-
-        // Смотрим подлежит ли текущий список сортировке
         Fragment currentFragment = router.currentFragment();
-        String sortingListType = null;
 
-        if (currentFragment instanceof Sortable) {
-            menu.getMenu().findItem(R.id.sorting).setVisible(true);
-            sortingListType = ((Sortable) currentFragment).getListType();
-        }
+        PowerMenu.Builder menuBuilder = new PowerMenu.Builder(this)
+                .setOnMenuItemClickListener((position, item) -> handleSelectedMenu(item, currentFragment))
+                .setMenuRadius(16)
+                .setTextColorResource(R.color.colorNewtoneWhite)
+                .setTextSize(14)
+                .setAnimation(MenuAnimation.SHOWUP_BOTTOM_RIGHT)
+                .setMenuColorResource(R.color.colorMenuItemBackground)
+                .setBackgroundAlpha(0f)
+                .setAutoDismiss(true)
+                .setLifecycleOwner(this);
+
+        // Показываем пункт меню "Сортировать по", если его можно сортировать
+        if (currentFragment instanceof Sortable)
+            menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_sorting_by), R.drawable.ic_sorting));
 
         // Показываем пункт меню "Добавить плейлист" в табе плейлистов
-        if (currentFragment instanceof TabPlaylistFragment) {
-            menu.getMenu().findItem(R.id.add_playlist).setVisible(true);
-        }
-        // Скрываем пункт меню "Настройки" если он уже был открыт
-        if (router.hasInstanceInStack(SettingFragment.class)) {
-            menu.getMenu().findItem(R.id.settings).setVisible(false);
-        }
+        if (currentFragment instanceof TabPlaylistFragment)
+            menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_add_playlist), R.drawable.ic_add_playlist));
 
-        String finalSortingListType = sortingListType;
-        menu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.sorting:
-                    router.openSortingDialog(finalSortingListType);
-                    return true;
-                case R.id.add_playlist:
-                    presenter.onClickMenuAddPlaylist();
-                    return true;
-                case R.id.settings:
-                    router.openSettings();
-                    return true;
-                default:
-                    return false;
+        // Скрываем пункт меню "Настройки" если он уже был открыт
+        if (!router.hasInstanceInStack(SettingFragment.class))
+            menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_settings), R.drawable.ic_setting));
+
+
+        PowerMenu powerMenu = menuBuilder.build();
+        if (powerMenu.getMenuListView().getCount() == 0) {
+            powerMenu.dismiss();
+        } else {
+            float minWidthPx = getResources().getDimension(R.dimen.context_menu_min_width);
+            if (powerMenu.getContentViewWidth() < (int) minWidthPx) {
+                powerMenu.setWidth((int) minWidthPx);
             }
-        });
-        menu.show();
+            powerMenu.showAsAnchorCenter(menuButton, 0, -(powerMenu.getContentViewHeight() / 4));
+        }
+    }
+
+    private void handleSelectedMenu(PowerMenuItem menuItem, Fragment currentFragment) {
+        if (menuItem.getTitle().equals(getString(R.string.menu_settings))) {
+            router.openSettings();
+        } else if (menuItem.getTitle().equals(getString(R.string.menu_add_playlist))) {
+            presenter.onClickMenuAddPlaylist();
+        } else if (menuItem.getTitle().equals(getString(R.string.menu_sorting_by))) {
+            String sortingListType = ((Sortable) currentFragment).getListType();
+            router.openSortingDialog(sortingListType);
+        }
     }
 
 
@@ -257,6 +270,16 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @Override
     public void requestStoragePermissionDialog() {
         ActivityCompat.requestPermissions(this, STORAGE_PERMISSIONS, STORAGE_PERMISSIONS_REQUEST_CODE);
+    }
+
+    @Override
+    public void setDurationMax(int max) {
+        durationSeekbar.setMax(max);
+    }
+
+    @Override
+    public void setDurationProgress(int progress) {
+        durationSeekbar.setProgress(progress);
     }
 
     @Override

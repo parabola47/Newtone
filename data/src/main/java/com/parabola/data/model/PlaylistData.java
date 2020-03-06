@@ -33,6 +33,11 @@ public final class PlaylistData implements Playlist {
     }
 
     @Override
+    public int size() {
+        return playlistTracks.size();
+    }
+
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (!(obj instanceof Playlist)) {
             return false;

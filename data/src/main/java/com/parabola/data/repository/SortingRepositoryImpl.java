@@ -3,10 +3,10 @@ package com.parabola.data.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.parabola.domain.repository.AccessRepository;
-import com.parabola.domain.repository.AccessRepository.AccessType;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.ArtistRepository;
+import com.parabola.domain.repository.PermissionHandler;
+import com.parabola.domain.repository.PermissionHandler.Type;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 
@@ -32,7 +32,7 @@ public final class SortingRepositoryImpl implements SortingRepository {
     private final BehaviorSubject<ArtistRepository.Sorting> allArtistsSorting;
 
 
-    public SortingRepositoryImpl(Context context, AccessRepository accessRepo) {
+    public SortingRepositoryImpl(Context context, PermissionHandler accessRepo) {
         this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         allTracksSorting = BehaviorSubject.createDefault(allTracksSorting());
@@ -47,7 +47,7 @@ public final class SortingRepositoryImpl implements SortingRepository {
 
 
         //  Если предоставлен доступ к файлам, то сообщаем всем об обновлении списков
-        accessRepo.observeAccessUpdates(AccessType.FILE_STORAGE)
+        accessRepo.observePermissionUpdates(Type.FILE_STORAGE)
                 .subscribe(hasFileStorageAccess -> {
                     if (hasFileStorageAccess) {
                         allArtistsSorting.onNext(allArtistsSorting.getValue());

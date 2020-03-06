@@ -7,9 +7,9 @@ import android.util.Log;
 
 import com.parabola.data.model.ArtistData;
 import com.parabola.domain.model.Artist;
-import com.parabola.domain.repository.AccessRepository;
-import com.parabola.domain.repository.AccessRepository.AccessType;
 import com.parabola.domain.repository.ArtistRepository;
+import com.parabola.domain.repository.PermissionHandler;
+import com.parabola.domain.repository.PermissionHandler.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,10 +21,10 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
     private static final String TAG = ArtistRepositoryImpl.class.getSimpleName();
 
     private final ContentResolver contentResolver;
-    private AccessRepository accessRepo;
+    private PermissionHandler accessRepo;
 
 
-    public ArtistRepositoryImpl(ContentResolver contentResolver, AccessRepository accessRepo) {
+    public ArtistRepositoryImpl(ContentResolver contentResolver, PermissionHandler accessRepo) {
         this.contentResolver = contentResolver;
         this.accessRepo = accessRepo;
     }
@@ -57,7 +57,7 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
 
     @Override
     public Single<List<Artist>> getAll(Sorting sorting) {
-        if (!accessRepo.hasAccess(AccessType.FILE_STORAGE)) {
+        if (!accessRepo.hasPermission(Type.FILE_STORAGE)) {
             return Single.just(Collections.emptyList());
         }
 

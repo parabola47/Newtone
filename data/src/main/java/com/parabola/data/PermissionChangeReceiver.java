@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.parabola.domain.repository.AccessRepository.AccessType;
+import com.parabola.domain.repository.PermissionHandler.Type;
 
 public class PermissionChangeReceiver extends BroadcastReceiver {
 
@@ -23,11 +23,11 @@ public class PermissionChangeReceiver extends BroadcastReceiver {
 
         if (ACTION_FILE_STORAGE_PERMISSION_UPDATE.equals(intent.getAction())) {
             if (listener != null)
-                listener.onPermissionUpdate(AccessType.FILE_STORAGE);
+                listener.onPermissionUpdate(Type.FILE_STORAGE);
         }
     }
 
     public interface PermissionChangeListener {
-        void onPermissionUpdate(AccessType changedAccessType);
+        void onPermissionUpdate(Type changedAccessType);
     }
 }

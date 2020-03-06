@@ -198,7 +198,10 @@
     <string name="queue_item_remove_content_desc">Exclude track</string>
     <string name="player_toggle_content_desc">Play/pause playback</string>
     <string name="main_menu_button_content_desc">Main menu</string>
+    <string name="artists_list_content_desc">Artists list</string>
+    <string name="albums_list_content_desc">Albums list</string>
     <string name="tracks_list_content_desc">Tracks list</string>
+    <string name="folders_list_content_desc">Folders list</string>
     <string name="playlist_title_content_desc">Playlist title</string>
     <string name="repeat_mode_content_desc">Repeat mode</string>
     <string name="shuffle_mode_content_desc">Shuffle mode</string>

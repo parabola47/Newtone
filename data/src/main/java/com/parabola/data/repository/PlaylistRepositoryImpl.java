@@ -13,8 +13,8 @@ import com.parabola.domain.exceptions.AlreadyExistsException;
 import com.parabola.domain.exceptions.ItemNotFoundException;
 import com.parabola.domain.interactors.type.Irrelevant;
 import com.parabola.domain.model.Playlist;
-import com.parabola.domain.repository.AccessRepository;
-import com.parabola.domain.repository.AccessRepository.AccessType;
+import com.parabola.domain.repository.PermissionHandler;
+import com.parabola.domain.repository.PermissionHandler.Type;
 import com.parabola.domain.repository.PlaylistRepository;
 
 import java.util.ArrayList;
@@ -33,15 +33,15 @@ import static android.provider.MediaStore.Audio.PlaylistsColumns.NAME;
 public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
     private final ContentResolver contentResolver;
-    private final AccessRepository accessRepo;
+    private final PermissionHandler accessRepo;
     private final BehaviorSubject<Irrelevant> playlistsUpdates = BehaviorSubject.create();
 
 
-    public PlaylistRepositoryImpl(ContentResolver contentResolver, AccessRepository accessRepo) {
+    public PlaylistRepositoryImpl(ContentResolver contentResolver, PermissionHandler accessRepo) {
         this.contentResolver = contentResolver;
         this.accessRepo = accessRepo;
 
-        this.accessRepo.observeAccessUpdates(AccessType.FILE_STORAGE)
+        this.accessRepo.observePermissionUpdates(Type.FILE_STORAGE)
                 .subscribe(hasStorageAccess -> {
                     if (hasStorageAccess) {
                         playlistsUpdates.onNext(Irrelevant.INSTANCE);
@@ -126,7 +126,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
     @Override
     public Single<List<Playlist>> getAll() {
-        if (!accessRepo.hasAccess(AccessType.FILE_STORAGE))
+        if (!accessRepo.hasPermission(Type.FILE_STORAGE))
             return Single.just(Collections.emptyList());
 
         return Single.fromCallable(() ->

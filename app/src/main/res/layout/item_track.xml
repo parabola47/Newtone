@@ -5,45 +5,60 @@
     android:id="@+id/trackHolder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorItemBG"
+    android:background="@color/colorListItemDefaultBackground"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    android:padding="8dp">
+    android:padding="16dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/cover"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/album_holder" />
 
     <TextView
         android:id="@+id/track_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textColor="@color/colorNotSelectedTrackTitle"
-        android:textSize="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:textColor="@color/colorDefaultTrackTitle"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/artist"
+        app:layout_constraintLeft_toRightOf="@id/cover"
         app:layout_constraintRight_toLeftOf="@id/song_duration"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpUsage"
         tools:text="Larks' Tongues In Aspic (Part IV)" />
 
     <TextView
         android:id="@+id/artist"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textSize="14dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/track_title"
         app:layout_constraintRight_toLeftOf="@id/song_duration"
         app:layout_constraintTop_toBottomOf="@id/track_title"
-        tools:ignore="SpUsage"
         tools:text="King Crimson" />
 
     <TextView
         android:id="@+id/song_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

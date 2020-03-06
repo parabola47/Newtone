@@ -166,7 +166,7 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         tmpView.setY(y);
 
         rootView.addView(tmpView);
-        rootView.setBackgroundColor(getResources().getColor(R.color.colorSelectedTrackWithContextMenu));
+        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
 
         PopupMenu popupMenu = new PopupMenu(requireContext(), tmpView, Gravity.CENTER);
         popupMenu.inflate(R.menu.track_menu);

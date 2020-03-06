@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorActivityBackground"
+            android:background="@color/colorNewtoneBackground"
             android:orientation="vertical">
 
             <LinearLayout
@@ -24,7 +24,7 @@
                 style="@style/CustomActionBar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/custom_action_bar_height"
-                android:background="@color/colorActionBarBg"
+                android:background="@color/colorActionBarBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="4dp"
@@ -36,8 +36,8 @@
                     android:id="@+id/back_btn"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginRight="4dp"
                     android:layout_marginEnd="4dp"
+                    android:layout_marginRight="4dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/back_btn_content_desc"
                     app:srcCompat="@drawable/ic_arrow_left"

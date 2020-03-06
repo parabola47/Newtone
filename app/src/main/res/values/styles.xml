@@ -2,13 +2,22 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:windowBackground">@color/colorActivityBackground</item>
+        <item name="android:windowBackground">@color/colorNewtoneBackground</item>
         <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="SettingItemContainer">
+        <item name="android:background">@color/colorListItemDefaultBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?android:selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:padding">16dp</item>
     </style>
 
     <style name="TextViewDialogAction">

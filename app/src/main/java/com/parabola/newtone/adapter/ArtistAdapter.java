@@ -68,12 +68,12 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
         return showSection ? String.valueOf(getSection(position)) : "";
     }
 
-    public class ArtistViewHolder extends RecyclerView.ViewHolder {
+    static class ArtistViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.artist) TextView artistTxt;
         @BindView(R.id.artist_info) TextView artistInfo;
 
-        public ArtistViewHolder(View itemView) {
+        private ArtistViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

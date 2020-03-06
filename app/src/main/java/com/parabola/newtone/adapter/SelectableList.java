@@ -19,7 +19,7 @@ public final class SelectableList<E> {
 
     public void add(int index, E element) {
         elements.add(index, element);
-        if (selectedItemIndex != -1 && index <= selectedItemIndex) {
+        if (selectedItemIndex != -1 && selectedItemIndex >= index) {
             selectedItemIndex++;
         }
     }
@@ -31,7 +31,7 @@ public final class SelectableList<E> {
     public boolean addAll(int index, Collection<? extends E> newElements) {
         boolean result = elements.addAll(index, newElements);
 
-        if (selectedItemIndex != -1) {
+        if (selectedItemIndex != -1 && selectedItemIndex >= index) {
             selectedItemIndex += newElements.size();
         }
 

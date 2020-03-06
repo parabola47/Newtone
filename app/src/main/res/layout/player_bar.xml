@@ -4,19 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="68dp"
-    android:background="@drawable/player_bar_background">
+    android:background="@color/colorPlayerBarBackground">
 
-    <ProgressBar
-        android:id="@+id/pb_scan"
-        style="?android:progressBarStyleHorizontal"
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:id="@+id/duration"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:indeterminateOnly="true"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        android:layout_height="4dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rcBackgroundColor="#4F4F4F"
+        app:rcProgressColor="@color/colorAccent"
+        app:rcRadius="2dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/player_toggle"
@@ -26,7 +25,6 @@
         android:layout_marginLeft="16dp"
         android:background="@drawable/ic_play_background"
         android:contentDescription="@string/player_toggle_content_desc"
-        android:foreground="?android:selectableItemBackground"
         android:scaleType="center"
         android:scaleX="0.75"
         android:scaleY="0.75"
@@ -50,7 +48,7 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/player_toggle"
-        app:layout_constraintRight_toLeftOf="@id/divider"
+        app:layout_constraintRight_toLeftOf="@id/menu_button"
         tools:ignore="SpUsage"
         tools:text="Larks' Tongues In Aspic (Part IV)" />
 
@@ -66,20 +64,11 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textSize="16dp"
         app:layout_constraintLeft_toRightOf="@id/player_toggle"
-        app:layout_constraintRight_toLeftOf="@id/divider"
+        app:layout_constraintRight_toLeftOf="@id/menu_button"
         app:layout_constraintTop_toBottomOf="@id/guideline"
         tools:ignore="SpUsage"
         tools:text="King Crimson" />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toStartOf="@id/menu_button"
-        app:layout_constraintStart_toStartOf="@id/menu_button" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/menu_button"
@@ -94,10 +83,9 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/divider"
-        app:layout_constraintStart_toEndOf="@id/divider"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_plus" />
+        app:srcCompat="@drawable/ic_kebab"
+        app:tint="@color/colorNewtoneWhite" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

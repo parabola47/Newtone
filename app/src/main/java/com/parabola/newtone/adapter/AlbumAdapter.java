@@ -3,23 +3,23 @@ package com.parabola.newtone.adapter;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Album;
 import com.parabola.newtone.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
-import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.observers.BiConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
 
@@ -51,14 +51,16 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.Al
                 .orElse(holder.albumArtist.getContext().getString(R.string.unknown_artist));
 
         holder.albumArtist.setText(artistName);
-        Single.fromCallable((Callable<Bitmap>) albumItem::getArtImage)
+
+        Single.fromCallable(albumItem::getArtImage)
+                .cast(Bitmap.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((bitmap, error) ->
-                        Glide.with(holder.albumImage)
+                .subscribe(new BiConsumerSingleObserver<>(
+                        (bitmap, error) -> Glide.with(holder.albumCover)
                                 .load(bitmap)
                                 .placeholder(R.drawable.album_holder)
-                                .into(holder.albumImage));
+                                .into(holder.albumCover)));
     }
 
     @Override
@@ -76,15 +78,18 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, AlbumAdapter.Al
         return showSection ? String.valueOf(getSection(position)) : "";
     }
 
-    public class AlbumViewHolder extends RecyclerView.ViewHolder {
+    static class AlbumViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.album_title) TextView albumTitle;
         @BindView(R.id.author) TextView albumArtist;
-        @BindView(R.id.album_image) ImageView albumImage;
+        @BindView(R.id.albumCover) ShapeableImageView albumCover;
 
         private AlbumViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
+                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.track_item_album_corner_size))
+                    .build());
         }
     }
 }

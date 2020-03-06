@@ -3,6 +3,8 @@ package com.parabola.data.repository;
 import android.content.ContentResolver;
 import android.database.Cursor;
 
+import androidx.core.util.Pair;
+
 import com.parabola.data.model.FolderData;
 import com.parabola.domain.model.Folder;
 import com.parabola.domain.model.Track;
@@ -14,11 +16,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
-import java8.util.stream.Collectors;
-import java8.util.stream.StreamSupport;
 
 import static android.provider.BaseColumns._ID;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_MUSIC;
@@ -63,16 +63,19 @@ public final class FolderRepositoryImpl implements FolderRepository {
             filePaths.add(cursor.getString(0));
         } while (cursor.moveToNext());
 
-        Map<String, Long> foldersTrackCount = StreamSupport.stream(filePaths)
+        List<Pair<String, Long>> foldersTrackCount = Observable.fromIterable(filePaths)
                 .map(filePath -> filePath.substring(0, filePath.lastIndexOf(File.separator)))
-                .collect(Collectors.groupingBy(folderPath -> folderPath, Collectors.counting()));
+                .groupBy(val -> val)
+                .flatMapSingle(group -> group.count().map(count -> new Pair<>(group.getKey(), count)))
+                .toList()
+                .blockingGet();
 
         List<Folder> result = new ArrayList<>(foldersTrackCount.size());
-        for (Map.Entry<String, Long> entry : foldersTrackCount.entrySet()) {
+        for (Pair<String, Long> entry : foldersTrackCount) {
             FolderData folderData = new FolderData();
 
-            folderData.folderPath = entry.getKey();
-            folderData.tracksCount = entry.getValue().intValue();
+            folderData.folderPath = entry.first;
+            folderData.tracksCount = entry.second.intValue();
             result.add(folderData);
         }
 

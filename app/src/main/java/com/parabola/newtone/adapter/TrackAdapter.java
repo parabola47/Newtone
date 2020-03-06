@@ -1,6 +1,7 @@
 package com.parabola.newtone.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -9,6 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.R;
 import com.parabola.newtone.util.TimeFormatterTool;
@@ -16,6 +20,10 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.observers.BiConsumerSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
 
 public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.TrackViewHolder>
@@ -47,14 +55,24 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
                 TimeFormatterTool.formatMillisecondsToMinutes(trackItem.getDurationMs()));
 
 
+        Single.fromCallable(trackItem::getArtImage)
+                .cast(Bitmap.class)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BiConsumerSingleObserver<>((bitmap, error) ->
+                        Glide.with(holder.cover)
+                                .load(bitmap)
+                                .placeholder(R.drawable.album_holder)
+                                .into(holder.cover)));
+
         if (isSelected(holder.getAdapterPosition())) {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrack));
-            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrack));
-            holder.itemView.setBackgroundResource(R.color.colorSelectedTrackBackground);
+            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
+            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
+            holder.itemView.setBackgroundResource(R.color.colorAccent);
         } else {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorNotSelectedTrackOther));
-            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorNotSelectedTrackOther));
-            holder.itemView.setBackgroundResource(R.color.colorItemBG);
+            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.itemView.setBackgroundResource(R.color.colorListItemDefaultBackground);
         }
 
     }
@@ -74,15 +92,19 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         return showSection ? String.valueOf(getSection(position)) : "";
     }
 
-    public class TrackViewHolder extends RecyclerView.ViewHolder {
+    static class TrackViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.track_title) TextView trackTitle;
         @BindView(R.id.artist) TextView artist;
         @BindView(R.id.song_duration) TextView duration;
+        @BindView(R.id.cover) ShapeableImageView cover;
 
         private TrackViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            cover.setShapeAppearanceModel(cover.getShapeAppearanceModel().toBuilder()
+                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.track_item_album_corner_size))
+                    .build());
         }
     }
 }

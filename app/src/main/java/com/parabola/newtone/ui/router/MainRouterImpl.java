@@ -84,6 +84,18 @@ public final class MainRouterImpl implements MainRouter {
         firstFragment.scrollOnTabTrackToCurrentTrack();
     }
 
+
+    @Override
+    public void goToArtistInTab(int artistId) {
+        firstFragment.scrollToArtistInTab(artistId);
+    }
+
+
+    @Override
+    public void goToAlbumInTab(int albumId) {
+        firstFragment.scrollToAlbumInTab(albumId);
+    }
+
     @Override
     public <T extends Fragment> boolean hasInstanceInStack(Class<T> fragment) {
         for (Fragment f : activity.getSupportFragmentManager().getFragments()) {
@@ -110,17 +122,13 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void goBack() {
         activity.getSupportFragmentManager()
-                .popBackStack();
+                .popBackStackImmediate();
     }
 
 
     @Override
     public void openArtist(int artistId) {
-        Bundle args = new Bundle();
-        args.putInt("artistId", artistId);
-
-        ArtistFragment artistFragment = new ArtistFragment();
-        artistFragment.setArguments(args);
+        ArtistFragment artistFragment = ArtistFragment.newInstance(artistId);
 
         activity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
@@ -130,14 +138,26 @@ public final class MainRouterImpl implements MainRouter {
                 .commit();
     }
 
+    @Override
+    public void openArtistFromBackStackIfAvailable(int artistId) {
+        while (!isRoot()) {
+            Fragment currentFragment = currentFragment();
+            if (currentFragment instanceof ArtistFragment) {
+                ArtistFragment artistFragment = (ArtistFragment) currentFragment;
+                if (artistFragment.getArtistId() == artistId)
+                    return;
+            }
+
+            goBack();
+        }
+
+        openArtist(artistId);
+    }
+
 
     @Override
     public void openAlbum(int albumId) {
-        Bundle args = new Bundle();
-        args.putInt("albumId", albumId);
-
-        AlbumFragment fragment = new AlbumFragment();
-        fragment.setArguments(args);
+        AlbumFragment fragment = AlbumFragment.newInstance(albumId);
 
         activity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
@@ -145,6 +165,22 @@ public final class MainRouterImpl implements MainRouter {
                 .addToBackStack(null)
                 .setPrimaryNavigationFragment(fragment)
                 .commit();
+    }
+
+    @Override
+    public void openAlbumFromBackStackIfAvailable(int albumId) {
+        while (!isRoot()) {
+            Fragment currentFragment = currentFragment();
+            if (currentFragment instanceof AlbumFragment) {
+                AlbumFragment albumFragment = (AlbumFragment) currentFragment;
+                if (albumFragment.getAlbumId() == albumId)
+                    return;
+            }
+
+            goBack();
+        }
+
+        openAlbum(albumId);
     }
 
 
@@ -202,6 +238,20 @@ public final class MainRouterImpl implements MainRouter {
     }
 
     @Override
+    public void openFavouritesFromBackStackIfAvailable() {
+        while (!isRoot()) {
+            Fragment currentFragment = currentFragment();
+            if (currentFragment instanceof FavoritesPlaylistFragment) {
+                return;
+            }
+
+            goBack();
+        }
+
+        openFavourites();
+    }
+
+    @Override
     public void openQueue() {
         QueueFragment fragment = new QueueFragment();
 
@@ -211,6 +261,20 @@ public final class MainRouterImpl implements MainRouter {
                 .addToBackStack(null)
                 .setPrimaryNavigationFragment(fragment)
                 .commit();
+    }
+
+    @Override
+    public void openQueueFromBackStackIfAvailable() {
+        while (!isRoot()) {
+            Fragment currentFragment = currentFragment();
+            if (currentFragment instanceof QueueFragment) {
+                return;
+            }
+
+            goBack();
+        }
+
+        openQueue();
     }
 
     @Override

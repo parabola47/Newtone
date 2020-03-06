@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactors.player.PlayerInteractor;
-import com.parabola.domain.repository.AccessRepository;
+import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
@@ -20,7 +20,7 @@ import io.reactivex.disposables.Disposable;
 public final class MainPresenter extends MvpPresenter<MainView> {
 
     @Inject PlayerInteractor playerInteractor;
-    @Inject AccessRepository accessRepo;
+    @Inject PermissionHandler accessRepo;
     @Inject TrackRepository trackRepo;
 
     @Inject MainRouter router;
@@ -34,12 +34,12 @@ public final class MainPresenter extends MvpPresenter<MainView> {
 
     @Override
     protected void onFirstViewAttach() {
-        if (!accessRepo.hasAccess(AccessRepository.AccessType.FILE_STORAGE)) {
+        if (!accessRepo.hasPermission(PermissionHandler.Type.FILE_STORAGE)) {
             getViewState().requestStoragePermissionDialog();
         }
 
         disposables.addAll(
-                observeCurrentTrack(),
+                observeCurrentTrack(), observePlaybackPosition(),
                 observeState());
     }
 
@@ -60,9 +60,17 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                 .filter(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
                 .flatMapSingle(currentTrackId -> trackRepo.getById(currentTrackId))
                 .subscribe(track -> {
+                    getViewState().setDurationMax((int) track.getDurationMs());
+                    getViewState().setDurationProgress((int) playerInteractor.playbackPosition());
                     getViewState().setTrackTitle(track.getTitle());
                     getViewState().setArtistName(track.getArtistName());
                 });
+    }
+
+
+    private Disposable observePlaybackPosition() {
+        return playerInteractor.onChangePlaybackPosition()
+                .subscribe(currentTimeMs -> getViewState().setDurationProgress(currentTimeMs.intValue()));
     }
 
     private Disposable observeState() {

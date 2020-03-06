@@ -7,6 +7,7 @@ public interface Playlist {
     String getTitle();
     long getDateAddingTimestamp();
     List<TrackItem> getPlaylistTracks();
+    int size();
 
     default boolean equals(Playlist o) {
         return getId() == o.getId();

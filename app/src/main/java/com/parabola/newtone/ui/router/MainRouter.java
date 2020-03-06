@@ -16,21 +16,30 @@ public interface MainRouter {
     void collapseBottomSlider();
     void goToTab(int tabNumber, boolean smoothScroll);
     void scrollOnTabTrackToCurrentTrack();
+    void goToArtistInTab(int artistId);
+    void goToAlbumInTab(int albumId);
+
 
     <F extends Fragment> boolean hasInstanceInStack(Class<F> fragment);
     void backToRoot();
     boolean isRoot();
     void goBack();
 
+
     //    FROM START
     void openArtist(int artistId);
+    void openArtistFromBackStackIfAvailable(int artistId);
+
     void openAlbum(int albumId);
+    void openAlbumFromBackStackIfAvailable(int albumId);
     void openPlaylist(int playlistId);
     void openRequestStoragePermissionScreen();
     //    SYSTEM PLAYLISTS
     void openRecentlyAdded();
     void openFavourites();
+    void openFavouritesFromBackStackIfAvailable();
     void openQueue();
+    void openQueueFromBackStackIfAvailable();
     void openFoldersList();
 
     void openSettings();

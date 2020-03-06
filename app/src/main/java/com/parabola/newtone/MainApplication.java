@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.parabola.domain.interactors.SleepTimerInteractor;
+import com.parabola.domain.interactors.observer.ConsumerObserver;
 import com.parabola.domain.interactors.player.PlayerInteractor;
 import com.parabola.domain.interactors.type.Irrelevant;
 import com.parabola.newtone.di.ComponentFactory;
@@ -57,11 +58,12 @@ public final class MainApplication extends Application {
                 playerInteractor.onChangePlayingState(),
                 playerInteractor.onRepeatModeChange(),
                 playerInteractor.onShuffleModeChange(), (i, b1, b2, b3) -> Irrelevant.INSTANCE)
-                .subscribe(irrelevant -> HomeScreenWidget.updateHomeScreenWidget(this));
+                .subscribe(ConsumerObserver.fromConsumer(
+                        irrelevant -> HomeScreenWidget.updateHomeScreenWidget(MainApplication.this)));
         //если приходит оповещение от таймера об окончании, то останавливаем плеер
         SleepTimerInteractor sleepTimerInteractor = appComponent.provideSleepTimerInteractor();
         sleepTimerInteractor.onTimerFinished()
-                .subscribe(irrelevant -> playerInteractor.pause());
+                .subscribe(ConsumerObserver.fromConsumer(irrelevant -> playerInteractor.pause()));
     }
 
 

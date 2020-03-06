@@ -52,13 +52,13 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
         holder.artist.setText(artistName);
 
         if (isSelected(holder.getAdapterPosition())) {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrack));
-            holder.itemView.setBackgroundResource(R.color.colorSelectedTrackBackground);
+            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
+            holder.itemView.setBackgroundResource(R.color.colorAccent);
             holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
             holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
         } else {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorNotSelectedTrackOther));
-            holder.itemView.setBackgroundResource(R.color.colorItemBG);
+            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.itemView.setBackgroundResource(R.color.colorListItemDefaultBackground);
             holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
             holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
         }
@@ -144,14 +144,14 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
         return get(position).getTitle().charAt(0);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.track_title) TextView trackTitle;
         @BindView(R.id.artist) TextView artist;
         @BindView(R.id.burger_img) ImageView burgerImg;
         @BindView(R.id.remove_img) ImageView removeImg;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        private ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

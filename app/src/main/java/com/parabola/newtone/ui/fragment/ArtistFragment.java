@@ -43,10 +43,25 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     private BaseAdapter<Album> albumsAdapter;
 
+    private static final String ARTIST_ID_ARG_KEY = "artistId";
+
+    public static ArtistFragment newInstance(int artistId) {
+        Bundle args = new Bundle();
+        args.putInt(ARTIST_ID_ARG_KEY, artistId);
+
+        ArtistFragment fragment = new ArtistFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     public ArtistFragment() {
         // Required empty public constructor
     }
 
+    public int getArtistId() {
+        return requireArguments().getInt(ARTIST_ID_ARG_KEY);
+    }
 
     @NonNull
     @Override
@@ -82,7 +97,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     public ArtistPresenter providePresenter() {
-        int artistId = requireArguments().getInt("artistId");
+        int artistId = requireArguments().getInt(ARTIST_ID_ARG_KEY);
 
         return new ArtistPresenter(MainApplication.getComponent(), artistId);
     }

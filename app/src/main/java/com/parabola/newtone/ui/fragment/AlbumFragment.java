@@ -48,9 +48,25 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     private final BaseAdapter<Track> tracksAdapter = new TrackAdapter();
 
+    private static final String ALBUM_ID_ARG_KEY = "albumId";
+
+    public static AlbumFragment newInstance(int albumId) {
+        Bundle args = new Bundle();
+        args.putInt(ALBUM_ID_ARG_KEY, albumId);
+
+        AlbumFragment fragment = new AlbumFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     public AlbumFragment() {
         // Required empty public constructor
+    }
+
+
+    public int getAlbumId() {
+        return requireArguments().getInt(ALBUM_ID_ARG_KEY);
     }
 
 
@@ -127,7 +143,7 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
         tmpView.setY(y);
 
         rootView.addView(tmpView);
-        rootView.setBackgroundColor(getResources().getColor(R.color.colorSelectedTrackWithContextMenu));
+        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
 
         PopupMenu popupMenu = new PopupMenu(requireContext(), tmpView, Gravity.CENTER);
         popupMenu.inflate(R.menu.track_menu);
@@ -151,7 +167,7 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     public AlbumPresenter providePresenter() {
-        int albumId = requireArguments().getInt("albumId");
+        int albumId = requireArguments().getInt(ALBUM_ID_ARG_KEY);
 
         return new AlbumPresenter(MainApplication.getComponent(), albumId);
     }

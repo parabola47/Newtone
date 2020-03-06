@@ -30,12 +30,10 @@ public final class PlaylistAdapter extends SimpleListAdapter<Playlist, PlaylistA
         Playlist playlist = get(holder.getAdapterPosition());
 
         holder.titleTxt.setText(playlist.getTitle());
-        holder.tracksCount.setText(
-                holder.tracksCount.getContext().getResources()
-                        .getQuantityString(R.plurals.tracks_count,
-                                playlist.getPlaylistTracks().size(),
-                                playlist.getPlaylistTracks().size())
-        );
+
+        String tracksCountText = holder.itemView.getResources()
+                .getQuantityString(R.plurals.tracks_count, playlist.size(), playlist.size());
+        holder.tracksCount.setText(tracksCountText);
     }
 
     @Override
@@ -44,7 +42,7 @@ public final class PlaylistAdapter extends SimpleListAdapter<Playlist, PlaylistA
     }
 
 
-    public class PlaylistViewHolder extends RecyclerView.ViewHolder {
+    static class PlaylistViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.title) TextView titleTxt;
         @BindView(R.id.tracks_count) TextView tracksCount;
 

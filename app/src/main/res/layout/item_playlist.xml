@@ -1,42 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorListItemDefaultBackground"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/colorItemBG">
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textSize="20dp"
+        tools:ignore="SpUsage"
+        tools:text="favorites" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            android:textSize="20dp"
-            tools:ignore="SpUsage"
-            tools:text="favorites" />
+    <TextView
+        android:id="@+id/tracks_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textSize="16dp"
+        tools:ignore="SpUsage"
+        tools:text="58 tracks" />
 
-        <TextView
-            android:id="@+id/tracks_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:textSize="16dp"
-            tools:ignore="SpUsage"
-            tools:text="58 tracks" />
-
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+</LinearLayout>

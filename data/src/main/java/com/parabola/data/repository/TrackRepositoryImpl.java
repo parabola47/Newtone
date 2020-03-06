@@ -13,12 +13,10 @@ import android.util.Log;
 import com.parabola.data.model.TrackData;
 import com.parabola.domain.interactors.type.Irrelevant;
 import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.AccessRepository;
-import com.parabola.domain.repository.AccessRepository.AccessType;
 import com.parabola.domain.repository.AlbumRepository;
+import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.utils.StringTool;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +24,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.internal.observers.CallbackCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
@@ -51,6 +49,7 @@ import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
 import static android.provider.MediaStore.MediaColumns.DURATION;
 import static android.provider.MediaStore.MediaColumns.SIZE;
 import static android.provider.MediaStore.MediaColumns.TITLE;
+import static java.util.Objects.requireNonNull;
 
 public final class TrackRepositoryImpl implements TrackRepository {
     private static final String TAG = TrackRepositoryImpl.class.getSimpleName();
@@ -58,14 +57,14 @@ public final class TrackRepositoryImpl implements TrackRepository {
     private final ContentResolver contentResolver;
     private final AlbumRepository albumRepo;
     private final PlaylistRepository playlistRepo;
-    private AccessRepository accessRepo;
+    private final PermissionHandler accessRepo;
 
     private final FavouriteTrackHelper favouriteTrackHelper;
 
     private static final String TRACK_REPOSITORY_SHARED_PREFS_NAME = "TRACK_REPOSITORY_SHARED_PREFS";
 
 
-    public TrackRepositoryImpl(Context context, AlbumRepository albumRepo, PlaylistRepository playlistRepo, AccessRepository accessRepo) {
+    public TrackRepositoryImpl(Context context, AlbumRepository albumRepo, PlaylistRepository playlistRepo, PermissionHandler accessRepo) {
         this.contentResolver = context.getContentResolver();
         this.albumRepo = albumRepo;
         this.playlistRepo = playlistRepo;
@@ -123,32 +122,36 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
     @Override
     public Single<List<Track>> getByIds(List<Integer> trackIds, Sorting sorting) {
-        if (!accessRepo.hasAccess(AccessType.FILE_STORAGE))
+        if (!accessRepo.hasPermission(PermissionHandler.Type.FILE_STORAGE))
             return Single.just(Collections.emptyList());
-
 
         return Single.fromCallable(() ->
                 contentResolver.query(
                         EXTERNAL_CONTENT_URI,
                         TRACK_QUERY_SELECTIONS,
-                        _ID + " IN (" + StringTool.makeQueryPlaceholders(trackIds.size()) + ")",
-                        toStringArray(trackIds),
+                        _ID + " IN (" + idsToString(trackIds) + ")",
+                        null,
                         mapDefaultSorting(sorting)))
                 .doAfterSuccess(Cursor::close)
                 .map(this::extractTracks);
     }
 
-    private String[] toStringArray(List<Integer> from) {
-        String[] result = new String[from.size()];
-        for (int i = 0; i < from.size(); i++) {
-            result[i] = String.valueOf(from.get(i));
+
+    private String idsToString(List<Integer> ids) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < ids.size(); i++) {
+            builder.append(ids.get(i));
+            if (i != ids.size() - 1)
+                builder.append(',');
         }
-        return result;
+
+        return builder.toString();
     }
 
     @Override
     public Single<List<Track>> getAll(Sorting sorting) {
-        if (!accessRepo.hasAccess(AccessType.FILE_STORAGE))
+        if (!accessRepo.hasPermission(PermissionHandler.Type.FILE_STORAGE))
             return Single.just(Collections.emptyList());
 
 
@@ -200,7 +203,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
             Cursor cursor = contentResolver.query(
                     MediaStore.Audio.Genres.getContentUriForAudioId("external", trackData.id),
                     genresProjection, null, null, null);
-            if (Objects.requireNonNull(cursor).getCount() == 0)
+            if (requireNonNull(cursor).getCount() == 0)
                 return 0;
 
             cursor.moveToFirst();
@@ -217,7 +220,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
                     new String[]{MediaStore.Audio.GenresColumns.NAME},
                     _ID + "=?",
                     new String[]{String.valueOf(trackData.getGenreId())}, null);
-            if (Objects.requireNonNull(cursor).getCount() == 0)
+            if (requireNonNull(cursor).getCount() == 0)
                 return "";
             cursor.moveToFirst();
             String genreName = cursor.getString(0);
@@ -310,7 +313,8 @@ public final class TrackRepositoryImpl implements TrackRepository {
                     }
                 }))
                 .subscribeOn(Schedulers.io())
-                .subscribe(() -> trackDeletingObserver.onNext(trackId));
+                .subscribe(new CallbackCompletableObserver(
+                        () -> trackDeletingObserver.onNext(trackId)));
     }
 
     //true если файл по данному пути поличилось удалить или если файл отсутсвовал изначально,

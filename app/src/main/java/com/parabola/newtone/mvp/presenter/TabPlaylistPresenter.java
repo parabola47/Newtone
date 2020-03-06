@@ -3,7 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.AccessRepository;
+import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.di.app.AppComponent;
@@ -20,7 +20,7 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
 
     @Inject PlaylistRepository playlistRepo;
     @Inject TrackRepository trackRepo;
-    @Inject AccessRepository accessRepo;
+    @Inject PermissionHandler accessRepo;
 
     @Inject MainRouter router;
 

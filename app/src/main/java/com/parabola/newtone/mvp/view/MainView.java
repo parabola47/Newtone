@@ -21,4 +21,7 @@ public interface MainView extends MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void requestStoragePermissionDialog();
+
+    void setDurationMax(int max);
+    void setDurationProgress(int progress);
 }

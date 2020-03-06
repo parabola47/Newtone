@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="custom_action_bar_height">64dp</dimen>
+    <dimen name="track_item_album_corner_size">4dp</dimen>
+    <dimen name="context_menu_min_width">216dp</dimen>
 </resources>

@@ -14,35 +14,37 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorTabBackground"
+            android:layout_height="72dp"
             android:elevation="24dp"
             app:tabBackground="@drawable/tab_bg_color"
+            app:tabIconTint="@color/colorTabIconTintDefault"
             app:tabIndicatorHeight="0dp"
-            app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small">
+            app:tabSelectedTextColor="@color/colorTabIconTintSelected"
+            app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small"
+            app:tabTextColor="@color/colorTabIconTintDefault">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/tab_ic_mic"
+                android:icon="@drawable/ic_artist"
                 android:text="@string/tab_artists" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/tab_ic_album"
+                android:icon="@drawable/ic_album"
                 android:text="@string/tab_albums" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/tab_ic_clef"
+                android:icon="@drawable/ic_clef"
                 android:text="@string/tab_tracks" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/tab_ic_playlist"
+                android:icon="@drawable/ic_playlist"
                 android:text="@string/tab_playlists" />
 
         </com.google.android.material.tabs.TabLayout>

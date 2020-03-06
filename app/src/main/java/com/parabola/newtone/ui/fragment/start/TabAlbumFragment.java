@@ -72,6 +72,15 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         return new TabAlbumPresenter(MainApplication.getComponent());
     }
 
+    public void scrollTo(int albumId) {
+        for (int i = 0; i < albumsAdapter.size(); i++) {
+            if (albumsAdapter.get(i).getId() == albumId) {
+                albumsList.scrollToPosition(i);
+                return;
+            }
+        }
+    }
+
     @Override
     public void refreshAlbums(List<Album> albums) {
         albumsAdapter.replaceAll(albums);

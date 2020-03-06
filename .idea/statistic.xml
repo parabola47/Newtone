@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/countdown_timer_feature/build" />
         <option value="$PROJECT_DIR$/domain/build" />
         <option value="$PROJECT_DIR$/player_feature/build" />
+        <option value="$PROJECT_DIR$/app/release" />
       </list>
     </option>
   </component>

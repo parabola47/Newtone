@@ -8,15 +8,9 @@
 
     <RelativeLayout
         android:id="@+id/notification_artwork_show_bar"
+        style="@style/SettingItemContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorItemBG"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:selectableItemBackground"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/notification_artwork_show_title"
@@ -58,15 +52,9 @@
 
     <RelativeLayout
         android:id="@+id/notification_color_bar"
+        style="@style/SettingItemContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorItemBG"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:selectableItemBackground"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/notification_color_title"
@@ -108,15 +96,9 @@
 
     <RelativeLayout
         android:id="@+id/privacy_policy_bar"
+        style="@style/SettingItemContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorItemBG"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:selectableItemBackground"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/privacy_policy_title"
@@ -138,15 +120,9 @@
 
     <RelativeLayout
         android:id="@+id/app_info_bar"
+        style="@style/SettingItemContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorItemBG"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:selectableItemBackground"
-        android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/app_info_title"
