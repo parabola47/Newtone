@@ -88,10 +88,4 @@ dependencies {
 
     //    Popup menu
     implementation "com.github.skydoves:powermenu:2.1.2"
-
-
-    //Crash reporter
-    def acraVersion = '5.5.0'
-    implementation "ch.acra:acra-mail:$acraVersion"
-    implementation "ch.acra:acra-dialog:$acraVersion"
 }

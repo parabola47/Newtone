@@ -13,23 +13,8 @@ import com.parabola.newtone.di.ComponentFactory;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.ui.HomeScreenWidget;
 
-import org.acra.ACRA;
-import org.acra.annotation.AcraCore;
-import org.acra.annotation.AcraDialog;
-import org.acra.annotation.AcraMailSender;
-
 import io.reactivex.Observable;
 
-@AcraCore(
-        buildConfigClass = BuildConfig.class,
-        deleteUnapprovedReportsOnApplicationStart = false,
-        sendReportsInDevMode = false)
-@AcraMailSender(mailTo = "zizik.zizik@gmail.com")
-@AcraDialog(
-        resTitle = R.string.dialog_on_crash_title,
-        resText = R.string.dialog_on_crash_text,
-        resTheme = R.style.AppTheme,
-        resCommentPrompt = R.string.dialog_on_crash_comment_prompt)
 public final class MainApplication extends Application {
     private static final String LOG_TAG = "Newtone Application";
 
@@ -38,8 +23,6 @@ public final class MainApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        //инициализация отправки сообщений об ошибке
-        ACRA.init(this);
         //устанавливает флаг для отображения xml-ресурсов с типом <selector>
         //на android версиях ниже LOLLIPOP
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);

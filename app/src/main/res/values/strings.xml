@@ -208,10 +208,4 @@
     <string name="start_prev_content_desc">Start previous track</string>
     <string name="start_next_content_desc">Start next track</string>
 
-    <!--CRASH REPORT-->
-    <string name="dialog_on_crash_title">Newtone was crashed</string>
-    <string name="dialog_on_crash_comment_prompt">You can add a comment here</string>
-    <string name="dialog_on_crash_text">Sorry, the application crashed.
-        \nPlease send a report to the developers via email, it helps us to resolve the problem.</string>
-
 </resources>
