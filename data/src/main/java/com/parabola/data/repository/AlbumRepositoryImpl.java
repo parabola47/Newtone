@@ -11,6 +11,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 
+import androidx.collection.LruCache;
+
 import com.parabola.data.model.AlbumData;
 import com.parabola.domain.model.Album;
 import com.parabola.domain.repository.AlbumRepository;
@@ -118,8 +120,34 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
                 .map(this::extractAlbums);
     }
 
+    private final int cacheMaxSize = (int) (Runtime.getRuntime().maxMemory() / 8);
+    private final LruCache<Integer, Bitmap> albumArtCache = new LruCache<Integer, Bitmap>(cacheMaxSize) {
+        @Override
+        protected int sizeOf(Integer albumId, Bitmap bitmap) {
+            return bitmap.getByteCount();
+        }
+    };
+    private final List<Integer> nullBitmapIds = new ArrayList<>();
+
+
     @Override
     public Bitmap getArtImage(int albumId) {
+        Bitmap cachedBitmap = albumArtCache.get(albumId);
+        if (cachedBitmap != null)
+            return cachedBitmap;
+
+        if (nullBitmapIds.contains(albumId))
+            return null;
+
+        Bitmap result = extractBitmap(albumId);
+
+        if (result != null) albumArtCache.put(albumId, result);
+        else nullBitmapIds.add(albumId);
+
+        return result;
+    }
+
+    private Bitmap extractBitmap(int albumId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
                 Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId);
@@ -127,8 +155,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
 
                 return contentResolver
                         .loadThumbnail(uri, size, null);
-
-            } catch (IOException ignored) {
+            } catch (IOException ex) {
                 return null;
             }
         } else {
