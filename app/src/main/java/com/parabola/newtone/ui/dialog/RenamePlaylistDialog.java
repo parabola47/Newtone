@@ -11,6 +11,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.RenamePlaylistPresenter;
 import com.parabola.newtone.mvp.view.RenamePlaylistView;
 
@@ -53,9 +54,10 @@ public final class RenamePlaylistDialog extends BaseDialogFragment
 
     @ProvidePresenter
     RenamePlaylistPresenter providePresenter() {
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         int playlistId = requireArguments().getInt(PLAYLIST_BUNDLE_KEY);
 
-        return new RenamePlaylistPresenter(MainApplication.getComponent(), playlistId);
+        return new RenamePlaylistPresenter(appComponent, playlistId);
     }
 
     @Override

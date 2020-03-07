@@ -10,6 +10,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter;
 import com.parabola.newtone.mvp.view.TimeToSleepInfoView;
 
@@ -53,7 +54,8 @@ public final class TimeToSleepInfoDialog extends BaseDialogFragment
 
     @ProvidePresenter
     TimeToSleepInfoPresenter providePresenter() {
-        return new TimeToSleepInfoPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new TimeToSleepInfoPresenter(appComponent);
     }
 
 

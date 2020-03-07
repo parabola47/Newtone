@@ -22,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ArtistTracksPresenter;
 import com.parabola.newtone.mvp.view.ArtistTracksView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
@@ -166,8 +167,9 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     ArtistTracksPresenter providePresenter() {
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         int artistId = requireArguments().getInt("artistId");
-        return new ArtistTracksPresenter(MainApplication.getComponent(), artistId);
+        return new ArtistTracksPresenter(appComponent, artistId);
     }
 
     @Override

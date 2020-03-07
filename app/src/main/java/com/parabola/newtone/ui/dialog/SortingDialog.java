@@ -14,6 +14,7 @@ import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 
 import javax.inject.Inject;
 
@@ -57,7 +58,9 @@ public final class SortingDialog extends BaseDialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sortingListType = requireArguments().getString(SORTING_LIST_TYPE_PARAM);
-        MainApplication.getComponent().inject(this);
+
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        appComponent.inject(this);
     }
 
     @Override

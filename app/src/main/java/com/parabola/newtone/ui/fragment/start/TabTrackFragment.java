@@ -20,6 +20,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
 import com.parabola.newtone.mvp.view.TabTrackView;
 import com.parabola.newtone.ui.dialog.SortingDialog;
@@ -138,7 +139,8 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
     @ProvidePresenter
     public TabTrackPresenter providePresenter() {
-        return new TabTrackPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new TabTrackPresenter(appComponent);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.CreatePlaylistPresenter;
 import com.parabola.newtone.mvp.view.CreatePlaylistView;
 
@@ -59,6 +60,7 @@ public final class CreatePlaylistDialog extends BaseDialogFragment
 
     @ProvidePresenter
     public CreatePlaylistPresenter providePresenter() {
-        return new CreatePlaylistPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new CreatePlaylistPresenter(appComponent);
     }
 }

@@ -22,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.PlaylistAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
 import com.parabola.newtone.mvp.view.TabPlaylistView;
 
@@ -100,7 +101,8 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
 
     @ProvidePresenter
     public TabPlaylistPresenter providePresenter() {
-        return new TabPlaylistPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new TabPlaylistPresenter(appComponent);
     }
 
 

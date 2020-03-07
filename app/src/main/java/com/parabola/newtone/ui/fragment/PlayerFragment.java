@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
 import com.parabola.newtone.ui.view.LockableViewPager;
@@ -229,7 +230,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @ProvidePresenter
     PlayerPresenter providePresenter() {
-        return new PlayerPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new PlayerPresenter(appComponent);
     }
 
 

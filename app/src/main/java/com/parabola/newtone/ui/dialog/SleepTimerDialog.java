@@ -14,6 +14,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.SleepTimerPresenter;
 import com.parabola.newtone.mvp.view.SleepTimerView;
 
@@ -74,7 +75,8 @@ public final class SleepTimerDialog extends BaseDialogFragment
 
     @ProvidePresenter
     SleepTimerPresenter providePresenter() {
-        return new SleepTimerPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new SleepTimerPresenter(appComponent);
     }
 
     @Override

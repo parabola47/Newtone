@@ -21,6 +21,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FavouritesPlaylistPresenter;
 import com.parabola.newtone.mvp.view.FavouritesPlaylistView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
@@ -90,7 +91,8 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     FavouritesPlaylistPresenter providePresenter() {
-        return new FavouritesPlaylistPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new FavouritesPlaylistPresenter(appComponent);
     }
 
     private void showTrackContextMenu(ViewGroup rootView, float x, float y, int itemPosition) {

@@ -16,6 +16,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ArtistAdapter;
 import com.parabola.newtone.adapter.BaseAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabArtistPresenter;
 import com.parabola.newtone.mvp.view.TabArtistView;
 import com.parabola.newtone.ui.dialog.SortingDialog;
@@ -63,7 +64,8 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
     @ProvidePresenter
     public TabArtistPresenter providePresenter() {
-        return new TabArtistPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new TabArtistPresenter(appComponent);
     }
 
     public void scrollTo(int artistId) {

@@ -15,6 +15,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.newtone.BuildConfig;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.SettingPresenter;
 import com.parabola.newtone.mvp.view.SettingView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
@@ -111,7 +112,8 @@ public final class SettingFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     public SettingPresenter providePresenter() {
-        return new SettingPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new SettingPresenter(appComponent);
     }
 
 }

@@ -44,8 +44,9 @@ public class HomeScreenWidget extends AppWidgetProvider {
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
 
-        PlayerInteractor playerInteractor = MainApplication.getComponent().providePlayerInteractor();
-        TrackRepository trackRepo = MainApplication.getComponent().provideTrackRepo();
+        AppComponent appComponent = ((MainApplication) context.getApplicationContext()).getAppComponent();
+        PlayerInteractor playerInteractor = appComponent.providePlayerInteractor();
+        TrackRepository trackRepo = appComponent.provideTrackRepo();
 
 
         boolean isNowPlaying = playerInteractor.isPlayWhenReady();
@@ -68,7 +69,7 @@ public class HomeScreenWidget extends AppWidgetProvider {
             albumArt = BitmapFactory.decodeResource(context.getResources(), R.drawable.album_holder);
         }
         for (int widgetId : allWidgetIds) {
-            setupWidget(context, appWidgetManager, widgetId, title, artist, album,
+            setupWidget(context, appComponent, appWidgetManager, widgetId, title, artist, album,
                     albumArt, isNowPlaying, loopEnabled, shuffleEnabled);
         }
     }
@@ -76,13 +77,12 @@ public class HomeScreenWidget extends AppWidgetProvider {
 
     private static final String SET_COLOR_FILTER_METHOD_NAME = "setColorFilter";
 
-    private void setupWidget(Context context, AppWidgetManager appWidgetManager, int widgetId,
+    private void setupWidget(Context context, AppComponent appComponent, AppWidgetManager appWidgetManager, int widgetId,
                              String trackTitle, String artistName, String albumTitle,
                              Bitmap albumCover,
                              boolean isNowPlaying, boolean isRepeatEnabled, boolean isShuffleEnabled) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.home_screen_widget);
-        AppComponent appComponent = MainApplication.getComponent();
 
         remoteViews.setTextViewText(R.id.title, trackTitle);
         remoteViews.setTextViewText(R.id.artist, artistName);

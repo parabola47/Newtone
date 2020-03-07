@@ -22,6 +22,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.StartFragmentPagerAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.StartPresenter;
 import com.parabola.newtone.mvp.view.StartView;
 
@@ -138,7 +139,8 @@ public final class StartFragment extends MvpAppCompatFragment
 
     @ProvidePresenter
     public StartPresenter providePresenter() {
-        return new StartPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new StartPresenter(appComponent);
     }
 
     public void scrollToArtistInTab(int artistId) {

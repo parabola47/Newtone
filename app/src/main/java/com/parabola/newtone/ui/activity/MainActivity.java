@@ -26,6 +26,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.data.PermissionChangeReceiver;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.MainPresenter;
 import com.parabola.newtone.mvp.view.MainView;
 import com.parabola.newtone.ui.fragment.SettingFragment;
@@ -70,7 +71,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         time = System.currentTimeMillis() - time;
         Log.i(TAG, "MainActivityTimeLoading: " + time);
         ButterKnife.bind(this);
-        MainApplication.getComponent().inject(this);
+        ((MainApplication) getApplication()).getAppComponent().inject(this);
 
         router.setActivity(this);
 
@@ -156,7 +157,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @ProvidePresenter
     public MainPresenter providePresenter() {
-        return new MainPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) getApplication()).getAppComponent();
+        return new MainPresenter(appComponent);
     }
 
     public void setBottomSliderPanelState(SlidingUpPanelLayout.PanelState panelState) {

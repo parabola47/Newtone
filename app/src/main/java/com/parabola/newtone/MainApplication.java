@@ -49,8 +49,7 @@ public final class MainApplication extends Application {
                 .subscribe(ConsumerObserver.fromConsumer(irrelevant -> playerInteractor.pause()));
     }
 
-
-    public static AppComponent getComponent() {
+    public AppComponent getAppComponent() {
         return appComponent;
     }
 }

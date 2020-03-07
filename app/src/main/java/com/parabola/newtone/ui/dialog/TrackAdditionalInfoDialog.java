@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter;
 import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
 import com.parabola.newtone.util.TimeFormatterTool;
@@ -74,8 +75,9 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
 
     @ProvidePresenter
     TrackAdditionalInfoPresenter providePresenter() {
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         int trackId = requireArguments().getInt(TRACK_ID_BUNDLE_KEY);
-        return new TrackAdditionalInfoPresenter(MainApplication.getComponent(), trackId);
+        return new TrackAdditionalInfoPresenter(appComponent, trackId);
     }
 
     @Override

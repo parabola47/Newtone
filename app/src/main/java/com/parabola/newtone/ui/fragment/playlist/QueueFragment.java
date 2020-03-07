@@ -18,6 +18,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.QueueAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.QueuePresenter;
 import com.parabola.newtone.mvp.view.QueueView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
@@ -93,7 +94,8 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     public QueuePresenter providePresenter() {
-        return new QueuePresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new QueuePresenter(appComponent);
     }
 
     @Override

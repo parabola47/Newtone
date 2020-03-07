@@ -9,6 +9,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.DeletePlaylistPresenter;
 import com.parabola.newtone.mvp.view.DeletePlaylistView;
 
@@ -43,9 +44,10 @@ public final class DeletePlaylistDialog extends BaseDialogFragment
 
     @ProvidePresenter
     public DeletePlaylistPresenter providePresenter() {
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         int playlistId = requireArguments().getInt(PLAYLIST_ID_BUNDLE_KEY);
 
-        return new DeletePlaylistPresenter(MainApplication.getComponent(), playlistId);
+        return new DeletePlaylistPresenter(appComponent, playlistId);
     }
 
     @Override

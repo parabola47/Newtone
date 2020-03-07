@@ -22,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
@@ -110,7 +111,8 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     RecentlyAddedPlaylistPresenter providePresenter() {
-        return new RecentlyAddedPlaylistPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new RecentlyAddedPlaylistPresenter(appComponent);
     }
 
     private void showTrackContextMenu(ViewGroup rootView, float x, float y, int itemPosition) {

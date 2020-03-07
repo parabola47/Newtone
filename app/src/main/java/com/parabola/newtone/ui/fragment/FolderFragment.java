@@ -21,6 +21,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FolderPresenter;
 import com.parabola.newtone.mvp.view.FolderView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
@@ -161,8 +162,9 @@ public final class FolderFragment extends BaseSwipeToBackFragment
 
     @ProvidePresenter
     FolderPresenter providePresenter() {
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         String folderPath = requireArguments().getString("folderPath");
-        return new FolderPresenter(MainApplication.getComponent(), folderPath);
+        return new FolderPresenter(appComponent, folderPath);
     }
 
     @Override

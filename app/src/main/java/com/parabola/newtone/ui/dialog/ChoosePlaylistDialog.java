@@ -19,6 +19,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.domain.model.Playlist;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter;
 import com.parabola.newtone.mvp.view.ChoosePlaylistView;
 
@@ -84,8 +85,9 @@ public final class ChoosePlaylistDialog extends BaseDialogFragment
 
     @ProvidePresenter
     ChoosePlaylistPresenter providePresenter() {
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         trackId = requireArguments().getInt(SELECTED_TRACK_BUNDLE_KEY);
-        return new ChoosePlaylistPresenter(MainApplication.getComponent(), trackId);
+        return new ChoosePlaylistPresenter(appComponent, trackId);
     }
 
     @Override

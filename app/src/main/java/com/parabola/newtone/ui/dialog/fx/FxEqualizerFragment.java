@@ -17,6 +17,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.domain.interactors.player.AudioEffectsInteractor.EqBand;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
 import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
 import com.parabola.newtone.util.SeekBarChangeAdapter;
@@ -63,7 +64,8 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
 
     @ProvidePresenter
     TabEqualizerPresenter providePresenter() {
-        return new TabEqualizerPresenter(MainApplication.getComponent());
+        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
+        return new TabEqualizerPresenter(appComponent);
     }
 
     @Override
