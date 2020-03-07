@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -30,6 +29,9 @@ import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
 import com.parabola.newtone.ui.view.LockableViewPager;
 import com.parabola.newtone.util.TimeFormatterTool;
+import com.skydoves.powermenu.MenuAnimation;
+import com.skydoves.powermenu.PowerMenu;
+import com.skydoves.powermenu.PowerMenuItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,7 @@ import io.reactivex.internal.observers.BiConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.NewtoneTool.constructDefaultContextMenu;
 
 public final class PlayerFragment extends MvpAppCompatFragment
         implements PlayerView {
@@ -119,39 +122,45 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @OnClick(R.id.track_settings)
     public void onClickTrackSettings() {
-        PopupMenu menu = new PopupMenu(requireContext(), trackSettings);
-        menu.inflate(R.menu.player_menu);
+        PowerMenu powerMenu = constructDefaultContextMenu(requireContext())
+                .setOnMenuItemClickListener((position, item) -> handleSelectedMenu(item))
+                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                .setLifecycleOwner(this)
+                .addItem(new PowerMenuItem(getString(R.string.player_menu_add_to_playlist), R.drawable.ic_add_playlist))
+                .addItem(new PowerMenuItem(getString(R.string.player_menu_lyrics), R.drawable.ic_lyrics))
+                .addItem(new PowerMenuItem(getString(R.string.player_menu_additional_info), R.drawable.ic_info))
+                .addItem(new PowerMenuItem(getString(R.string.player_menu_delete), R.drawable.ic_delete))
+                .addItem(new PowerMenuItem(getString(R.string.player_menu_share), R.drawable.ic_share))
+                .build();
 
-        menu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.add_to_playlist:
-                    presenter.onClickMenuAddTrackToPlaylist();
-                    return true;
-                case R.id.lyrics:
-                    presenter.onClickMenuLyrics();
-                    return true;
-                case R.id.delete:
-                    AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.track_menu_delete_dialog_title)
-                            .setMessage(R.string.track_menu_delete_dialog_message)
-                            .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete())
-                            .setNegativeButton(R.string.dialog_cancel, null)
-                            .create();
-                    dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_bg));
-                    dialog.getWindow().setLayout((int) convertDpToPixel(300, requireContext()), ViewGroup.LayoutParams.WRAP_CONTENT);
-                    dialog.show();
-                    return true;
-                case R.id.share:
-                    presenter.onClickMenuShareTrack();
-                    return true;
-                case R.id.additional_info:
-                    presenter.onClickMenuAdditionalInfo();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        menu.show();
+        float minWidthPx = getResources().getDimension(R.dimen.context_menu_min_width);
+        if (powerMenu.getContentViewWidth() < (int) minWidthPx) {
+            powerMenu.setWidth((int) minWidthPx);
+        }
+
+        powerMenu.showAsAnchorCenter(trackSettings);
+    }
+
+    private void handleSelectedMenu(PowerMenuItem menuItem) {
+        if (menuItem.getTitle().equals(getString(R.string.player_menu_add_to_playlist))) {
+            presenter.onClickMenuAddTrackToPlaylist();
+        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_lyrics))) {
+            presenter.onClickMenuLyrics();
+        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_additional_info))) {
+            presenter.onClickMenuAdditionalInfo();
+        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_delete))) {
+            AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.track_menu_delete_dialog_title)
+                    .setMessage(R.string.track_menu_delete_dialog_message)
+                    .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete())
+                    .setNegativeButton(R.string.dialog_cancel, null)
+                    .create();
+            dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_bg));
+            dialog.getWindow().setLayout((int) convertDpToPixel(250, requireContext()), ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.show();
+        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_share))) {
+            presenter.onClickMenuShareTrack();
+        }
     }
 
     @OnClick(R.id.timer)

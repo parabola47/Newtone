@@ -44,6 +44,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.parabola.newtone.util.NewtoneTool.constructDefaultContextMenu;
+
 public final class MainActivity extends MvpAppCompatActivity implements MainView {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -107,15 +109,9 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     public void onClickMenuButton(ImageView menuButton) {
         Fragment currentFragment = router.currentFragment();
 
-        PowerMenu.Builder menuBuilder = new PowerMenu.Builder(this)
+        PowerMenu.Builder menuBuilder = constructDefaultContextMenu(this)
                 .setOnMenuItemClickListener((position, item) -> handleSelectedMenu(item, currentFragment))
-                .setMenuRadius(16)
-                .setTextColorResource(R.color.colorNewtoneWhite)
-                .setTextSize(14)
                 .setAnimation(MenuAnimation.SHOWUP_BOTTOM_RIGHT)
-                .setMenuColorResource(R.color.colorMenuItemBackground)
-                .setBackgroundAlpha(0f)
-                .setAutoDismiss(true)
                 .setLifecycleOwner(this);
 
         // Показываем пункт меню "Сортировать по", если его можно сортировать

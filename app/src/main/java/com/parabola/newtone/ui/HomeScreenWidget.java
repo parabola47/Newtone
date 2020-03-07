@@ -19,7 +19,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 
-public class HomeScreenWidget extends AppWidgetProvider {
+public final class HomeScreenWidget extends AppWidgetProvider {
 
     public static void updateHomeScreenWidget(Context context) {
         Intent intent = new Intent(context, HomeScreenWidget.class);

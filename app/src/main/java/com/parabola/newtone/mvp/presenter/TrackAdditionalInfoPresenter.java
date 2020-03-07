@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import io.reactivex.disposables.CompositeDisposable;
 
 @InjectViewState
-public class TrackAdditionalInfoPresenter extends MvpPresenter<TrackAdditionalInfoView> {
+public final class TrackAdditionalInfoPresenter extends MvpPresenter<TrackAdditionalInfoView> {
 
     private final int trackId;
     private final CompositeDisposable disposables = new CompositeDisposable();

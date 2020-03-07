@@ -6,6 +6,10 @@ import android.util.DisplayMetrics;
 
 public final class AndroidTool {
 
+    private AndroidTool() {
+        throw new AssertionError();
+    }
+
     public static float convertDpToPixel(float dp, Context context) {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
