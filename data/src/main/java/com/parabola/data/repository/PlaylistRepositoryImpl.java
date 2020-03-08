@@ -9,9 +9,9 @@ import android.provider.MediaStore.Audio.Playlists.Members;
 
 import com.parabola.data.model.PlaylistData;
 import com.parabola.data.utils.RxCursorIterable;
-import com.parabola.domain.exceptions.AlreadyExistsException;
-import com.parabola.domain.exceptions.ItemNotFoundException;
-import com.parabola.domain.interactors.type.Irrelevant;
+import com.parabola.domain.exception.AlreadyExistsException;
+import com.parabola.domain.exception.ItemNotFoundException;
+import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Playlist;
 import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.PermissionHandler.Type;

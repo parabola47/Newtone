@@ -52,7 +52,7 @@
             app:fastScrollTrackColor="@color/colorScrollbarBackground"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
-            tools:listitem="@layout/item_album" />
+            tools:listitem="@layout/item_album_grid" />
 
     </LinearLayout>
 

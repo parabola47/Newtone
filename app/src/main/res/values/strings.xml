@@ -35,6 +35,8 @@
 
     <!--MAIN MENU-->
     <string name="menu_sorting_by">Sort by…</string>
+    <string name="menu_grid_view">Grid view</string>
+    <string name="menu_list_view">List view</string>
     <string name="menu_add_playlist">Add playlist</string>
     <string name="menu_settings">Settings</string>
 

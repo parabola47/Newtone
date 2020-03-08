@@ -3,10 +3,11 @@ package com.parabola.newtone.mvp.presenter;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactors.AlbumInteractor;
+import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabAlbumView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -25,6 +26,7 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
     @Inject AlbumInteractor albumInteractor;
     @Inject SortingRepository sortingRepo;
     @Inject TrackRepository trackRepo;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     @Inject SchedulerProvider schedulers;
 
@@ -37,7 +39,8 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
     @Override
     protected void onFirstViewAttach() {
         disposables.addAll(
-                observeAllAlbumsSorting(), observeTrackDeleting());
+                observeAllAlbumsSorting(), observeTrackDeleting(),
+                observeTabAlbumViewType());
     }
 
     @Override
@@ -59,6 +62,11 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
                 .flatMapSingle(deletedTrackId -> albumInteractor.getAll())
                 .observeOn(schedulers.ui())
                 .subscribe(getViewState()::refreshAlbums);
+    }
+
+    private Disposable observeTabAlbumViewType() {
+        return viewSettingsInteractor.observeTabAlbumViewType()
+                .subscribe(getViewState()::setViewType);
     }
 
     public void onItemClick(int albumId) {

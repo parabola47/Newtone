@@ -24,13 +24,17 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.data.PermissionChangeReceiver;
+import com.parabola.domain.settings.ViewSettingsInteractor;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.MainPresenter;
 import com.parabola.newtone.mvp.view.MainView;
+import com.parabola.newtone.ui.fragment.ArtistFragment;
 import com.parabola.newtone.ui.fragment.SettingFragment;
 import com.parabola.newtone.ui.fragment.Sortable;
+import com.parabola.newtone.ui.fragment.start.TabAlbumFragment;
 import com.parabola.newtone.ui.fragment.start.TabPlaylistFragment;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.skydoves.powermenu.MenuAnimation;
@@ -58,6 +62,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @BindView(R.id.player_toggle) ImageView playerToggle;
 
     @Inject MainRouter router;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     @InjectPresenter MainPresenter presenter;
 
@@ -122,6 +127,24 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         if (currentFragment instanceof Sortable)
             menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_sorting_by), R.drawable.ic_sorting));
 
+
+        //Показывать меню Вид списком/Вид сеткой на экранах с альбомами
+        if (currentFragment instanceof TabAlbumFragment) {
+            AlbumViewType viewType = viewSettingsInteractor.getTabAlbumViewType();
+            if (viewType == AlbumViewType.GRID) {
+                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_list_view), R.drawable.ic_list_view));
+            } else {
+                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_grid_view), R.drawable.ic_grid_view));
+            }
+        } else if (currentFragment instanceof ArtistFragment) {
+            AlbumViewType viewType = viewSettingsInteractor.getArtistAlbumsViewType();
+            if (viewType == AlbumViewType.GRID) {
+                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_list_view), R.drawable.ic_list_view));
+            } else {
+                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_grid_view), R.drawable.ic_grid_view));
+            }
+        }
+
         // Показываем пункт меню "Добавить плейлист" в табе плейлистов
         if (currentFragment instanceof TabPlaylistFragment)
             menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_add_playlist), R.drawable.ic_add_playlist));
@@ -144,7 +167,17 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     }
 
     private void handleSelectedMenu(PowerMenuItem menuItem, Fragment currentFragment) {
-        if (menuItem.getTitle().equals(getString(R.string.menu_settings))) {
+        if (menuItem.getTitle().equals(getString(R.string.menu_grid_view))) {
+            if (currentFragment instanceof TabAlbumFragment)
+                viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.GRID);
+            else if (currentFragment instanceof ArtistFragment)
+                viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.GRID);
+        } else if (menuItem.getTitle().equals(getString(R.string.menu_list_view))) {
+            if (currentFragment instanceof TabAlbumFragment)
+                viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.LIST);
+            else if (currentFragment instanceof ArtistFragment)
+                viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.LIST);
+        } else if (menuItem.getTitle().equals(getString(R.string.menu_settings))) {
             router.openSettings();
         } else if (menuItem.getTitle().equals(getString(R.string.menu_add_playlist))) {
             presenter.onClickMenuAddPlaylist();

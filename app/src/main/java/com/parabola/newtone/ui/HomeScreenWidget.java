@@ -11,7 +11,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.widget.RemoteViews;
 
-import com.parabola.domain.interactors.player.PlayerInteractor;
+import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;

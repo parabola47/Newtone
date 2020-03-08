@@ -46,7 +46,7 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
         int albumsCount = artist.getAlbumsCount();
 
         String tracksCountStr =
-                recyclerView.getContext().getResources().getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
+                recyclerView.getResources().getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
         String albumsCountStr =
                 recyclerView.getContext().getResources().getQuantityString(R.plurals.albums_count, albumsCount, albumsCount);
 

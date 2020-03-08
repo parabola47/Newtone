@@ -1,7 +1,7 @@
 package com.parabola.player_feature;
 
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.parabola.domain.interactors.player.PlayerSetting;
+import com.parabola.domain.interactor.player.PlayerSetting;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
