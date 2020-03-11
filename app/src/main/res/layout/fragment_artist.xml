@@ -43,8 +43,6 @@
             android:id="@+id/albums_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:columnWidth="100dp"
-            android:horizontalSpacing="10dp"
             android:nestedScrollingEnabled="false"
             android:splitMotionEvents="false"
             app:fastScrollThumbColor="@color/colorThumb"

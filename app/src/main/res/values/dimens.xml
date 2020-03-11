@@ -3,5 +3,4 @@
     <dimen name="custom_action_bar_height">64dp</dimen>
     <dimen name="track_item_album_corner_size">4dp</dimen>
     <dimen name="context_menu_min_width">216dp</dimen>
-    <dimen name="album_grid_view_side_padding">8dp</dimen>
 </resources>

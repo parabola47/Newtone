@@ -99,9 +99,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
                         columnsCount = ((int) widthDp / 200);
                     }
 
-                    int paddingPx = (int) getResources().getDimension(R.dimen.album_grid_view_side_padding);
-
-                    albumsAdapter.showAsGrid(columnsCount, paddingPx);
+                    albumsAdapter.showAsGrid(columnsCount);
                 });
                 break;
             default: throw new IllegalArgumentException(viewType.toString());

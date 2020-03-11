@@ -42,7 +42,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
     }
 
 
-    public void showAsGrid(int spanCount, int sidePadding) {
+    public void showAsGrid(int spanCount) {
         int scrollPosition = 0;
 
         // If a layout manager has already been set, get current scroll position.
@@ -54,7 +54,6 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recyclerView.getContext(), spanCount);
         viewType = GRID_VIEW_TYPE;
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setPadding(sidePadding, 0, sidePadding, 0);
         recyclerView.scrollToPosition(scrollPosition);
     }
 
@@ -70,7 +69,6 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(recyclerView.getContext());
         viewType = LIST_VIEW_TYPE;
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setPadding(0, 0, 0, 0);
         recyclerView.scrollToPosition(scrollPosition);
     }
 
