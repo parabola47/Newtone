@@ -5,33 +5,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.domain.model.Album;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabAlbumPresenter;
 import com.parabola.newtone.mvp.view.TabAlbumView;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.fragment.Sortable;
-import com.parabola.newtone.util.AndroidTool;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.parabola.newtone.util.AndroidTool.convertPixelsToDp;
+
 public final class TabAlbumFragment extends MvpAppCompatFragment
         implements TabAlbumView, Sortable {
 
-    private BaseAdapter<Album> albumsAdapter;
+    private AlbumAdapter albumsAdapter = new AlbumAdapter();
 
     @BindView(R.id.albums_list) RecyclerView albumsList;
 
@@ -48,17 +48,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         View layout = inflater.inflate(R.layout.fragment_tab_album, container, false);
         ButterKnife.bind(this, layout);
 
-        albumsAdapter = new AlbumAdapter();
-        albumsList.setAdapter((RecyclerView.Adapter) albumsAdapter);
-        albumsList.post(() -> {
-            int widthPx = albumsList.getWidth();
-            float widthDp = AndroidTool.convertPixelsToDp(widthPx, layout.getContext());
-            int columnsCount = 2;
-            if (widthDp > 500) {
-                columnsCount = ((int) widthDp / 200);
-            }
-            ((GridLayoutManager) albumsList.getLayoutManager()).setSpanCount(columnsCount);
-        });
+        albumsList.setAdapter(albumsAdapter);
 
         albumsAdapter.setItemClickListener(position -> {
             int albumId = albumsAdapter.get(position).getId();
@@ -92,6 +82,30 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     public void setSectionShowing(boolean enable) {
         albumsAdapter.setSectionEnabled(enable);
     }
+
+
+    @Override
+    public void setViewType(AlbumViewType viewType) {
+        switch (viewType) {
+            case LIST:
+                albumsAdapter.showAsList();
+                break;
+            case GRID:
+                albumsList.post(() -> {
+                    float widthDp = convertPixelsToDp(albumsList.getWidth(), requireContext());
+
+                    int columnsCount = 2;
+                    if (widthDp > 500) {
+                        columnsCount = ((int) widthDp / 200);
+                    }
+
+                    albumsAdapter.showAsGrid(columnsCount);
+                });
+                break;
+            default: throw new IllegalArgumentException(viewType.toString());
+        }
+    }
+
 
     @Override
     public String getListType() {

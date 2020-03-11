@@ -2,7 +2,7 @@ package com.parabola.newtone.mvp.presenter.fx;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.parabola.domain.interactors.player.AudioEffectsInteractor;
+import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
 

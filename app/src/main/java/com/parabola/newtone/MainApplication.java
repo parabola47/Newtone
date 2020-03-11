@@ -5,10 +5,10 @@ import android.content.Context;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.parabola.domain.interactors.SleepTimerInteractor;
-import com.parabola.domain.interactors.observer.ConsumerObserver;
-import com.parabola.domain.interactors.player.PlayerInteractor;
-import com.parabola.domain.interactors.type.Irrelevant;
+import com.parabola.domain.interactor.SleepTimerInteractor;
+import com.parabola.domain.interactor.observer.ConsumerObserver;
+import com.parabola.domain.interactor.player.PlayerInteractor;
+import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.newtone.di.ComponentFactory;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.ui.HomeScreenWidget;

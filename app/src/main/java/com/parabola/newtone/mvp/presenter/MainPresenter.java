@@ -3,7 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactors.player.PlayerInteractor;
+import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;

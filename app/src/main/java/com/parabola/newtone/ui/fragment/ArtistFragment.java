@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.domain.model.Album;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ArtistPresenter;
 import com.parabola.newtone.mvp.view.ArtistView;
@@ -26,6 +26,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.parabola.newtone.util.AndroidTool.convertPixelsToDp;
 
 public final class ArtistFragment extends BaseSwipeToBackFragment
         implements ArtistView, Sortable {
@@ -42,7 +44,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     @BindView(R.id.additional_info) TextView albumsCountTxt;
 
 
-    private BaseAdapter<Album> albumsAdapter;
+    private AlbumAdapter albumsAdapter = new AlbumAdapter();
 
     private static final String ARTIST_ID_ARG_KEY = "artistId";
 
@@ -74,7 +76,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         albumsAdapter = new AlbumAdapter();
-        albumsList.setAdapter((RecyclerView.Adapter) albumsAdapter);
+        albumsList.setAdapter(albumsAdapter);
 
         allTracksBar.setOnClickListener(view -> presenter.onClickAllTracks());
         albumsAdapter.setItemClickListener(position -> {
@@ -126,6 +128,29 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     @Override
     public void refreshAlbums(List<Album> albums) {
         albumsAdapter.replaceAll(albums);
+    }
+
+
+    @Override
+    public void setViewType(AlbumViewType viewType) {
+        switch (viewType) {
+            case LIST:
+                albumsAdapter.showAsList();
+                break;
+            case GRID:
+                albumsList.post(() -> {
+                    float widthDp = convertPixelsToDp(albumsList.getWidth(), requireContext());
+
+                    int columnsCount = 2;
+                    if (widthDp > 500) {
+                        columnsCount = ((int) widthDp / 200);
+                    }
+
+                    albumsAdapter.showAsGrid(columnsCount);
+                });
+                break;
+            default: throw new IllegalArgumentException(viewType.toString());
+        }
     }
 
     @Override

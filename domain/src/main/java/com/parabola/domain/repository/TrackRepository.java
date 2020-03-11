@@ -1,7 +1,7 @@
 package com.parabola.domain.repository;
 
 
-import com.parabola.domain.interactors.type.Irrelevant;
+import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Track;
 
 import java.util.List;

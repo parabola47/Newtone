@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioListener;
-import com.parabola.domain.interactors.player.AudioEffectsInteractor;
+import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 
 import java.util.ArrayList;
 import java.util.Collections;

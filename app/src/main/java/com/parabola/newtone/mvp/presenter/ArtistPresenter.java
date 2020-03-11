@@ -3,11 +3,12 @@ package com.parabola.newtone.mvp.presenter;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactors.AlbumInteractor;
+import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.ArtistView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -32,6 +33,8 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
     @Inject AlbumInteractor albumInteractor;
     @Inject TrackRepository trackRepo;
     @Inject SortingRepository sortingRepo;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
+
 
     @Inject SchedulerProvider schedulers;
 
@@ -47,6 +50,7 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
     protected void onFirstViewAttach() {
         disposables.addAll(
                 loadArtist(),
+                observeArtistAlbumsViewType(),
                 observeArtistAlbumsSorting(),
                 observeTrackDeleting());
     }
@@ -79,6 +83,11 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
                             getViewState().refreshAlbums(artistAlbumsEntry.getValue());
                         },
                         error -> router.backToRoot());
+    }
+
+    private Disposable observeArtistAlbumsViewType() {
+        return viewSettingsInteractor.observeArtistAlbumsViewType()
+                .subscribe(getViewState()::setViewType);
     }
 
 

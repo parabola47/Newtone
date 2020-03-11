@@ -2,7 +2,7 @@ package com.parabola.newtone.mvp.presenter;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.parabola.domain.interactors.player.PlayerSetting;
+import com.parabola.domain.interactor.player.PlayerSetting;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SettingView;
 import com.parabola.newtone.ui.router.MainRouter;

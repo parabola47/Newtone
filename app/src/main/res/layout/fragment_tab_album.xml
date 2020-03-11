@@ -6,8 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:contentDescription="@string/albums_list_content_desc"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
     android:splitMotionEvents="false"
     app:fastScrollAutoHide="true"
     app:fastScrollAutoHideDelay="500"
@@ -20,4 +18,4 @@
     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
     app:spanCount="2"
     tools:context=".ui.fragment.start.TabAlbumFragment"
-    tools:listitem="@layout/item_album" />
+    tools:listitem="@layout/item_album_grid" />

@@ -2,7 +2,7 @@ package com.parabola.newtone.mvp.presenter;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.parabola.domain.exceptions.AlreadyExistsException;
+import com.parabola.domain.exception.AlreadyExistsException;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.newtone.R;

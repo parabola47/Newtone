@@ -11,7 +11,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.parabola.data.model.TrackData;
-import com.parabola.domain.interactors.type.Irrelevant;
+import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.PermissionHandler;

@@ -1,4 +1,4 @@
-package com.parabola.domain.interactors.observer;
+package com.parabola.domain.interactor.observer;
 
 import java.util.concurrent.CountDownLatch;
 

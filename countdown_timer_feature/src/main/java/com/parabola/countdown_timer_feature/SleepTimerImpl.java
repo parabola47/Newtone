@@ -1,7 +1,7 @@
 package com.parabola.countdown_timer_feature;
 
-import com.parabola.domain.interactors.SleepTimerInteractor;
-import com.parabola.domain.interactors.type.Irrelevant;
+import com.parabola.domain.interactor.SleepTimerInteractor;
+import com.parabola.domain.interactor.type.Irrelevant;
 
 import java.util.concurrent.TimeUnit;
 

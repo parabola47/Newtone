@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.parabola.domain.interactors.player.AudioEffectsInteractor.EqBand;
+import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;

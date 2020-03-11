@@ -3,7 +3,7 @@ package com.parabola.newtone.mvp.view.fx;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
-import com.parabola.domain.interactors.player.AudioEffectsInteractor.EqBand;
+import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand;
 
 import java.util.List;
 
