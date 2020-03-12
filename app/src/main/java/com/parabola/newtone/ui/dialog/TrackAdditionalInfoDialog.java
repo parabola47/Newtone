@@ -98,7 +98,7 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
 
         Glide.with(this)
                 .load((Bitmap) track.getArtImage())
-                .placeholder(R.drawable.album_holder)
+                .placeholder(R.drawable.album_default)
                 .into(albumCoverImageView);
     }
 

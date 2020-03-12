@@ -45,11 +45,10 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textSize="20dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/player_toggle"
         app:layout_constraintRight_toLeftOf="@id/menu_button"
-        tools:ignore="SpUsage"
         tools:text="Larks' Tongues In Aspic (Part IV)" />
 
 
@@ -62,11 +61,10 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textSize="16dp"
+        android:textSize="14sp"
         app:layout_constraintLeft_toRightOf="@id/player_toggle"
         app:layout_constraintRight_toLeftOf="@id/menu_button"
         app:layout_constraintTop_toBottomOf="@id/guideline"
-        tools:ignore="SpUsage"
         tools:text="King Crimson" />
 
 

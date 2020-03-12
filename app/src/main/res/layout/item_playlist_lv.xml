@@ -15,11 +15,10 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textSize="18dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tracks_count"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpUsage"
         tools:text="favorites" />
 
     <TextView
@@ -29,11 +28,10 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textSize="14dp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:ignore="SpUsage"
         tools:text="58 tracks" />
 
     <androidx.appcompat.widget.AppCompatImageView

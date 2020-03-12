@@ -43,9 +43,12 @@
     <!--P L A Y E R    S C R E E N-->
     <color name="colorPlayerActionIconDefault">#AFAFAF</color>
     <color name="colorPlayerActionIconActive">@color/colorAccent</color>
-    <!--PLAYER SEEKBAR-->
+    <!--P L A Y E R    S E E K B A R-->
     <color name="colorThumbPlayer">#B0B0B0</color>
     <color name="colorProgress">@color/colorAccent</color>
     <color name="colorSeekBackground">#CCCCCC</color>
+    <!--D E F A U L T    A L B U M    C O V E R-->
+    <color name="colorDefaultAlbumBackground">#181818</color>
+    <color name="colorDefaultAlbumForeground">#383838</color>
 
 </resources>

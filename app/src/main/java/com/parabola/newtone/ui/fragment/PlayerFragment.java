@@ -369,7 +369,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
                     .subscribe(new BiConsumerSingleObserver<>(
                             (bitmap, throwable) -> Glide.with(albumCover)
                                     .load(bitmap)
-                                    .placeholder(R.drawable.album_holder)
+                                    .placeholder(R.drawable.album_default)
                                     .into(albumCover)));
 
             container.addView(albumCover, 0);

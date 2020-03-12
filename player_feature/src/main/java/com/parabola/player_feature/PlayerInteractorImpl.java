@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -36,7 +35,6 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +69,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private final Context context;
     private final TrackRepository trackRepo;
     private final Intent notificationClickIntent;
+    private final Bitmap defaultNotificationAlbumArt;
 
 
     private final Player.EventListener exoPlayerEventListener = new NewtonePlayerEventListener();
@@ -87,7 +86,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private static final long PLAYBACK_UPDATE_TIME_MS = 200;
 
     //TODO посмотреть время выполнения, возможно стоит оптимизировать
-    public PlayerInteractorImpl(Context context, TrackRepository trackRepo, Intent notificationClickIntent) {
+    public PlayerInteractorImpl(Context context, TrackRepository trackRepo, Intent notificationClickIntent, Bitmap defaultNotificationAlbumArt) {
         long startTime = System.currentTimeMillis();
         exoPlayer = new SimpleExoPlayer.Builder(context, new DefaultRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
@@ -95,6 +94,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         this.context = context;
         this.trackRepo = trackRepo;
         this.notificationClickIntent = notificationClickIntent;
+        this.defaultNotificationAlbumArt = defaultNotificationAlbumArt;
 
 
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -569,19 +569,10 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             Track track = getCurrentTrack(player);
             Bitmap image = track.getArtImage();
             if (image == null) {
-                image = getDefaultBitmap();
+                image = defaultNotificationAlbumArt;
             }
             return image;
         }
-    }
-
-    private WeakReference<Bitmap> defaultArtWeak;
-
-    private Bitmap getDefaultBitmap() {
-        if (defaultArtWeak == null || defaultArtWeak.get() == null) {
-            defaultArtWeak = new WeakReference<>(BitmapFactory.decodeResource(context.getResources(), R.drawable.album_holder));
-        }
-        return defaultArtWeak.get();
     }
 
 }

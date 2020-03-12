@@ -30,8 +30,8 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
 
     private int viewType = GRID_VIEW_TYPE;
 
-    public static final int GRID_VIEW_TYPE = 0;
-    public static final int LIST_VIEW_TYPE = 1;
+    private static final int GRID_VIEW_TYPE = 0;
+    private static final int LIST_VIEW_TYPE = 1;
 
     public AlbumAdapter() {
     }
@@ -116,7 +116,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .subscribe(new BiConsumerSingleObserver<>(
                         (bitmap, error) -> Glide.with(holder.albumCover)
                                 .load(bitmap)
-                                .placeholder(R.drawable.album_holder)
+                                .placeholder(R.drawable.album_default)
                                 .into(holder.albumCover)));
     }
 
@@ -141,7 +141,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .subscribe(new BiConsumerSingleObserver<>(
                         (bitmap, error) -> Glide.with(holder.albumCover)
                                 .load(bitmap)
-                                .placeholder(R.drawable.album_holder)
+                                .placeholder(R.drawable.album_default)
                                 .into(holder.albumCover)));
     }
 

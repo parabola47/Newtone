@@ -116,12 +116,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/drop_down"
-        tools:background="@drawable/album_holder" />
+        tools:background="@drawable/album_default" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/artist"
         style="@style/PlayerTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="36dp"
         android:clickable="true"
         android:focusable="true"
@@ -138,7 +138,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/album"
         style="@style/PlayerTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
@@ -155,7 +155,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
         style="@style/PlayerTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:clickable="true"
@@ -273,7 +273,7 @@
 
     <SeekBar
         android:id="@+id/seek_player"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="24dp"
         android:clickable="true"
         android:focusable="true"

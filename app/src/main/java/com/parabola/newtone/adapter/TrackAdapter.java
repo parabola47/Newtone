@@ -62,7 +62,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
                 .subscribe(new BiConsumerSingleObserver<>((bitmap, error) ->
                         Glide.with(holder.cover)
                                 .load(bitmap)
-                                .placeholder(R.drawable.album_holder)
+                                .placeholder(R.drawable.album_default)
                                 .into(holder.cover)));
 
         if (isSelected(holder.getAdapterPosition())) {

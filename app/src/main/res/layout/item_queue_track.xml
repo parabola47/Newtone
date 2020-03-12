@@ -2,25 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorListItemDefaultBackground"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/burger_img"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/queue_item_burger_content_desc"
         android:focusable="true"
         android:longClickable="true"
+        android:padding="8dp"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -37,11 +36,11 @@
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="@color/colorDefaultTrackTitle"
-        android:textSize="20dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/artist"
         app:layout_constraintLeft_toRightOf="@+id/burger_img"
         app:layout_constraintRight_toLeftOf="@+id/remove_img"
-        tools:ignore="SpUsage"
+        app:layout_constraintTop_toTopOf="@+id/burger_img"
         tools:text="Larks' Tongues In Aspic (Part IV)" />
 
     <TextView
@@ -53,11 +52,11 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textSize="14dp"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/burger_img"
         app:layout_constraintLeft_toRightOf="@+id/burger_img"
         app:layout_constraintRight_toLeftOf="@+id/remove_img"
         app:layout_constraintTop_toBottomOf="@+id/track_title"
-        tools:ignore="SpUsage"
         tools:text="King Crimson" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -66,12 +65,12 @@
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/queue_item_remove_content_desc"
         android:focusable="true"
         android:longClickable="true"
+        android:padding="8dp"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -24,7 +24,7 @@
             android:layout_width="108dp"
             android:layout_height="108dp"
             android:layout_margin="8dp"
-            tools:src="@drawable/album_holder"
+            tools:src="@drawable/album_default"
             android:contentDescription="@string/album_cover_desc" />
 
         <LinearLayout

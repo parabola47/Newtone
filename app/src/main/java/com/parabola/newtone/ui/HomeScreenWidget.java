@@ -7,9 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.widget.RemoteViews;
+
+import androidx.annotation.Nullable;
 
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
@@ -65,9 +66,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
         album = currentTrack.getAlbumTitle();
 
         Bitmap albumArt = currentTrack.getArtImage();
-        if (albumArt == null) {
-            albumArt = BitmapFactory.decodeResource(context.getResources(), R.drawable.album_holder);
-        }
+
         for (int widgetId : allWidgetIds) {
             setupWidget(context, appComponent, appWidgetManager, widgetId, title, artist, album,
                     albumArt, isNowPlaying, loopEnabled, shuffleEnabled);
@@ -79,7 +78,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
 
     private void setupWidget(Context context, AppComponent appComponent, AppWidgetManager appWidgetManager, int widgetId,
                              String trackTitle, String artistName, String albumTitle,
-                             Bitmap albumCover,
+                             @Nullable Bitmap albumCover,
                              boolean isNowPlaying, boolean isRepeatEnabled, boolean isShuffleEnabled) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.home_screen_widget);
@@ -87,8 +86,6 @@ public final class HomeScreenWidget extends AppWidgetProvider {
         remoteViews.setTextViewText(R.id.title, trackTitle);
         remoteViews.setTextViewText(R.id.artist, artistName);
         remoteViews.setTextViewText(R.id.album, albumTitle);
-
-        remoteViews.setImageViewResource(R.id.cover, R.drawable.album_holder);
 
 
         PendingIntent playNextTrackIntent = getPendingIntent(context, 0, appComponent.provideGoNextIntent(), 0);
@@ -116,7 +113,9 @@ public final class HomeScreenWidget extends AppWidgetProvider {
         remoteViews.setInt(R.id.shuffle, SET_COLOR_FILTER_METHOD_NAME, color);
         remoteViews.setOnClickPendingIntent(R.id.shuffle, getPendingIntent(context, 0, appComponent.provideToggleShuffleModeIntent(), 0));
 
-        remoteViews.setImageViewBitmap(R.id.cover, albumCover);
+        if (albumCover != null) remoteViews.setImageViewBitmap(R.id.cover, albumCover);
+        else remoteViews.setImageViewResource(R.id.cover, R.drawable.album_default);
+
 
         appWidgetManager.updateAppWidget(widgetId, remoteViews);
     }
