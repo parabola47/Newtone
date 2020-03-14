@@ -3,6 +3,7 @@ package com.parabola.newtone.ui.fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -24,14 +26,12 @@ import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
 import com.parabola.newtone.ui.view.LockableViewPager;
 import com.parabola.newtone.util.TimeFormatterTool;
-import com.skydoves.powermenu.MenuAnimation;
-import com.skydoves.powermenu.PowerMenu;
-import com.skydoves.powermenu.PowerMenuItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +47,6 @@ import io.reactivex.internal.observers.BiConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-import static com.parabola.newtone.util.NewtoneTool.constructDefaultContextMenu;
 
 public final class PlayerFragment extends MvpAppCompatFragment
         implements PlayerView {
@@ -70,7 +69,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @BindView(R.id.album_container) LockableViewPager albumCoverPager;
 
-    private AlbumCoverPagerAdapter albumCoverAdapter = new AlbumCoverPagerAdapter();
+    private final AlbumCoverPagerAdapter albumCoverAdapter = new AlbumCoverPagerAdapter();
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -122,44 +121,47 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @OnClick(R.id.track_settings)
     public void onClickTrackSettings() {
-        PowerMenu powerMenu = constructDefaultContextMenu(requireContext())
-                .setOnMenuItemClickListener((position, item) -> handleSelectedMenu(item))
-                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
-                .setLifecycleOwner(this)
-                .addItem(new PowerMenuItem(getString(R.string.player_menu_add_to_playlist), R.drawable.ic_add_playlist))
-                .addItem(new PowerMenuItem(getString(R.string.player_menu_lyrics), R.drawable.ic_lyrics))
-                .addItem(new PowerMenuItem(getString(R.string.player_menu_additional_info), R.drawable.ic_info))
-                .addItem(new PowerMenuItem(getString(R.string.player_menu_delete), R.drawable.ic_delete))
-                .addItem(new PowerMenuItem(getString(R.string.player_menu_share), R.drawable.ic_share))
-                .build();
+        ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
 
-        float minWidthPx = getResources().getDimension(R.dimen.context_menu_min_width);
-        if (powerMenu.getContentViewWidth() < (int) minWidthPx) {
-            powerMenu.setWidth((int) minWidthPx);
-        }
+        ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(requireContext(), R.menu.player_menu);
+        popupWindow.setAdapter(adapter);
+        popupWindow.setAnchorView(trackSettings);
+        popupWindow.setVerticalOffset(-trackSettings.getWidth());
+        popupWindow.setModal(true);
+        popupWindow.setWidth(adapter.measureContentWidth());
+        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
+            handleSelectedMenu(adapter.getItem(position));
+            popupWindow.dismiss();
+        });
 
-        powerMenu.showAsAnchorCenter(trackSettings);
+        popupWindow.show();
     }
 
-    private void handleSelectedMenu(PowerMenuItem menuItem) {
-        if (menuItem.getTitle().equals(getString(R.string.player_menu_add_to_playlist))) {
-            presenter.onClickMenuAddTrackToPlaylist();
-        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_lyrics))) {
-            presenter.onClickMenuLyrics();
-        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_additional_info))) {
-            presenter.onClickMenuAdditionalInfo();
-        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_delete))) {
-            AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.track_menu_delete_dialog_title)
-                    .setMessage(R.string.track_menu_delete_dialog_message)
-                    .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete())
-                    .setNegativeButton(R.string.dialog_cancel, null)
-                    .create();
-            dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_bg));
-            dialog.getWindow().setLayout((int) convertDpToPixel(250, requireContext()), ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.show();
-        } else if (menuItem.getTitle().equals(getString(R.string.player_menu_share))) {
-            presenter.onClickMenuShareTrack();
+    private void handleSelectedMenu(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.add_to_playlist:
+                presenter.onClickMenuAddTrackToPlaylist();
+                break;
+            case R.id.lyrics:
+                presenter.onClickMenuLyrics();
+                break;
+            case R.id.additional_info:
+                presenter.onClickMenuAdditionalInfo();
+                break;
+            case R.id.delete:
+                AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.track_menu_delete_dialog_title)
+                        .setMessage(R.string.track_menu_delete_dialog_message)
+                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete())
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .create();
+                dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_bg));
+                dialog.getWindow().setLayout((int) convertDpToPixel(250, requireContext()), ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.show();
+                break;
+            case R.id.share:
+                presenter.onClickMenuShareTrack();
+                break;
         }
     }
 
@@ -355,7 +357,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
         albumCoverAdapter.notifyDataSetChanged();
     }
 
-    private class AlbumCoverPagerAdapter extends PagerAdapter {
+    private static class AlbumCoverPagerAdapter extends PagerAdapter {
         private final List<Track> tracks = new ArrayList<>();
 
         @NonNull

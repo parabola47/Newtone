@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -28,6 +30,7 @@ import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.MainPresenter;
 import com.parabola.newtone.mvp.view.MainView;
@@ -37,9 +40,6 @@ import com.parabola.newtone.ui.fragment.Sortable;
 import com.parabola.newtone.ui.fragment.start.TabAlbumFragment;
 import com.parabola.newtone.ui.fragment.start.TabPlaylistFragment;
 import com.parabola.newtone.ui.router.MainRouter;
-import com.skydoves.powermenu.MenuAnimation;
-import com.skydoves.powermenu.PowerMenu;
-import com.skydoves.powermenu.PowerMenuItem;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import javax.inject.Inject;
@@ -47,8 +47,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.parabola.newtone.util.NewtoneTool.constructDefaultContextMenu;
 
 public final class MainActivity extends MvpAppCompatActivity implements MainView {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -114,72 +112,70 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     public void onClickMenuButton(ImageView menuButton) {
         Fragment currentFragment = router.currentFragment();
 
-        PowerMenu.Builder menuBuilder = constructDefaultContextMenu(this)
-                .setOnMenuItemClickListener((position, item) -> handleSelectedMenu(item, currentFragment))
-                .setAnimation(MenuAnimation.SHOWUP_BOTTOM_RIGHT)
-                .setLifecycleOwner(this);
+        ListPopupWindow popupWindow = new ListPopupWindow(this);
 
-        // Показываем пункт меню "Сортировать по", если его можно сортировать
-        if (currentFragment instanceof Sortable)
-            menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_sorting_by), R.drawable.ic_sorting));
-
-
-        //Показывать меню Вид списком/Вид сеткой на экранах с альбомами
-        if (currentFragment instanceof TabAlbumFragment) {
-            AlbumViewType viewType = viewSettingsInteractor.getTabAlbumViewType();
-            if (viewType == AlbumViewType.GRID) {
-                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_list_view), R.drawable.ic_list_view));
-            } else {
-                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_grid_view), R.drawable.ic_grid_view));
+        ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(this, R.menu.main_menu);
+        adapter.setMenuVisibility(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.sorting:
+                    return currentFragment instanceof Sortable;
+                case R.id.add_playlist:
+                    return currentFragment instanceof TabPlaylistFragment;
+                case R.id.grid_view:
+                    if (currentFragment instanceof TabAlbumFragment && viewSettingsInteractor.getTabAlbumViewType() == AlbumViewType.LIST)
+                        return true;
+                    if (currentFragment instanceof ArtistFragment && viewSettingsInteractor.getArtistAlbumsViewType() == AlbumViewType.LIST)
+                        return true;
+                    return false;
+                case R.id.list_view:
+                    if (currentFragment instanceof TabAlbumFragment && viewSettingsInteractor.getTabAlbumViewType() == AlbumViewType.GRID)
+                        return true;
+                    if (currentFragment instanceof ArtistFragment && viewSettingsInteractor.getArtistAlbumsViewType() == AlbumViewType.GRID)
+                        return true;
+                    return false;
+                case R.id.settings:
+                    return !router.hasInstanceInStack(SettingFragment.class);
             }
-        } else if (currentFragment instanceof ArtistFragment) {
-            AlbumViewType viewType = viewSettingsInteractor.getArtistAlbumsViewType();
-            if (viewType == AlbumViewType.GRID) {
-                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_list_view), R.drawable.ic_list_view));
-            } else {
-                menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_grid_view), R.drawable.ic_grid_view));
-            }
-        }
+            return false;
+        });
 
-        // Показываем пункт меню "Добавить плейлист" в табе плейлистов
-        if (currentFragment instanceof TabPlaylistFragment)
-            menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_add_playlist), R.drawable.ic_add_playlist));
+        popupWindow.setAdapter(adapter);
+        popupWindow.setAnchorView(menuButton);
+        popupWindow.setVerticalOffset(menuButton.getHeight());
+        popupWindow.setModal(true);
+        popupWindow.setWidth(adapter.measureContentWidth());
+        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
+            handleSelectedMenu(adapter.getItem(position), currentFragment);
+            popupWindow.dismiss();
+        });
 
-        // Скрываем пункт меню "Настройки" если он уже был открыт
-        if (!router.hasInstanceInStack(SettingFragment.class))
-            menuBuilder.addItem(new PowerMenuItem(getString(R.string.menu_settings), R.drawable.ic_setting));
-
-
-        PowerMenu powerMenu = menuBuilder.build();
-        if (powerMenu.getMenuListView().getCount() == 0) {
-            powerMenu.dismiss();
-        } else {
-            float minWidthPx = getResources().getDimension(R.dimen.context_menu_min_width);
-            if (powerMenu.getContentViewWidth() < (int) minWidthPx) {
-                powerMenu.setWidth((int) minWidthPx);
-            }
-            powerMenu.showAsAnchorCenter(menuButton, 0, -(powerMenu.getContentViewHeight() / 4));
-        }
+        popupWindow.show();
     }
 
-    private void handleSelectedMenu(PowerMenuItem menuItem, Fragment currentFragment) {
-        if (menuItem.getTitle().equals(getString(R.string.menu_grid_view))) {
-            if (currentFragment instanceof TabAlbumFragment)
-                viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.GRID);
-            else if (currentFragment instanceof ArtistFragment)
-                viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.GRID);
-        } else if (menuItem.getTitle().equals(getString(R.string.menu_list_view))) {
-            if (currentFragment instanceof TabAlbumFragment)
-                viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.LIST);
-            else if (currentFragment instanceof ArtistFragment)
-                viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.LIST);
-        } else if (menuItem.getTitle().equals(getString(R.string.menu_settings))) {
-            router.openSettings();
-        } else if (menuItem.getTitle().equals(getString(R.string.menu_add_playlist))) {
-            presenter.onClickMenuAddPlaylist();
-        } else if (menuItem.getTitle().equals(getString(R.string.menu_sorting_by))) {
-            String sortingListType = ((Sortable) currentFragment).getListType();
-            router.openSortingDialog(sortingListType);
+    private void handleSelectedMenu(MenuItem menuItem, Fragment currentFragment) {
+        switch (menuItem.getItemId()) {
+            case R.id.sorting:
+                Sortable sortable = (Sortable) currentFragment;
+                router.openSortingDialog(sortable.getListType());
+                break;
+            case R.id.grid_view:
+                if (currentFragment instanceof TabAlbumFragment)
+                    viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.GRID);
+                else if (currentFragment instanceof ArtistFragment)
+                    viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.GRID);
+                break;
+            case R.id.list_view:
+                if (currentFragment instanceof TabAlbumFragment)
+                    viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.LIST);
+                else if (currentFragment instanceof ArtistFragment)
+                    viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.LIST);
+                break;
+            case R.id.add_playlist:
+                presenter.onClickMenuAddPlaylist();
+                break;
+            case R.id.settings:
+                router.openSettings();
+                break;
         }
     }
 

@@ -66,6 +66,8 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
     private Disposable observePlaylistUpdates() {
         return playlistRepo.observePlaylistsUpdates()
                 .flatMapSingle(irrelevant -> trackInteractor.getByPlaylist(playlistId))
+                // ожидаем пока прогрузится анимация входа
+                .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {
@@ -101,6 +103,12 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     public void onClickBack() {
         router.goBack();
+    }
+
+    private volatile boolean enterSlideAnimationEnded = false;
+
+    public void onEnterSlideAnimationEnded() {
+        enterSlideAnimationEnded = true;
     }
 
     public void onClickTrackItem(List<Track> tracks, int selectedPosition) {

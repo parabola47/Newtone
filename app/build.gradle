@@ -57,6 +57,7 @@ dependencies {
     implementation 'com.simplecityapps:recyclerview-fastscroll:1.0.18'
 
     //    BUTTERKNIFE
+    //noinspection AnnotationProcessorOnCompilePath
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
@@ -85,7 +86,4 @@ dependencies {
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
     //    Round corner ProgressBar
     implementation 'com.akexorcist:RoundCornerProgressBar:2.0.3'
-
-    //    Popup menu
-    implementation "com.github.skydoves:powermenu:2.1.2"
 }

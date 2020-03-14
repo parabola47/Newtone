@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Playlist;
@@ -34,6 +35,8 @@ public final class PlaylistAdapter extends SimpleListAdapter<Playlist, PlaylistA
         String tracksCountText = holder.itemView.getResources()
                 .getQuantityString(R.plurals.tracks_count, playlist.size(), playlist.size());
         holder.tracksCount.setText(tracksCountText);
+        int backgroundColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.colorListItemDefaultBackground);
+        holder.itemView.setBackgroundColor(backgroundColor);
     }
 
     @Override

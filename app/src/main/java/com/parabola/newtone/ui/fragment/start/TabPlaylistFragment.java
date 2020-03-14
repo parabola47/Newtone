@@ -1,8 +1,6 @@
 package com.parabola.newtone.ui.fragment.start;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +19,7 @@ import com.parabola.domain.model.Playlist;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.PlaylistAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
@@ -67,36 +66,30 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
     }
 
 
-    public void showTrackContextMenu(ViewGroup rootView, float x, float y, int itemPosition) {
-        final View tmpView = new View(requireContext());
-        tmpView.setLayoutParams(new ViewGroup.LayoutParams(1, 1));
-        tmpView.setBackgroundColor(Color.TRANSPARENT);
-        tmpView.setX(x);
-        tmpView.setY(y);
-
-        rootView.addView(tmpView);
-
-
-        PopupMenu popupMenu = new PopupMenu(requireContext(), tmpView, Gravity.CENTER);
-        popupMenu.inflate(R.menu.playlist_menu);
-        popupMenu.setOnDismissListener(menu -> rootView.removeView(tmpView));
-
-
-        popupMenu.setOnMenuItemClickListener(item -> {
+    private void showTrackContextMenu(ViewGroup rootView, float x, float y, int itemPosition) {
+        ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
+        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.playlist_menu);
+        popupWindow.setAdapter(menuAdapter);
+        popupWindow.setAnchorView(rootView);
+        popupWindow.setHorizontalOffset((int) x);
+        popupWindow.setModal(true);
+        popupWindow.setWidth(menuAdapter.measureContentWidth());
+        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
             int playlistId = playlistAdapter.get(itemPosition).getId();
-
-            switch (item.getItemId()) {
+            switch (menuAdapter.getItem(position).getItemId()) {
                 case R.id.rename_playlist:
                     presenter.onClickMenuRenamePlaylist(playlistId);
-                    return true;
+                    break;
                 case R.id.delete_playlist:
                     presenter.onClickMenuDeletePlaylist(playlistId);
-                    return true;
-                default: return false;
+                    break;
             }
+            popupWindow.dismiss();
         });
+        popupWindow.setOnDismissListener(() -> playlistAdapter.invalidateItem(itemPosition));
 
-        popupMenu.show();
+        popupWindow.show();
+        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
     }
 
     @ProvidePresenter
@@ -111,16 +104,16 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
         playlistAdapter.replaceAll(playlists);
     }
 
-    public class SystemPlaylistAdapter extends RecyclerView.Adapter<SystemPlaylistAdapter.SystemPlaylistVh> {
+    public class SystemPlaylistAdapter extends RecyclerView.Adapter<SystemPlaylistAdapter.SystemPlaylistViewHolder> {
         @NonNull
         @Override
-        public SystemPlaylistAdapter.SystemPlaylistVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public SystemPlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_system_playlist, parent, false);
-            return new SystemPlaylistVh(view);
+            return new SystemPlaylistViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SystemPlaylistAdapter.SystemPlaylistVh holder, int position) {
+        public void onBindViewHolder(@NonNull SystemPlaylistViewHolder holder, int position) {
             switch (holder.getAdapterPosition()) {
                 case 0:
                     holder.icon.setImageResource(R.drawable.ic_favourite_white);
@@ -151,11 +144,11 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
             return 4;
         }
 
-        public class SystemPlaylistVh extends RecyclerView.ViewHolder {
+        class SystemPlaylistViewHolder extends RecyclerView.ViewHolder {
             @BindView(R.id.icon) ImageView icon;
             @BindView(R.id.title) TextView title;
 
-            public SystemPlaylistVh(@NonNull View itemView) {
+            SystemPlaylistViewHolder(@NonNull View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
             }

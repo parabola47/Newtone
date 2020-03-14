@@ -1,14 +1,13 @@
 package com.parabola.newtone.ui.fragment.start;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +18,7 @@ import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
@@ -72,68 +72,68 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
 
     private void showTrackContextMenu(ViewGroup rootView, float x, float y, int itemPosition) {
-        PopupMenu popupMenu = createPopupMenu(rootView, x, y, itemPosition);
-
         Track selectedTrack = tracksAdapter.get(itemPosition);
-        if (selectedTrack.isFavourite())
-            popupMenu.getMenu().findItem(R.id.add_to_favorites).setVisible(false);
-        else popupMenu.getMenu().findItem(R.id.remove_from_favourites).setVisible(false);
+        ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
+        ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(requireContext(), R.menu.track_menu);
 
-        popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.play:
-                    List<Track> tracks = tracksAdapter.getAll();
-                    presenter.onClickMenuPlay(tracks, itemPosition);
-                    return true;
-                case R.id.add_to_playlist:
-                    presenter.onClickMenuAddToPlaylist(selectedTrack.getId());
-                    return true;
+        adapter.setMenuVisibility(menuItem -> {
+            switch (menuItem.getItemId()) {
                 case R.id.add_to_favorites:
-                    presenter.onClickMenuAddToFavourites(selectedTrack.getId());
-                    return true;
+                    return !selectedTrack.isFavourite();
                 case R.id.remove_from_favourites:
-                    presenter.onClickMenuRemoveFromFavourites(selectedTrack.getId());
-                    return true;
-                case R.id.share_track:
-                    presenter.onClickMenuShareTrack(selectedTrack);
-                    return true;
-                case R.id.additional_info:
-                    presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
-                    return true;
-                case R.id.delete_track:
-                    AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.track_menu_delete_dialog_title)
-                            .setMessage(R.string.track_menu_delete_dialog_message)
-                            .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
-                            .setNegativeButton(R.string.dialog_cancel, null)
-                            .create();
-                    dialog.show();
-                    return true;
-                default: return false;
+                    return selectedTrack.isFavourite();
+                case R.id.remove_from_playlist:
+                    return false;
+                default: return true;
             }
         });
+        popupWindow.setAdapter(adapter);
+        popupWindow.setAnchorView(rootView);
+        popupWindow.setHorizontalOffset((int) x);
+        popupWindow.setModal(true);
+        popupWindow.setWidth(adapter.measureContentWidth());
+        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
+            handleSelectedMenu(adapter.getItem(position), selectedTrack, itemPosition);
+            popupWindow.dismiss();
+        });
+        popupWindow.setOnDismissListener(() -> tracksAdapter.invalidateItem(itemPosition));
 
-        popupMenu.show();
+        popupWindow.show();
+        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
     }
 
-    private PopupMenu createPopupMenu(ViewGroup rootView, float x, float y, int itemPosition) {
-        final View tmpView = new View(requireContext());
-        tmpView.setLayoutParams(new ViewGroup.LayoutParams(1, 1));
-        tmpView.setBackgroundColor(Color.TRANSPARENT);
-        tmpView.setX(x);
-        tmpView.setY(y);
 
-        rootView.addView(tmpView);
-        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
-
-        PopupMenu popupMenu = new PopupMenu(requireContext(), tmpView, Gravity.CENTER);
-        popupMenu.inflate(R.menu.track_menu);
-        popupMenu.setOnDismissListener(menu -> {
-            rootView.removeView(tmpView);
-            tracksAdapter.invalidateItem(itemPosition);
-        });
-
-        return popupMenu;
+    private void handleSelectedMenu(MenuItem menuItem, Track selectedTrack, int itemPosition) {
+        switch (menuItem.getItemId()) {
+            case R.id.play:
+                List<Track> tracks = tracksAdapter.getAll();
+                presenter.onClickMenuPlay(tracks, itemPosition);
+                break;
+            case R.id.add_to_playlist:
+                presenter.onClickMenuAddToPlaylist(selectedTrack.getId());
+                break;
+            case R.id.add_to_favorites:
+                presenter.onClickMenuAddToFavourites(selectedTrack.getId());
+                break;
+            case R.id.remove_from_favourites:
+                presenter.onClickMenuRemoveFromFavourites(selectedTrack.getId());
+                break;
+            case R.id.share_track:
+                presenter.onClickMenuShareTrack(selectedTrack);
+                break;
+            case R.id.additional_info:
+                presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
+                break;
+            case R.id.delete_track:
+                AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.track_menu_delete_dialog_title)
+                        .setMessage(R.string.track_menu_delete_dialog_message)
+                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .create();
+                dialog.show();
+                break;
+        }
     }
 
 

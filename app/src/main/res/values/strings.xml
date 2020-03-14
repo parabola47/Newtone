@@ -44,8 +44,8 @@
     <string name="track_menu_play">Play</string>
     <string name="track_menu_add_to_playlist">Add to playlist…</string>
     <string name="track_menu_remove_from_playlist">Remove from playlist</string>
-    <string name="track_menu_add_to_favourites">Add to Favourites</string>
-    <string name="track_menu_remove_from_favourites">Remove from Favourites</string>
+    <string name="track_menu_add_to_favourites">Favourite</string>
+    <string name="track_menu_remove_from_favourites">Not favourite</string>
     <string name="track_menu_share_track">Share</string>
     <string name="track_menu_additional_info">Additional Info</string>
     <string name="track_menu_share_track_intent_title">Share audio file</string>

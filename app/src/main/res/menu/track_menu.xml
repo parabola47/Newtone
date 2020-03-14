@@ -1,37 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/play"
+        android:icon="@drawable/ic_play"
         android:title="@string/track_menu_play" />
 
     <item
         android:id="@+id/add_to_playlist"
+        android:icon="@drawable/ic_add_playlist"
         android:title="@string/track_menu_add_to_playlist" />
 
     <item
         android:id="@+id/remove_from_playlist"
-        android:title="@string/track_menu_remove_from_playlist"
-        android:visible="false" />
+        android:icon="@drawable/ic_close"
+        android:title="@string/track_menu_remove_from_playlist" />
 
     <item
         android:id="@+id/add_to_favorites"
+        android:icon="@drawable/ic_favourite_white"
+        app:iconTint="@color/colorNewtoneWhite"
         android:title="@string/track_menu_add_to_favourites" />
 
     <item
         android:id="@+id/remove_from_favourites"
+        android:icon="@drawable/ic_favourite"
         android:title="@string/track_menu_remove_from_favourites" />
 
     <item
         android:id="@+id/share_track"
+        android:icon="@drawable/ic_share"
         android:title="@string/track_menu_share_track" />
 
     <item
         android:id="@+id/additional_info"
+        android:icon="@drawable/ic_info"
         android:title="@string/track_menu_additional_info" />
 
     <item
         android:id="@+id/delete_track"
+        android:icon="@drawable/ic_delete"
         android:title="@string/track_menu_delete" />
 
 </menu>

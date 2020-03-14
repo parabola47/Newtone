@@ -96,6 +96,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
+        android:scaleType="fitCenter"
         android:tint="@color/colorPlayerActionIconDefault"
         app:layout_constraintBottom_toBottomOf="@id/drop_down"
         app:layout_constraintRight_toRightOf="parent"
