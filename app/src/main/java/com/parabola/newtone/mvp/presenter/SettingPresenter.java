@@ -1,7 +1,5 @@
 package com.parabola.newtone.mvp.presenter;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.interactor.player.PlayerSetting;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SettingView;
@@ -11,6 +9,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import moxy.InjectViewState;
+import moxy.MvpPresenter;
 
 @InjectViewState
 public class SettingPresenter extends MvpPresenter<SettingView> {

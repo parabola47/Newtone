@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
@@ -24,6 +22,8 @@ import com.parabola.newtone.util.TimeFormatterTool;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenter;
 
 public final class TrackAdditionalInfoDialog extends BaseDialogFragment
         implements TrackAdditionalInfoView {

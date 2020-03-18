@@ -10,12 +10,13 @@ import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.parabola.newtone.R;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
 import com.r0adkll.slidr.model.SlidrPosition;
+
+import moxy.MvpAppCompatFragment;
 
 public abstract class BaseSwipeToBackFragment extends MvpAppCompatFragment {
     private static final String LOG_TAG = BaseSwipeToBackFragment.class.getSimpleName();

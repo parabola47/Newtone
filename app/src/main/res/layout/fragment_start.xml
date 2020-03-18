@@ -27,24 +27,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_artist"
+                android:contentDescription="@string/tab_artists"
                 android:text="@string/tab_artists" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_album"
+                android:contentDescription="@string/tab_albums"
                 android:text="@string/tab_albums" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_clef"
+                android:contentDescription="@string/tab_tracks"
                 android:text="@string/tab_tracks" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_playlist"
+                android:contentDescription="@string/tab_playlists"
                 android:text="@string/tab_playlists" />
 
         </com.google.android.material.tabs.TabLayout>

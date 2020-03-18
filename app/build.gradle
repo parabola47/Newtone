@@ -72,9 +72,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     //    MOXY
-    implementation 'tech.schoolhelper:moxy-x:1.7.0'
-    implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
-    annotationProcessor 'tech.schoolhelper:moxy-x-compiler:1.7.0'
+    implementation "com.github.moxy-community:moxy:2.1.2"
+    implementation "com.github.moxy-community:moxy-androidx:2.1.2"
+    annotationProcessor "com.github.moxy-community:moxy-compiler:2.1.2"
 
     //    STREAM JAVA 8 SUPPORT
     implementation 'net.sourceforge.streamsupport:streamsupport:1.7.1'

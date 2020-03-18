@@ -25,8 +25,7 @@
         app:layout_constraintBottom_toBottomOf="@id/drop_down"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@id/drop_down"
-        app:srcCompat="@drawable/ic_queue"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_queue" />
 
 
     <androidx.appcompat.widget.AppCompatImageButton
@@ -42,8 +41,7 @@
         app:layout_constraintBottom_toBottomOf="@id/drop_down"
         app:layout_constraintLeft_toRightOf="@id/queue"
         app:layout_constraintTop_toTopOf="@id/drop_down"
-        app:srcCompat="@drawable/ic_eq"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_eq" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/drop_down"
@@ -51,12 +49,12 @@
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
+        android:contentDescription="@string/drop_down_button_content_desc"
         android:focusable="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_drop"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_arrow_drop" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/favourite"
@@ -70,8 +68,7 @@
         app:layout_constraintBottom_toBottomOf="@id/drop_down"
         app:layout_constraintRight_toLeftOf="@id/timer"
         app:layout_constraintTop_toTopOf="@id/drop_down"
-        app:srcCompat="@drawable/ic_favourite"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_favourite" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/timer"
@@ -86,8 +83,7 @@
         app:layout_constraintBottom_toBottomOf="@id/drop_down"
         app:layout_constraintRight_toLeftOf="@+id/track_settings"
         app:layout_constraintTop_toTopOf="@id/drop_down"
-        app:srcCompat="@drawable/ic_timer"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_timer" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/track_settings"
@@ -101,8 +97,7 @@
         app:layout_constraintBottom_toBottomOf="@id/drop_down"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/drop_down"
-        app:srcCompat="@drawable/ic_setting"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_setting" />
 
     <com.parabola.newtone.ui.view.LockableViewPager
         android:id="@+id/album_container"
@@ -184,8 +179,7 @@
         app:layout_constraintStart_toEndOf="@id/album_container"
         app:layout_constraintTop_toTopOf="@+id/player_toggle"
         app:layout_constraintVertical_bias="0.5"
-        app:srcCompat="@drawable/ic_loop"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_loop" />
 
 
     <androidx.appcompat.widget.AppCompatImageButton
@@ -201,8 +195,7 @@
         app:layout_constraintStart_toEndOf="@+id/loop"
         app:layout_constraintTop_toTopOf="@+id/player_toggle"
         app:layout_constraintVertical_bias="0.5"
-        app:srcCompat="@drawable/ic_prev"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_prev" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/player_toggle"
@@ -215,8 +208,7 @@
         app:layout_constraintEnd_toStartOf="@+id/next_track"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/prev_track"
-        app:srcCompat="@drawable/ic_play"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_play" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/next_track"
@@ -231,8 +223,7 @@
         app:layout_constraintStart_toEndOf="@+id/player_toggle"
         app:layout_constraintTop_toTopOf="@+id/player_toggle"
         app:layout_constraintVertical_bias="0.5"
-        app:srcCompat="@drawable/ic_next"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_next" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/shuffle"
@@ -245,8 +236,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/next_track"
         app:layout_constraintTop_toTopOf="@+id/player_toggle"
-        app:srcCompat="@drawable/ic_shuffled"
-        tools:targetApi="lollipop" />
+        app:srcCompat="@drawable/ic_shuffled" />
 
     <TextView
         android:id="@+id/current_time"
@@ -271,7 +261,7 @@
         app:layout_constraintRight_toRightOf="@+id/seek_player"
         tools:text="10:26" />
 
-    <SeekBar
+    <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/seek_player"
         android:layout_width="0dp"
         android:layout_height="24dp"
@@ -285,8 +275,7 @@
         app:layout_constraintLeft_toRightOf="@id/album_container"
         app:layout_constraintRight_toRightOf="parent"
         tools:max="626"
-        tools:progress="181"
-        tools:targetApi="lollipop" />
+        tools:progress="181" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

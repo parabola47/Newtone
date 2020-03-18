@@ -1,7 +1,5 @@
 package com.parabola.newtone.mvp.presenter;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.repository.AlbumRepository;
@@ -16,6 +14,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import moxy.InjectViewState;
+import moxy.MvpPresenter;
 
 @InjectViewState
 public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
@@ -50,6 +50,7 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
 
     private Disposable observeAllAlbumsSorting() {
         return sortingRepo.observeAllAlbumsSorting()
+                .doOnNext(sorting -> { while (getViewState() == null) ; })
                 .doOnNext(sorting -> getViewState().setSectionShowing(sorting == AlbumRepository.Sorting.BY_TITLE))
                 .flatMapSingle(sorting -> albumInteractor.getAll())
                 .subscribeOn(schedulers.io())

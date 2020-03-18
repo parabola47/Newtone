@@ -15,8 +15,6 @@ import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
@@ -34,6 +32,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenter;
 
 public final class AlbumFragment extends BaseSwipeToBackFragment
         implements AlbumView, Sortable {

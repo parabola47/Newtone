@@ -236,7 +236,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
             return mediaExtractor.getTrackFormat(0)
                     .getInteger(MediaFormat.KEY_BIT_RATE) / 1000;
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             return 0;
         }
     };
@@ -247,7 +247,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
             return mediaExtractor.getTrackFormat(0)
                     .getInteger(MediaFormat.KEY_SAMPLE_RATE);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             return 0;
         }
     };

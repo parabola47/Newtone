@@ -205,6 +205,8 @@
     <string name="tracks_list_content_desc">Tracks list</string>
     <string name="folders_list_content_desc">Folders list</string>
     <string name="playlist_title_content_desc">Playlist title</string>
+    <string name="drop_down_button_content_desc">Drop down panel</string>
+    <string name="system_playlist_content_desc">System playlist</string>
     <string name="repeat_mode_content_desc">Repeat mode</string>
     <string name="shuffle_mode_content_desc">Shuffle mode</string>
     <string name="start_prev_content_desc">Start previous track</string>

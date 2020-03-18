@@ -14,8 +14,6 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.domain.model.Playlist;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
@@ -30,6 +28,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenter;
 
 public final class ChoosePlaylistDialog extends BaseDialogFragment
         implements ChoosePlaylistView {

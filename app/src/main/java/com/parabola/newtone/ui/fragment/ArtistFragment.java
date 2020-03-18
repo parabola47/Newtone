@@ -9,8 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.parabola.domain.model.Album;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
 import com.parabola.newtone.MainApplication;
@@ -26,6 +24,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.convertPixelsToDp;
 

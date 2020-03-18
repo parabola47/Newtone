@@ -1,7 +1,5 @@
 package com.parabola.newtone.mvp.presenter;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
@@ -9,6 +7,8 @@ import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import moxy.InjectViewState;
+import moxy.MvpPresenter;
 
 @InjectViewState
 public final class TrackAdditionalInfoPresenter extends MvpPresenter<TrackAdditionalInfoView> {

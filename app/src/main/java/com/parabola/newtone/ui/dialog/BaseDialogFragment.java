@@ -3,7 +3,7 @@ package com.parabola.newtone.ui.dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
-import com.arellomobile.mvp.MvpAppCompatDialogFragment;
+import moxy.MvpAppCompatDialogFragment;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
