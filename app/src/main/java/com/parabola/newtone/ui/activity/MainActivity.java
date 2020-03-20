@@ -203,12 +203,12 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     public void setPlaybackButtonAsPause() {
-        playerToggle.setImageResource(R.drawable.ic_pause);
+        playerToggle.setImageResource(R.drawable.ic_pause_accent);
     }
 
     @Override
     public void setPlaybackButtonAsPlay() {
-        playerToggle.setImageResource(R.drawable.ic_play);
+        playerToggle.setImageResource(R.drawable.ic_play_accent);
     }
 
     @Override

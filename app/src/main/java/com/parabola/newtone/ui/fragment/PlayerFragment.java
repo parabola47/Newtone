@@ -145,6 +145,9 @@ public final class PlayerFragment extends MvpAppCompatFragment
             case R.id.lyrics:
                 presenter.onClickMenuLyrics();
                 break;
+            case R.id.share:
+                presenter.onClickMenuShareTrack();
+                break;
             case R.id.additional_info:
                 presenter.onClickMenuAdditionalInfo();
                 break;
@@ -158,9 +161,6 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_bg));
                 dialog.getWindow().setLayout((int) convertDpToPixel(250, requireContext()), ViewGroup.LayoutParams.WRAP_CONTENT);
                 dialog.show();
-                break;
-            case R.id.share:
-                presenter.onClickMenuShareTrack();
                 break;
         }
     }

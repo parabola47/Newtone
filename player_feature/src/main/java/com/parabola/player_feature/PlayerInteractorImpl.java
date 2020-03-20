@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.interactor.player.PlayerSetting;
@@ -46,6 +47,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
@@ -64,6 +66,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private final ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource();
     private final DataSource.Factory dataSourceFactory = new FileDataSource.Factory();
     private final SimpleExoPlayer exoPlayer;
+    private final PlayerNotificationManager notificationManager;
 
 
     private final Context context;
@@ -107,7 +110,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
 
         MediaSessionCompat mediaSession = setupMediaSession(context);
-        PlayerNotificationManager notificationManager = setupNotificationManager(context, mediaSession);
+        notificationManager = setupNotificationManager(context, mediaSession);
 
 
         settingSaver = new PlayerSettingSaver(context);
@@ -127,11 +130,13 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
         //  Исключаем трек из плейлиста если он был удалён с устройства
         trackRepo.observeTrackDeleting()
-                .subscribe(this::removeAllById);
+                .subscribe(new ConsumerObserver<>(this::removeAllById));
 
         //  Восстанавливаем состояние плеера перед выходом из приложения
         trackRepo.getByIds(settingSaver.getSavedPlaylist())
-                .subscribe(tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()));
+                .subscribe(new ConsumerSingleObserver<>(
+                        tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()),
+                        null));
 
         PlayerService.playerInteractor = this;
 
@@ -221,7 +226,6 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         } else {
             isCurrentTrackChanged = currentTrackPosition() != trackPosition;
         }
-        exoPlayer.setPlayWhenReady(startImmediately);
         if (isCurrentTrackChanged) {
             exoPlayer.prepare(concatenatedSource);
             if (isPlaylistChanged) {
@@ -232,6 +236,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                 exoPlayer.seekTo(playbackPositionMs);
             }
         }
+        exoPlayer.setPlayWhenReady(startImmediately);
 
         settingSaver.setSavedPlaylist(concatenatedSource, trackPosition);
     }

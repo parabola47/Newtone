@@ -23,16 +23,12 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:background="@drawable/ic_play_background"
+        android:padding="4dp"
         android:contentDescription="@string/player_toggle_content_desc"
-        android:scaleType="center"
-        android:scaleX="0.75"
-        android:scaleY="0.75"
-        android:tint="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_play" />
+        app:srcCompat="@drawable/ic_play_accent" />
 
 
     <androidx.appcompat.widget.AppCompatTextView

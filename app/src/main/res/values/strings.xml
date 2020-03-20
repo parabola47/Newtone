@@ -47,7 +47,7 @@
     <string name="track_menu_add_to_favourites">Favourite</string>
     <string name="track_menu_remove_from_favourites">Not favourite</string>
     <string name="track_menu_share_track">Share</string>
-    <string name="track_menu_additional_info">Additional Info</string>
+    <string name="track_menu_additional_info">Additional info</string>
     <string name="track_menu_share_track_intent_title">Share audio file</string>
     <string name="track_menu_delete">Delete</string>
     <string name="track_menu_delete_dialog_title">Delete track?</string>
@@ -62,7 +62,7 @@
     <string name="player_menu_lyrics">Lyrics</string>
     <string name="player_menu_delete">Delete</string>
     <string name="player_menu_share">Share</string>
-    <string name="player_menu_additional_info">Additional Info</string>
+    <string name="player_menu_additional_info">Additional info</string>
 
     <!--               !!!!                 -->
     <!--          BLOCK OF SORTING          -->

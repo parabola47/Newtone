@@ -12,6 +12,11 @@
         android:title="@string/player_menu_lyrics" />
 
     <item
+        android:id="@+id/share"
+        android:icon="@drawable/ic_share"
+        android:title="@string/player_menu_share" />
+
+    <item
         android:id="@+id/additional_info"
         android:icon="@drawable/ic_info"
         android:title="@string/player_menu_additional_info" />
@@ -20,10 +25,5 @@
         android:id="@+id/delete"
         android:icon="@drawable/ic_delete"
         android:title="@string/player_menu_delete" />
-
-    <item
-        android:id="@+id/share"
-        android:icon="@drawable/ic_share"
-        android:title="@string/player_menu_share" />
 
 </menu>

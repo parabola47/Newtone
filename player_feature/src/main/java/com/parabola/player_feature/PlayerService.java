@@ -49,8 +49,8 @@ public class PlayerService extends Service {
 
             @Override
             public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                Intent intent = new Intent(PlayerService.this, PlayerService.class);
-                intent.setAction(ACTION_STOP_SERVICE);
+                Intent intent = new Intent(PlayerService.this, PlayerService.class)
+                        .setAction(ACTION_STOP_SERVICE);
                 startService(intent);
             }
         });
