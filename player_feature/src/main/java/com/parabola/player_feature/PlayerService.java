@@ -3,6 +3,7 @@ package com.parabola.player_feature;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -24,14 +25,12 @@ public class PlayerService extends Service {
 
 
     static PlayerInteractorImpl playerInteractor;
-    static boolean isRunning = false;
 
     private int notificationId;
     private Notification notification;
 
     @Override
     public void onCreate() {
-        isRunning = true;
         playerInteractor.setNewtonePlayerListener(new PlayerInteractorImpl.NewtonePlayerListener() {
 
             @Override
@@ -97,13 +96,20 @@ public class PlayerService extends Service {
 
     @Override
     public void onDestroy() {
-        isRunning = false;
         playerInteractor.setNewtonePlayerListener(null);
+    }
+
+    private LocalBinder binder = new LocalBinder();
+
+    private class LocalBinder extends Binder {
+        public PlayerService getService() {
+            return PlayerService.this;
+        }
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 }
