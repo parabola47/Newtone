@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -30,11 +29,9 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
 
     private int viewType = GRID_VIEW_TYPE;
 
-    private static final int GRID_VIEW_TYPE = 0;
-    private static final int LIST_VIEW_TYPE = 1;
+    private static final int GRID_VIEW_TYPE = R.layout.item_album_grid;
+    private static final int LIST_VIEW_TYPE = R.layout.item_album_list;
 
-    public AlbumAdapter() {
-    }
 
     @Override
     public int getItemViewType(int position) {
@@ -43,43 +40,26 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
 
 
     public void showAsGrid(int spanCount) {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (recyclerView.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recyclerView.getContext(), spanCount);
         viewType = GRID_VIEW_TYPE;
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.scrollToPosition(scrollPosition);
+        ((GridLayoutManager) recyclerView.getLayoutManager())
+                .setSpanCount(spanCount);
     }
 
     public void showAsList() {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (recyclerView.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(recyclerView.getContext());
         viewType = LIST_VIEW_TYPE;
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.scrollToPosition(scrollPosition);
+        ((GridLayoutManager) recyclerView.getLayoutManager())
+                .setSpanCount(1);
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = inflateByViewType(parent.getContext(), viewType, parent);
         switch (viewType) {
             case GRID_VIEW_TYPE:
-                return new GridAlbumViewHolder(inflateByViewType(parent.getContext(), R.layout.item_album_grid, parent));
+                return new GridAlbumViewHolder(itemView);
             case LIST_VIEW_TYPE:
-                return new ListAlbumViewHolder(inflateByViewType(parent.getContext(), R.layout.item_album_list, parent));
+                return new ListAlbumViewHolder(itemView);
             default: throw new IllegalStateException();
         }
     }

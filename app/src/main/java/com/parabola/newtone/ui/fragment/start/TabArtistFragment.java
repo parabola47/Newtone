@@ -34,7 +34,7 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
     @InjectPresenter TabArtistPresenter presenter;
 
-    private BaseAdapter<Artist> artistsAdapter;
+    private final BaseAdapter<Artist> artistsAdapter = new ArtistAdapter();
 
     public TabArtistFragment() {
         // Required empty public constructor
@@ -47,8 +47,6 @@ public final class TabArtistFragment extends MvpAppCompatFragment
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_tab_artist, container, false);
         ButterKnife.bind(this, layout);
-
-        artistsAdapter = new ArtistAdapter();
 
         artistsList.setAdapter((RecyclerView.Adapter) artistsAdapter);
         artistsList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));

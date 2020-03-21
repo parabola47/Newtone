@@ -26,12 +26,12 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-import static com.parabola.newtone.util.AndroidTool.convertPixelsToDp;
+import static com.parabola.newtone.util.AndroidTool.getScreenWidthDp;
 
 public final class TabAlbumFragment extends MvpAppCompatFragment
         implements TabAlbumView, Sortable {
 
-    private AlbumAdapter albumsAdapter = new AlbumAdapter();
+    private final AlbumAdapter albumsAdapter = new AlbumAdapter();
 
     @BindView(R.id.albums_list) RecyclerView albumsList;
 
@@ -88,24 +88,23 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     public void setViewType(AlbumViewType viewType) {
         switch (viewType) {
             case LIST:
-                albumsAdapter.showAsList();
+                albumsList.post(() -> albumsAdapter.showAsList());
                 break;
             case GRID:
-                albumsList.post(() -> {
-                    float widthDp = convertPixelsToDp(albumsList.getWidth(), requireContext());
-
-                    int columnsCount = 2;
-                    if (widthDp > 500) {
-                        columnsCount = ((int) widthDp / 200);
-                    }
-
-                    albumsAdapter.showAsGrid(columnsCount);
-                });
+                albumsList.post(() -> albumsAdapter.showAsGrid(calculateSpanCount()));
                 break;
             default: throw new IllegalArgumentException(viewType.toString());
         }
     }
 
+    private int calculateSpanCount() {
+        float widthDp = getScreenWidthDp(requireContext(), requireActivity().getWindowManager());
+
+        int columnsCount = 2;
+        if (widthDp > 500) columnsCount = ((int) widthDp / 200);
+
+        return columnsCount;
+    }
 
     @Override
     public String getListType() {

@@ -1,5 +1,6 @@
 package com.parabola.newtone.ui.base;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,12 @@ public abstract class BaseSwipeToBackFragment extends MvpAppCompatFragment {
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        Animation anim = AnimationUtils.loadAnimation(getActivity(), nextAnim);
+        Animation anim;
+        try {
+            anim = AnimationUtils.loadAnimation(getActivity(), nextAnim);
+        } catch (Resources.NotFoundException ex) {
+            return super.onCreateAnimation(transit, enter, nextAnim);
+        }
 
         anim.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationStart(Animation animation) {

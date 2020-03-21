@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -44,11 +45,15 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void setActivity(MainActivity activity) {
         this.activity = activity;
-        firstFragment = new StartFragment();
 
-        activity.getSupportFragmentManager().beginTransaction()
-                .add(R.id.nav_host_fragment, firstFragment)
-                .commit();
+        firstFragment = getInstance(StartFragment.class);
+        if (firstFragment == null) {
+            firstFragment = new StartFragment();
+
+            activity.getSupportFragmentManager().beginTransaction()
+                    .add(R.id.nav_host_fragment, firstFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -105,6 +110,16 @@ public final class MainRouterImpl implements MainRouter {
         }
 
         return false;
+    }
+
+    @Nullable
+    private <T extends Fragment> T getInstance(Class<T> fragment) {
+        for (Fragment f : activity.getSupportFragmentManager().getFragments()) {
+            if (fragment.isInstance(f)) {
+                return (T) f;
+            }
+        }
+        return null;
     }
 
     @Override

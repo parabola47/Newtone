@@ -24,18 +24,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-import static com.parabola.newtone.util.AndroidTool.convertPixelsToDp;
+import static com.parabola.newtone.util.AndroidTool.getScreenWidthDp;
 
 public final class ArtistFragment extends BaseSwipeToBackFragment
         implements ArtistView, Sortable {
     private static final String TAG = ArtistFragment.class.getSimpleName();
 
     @InjectPresenter ArtistPresenter presenter;
-
-    @BindView(R.id.all_tracks_bar) View allTracksBar;
 
     @BindView(R.id.tracks_count) TextView tracksCountTxt;
     @BindView(R.id.albums_list) RecyclerView albumsList;
@@ -44,7 +43,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     @BindView(R.id.additional_info) TextView albumsCountTxt;
 
 
-    private AlbumAdapter albumsAdapter = new AlbumAdapter();
+    private final AlbumAdapter albumsAdapter = new AlbumAdapter();
 
     private static final String ARTIST_ID_ARG_KEY = "artistId";
 
@@ -75,10 +74,8 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
         ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
         ButterKnife.bind(this, root);
 
-        albumsAdapter = new AlbumAdapter();
         albumsList.setAdapter(albumsAdapter);
 
-        allTracksBar.setOnClickListener(view -> presenter.onClickAllTracks());
         albumsAdapter.setItemClickListener(position -> {
             int albumId = albumsAdapter.get(position).getId();
             presenter.onAlbumItemClick(albumId);
@@ -87,6 +84,10 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
         return root;
     }
 
+    @OnClick(R.id.all_tracks_bar)
+    public void onClickAllTracksBar() {
+        presenter.onClickAllTracks();
+    }
 
     @Override
     protected void onClickBackButton() {
@@ -135,22 +136,22 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     public void setViewType(AlbumViewType viewType) {
         switch (viewType) {
             case LIST:
-                albumsAdapter.showAsList();
+                albumsList.post(() -> albumsAdapter.showAsList());
                 break;
             case GRID:
-                albumsList.post(() -> {
-                    float widthDp = convertPixelsToDp(albumsList.getWidth(), requireContext());
-
-                    int columnsCount = 2;
-                    if (widthDp > 500) {
-                        columnsCount = ((int) widthDp / 200);
-                    }
-
-                    albumsAdapter.showAsGrid(columnsCount);
-                });
+                albumsList.post(() -> albumsAdapter.showAsGrid(calculateSpanCount()));
                 break;
             default: throw new IllegalArgumentException(viewType.toString());
         }
+    }
+
+    private int calculateSpanCount() {
+        float widthDp = getScreenWidthDp(requireContext(), requireActivity().getWindowManager());
+
+        int columnsCount = 2;
+        if (widthDp > 500) columnsCount = ((int) widthDp / 200);
+
+        return columnsCount;
     }
 
     @Override

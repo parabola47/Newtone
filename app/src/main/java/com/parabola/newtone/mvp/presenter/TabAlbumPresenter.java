@@ -50,7 +50,6 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
 
     private Disposable observeAllAlbumsSorting() {
         return sortingRepo.observeAllAlbumsSorting()
-                .doOnNext(sorting -> { while (getViewState() == null) ; })
                 .doOnNext(sorting -> getViewState().setSectionShowing(sorting == AlbumRepository.Sorting.BY_TITLE))
                 .flatMapSingle(sorting -> albumInteractor.getAll())
                 .subscribeOn(schedulers.io())
