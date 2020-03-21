@@ -8,6 +8,7 @@ import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.MainView;
 import com.parabola.newtone.ui.router.MainRouter;
+import com.parabola.player_feature.PlayerInteractorImpl;
 
 import javax.inject.Inject;
 
@@ -46,6 +47,10 @@ public final class MainPresenter extends MvpPresenter<MainView> {
     @Override
     public void onDestroy() {
         disposables.dispose();
+    }
+
+    public void onFinishing() {
+        ((PlayerInteractorImpl) playerInteractor).closeNotificationIfPaused();
     }
 
     private Disposable observeCurrentTrack() {

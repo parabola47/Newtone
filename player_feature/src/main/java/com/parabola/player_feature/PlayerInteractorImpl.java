@@ -2,10 +2,13 @@ package com.parabola.player_feature;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
@@ -138,12 +141,25 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                         tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()),
                         null));
 
+        //закрываем уведомление, если очередь воспроизведения пуста
+        currentTracklistUpdate
+                .observeOn(AndroidSchedulers.from(exoPlayer.getApplicationLooper()))
+                .subscribe(new ConsumerObserver<>(trackIds -> {
+                    if (trackIds.isEmpty())
+                        clearNotificationManagerAndUnbindService();
+                }));
+
         PlayerService.playerInteractor = this;
 
         long endTime = System.currentTimeMillis();
         Log.d(LOG_TAG, "PLAYER INTERACTOR CONSTRUCTOR END EXECUTION WITH " + (endTime - startTime) + " MS");
     }
 
+
+    public void closeNotificationIfPaused() {
+        if (!isPlayWhenReady())
+            clearNotificationManagerAndUnbindService();
+    }
 
     private MediaSessionCompat setupMediaSession(Context context) {
         MediaSessionCompat mediaSession = new MediaSessionCompat(context, "Newtone");
@@ -163,7 +179,6 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                         context, NOTIFICATION_CHANNEL_ID, R.string.app_name, R.string.app_name, NOTIFICATION_ID,
                         mediaDescriptionAdapter, playerNotificationListener);
 
-        notificationManager.setPlayer(exoPlayer);
         notificationManager.setMediaSessionToken(mediaSession.getSessionToken());
         notificationManager.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         notificationManager.setUseNavigationActionsInCompactView(true);
@@ -189,6 +204,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             if (newtonePlayerListener != null) {
                 newtonePlayerListener.onNotificationCancelled(notificationId, dismissedByUser);
             }
+            clearNotificationManagerAndUnbindService();
         }
 
         @Override
@@ -472,6 +488,26 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         return playerSetting;
     }
 
+    private void clearNotificationManagerAndUnbindService() {
+        notificationManager.setPlayer(null);
+        if (isServiceBound) {
+            context.unbindService(serviceConnection);
+            isServiceBound = false;
+        }
+    }
+
+    private boolean isServiceBound = false;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            notificationManager.setPlayer(exoPlayer);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
     private class NewtonePlayerEventListener implements Player.EventListener {
 
         @Override
@@ -482,9 +518,10 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         }
 
         private void runServiceIfNeeded(boolean isPlaying) {
-            if (isPlaying && !PlayerService.isRunning) {
+            if (isPlaying && !isServiceBound) {
                 Intent intent = new Intent(context, PlayerService.class);
-                context.startService(intent);
+                context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+                isServiceBound = true;
             }
         }
 

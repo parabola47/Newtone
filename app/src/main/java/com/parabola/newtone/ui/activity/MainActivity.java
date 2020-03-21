@@ -87,6 +87,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     protected void onDestroy() {
+        if (isFinishing())
+            presenter.onFinishing();
         router.clearActivity();
         super.onDestroy();
     }
