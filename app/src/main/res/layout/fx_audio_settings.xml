@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingVertical="12dp"
     tools:context=".ui.dialog.fx.FxAudioSettingsFragment">
 
     <androidx.appcompat.widget.SwitchCompat

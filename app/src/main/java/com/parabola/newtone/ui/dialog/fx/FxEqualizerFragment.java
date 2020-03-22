@@ -5,10 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand;
@@ -34,7 +34,7 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
         implements TabEqualizerView {
 
     @BindView(R.id.eq_bands) RecyclerView eqBandList;
-    @BindView(R.id.eq_switcher) Switch eqSwitch;
+    @BindView(R.id.eq_switcher) SwitchCompat eqSwitch;
 
 
     private BandAdapter bandsAdapter = new BandAdapter();
