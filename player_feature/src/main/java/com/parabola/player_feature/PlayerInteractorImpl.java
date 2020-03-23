@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
@@ -94,7 +93,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     //TODO посмотреть время выполнения, возможно стоит оптимизировать
     public PlayerInteractorImpl(Context context, TrackRepository trackRepo, Intent notificationClickIntent, Bitmap defaultNotificationAlbumArt) {
         long startTime = System.currentTimeMillis();
-        exoPlayer = new SimpleExoPlayer.Builder(context, new DefaultRenderersFactory(context))
+        exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
                 .build();
         this.context = context;
@@ -192,10 +191,12 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     private PlayerNotificationManager.NotificationListener playerNotificationListener = new PlayerNotificationManager.NotificationListener() {
         @Override
+        @SuppressWarnings("deprecation")
         public void onNotificationStarted(int notificationId, Notification notification) {
         }
 
         @Override
+        @SuppressWarnings("deprecation")
         public void onNotificationCancelled(int notificationId) {
         }
 
