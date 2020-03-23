@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!--Файл, указывающий игнорируемые предупреждения от Android Studio-->
+    <!--После обновления файла необходимо в Android Studio выбрать действие "Sync Project with Gradle Files"-->
+
+    <issue id="UnusedAttribute" severity="ignore">
+        <ignore regexp="foreground" />
+        <ignore regexp="elevation" />
+    </issue>
+
+</lint>

@@ -1,10 +1,13 @@
 package com.parabola.newtone.ui.fragment.start;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
@@ -32,6 +35,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         implements TabAlbumView, Sortable {
 
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
+    private DividerItemDecoration verticalItemDecoration;
 
     @BindView(R.id.albums_list) RecyclerView albumsList;
 
@@ -41,6 +45,11 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        verticalItemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,10 +97,16 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     public void setViewType(AlbumViewType viewType) {
         switch (viewType) {
             case LIST:
-                albumsList.post(() -> albumsAdapter.showAsList());
+                albumsList.post(() -> {
+                    albumsAdapter.showAsList();
+                    albumsList.addItemDecoration(verticalItemDecoration);
+                });
                 break;
             case GRID:
-                albumsList.post(() -> albumsAdapter.showAsGrid(calculateSpanCount()));
+                albumsList.post(() -> {
+                    albumsList.removeItemDecoration(verticalItemDecoration);
+                    albumsAdapter.showAsGrid(calculateSpanCount());
+                });
                 break;
             default: throw new IllegalArgumentException(viewType.toString());
         }

@@ -1,5 +1,6 @@
 package com.parabola.newtone.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
@@ -44,6 +46,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
 
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
+    private DividerItemDecoration verticalItemDecoration;
 
     private static final String ARTIST_ID_ARG_KEY = "artistId";
 
@@ -63,6 +66,12 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     public int getArtistId() {
         return requireArguments().getInt(ARTIST_ID_ARG_KEY);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        verticalItemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
     }
 
     @NonNull
@@ -136,10 +145,16 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     public void setViewType(AlbumViewType viewType) {
         switch (viewType) {
             case LIST:
-                albumsList.post(() -> albumsAdapter.showAsList());
+                albumsList.post(() -> {
+                    albumsAdapter.showAsList();
+                    albumsList.addItemDecoration(verticalItemDecoration);
+                });
                 break;
             case GRID:
-                albumsList.post(() -> albumsAdapter.showAsGrid(calculateSpanCount()));
+                albumsList.post(() -> {
+                    albumsList.removeItemDecoration(verticalItemDecoration);
+                    albumsAdapter.showAsGrid(calculateSpanCount());
+                });
                 break;
             default: throw new IllegalArgumentException(viewType.toString());
         }
