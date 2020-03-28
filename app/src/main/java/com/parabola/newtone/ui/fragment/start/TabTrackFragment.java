@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
@@ -40,7 +40,7 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
     @InjectPresenter TabTrackPresenter presenter;
 
-    private final BaseAdapter<Track> tracksAdapter = new TrackAdapter();
+    private final TrackAdapter tracksAdapter = new TrackAdapter();
 
     public TabTrackFragment() {
         // Required empty public constructor
@@ -53,7 +53,7 @@ public final class TabTrackFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
 
-        tracksList.setAdapter((RecyclerView.Adapter) tracksAdapter);
+        tracksList.setAdapter(tracksAdapter);
         tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
@@ -146,6 +146,11 @@ public final class TabTrackFragment extends MvpAppCompatFragment
     @Override
     public void refreshTracks(List<Track> tracks) {
         tracksAdapter.replaceAll(tracks);
+    }
+
+    @Override
+    public void setItemViewSettings(ViewSettingsInteractor.TrackItemView viewSettings) {
+        tracksAdapter.setViewSettings(viewSettings);
     }
 
     @Override

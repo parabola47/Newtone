@@ -7,6 +7,7 @@ import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.AlbumView;
@@ -39,6 +40,7 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
     @Inject TrackInteractor trackInteractor;
     @Inject TrackRepository trackRepo;
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SortingRepository sortingRepo;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -53,6 +55,7 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
         disposables.addAll(
                 loadAlbum(),
                 observeCurrentTrack(), observeSortingUpdates(),
+                observeTrackItemViewUpdates(),
                 observeTrackDeleting());
     }
 
@@ -78,6 +81,11 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });
+    }
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
     }
 
     private Disposable observeTrackDeleting() {

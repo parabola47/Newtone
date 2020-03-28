@@ -4,6 +4,7 @@ import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.QueueView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -25,6 +26,7 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
     private boolean isFirstTracklistUpdate = true;
 
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
 
@@ -38,6 +40,7 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
     protected void onFirstViewAttach() {
         disposables.addAll(
                 observeTracklistUpdates(),
+                observeTrackItemViewUpdates(),
                 observeCurrentTrackUpdates(),
                 observeTrackRemoving(),
                 observeTrackMoving());
@@ -66,6 +69,13 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
                     }
                 });
     }
+
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
+    }
+
 
     private Disposable observeCurrentTrackUpdates() {
         return playerInteractor.onChangeCurrentTrackId()

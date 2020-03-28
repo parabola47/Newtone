@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import java8.util.Optional;
+
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.ViewHolder> {
 
@@ -37,6 +40,14 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
         return new ViewHolder(v);
     }
 
+    private ViewSettingsInteractor.TrackItemView trackItemView;
+
+    public void setViewSettings(ViewSettingsInteractor.TrackItemView trackItemView) {
+        this.trackItemView = trackItemView;
+        notifyDataSetChanged();
+    }
+
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
@@ -44,7 +55,11 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
 
         Track trackItem = get(holder.getAdapterPosition());
 
-        String trackTitle = Optional.ofNullable(trackItem.getTitle()).orElse(trackItem.getFileNameWithoutExtension());
+        if (trackItemView != null)
+            buildItemLayout(holder);
+
+        String trackTitle = Optional.ofNullable(trackItem.getTitle())
+                .orElse(trackItem.getFileNameWithoutExtension());
         holder.trackTitle.setText(trackTitle);
 
         String artistName = Optional.ofNullable(trackItem.getArtistName())
@@ -76,6 +91,14 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
             }
             return false;
         });
+    }
+
+    private void buildItemLayout(ViewHolder holder) {
+        holder.trackTitle.setTextSize(trackItemView.textSize);
+        holder.artist.setTextSize(trackItemView.textSize - 2);
+
+        int paddingPx = (int) convertDpToPixel(trackItemView.borderPadding, holder.itemView.getContext());
+        holder.itemView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
     }
 
     private final ItemTouchHelper touchHelper = new ItemTouchHelper(

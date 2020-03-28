@@ -6,6 +6,7 @@ import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.FolderRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.FolderView;
@@ -28,6 +29,7 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
     @Inject MainRouter router;
 
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject FolderRepository folderRepo;
     @Inject SortingRepository sortingRepo;
     @Inject TrackRepository trackRepo;
@@ -48,7 +50,10 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
         getViewState().setFolderPath(folderPath);
 
         disposables.addAll(
-                observeCurrentTrack(), observeFolderTracksSorting(), observeTrackDeleting());
+                observeCurrentTrack(),
+                observeFolderTracksSorting(),
+                observeTrackItemViewUpdates(),
+                observeTrackDeleting());
     }
 
     @Override
@@ -75,6 +80,11 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });
+    }
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
     }
 
     private Disposable observeTrackDeleting() {

@@ -2,6 +2,7 @@ package com.parabola.newtone.di.app.modules;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.parabola.countdown_timer_feature.SleepTimerImpl;
@@ -29,10 +30,11 @@ public final class InteractorModule {
 
     @Singleton
     @Provides
-    PlayerInteractor providePlayerInteractor(Context context, TrackRepository trackRepo,
+    PlayerInteractor providePlayerInteractor(Context context, SharedPreferences preferences,
+                                             TrackRepository trackRepo,
                                              @Named(IntentModule.OPEN_ACTIVITY_INTENT) Intent openActivityIntent,
                                              Bitmap defaultNotificationAlbumArt) {
-        return new PlayerInteractorImpl(context, trackRepo, openActivityIntent, defaultNotificationAlbumArt);
+        return new PlayerInteractorImpl(context, preferences, trackRepo, openActivityIntent, defaultNotificationAlbumArt);
     }
 
     @Singleton

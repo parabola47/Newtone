@@ -1,8 +1,8 @@
 package com.parabola.data.repository;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.PermissionHandler;
@@ -14,9 +14,6 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public final class SortingRepositoryImpl implements SortingRepository {
-
-
-    private static final String PREFS_NAME = "SortingRepositoryImpl";
 
     private final SharedPreferences prefs;
 
@@ -32,8 +29,8 @@ public final class SortingRepositoryImpl implements SortingRepository {
     private final BehaviorSubject<ArtistRepository.Sorting> allArtistsSorting;
 
 
-    public SortingRepositoryImpl(Context context, PermissionHandler accessRepo) {
-        this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    public SortingRepositoryImpl(SharedPreferences preferences, PermissionHandler accessRepo) {
+        this.prefs = preferences;
 
         allTracksSorting = BehaviorSubject.createDefault(allTracksSorting());
         albumTracksSorting = BehaviorSubject.createDefault(albumTracksSorting());
@@ -48,13 +45,7 @@ public final class SortingRepositoryImpl implements SortingRepository {
 
         //  Если предоставлен доступ к файлам, то сообщаем всем об обновлении списков
         accessRepo.observePermissionUpdates(Type.FILE_STORAGE)
-                .subscribe(hasFileStorageAccess -> {
-                    if (hasFileStorageAccess) {
-                        allArtistsSorting.onNext(allArtistsSorting.getValue());
-                        allAlbumsSorting.onNext(allAlbumsSorting.getValue());
-                        allTracksSorting.onNext(allTracksSorting.getValue());
-                    }
-                });
+                .subscribe(new ConsumerObserver<>(this::onFileStorageChangeAccess));
     }
 
     private static final String TRACKS_ALL = "TRACKS_ALL";
@@ -229,5 +220,13 @@ public final class SortingRepositoryImpl implements SortingRepository {
     @Override
     public Observable<ArtistRepository.Sorting> observeAllArtistsSorting() {
         return allArtistsSorting;
+    }
+
+    private void onFileStorageChangeAccess(boolean hasFileStorageAccess) {
+        if (hasFileStorageAccess) {
+            allArtistsSorting.onNext(allArtistsSorting.getValue());
+            allAlbumsSorting.onNext(allAlbumsSorting.getValue());
+            allTracksSorting.onNext(allTracksSorting.getValue());
+        }
     }
 }

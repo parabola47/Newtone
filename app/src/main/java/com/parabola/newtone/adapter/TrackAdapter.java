@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.R;
 import com.parabola.newtone.util.TimeFormatterTool;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -25,6 +26,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.observers.BiConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
+
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.TrackViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -38,12 +41,22 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         return new TrackViewHolder(v);
     }
 
+    private TrackItemView trackItemView;
+
+    public void setViewSettings(TrackItemView trackItemView) {
+        this.trackItemView = trackItemView;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull TrackViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         Context context = holder.itemView.getContext();
 
         Track trackItem = get(holder.getAdapterPosition());
+
+        if (trackItemView != null)
+            buildItemLayout(holder);
 
         String trackTitle = Optional.ofNullable(trackItem.getTitle())
                 .orElse(trackItem.getFileNameWithoutExtension());
@@ -55,15 +68,9 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
                 TimeFormatterTool.formatMillisecondsToMinutes(trackItem.getDurationMs()));
 
 
-        Single.fromCallable(trackItem::getArtImage)
-                .cast(Bitmap.class)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumerSingleObserver<>((bitmap, error) ->
-                        Glide.with(holder.cover)
-                                .load(bitmap)
-                                .placeholder(R.drawable.album_default)
-                                .into(holder.cover)));
+        if (trackItemView != null && trackItemView.isCoverShows)
+            loadCoverAsync(holder, trackItem);
+
 
         if (isSelected(holder.getAdapterPosition())) {
             holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
@@ -74,8 +81,47 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
             holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
             holder.itemView.setBackgroundResource(R.color.colorListItemDefaultBackground);
         }
-
     }
+
+    private void buildItemLayout(TrackViewHolder holder) {
+        if (trackItemView.isCoverShows) {
+            holder.cover.setVisibility(View.VISIBLE);
+
+            float coverCornersRadius = convertDpToPixel(trackItemView.coverCornersRadius, holder.itemView.getContext());
+            holder.cover.setShapeAppearanceModel(holder.cover.getShapeAppearanceModel().toBuilder()
+                    .setAllCorners(CornerFamily.ROUNDED, coverCornersRadius)
+                    .build());
+
+            int coverSizePx = (int) convertDpToPixel(trackItemView.coverSize, holder.itemView.getContext());
+            ViewGroup.LayoutParams params = holder.cover.getLayoutParams();
+            params.width = coverSizePx;
+            params.height = coverSizePx;
+            holder.cover.setLayoutParams(params);
+        } else {
+            holder.cover.setVisibility(View.GONE);
+        }
+
+        holder.trackTitle.setTextSize(trackItemView.textSize);
+        holder.artist.setTextSize(trackItemView.textSize - 2);
+        holder.duration.setTextSize(trackItemView.textSize - 4);
+
+
+        int paddingPx = (int) convertDpToPixel(trackItemView.borderPadding, holder.itemView.getContext());
+        holder.itemView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+    }
+
+    private void loadCoverAsync(TrackViewHolder holder, Track trackItem) {
+        Single.fromCallable(trackItem::getArtImage)
+                .cast(Bitmap.class)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BiConsumerSingleObserver<>((bitmap, error) ->
+                        Glide.with(holder.cover)
+                                .load(bitmap)
+                                .placeholder(R.drawable.album_default)
+                                .into(holder.cover)));
+    }
+
 
     @Override
     public char getSection(int position) {
@@ -102,9 +148,6 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         private TrackViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            cover.setShapeAppearanceModel(cover.getShapeAppearanceModel().toBuilder()
-                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.track_item_album_corner_size))
-                    .build());
         }
     }
 }

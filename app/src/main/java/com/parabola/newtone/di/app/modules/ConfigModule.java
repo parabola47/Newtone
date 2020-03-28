@@ -1,6 +1,6 @@
 package com.parabola.newtone.di.app.modules;
 
-import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.parabola.data.repository.SortingRepositoryImpl;
 import com.parabola.data.settings.ViewSettingsInteractorImpl;
@@ -18,14 +18,14 @@ public final class ConfigModule {
 
     @Singleton
     @Provides
-    SortingRepository provideTrackSortingRepository(Context context, PermissionHandler accessRepo) {
-        return new SortingRepositoryImpl(context, accessRepo);
+    SortingRepository provideTrackSortingRepository(SharedPreferences preferences, PermissionHandler accessRepo) {
+        return new SortingRepositoryImpl(preferences, accessRepo);
     }
 
     @Singleton
     @Provides
-    ViewSettingsInteractor provideViewSettingsInteractor(Context context) {
-        return new ViewSettingsInteractorImpl(context);
+    ViewSettingsInteractor provideViewSettingsInteractor(SharedPreferences preferences) {
+        return new ViewSettingsInteractorImpl(preferences);
     }
 
 }

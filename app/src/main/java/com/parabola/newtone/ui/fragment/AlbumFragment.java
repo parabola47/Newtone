@@ -17,9 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
@@ -47,7 +47,7 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
     @BindView(R.id.additional_info) TextView artistNameTxt;
     @BindView(R.id.image) ImageView albumCover;
 
-    private final BaseAdapter<Track> tracksAdapter = new TrackAdapter();
+    private final TrackAdapter tracksAdapter = new TrackAdapter();
 
     private static final String ALBUM_ID_ARG_KEY = "albumId";
 
@@ -80,7 +80,7 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
         ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
         ButterKnife.bind(this, root);
 
-        tracksList.setAdapter((RecyclerView.Adapter) tracksAdapter);
+        tracksList.setAdapter(tracksAdapter);
         tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         albumCover.setVisibility(View.VISIBLE);
 
@@ -195,6 +195,11 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
     @Override
     public void refreshTracks(List<Track> tracks) {
         tracksAdapter.replaceAll(tracks);
+    }
+
+    @Override
+    public void setItemViewSettings(TrackItemView itemViewSettings) {
+        tracksAdapter.setViewSettings(itemViewSettings);
     }
 
     @Override

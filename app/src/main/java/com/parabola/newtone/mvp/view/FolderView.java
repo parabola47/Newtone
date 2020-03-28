@@ -1,6 +1,7 @@
 package com.parabola.newtone.mvp.view;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface FolderView extends MvpView {
     void setFolderPath(String folderPath);
 
     void refreshTracks(List<Track> tracks);
+    void setItemViewSettings(TrackItemView viewSettings);
     void setSectionShowing(boolean enable);
 
     void setCurrentTrack(int trackId);

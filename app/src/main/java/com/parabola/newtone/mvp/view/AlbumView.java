@@ -1,6 +1,7 @@
 package com.parabola.newtone.mvp.view;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public interface AlbumView extends MvpView {
     void setAlbumArt(Object artCover);
 
     void refreshTracks(List<Track> tracks);
+    void setItemViewSettings(TrackItemView itemViewSettings);
 
     void setCurrentTrack(int trackId);
 }

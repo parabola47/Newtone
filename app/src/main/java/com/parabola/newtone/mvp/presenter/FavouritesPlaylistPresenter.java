@@ -5,6 +5,7 @@ import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.FavouritesPlaylistView;
@@ -23,11 +24,12 @@ import moxy.MvpPresenter;
 public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPlaylistView> {
 
     @Inject MainRouter router;
-    @Inject SchedulerProvider schedulers;
 
     @Inject TrackInteractor trackInteractor;
     @Inject TrackRepository trackRepo;
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject SchedulerProvider schedulers;
 
     private int currentTrackId = EmptyItems.NO_TRACK.getId();
 
@@ -40,7 +42,9 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
     @Override
     protected void onFirstViewAttach() {
         disposables.addAll(
-                observeFavouritesChanged(), observeCurrentTrackChanged(),
+                observeFavouritesChanged(),
+                observeTrackItemViewUpdates(),
+                observeCurrentTrackChanged(),
                 observeTrackDeleting());
     }
 
@@ -61,6 +65,12 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
                     getViewState().setCurrentTrack(currentTrackId);
                 });
     }
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
+    }
+
 
     private Disposable observeCurrentTrackChanged() {
         return playerInteractor.onChangeCurrentTrackId()

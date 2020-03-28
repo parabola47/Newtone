@@ -42,7 +42,10 @@ public interface MainRouter {
     void openQueueFromBackStackIfAvailable();
     void openFoldersList();
 
+    //    SETTINGS
     void openSettings();
+    void openTrackItemDisplaySettings();
+
 
     //    FROM FOLDERS LIST
     void openFolder(String folderPath);

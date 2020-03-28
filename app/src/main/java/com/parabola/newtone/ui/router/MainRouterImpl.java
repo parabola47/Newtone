@@ -22,6 +22,7 @@ import com.parabola.newtone.ui.dialog.SleepTimerDialog;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.dialog.TimeToSleepInfoDialog;
 import com.parabola.newtone.ui.dialog.TrackAdditionalInfoDialog;
+import com.parabola.newtone.ui.dialog.TrackItemDisplaySettingFragment;
 import com.parabola.newtone.ui.dialog.fx.AudioEffectsDialog;
 import com.parabola.newtone.ui.fragment.AlbumFragment;
 import com.parabola.newtone.ui.fragment.ArtistFragment;
@@ -116,7 +117,7 @@ public final class MainRouterImpl implements MainRouter {
     private <T extends Fragment> T getInstance(Class<T> fragment) {
         for (Fragment f : activity.getSupportFragmentManager().getFragments()) {
             if (fragment.isInstance(f)) {
-                return (T) f;
+                return fragment.cast(f);
             }
         }
         return null;
@@ -219,6 +220,18 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void openSettings() {
         SettingFragment fragment = new SettingFragment();
+
+        activity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
+                .add(R.id.nav_host_fragment, fragment)
+                .addToBackStack(null)
+                .setPrimaryNavigationFragment(fragment)
+                .commit();
+    }
+
+    @Override
+    public void openTrackItemDisplaySettings() {
+        TrackItemDisplaySettingFragment fragment = TrackItemDisplaySettingFragment.newInstance();
 
         activity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)

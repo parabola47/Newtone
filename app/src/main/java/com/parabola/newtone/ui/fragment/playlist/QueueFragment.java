@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
@@ -39,7 +40,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @BindView(R.id.tracks_list) RecyclerView queueList;
 
-    private final BaseAdapter<Track> queueAdapter = new QueueAdapter();
+    private final QueueAdapter queueAdapter = new QueueAdapter();
 
     public QueueFragment() {
         // Required empty public constructor
@@ -57,7 +58,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
         playlistTitle.setText(R.string.playlist_queue);
 
-        queueList.setAdapter((RecyclerView.Adapter) queueAdapter);
+        queueList.setAdapter(queueAdapter);
         queueList.addItemDecoration(
                 new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         queueAdapter.setItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
@@ -104,6 +105,12 @@ public final class QueueFragment extends BaseSwipeToBackFragment
             queueAdapter.replaceAll(tracks);
         }
     }
+
+    @Override
+    public void setItemViewSettings(TrackItemView viewSettings) {
+        queueAdapter.setViewSettings(viewSettings);
+    }
+
 
     private boolean isNewTracksIdenticalWithAdapter(List<Track> tracks) {
         if (tracks.size() != queueAdapter.size()) {

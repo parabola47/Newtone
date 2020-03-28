@@ -96,6 +96,11 @@ public final class SettingFragment extends BaseSwipeToBackFragment
         presenter.onClickNotificationArtworkShowSetting();
     }
 
+    @OnClick(R.id.track_item_view_bar)
+    public void onClickTrackItemViewSettings() {
+        presenter.onClickTrackItemViewSettings();
+    }
+
     @OnClick(R.id.privacy_policy_bar)
     public void onClickPrivacyPolicy() {
         presenter.onClickPrivacyPolicy();
@@ -103,6 +108,7 @@ public final class SettingFragment extends BaseSwipeToBackFragment
 
 
     private int appInfoBarClickCount = 0;
+
     @OnClick(R.id.app_info_bar)
     public void onClickAppInfoBar() {
         if (++appInfoBarClickCount % 10 == 0) {

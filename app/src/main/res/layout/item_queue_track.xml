@@ -41,7 +41,7 @@
         app:layout_constraintLeft_toRightOf="@+id/burger_img"
         app:layout_constraintRight_toLeftOf="@+id/remove_img"
         app:layout_constraintTop_toTopOf="@+id/burger_img"
-        tools:text="Larks' Tongues In Aspic (Part IV)" />
+        tools:text="@string/default_track_title" />
 
     <TextView
         android:id="@+id/artist"
@@ -57,7 +57,7 @@
         app:layout_constraintLeft_toRightOf="@+id/burger_img"
         app:layout_constraintRight_toLeftOf="@+id/remove_img"
         app:layout_constraintTop_toBottomOf="@+id/track_title"
-        tools:text="King Crimson" />
+        tools:text="@string/default_artist" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/remove_img"

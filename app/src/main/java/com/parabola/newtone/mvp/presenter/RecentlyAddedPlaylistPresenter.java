@@ -5,6 +5,7 @@ import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
@@ -27,6 +28,7 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -40,6 +42,7 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     public void onFirstViewAttach() {
         disposables.addAll(
                 refreshPlaylists(),
+                observeTrackItemViewUpdates(),
                 observeCurrentTrack(),
                 observeTrackDeleting());
     }
@@ -47,6 +50,12 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     @Override
     public void onDestroy() {
         disposables.dispose();
+    }
+
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
     }
 
     private Disposable observeCurrentTrack() {

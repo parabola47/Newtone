@@ -17,6 +17,7 @@ public class SettingPresenter extends MvpPresenter<SettingView> {
     @Inject MainRouter router;
 
     @Inject PlayerSetting playerSetting;
+
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     public SettingPresenter(AppComponent appComponent) {
@@ -52,6 +53,10 @@ public class SettingPresenter extends MvpPresenter<SettingView> {
 
     public void onClickNotificationArtworkShowSetting() {
         playerSetting.setNotificationArtworkShow(!playerSetting.isNotificationArtworkShow());
+    }
+
+    public void onClickTrackItemViewSettings() {
+        router.openTrackItemDisplaySettings();
     }
 
     public void onClickPrivacyPolicy() {

@@ -2,6 +2,7 @@ package com.parabola.newtone.di.app.modules;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -41,6 +42,15 @@ public final class AndroidAppModule {
     @Provides
     SchedulerProvider schedulerProvider() {
         return new SchedulerProviderImpl();
+    }
+
+
+    private static final String SHARED_PREFERENCES_NAME = "com.parabola.newtone.SHARED_PREFERENCES";
+
+    @Singleton
+    @Provides
+    SharedPreferences provideSharedPreferences(Context context) {
+        return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
     @Singleton

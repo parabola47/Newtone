@@ -6,6 +6,7 @@ import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabTrackView;
@@ -31,6 +32,7 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
     @Inject TrackInteractor trackInteractor;
     @Inject TrackRepository trackRepo;
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SortingRepository sortingRepo;
 
     @Inject SchedulerProvider schedulers;
@@ -47,6 +49,7 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
         disposables.addAll(
                 observeCurrentTrack(),
                 observeAllTracksSorting(),
+                observeTrackItemViewUpdates(),
                 observeTrackDeleting());
     }
 
@@ -72,6 +75,11 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });
+    }
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
     }
 
     private Disposable observeTrackDeleting() {

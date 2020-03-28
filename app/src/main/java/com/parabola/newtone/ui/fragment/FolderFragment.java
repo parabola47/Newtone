@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
@@ -35,7 +35,7 @@ import moxy.presenter.ProvidePresenter;
 public final class FolderFragment extends BaseSwipeToBackFragment
         implements FolderView, Sortable {
 
-    private final BaseAdapter<Track> tracksAdapter = new TrackAdapter();
+    private final TrackAdapter tracksAdapter = new TrackAdapter();
 
     @InjectPresenter FolderPresenter presenter;
 
@@ -51,7 +51,7 @@ public final class FolderFragment extends BaseSwipeToBackFragment
         ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
         ButterKnife.bind(this, root);
 
-        tracksList.setAdapter((RecyclerView.Adapter) tracksAdapter);
+        tracksList.setAdapter(tracksAdapter);
         tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         tracksAdapter.setItemClickListener(position -> presenter.onTrackClick(tracksAdapter.getAll(), position));
         tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
@@ -132,6 +132,11 @@ public final class FolderFragment extends BaseSwipeToBackFragment
                 .getQuantityString(R.plurals.tracks_count, tracks.size(), tracks.size());
 
         tracksCount.setText(tracksCountStr);
+    }
+
+    @Override
+    public void setItemViewSettings(TrackItemView viewSettings) {
+        tracksAdapter.setViewSettings(viewSettings);
     }
 
     @Override

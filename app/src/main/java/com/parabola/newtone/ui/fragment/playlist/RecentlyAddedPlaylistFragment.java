@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
@@ -35,7 +35,7 @@ import moxy.presenter.ProvidePresenter;
 public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         implements RecentlyAddedPlaylistView {
 
-    private final BaseAdapter<Track> tracklistAdapter = new TrackAdapter();
+    private final TrackAdapter tracklistAdapter = new TrackAdapter();
     @InjectPresenter RecentlyAddedPlaylistPresenter presenter;
 
 
@@ -57,7 +57,7 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
 
-        tracklistView.setAdapter((RecyclerView.Adapter) tracklistAdapter);
+        tracklistView.setAdapter(tracklistAdapter);
         tracklistView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         tracklistAdapter.setItemClickListener(position -> presenter.onClickTrackItem(
                 tracklistAdapter.getAll(), position));
@@ -84,6 +84,11 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         String tracksCount = getResources()
                 .getQuantityString(R.plurals.tracks_count, trackList.size(), trackList.size());
         songsCount.setText(tracksCount);
+    }
+
+    @Override
+    public void setItemViewSettings(TrackItemView viewSettings) {
+        tracklistAdapter.setViewSettings(viewSettings);
     }
 
     @Override

@@ -15,9 +15,12 @@
         android:id="@+id/cover"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/track_title"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/album_default" />
 
@@ -25,8 +28,6 @@
         android:id="@+id/track_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
@@ -36,14 +37,12 @@
         app:layout_constraintLeft_toRightOf="@id/cover"
         app:layout_constraintRight_toLeftOf="@id/song_duration"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Larks' Tongues In Aspic (Part IV)" />
+        tools:text="@string/default_track_title" />
 
     <TextView
         android:id="@+id/artist"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
@@ -52,7 +51,7 @@
         app:layout_constraintLeft_toLeftOf="@id/track_title"
         app:layout_constraintRight_toLeftOf="@id/song_duration"
         app:layout_constraintTop_toBottomOf="@id/track_title"
-        tools:text="King Crimson" />
+        tools:text="@string/default_artist" />
 
     <TextView
         android:id="@+id/song_duration"
@@ -62,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="10:26" />
+        tools:text="@string/default_duration" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

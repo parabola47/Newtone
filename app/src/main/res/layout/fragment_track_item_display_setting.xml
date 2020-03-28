@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:background="#444444"
+        android:gravity="center">
+
+        <include
+            android:id="@+id/trackHolder"
+            layout="@layout/item_track" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/textSizeBar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="8dp"
+                android:background="#222"
+                android:padding="4dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/textSizeSeekBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/track_item_text_size_setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textSizeValue"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/textSizeSeekBar"
+                    android:layout_alignBottom="@+id/textSizeSeekBar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    tools:text="16" />
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/textSizeSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/textSizeValue"
+                    android:layout_toLeftOf="@+id/textSizeValue"
+                    android:max="12"
+                    android:paddingVertical="4dp"
+                    tools:progress="4" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/borderPaddingBar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="4dp"
+                android:background="#222"
+                android:padding="4dp">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/borderPaddingSeekBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/track_item_border_padding_setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/borderPaddingValue"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/borderPaddingSeekBar"
+                    android:layout_alignBottom="@+id/borderPaddingSeekBar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    tools:text="16" />
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/borderPaddingSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/borderPaddingValue"
+                    android:layout_toLeftOf="@+id/borderPaddingValue"
+                    android:max="16"
+                    android:paddingVertical="4dp"
+                    tools:progress="8" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/showCoverBar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:background="#222"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:paddingHorizontal="16dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/showCoverSwitch"
+                    android:layout_toLeftOf="@id/showCoverSwitch"
+                    android:text="@string/track_item_show_cover_setting" />
+
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/showCoverSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/coverSizeBar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="4dp"
+                android:background="#222"
+                android:padding="4dp">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/coverSizeSeekBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/track_item_cover_size_setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/coverSizeValue"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/coverSizeSeekBar"
+                    android:layout_alignBottom="@+id/coverSizeSeekBar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    tools:text="40" />
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/coverSizeSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/coverSizeValue"
+                    android:layout_toLeftOf="@+id/coverSizeValue"
+                    android:max="32"
+                    android:paddingVertical="4dp"
+                    tools:progress="8" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/coverCornersBar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="4dp"
+                android:background="#222"
+                android:padding="4dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/coverCornersSeekBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/track_item_cover_corners_setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/coverCornersValue"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/coverCornersSeekBar"
+                    android:layout_alignBottom="@+id/coverCornersSeekBar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    tools:text="4" />
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/coverCornersSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/coverCornersValue"
+                    android:layout_toLeftOf="@+id/coverCornersValue"
+                    android:max="16"
+                    android:paddingVertical="4dp"
+                    tools:progress="4" />
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/setDefault"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/track_item_reset_to_default_button" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

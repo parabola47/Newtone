@@ -1,6 +1,7 @@
 package com.parabola.newtone.mvp.view;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import moxy.viewstate.strategy.StateStrategyType;
 public interface RecentlyAddedPlaylistView extends MvpView {
 
     void refreshTracks(List<Track> trackList);
+    void setItemViewSettings(TrackItemView viewSettings);
     void removeTrack(int trackId);
 
     void setCurrentTrack(int trackId);

@@ -1,6 +1,5 @@
 package com.parabola.player_feature;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -15,9 +14,6 @@ class PlayerSettingSaver {
     private static final String LOG_TAG = PlayerSettingSaver.class.getSimpleName();
 
     private SharedPreferences prefs;
-
-    private static final String SHARED_PREFERENCES_KEY = "com.parabola.player_feature.PlayerSettingSaver";
-
 
     private static final String NOTIFICATION_BACKGROUND_COLORIZED_KEY = "com.parabola.player_feature.NOTIFICATION_BACKGROUND_COLORIZED";
     private static final String NOTIFICATION_ARTWORK_SHOW_KEY = "com.parabola.player_feature.NOTIFICATION_ARTWORK_SHOW_KEY";
@@ -45,8 +41,8 @@ class PlayerSettingSaver {
     private static final String SAVED_EQ_BAND_ENABLED_KEY_FORMAT = "com.parabola.player_feature.SAVED_EQ_BAND_ENABLED_KEY_FORMAT%d";
 
 
-    PlayerSettingSaver(Context context) {
-        this.prefs = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    PlayerSettingSaver(SharedPreferences prefs) {
+        this.prefs = prefs;
     }
 
     void setNotificationBackgroundColorized(boolean colorized) {

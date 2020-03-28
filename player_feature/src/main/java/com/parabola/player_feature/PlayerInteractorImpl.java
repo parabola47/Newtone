@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.IBinder;
@@ -91,7 +92,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private static final long PLAYBACK_UPDATE_TIME_MS = 200;
 
     //TODO посмотреть время выполнения, возможно стоит оптимизировать
-    public PlayerInteractorImpl(Context context, TrackRepository trackRepo, Intent notificationClickIntent, Bitmap defaultNotificationAlbumArt) {
+    public PlayerInteractorImpl(Context context, SharedPreferences preferences,
+                                TrackRepository trackRepo, Intent notificationClickIntent, Bitmap defaultNotificationAlbumArt) {
         long startTime = System.currentTimeMillis();
         exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
@@ -115,7 +117,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         notificationManager = setupNotificationManager(context, mediaSession);
 
 
-        settingSaver = new PlayerSettingSaver(context);
+        settingSaver = new PlayerSettingSaver(preferences);
         audioEffects = new AudioEffectsInteractorImpl(exoPlayer, settingSaver);
         playerSetting = new PlayerSettingImpl(settingSaver, notificationManager);
 

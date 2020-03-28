@@ -151,7 +151,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
             super(itemView);
             ButterKnife.bind(this, itemView);
             albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
-                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.track_item_album_corner_size))
+                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.default_album_corner_size))
                     .build());
         }
     }
@@ -167,7 +167,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
             super(itemView);
             ButterKnife.bind(this, itemView);
             albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
-                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.track_item_album_corner_size))
+                    .setAllCorners(CornerFamily.ROUNDED, itemView.getResources().getDimension(R.dimen.default_album_corner_size))
                     .build());
         }
     }

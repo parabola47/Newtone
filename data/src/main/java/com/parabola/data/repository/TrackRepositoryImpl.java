@@ -1,7 +1,6 @@
 package com.parabola.data.repository;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -61,17 +60,15 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
     private final FavouriteTrackHelper favouriteTrackHelper;
 
-    private static final String TRACK_REPOSITORY_SHARED_PREFS_NAME = "TRACK_REPOSITORY_SHARED_PREFS";
-
-
-    public TrackRepositoryImpl(Context context, AlbumRepository albumRepo, PlaylistRepository playlistRepo, PermissionHandler accessRepo) {
-        this.contentResolver = context.getContentResolver();
+    public TrackRepositoryImpl(ContentResolver contentResolver, SharedPreferences preferences,
+                               AlbumRepository albumRepo, PlaylistRepository playlistRepo,
+                               PermissionHandler accessRepo) {
+        this.contentResolver = contentResolver;
         this.albumRepo = albumRepo;
         this.playlistRepo = playlistRepo;
         this.accessRepo = accessRepo;
 
-        SharedPreferences trackReposPrefs = context.getSharedPreferences(TRACK_REPOSITORY_SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        favouriteTrackHelper = new FavouriteTrackHelper(trackReposPrefs);
+        favouriteTrackHelper = new FavouriteTrackHelper(preferences);
     }
 
 
