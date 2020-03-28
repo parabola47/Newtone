@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
@@ -36,7 +36,7 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     @InjectPresenter PlaylistPresenter presenter;
 
-    private final BaseAdapter<Track> tracksAdapter = new TrackAdapter();
+    private final TrackAdapter tracksAdapter = new TrackAdapter();
 
 
     @BindView(R.id.tracks_list) RecyclerView tracksList;
@@ -64,7 +64,7 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
         ButterKnife.bind(this, root);
 
-        tracksList.setAdapter((RecyclerView.Adapter) tracksAdapter);
+        tracksList.setAdapter(tracksAdapter);
         tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
@@ -169,6 +169,11 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
     @Override
     public void refreshTracks(List<Track> tracks) {
         tracksAdapter.replaceAll(tracks);
+    }
+
+    @Override
+    public void setItemViewSettings(TrackItemView viewSettings) {
+        tracksAdapter.setViewSettings(viewSettings);
     }
 
     @Override

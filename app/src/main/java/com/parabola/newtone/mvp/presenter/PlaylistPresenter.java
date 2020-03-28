@@ -6,6 +6,7 @@ import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.PlaylistView;
@@ -26,6 +27,7 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
     @Inject MainRouter router;
 
     @Inject PlayerInteractor playerInteractor;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject PlaylistRepository playlistRepo;
     @Inject TrackInteractor trackInteractor;
     @Inject TrackRepository trackRepo;
@@ -47,6 +49,7 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
         disposables.addAll(
                 refreshPlaylistInfo(),
                 observePlaylistUpdates(),
+                observeTrackItemViewUpdates(),
                 observeCurrentTrackUpdates(),
                 observeTrackDeleting());
     }
@@ -75,6 +78,11 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });
+    }
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
     }
 
     private Disposable observeTrackDeleting() {
