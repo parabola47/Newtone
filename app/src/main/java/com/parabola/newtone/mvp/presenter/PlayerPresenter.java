@@ -95,7 +95,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                 .doOnNext(currentTrackId -> this.currentTrackId = currentTrackId)
                 //Пропускаем, если id текущего трека неверен
                 .filter(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
-                .flatMapSingle(currentTrackId -> trackRepo.getById(currentTrackId))
+                .flatMapSingle(trackRepo::getById)
                 .subscribe(track -> {
                     getViewState().setArtist(track.getArtistName());
                     getViewState().setAlbum(track.getAlbumTitle());

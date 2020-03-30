@@ -63,7 +63,7 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                 })
                 //Пропускаем, если id текущего трека неверен
                 .filter(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
-                .flatMapSingle(currentTrackId -> trackRepo.getById(currentTrackId))
+                .flatMapSingle(trackRepo::getById)
                 .subscribe(track -> {
                     getViewState().setDurationMax((int) track.getDurationMs());
                     getViewState().setDurationProgress((int) playerInteractor.playbackPosition());

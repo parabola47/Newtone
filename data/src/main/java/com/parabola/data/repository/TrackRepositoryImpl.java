@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.parabola.data.model.TrackData;
 import com.parabola.domain.interactor.type.Irrelevant;
+import com.parabola.domain.model.Playlist;
+import com.parabola.domain.model.Playlist.TrackItem;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.PermissionHandler;
@@ -104,6 +106,10 @@ public final class TrackRepositoryImpl implements TrackRepository {
                         new String[]{String.valueOf(trackId)},
                         null))
                 .doAfterSuccess(Cursor::close)
+                .doOnSuccess(cursor -> {
+                    if (cursor.getCount() == 0)
+                        throw new IllegalArgumentException("Track with id " + trackId + " not founded");
+                })
                 .map(cursor -> extractTracks(cursor).get(0));
     }
 
@@ -309,6 +315,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
                                 new String[]{filePath});
                     }
                 }))
+                .onErrorComplete()
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CallbackCompletableObserver(
                         () -> trackDeletingObserver.onNext(trackId)));
@@ -353,9 +360,11 @@ public final class TrackRepositoryImpl implements TrackRepository {
     @Override
     public Single<List<Track>> getByPlaylist(int playlistId) {
         return playlistRepo.getById(playlistId)
-                .flatMapObservable(playlist -> Observable.fromIterable(playlist.getPlaylistTracks()))
-                .map(trackItem -> getById(trackItem.getTrackId()).blockingGet())
-                .toList();
+                .map(Playlist::getPlaylistTracks)
+                .flatMapObservable(Observable::fromIterable)
+                .map(TrackItem::getTrackId)
+                .toList()
+                .flatMap(this::getByIds);
     }
 
     @Override
