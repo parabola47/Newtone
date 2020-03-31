@@ -27,6 +27,7 @@ import io.reactivex.Single;
 import io.reactivex.subjects.BehaviorSubject;
 
 import static android.provider.BaseColumns._ID;
+import static android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 import static android.provider.MediaStore.Audio.PlaylistsColumns.DATE_ADDED;
 import static android.provider.MediaStore.Audio.PlaylistsColumns.NAME;
 
@@ -61,7 +62,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
     public Single<Playlist> getById(int playlistId) {
         return Single.fromCallable(() -> {
                     try (Cursor cursor = contentResolver.query(
-                            MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+                            EXTERNAL_CONTENT_URI,
                             PLAYLIST_QUERY_SELECTIONS,
                             _ID + "=?", new String[]{String.valueOf(playlistId)}, null)) {
 
@@ -131,13 +132,33 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+                        EXTERNAL_CONTENT_URI,
                         PLAYLIST_QUERY_SELECTIONS,
                         null, null, null))
                 .doAfterSuccess(Cursor::close)
                 .map(this::extractPlaylistsFromCursor);
     }
 
+
+    @Override
+    public Single<List<Playlist>> getByQuery(String query, int limit) {
+        if (!accessRepo.hasPermission(Type.FILE_STORAGE))
+            return Single.just(Collections.emptyList());
+
+        String selection = NAME + " LIKE ?";
+
+        Uri uri = EXTERNAL_CONTENT_URI.buildUpon()
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+        return Single.fromCallable(() ->
+                contentResolver.query(
+                        uri,
+                        PLAYLIST_QUERY_SELECTIONS,
+                        selection, new String[]{"%" + query + "%"}, null))
+                .doAfterSuccess(Cursor::close)
+                .map(this::extractPlaylistsFromCursor);
+    }
 
     @Override
     public Single<Playlist> addNew(String newPlaylistTitle) {
@@ -147,7 +168,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                         return Single.error(new AlreadyExistsException("Playlist with title '" + newPlaylistTitle + "' already exists"));
                     return Single.just(createPlaylistValues(newPlaylistTitle));
                 })
-                .map(contentValues -> contentResolver.insert(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, contentValues))
+                .map(contentValues -> contentResolver.insert(EXTERNAL_CONTENT_URI, contentValues))
                 .map(Uri::getLastPathSegment)
                 .map(Integer::valueOf)
                 .doOnSuccess((integer) -> playlistsUpdates.onNext(Irrelevant.INSTANCE))
@@ -160,7 +181,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                 .fromCallable(() -> {
                     String SELECTION = NAME + "=? AND " + _ID + "!=?";
 
-                    try (Cursor cursor = contentResolver.query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, null,
+                    try (Cursor cursor = contentResolver.query(EXTERNAL_CONTENT_URI, null,
                             SELECTION, new String[]{newTitle, String.valueOf(playlistId)}, // ищем есть ли плейлист с таким именем, не учитывая текущий
                             null)) {
                         return cursor != null && cursor.getCount() > 0;
@@ -218,7 +239,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
     private boolean containPlaylist(String playlistTitle) {
         String SELECTION_BY_NAME = NAME + "=?";
 
-        try (Cursor cursor = contentResolver.query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, null,
+        try (Cursor cursor = contentResolver.query(EXTERNAL_CONTENT_URI, null,
                 SELECTION_BY_NAME, new String[]{playlistTitle},
                 null)) {
 

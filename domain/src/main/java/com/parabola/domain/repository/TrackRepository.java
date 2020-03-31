@@ -20,6 +20,8 @@ public interface TrackRepository {
         return getAll(null);
     }
 
+    Single<List<Track>> getByQuery(String query, int limit);
+
     Observable<Integer> observeTrackDeleting(); //возвращает id удалённого трека
     void deleteTrack(int trackId);
 

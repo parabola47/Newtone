@@ -34,6 +34,7 @@
 
 
     <!--MAIN MENU-->
+    <string name="menu_search">Search…</string>
     <string name="menu_sorting_by">Sort by…</string>
     <string name="menu_grid_view">Grid view</string>
     <string name="menu_list_view">List view</string>
@@ -182,6 +183,13 @@
     <string name="track_add_info_file_size_format">%d kB</string>
     <string name="track_add_info_bitrate_format">%d kbps</string>
     <string name="track_add_info_sample_rate_format">%d Hz</string>
+
+    <!--SEARCH SCREEN-->
+    <string name="search_bar_title">Search</string>
+    <string name="search_screen_artists_group">Artists</string>
+    <string name="search_screen_albums_group">Albums</string>
+    <string name="search_screen_tracks_group">Tracks</string>
+    <string name="search_screen_playlists_group">Playlists</string>
 
     <!--SETTING-->
     <string name="setting_title">Settings</string>

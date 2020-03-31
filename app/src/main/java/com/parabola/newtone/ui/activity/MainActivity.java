@@ -32,6 +32,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.MainPresenter;
 import com.parabola.newtone.mvp.view.MainView;
 import com.parabola.newtone.ui.fragment.ArtistFragment;
+import com.parabola.newtone.ui.fragment.SearchFragment;
 import com.parabola.newtone.ui.fragment.SettingFragment;
 import com.parabola.newtone.ui.fragment.Sortable;
 import com.parabola.newtone.ui.fragment.start.TabAlbumFragment;
@@ -119,6 +120,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(this, R.menu.main_menu);
         adapter.setMenuVisibility(menuItem -> {
             switch (menuItem.getItemId()) {
+                case R.id.search:
+                    return !router.hasInstanceInStack(SearchFragment.class);
                 case R.id.sorting:
                     return currentFragment instanceof Sortable;
                 case R.id.add_playlist:
@@ -151,11 +154,15 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
             popupWindow.dismiss();
         });
 
-        popupWindow.show();
+        if (adapter.getCount() > 0)
+            popupWindow.show();
     }
 
     private void handleSelectedMenu(MenuItem menuItem, Fragment currentFragment) {
         switch (menuItem.getItemId()) {
+            case R.id.search:
+                router.openSearchScreen();
+                break;
             case R.id.sorting:
                 Sortable sortable = (Sortable) currentFragment;
                 router.openSortingDialog(sortable.getListType());

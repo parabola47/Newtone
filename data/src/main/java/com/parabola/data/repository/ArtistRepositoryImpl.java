@@ -2,7 +2,7 @@ package com.parabola.data.repository;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.provider.MediaStore;
+import android.net.Uri;
 import android.util.Log;
 
 import com.parabola.data.model.ArtistData;
@@ -16,6 +16,13 @@ import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Single;
+
+import static android.provider.BaseColumns._ID;
+import static android.provider.MediaStore.Audio.ArtistColumns.ARTIST;
+import static android.provider.MediaStore.Audio.ArtistColumns.NUMBER_OF_ALBUMS;
+import static android.provider.MediaStore.Audio.ArtistColumns.NUMBER_OF_TRACKS;
+import static android.provider.MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+
 
 public final class ArtistRepositoryImpl implements ArtistRepository {
     private static final String TAG = ArtistRepositoryImpl.class.getSimpleName();
@@ -31,21 +38,21 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
 
 
     private final String[] ARTISTS_QUERY_SELECTIONS = new String[]{
-            MediaStore.Audio.Artists._ID,
-            MediaStore.Audio.Artists.ARTIST,
-            MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
-            MediaStore.Audio.Artists.NUMBER_OF_TRACKS,
+            _ID,
+            ARTIST,
+            NUMBER_OF_ALBUMS,
+            NUMBER_OF_TRACKS,
     };
 
 
-    private static final String SELECTION_BY_ID = MediaStore.Audio.Artists._ID + "=?";
+    private static final String SELECTION_BY_ID = _ID + "=?";
 
 
     @Override
     public Single<Artist> getById(int artistId) {
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                        EXTERNAL_CONTENT_URI,
                         ARTISTS_QUERY_SELECTIONS,
                         SELECTION_BY_ID,
                         new String[]{String.valueOf(artistId)},
@@ -63,7 +70,7 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
 
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                        EXTERNAL_CONTENT_URI,
                         ARTISTS_QUERY_SELECTIONS,
                         null,
                         null,
@@ -76,12 +83,32 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
         if (defaultSorting == null) return null;
 
         switch (defaultSorting) {
-            case BY_NAME: return MediaStore.Audio.Artists.ARTIST + " COLLATE NOCASE";
-            case BY_NAME_DESC: return MediaStore.Audio.Artists.ARTIST + " COLLATE NOCASE DESC";
-            case BY_TRACKS_COUNT: return MediaStore.Audio.Artists.NUMBER_OF_TRACKS + ", " + MediaStore.Audio.Artists.ARTIST + " COLLATE NOCASE";
-            case BY_TRACKS_COUNT_DESC: return MediaStore.Audio.Artists.NUMBER_OF_TRACKS + " DESC, " + MediaStore.Audio.Artists.ARTIST + " COLLATE NOCASE";
+            case BY_NAME: return ARTIST + " COLLATE NOCASE";
+            case BY_NAME_DESC: return ARTIST + " COLLATE NOCASE DESC";
+            case BY_TRACKS_COUNT: return NUMBER_OF_TRACKS + ", " + ARTIST + " COLLATE NOCASE";
+            case BY_TRACKS_COUNT_DESC: return NUMBER_OF_TRACKS + " DESC, " + ARTIST + " COLLATE NOCASE";
             default: return null;
         }
+    }
+
+    @Override
+    public Single<List<Artist>> getByQuery(String query, int limit) {
+        if (!accessRepo.hasPermission(Type.FILE_STORAGE)) {
+            return Single.just(Collections.emptyList());
+        }
+
+        String selection = ARTIST + " LIKE ?";
+
+        Uri uri = EXTERNAL_CONTENT_URI.buildUpon()
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+        return Single.fromCallable(() ->
+                contentResolver.query(
+                        uri, ARTISTS_QUERY_SELECTIONS,
+                        selection, new String[]{"%" + query + "%"}, null))
+                .doAfterSuccess(Cursor::close)
+                .map(this::extractArtists);
     }
 
     private List<Artist> extractArtists(Cursor cursor) {
@@ -96,10 +123,10 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
         do {
             ArtistData artist = new ArtistData();
 
-            artist.id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Artists._ID));
-            artist.name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST));
-            artist.albumsCount = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS));
-            artist.tracksCount = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
+            artist.id = cursor.getInt(cursor.getColumnIndex(_ID));
+            artist.name = cursor.getString(cursor.getColumnIndex(ARTIST));
+            artist.albumsCount = cursor.getInt(cursor.getColumnIndex(NUMBER_OF_ALBUMS));
+            artist.tracksCount = cursor.getInt(cursor.getColumnIndex(NUMBER_OF_TRACKS));
 
             result.add(artist);
         } while (cursor.moveToNext());

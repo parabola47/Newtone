@@ -15,6 +15,7 @@ import com.parabola.newtone.mvp.presenter.PlaylistPresenter;
 import com.parabola.newtone.mvp.presenter.QueuePresenter;
 import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
 import com.parabola.newtone.mvp.presenter.RenamePlaylistPresenter;
+import com.parabola.newtone.mvp.presenter.SearchPresenter;
 import com.parabola.newtone.mvp.presenter.SettingPresenter;
 import com.parabola.newtone.mvp.presenter.SleepTimerPresenter;
 import com.parabola.newtone.mvp.presenter.StartPresenter;
@@ -49,6 +50,8 @@ public interface AppComponentInjects {
     void inject(ArtistTracksPresenter presenter);
     void inject(PlayerPresenter presenter);
     void inject(FolderPresenter presenter);
+    void inject(SearchPresenter presenter);
+
 
     //  SETTINGS
     void inject(SettingPresenter presenter);

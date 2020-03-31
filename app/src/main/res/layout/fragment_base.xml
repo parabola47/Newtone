@@ -40,7 +40,7 @@
                     android:layout_marginRight="4dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/back_btn_content_desc"
-                    app:srcCompat="@drawable/ic_arrow_left"/>
+                    app:srcCompat="@drawable/ic_arrow_left" />
 
                 <ImageView
                     android:id="@+id/image"

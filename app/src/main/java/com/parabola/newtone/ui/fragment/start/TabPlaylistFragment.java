@@ -56,7 +56,7 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
         playlists.setAdapter((RecyclerView.Adapter) playlistAdapter);
         playlists.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        playlistAdapter.setItemClickListener(position -> presenter.onClickPlaylistItem(playlistAdapter.getAll().get(position).getId()));
+        playlistAdapter.setItemClickListener(position -> presenter.onClickPlaylistItem(playlistAdapter.get(position).getId()));
         playlistAdapter.setItemLongClickListener(this::showTrackContextMenu);
 
         sysPlaylists.setAdapter(sysPlaylistAdapter);

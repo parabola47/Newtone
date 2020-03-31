@@ -227,8 +227,14 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
         });
     }
 
+    protected RecyclerView.LayoutManager getLayoutManager() {
+        if (recyclerView == null)
+            return null;
+        return recyclerView.getLayoutManager();
+    }
 
     @Override
+    @CallSuper
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         recyclerView.setHasFixedSize(true);

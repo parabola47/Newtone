@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -163,6 +164,26 @@ public final class TrackRepositoryImpl implements TrackRepository {
                         EXTERNAL_CONTENT_URI,
                         TRACK_QUERY_SELECTIONS,
                         SELECTION_NON_HIDDEN_MUSIC, null, mapDefaultSorting(sorting)))
+                .doAfterSuccess(Cursor::close)
+                .map(this::extractTracks);
+    }
+
+    @Override
+    public Single<List<Track>> getByQuery(String query, int limit) {
+        if (!accessRepo.hasPermission(PermissionHandler.Type.FILE_STORAGE))
+            return Single.just(Collections.emptyList());
+
+        String selection = SELECTION_NON_HIDDEN_MUSIC + " AND " + TITLE + " LIKE ?";
+
+        Uri uri = EXTERNAL_CONTENT_URI.buildUpon()
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+        return Single.fromCallable(() ->
+                contentResolver.query(
+                        uri,
+                        TRACK_QUERY_SELECTIONS,
+                        selection, new String[]{"%" + query + "%"}, null))
                 .doAfterSuccess(Cursor::close)
                 .map(this::extractTracks);
     }

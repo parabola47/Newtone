@@ -14,6 +14,8 @@ public interface ArtistRepository {
         return getAll(null);
     }
 
+    Single<List<Artist>> getByQuery(String query, int limit);
+
 
     enum Sorting {
         BY_NAME, BY_NAME_DESC,

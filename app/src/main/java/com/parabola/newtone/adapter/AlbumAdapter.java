@@ -28,6 +28,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
         implements FastScrollRecyclerView.SectionedAdapter {
 
     private int viewType = GRID_VIEW_TYPE;
+    private int spanCount = 1;
 
     private static final int GRID_VIEW_TYPE = R.layout.item_album_grid;
     private static final int LIST_VIEW_TYPE = R.layout.item_album_list;
@@ -41,14 +42,24 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
 
     public void showAsGrid(int spanCount) {
         viewType = GRID_VIEW_TYPE;
-        ((GridLayoutManager) recyclerView.getLayoutManager())
-                .setSpanCount(spanCount);
+        this.spanCount = spanCount;
+        if (getLayoutManager() != null) {
+            ((GridLayoutManager) getLayoutManager()).setSpanCount(spanCount);
+        }
     }
 
     public void showAsList() {
         viewType = LIST_VIEW_TYPE;
-        ((GridLayoutManager) recyclerView.getLayoutManager())
-                .setSpanCount(1);
+        spanCount = 1;
+        if (getLayoutManager() != null) {
+            ((GridLayoutManager) getLayoutManager()).setSpanCount(spanCount);
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        ((GridLayoutManager) getLayoutManager()).setSpanCount(spanCount);
     }
 
     @NonNull

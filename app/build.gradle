@@ -29,7 +29,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     lintOptions {
-        lintConfig file("../lint.xml")
+        lintConfig file("../app/lint.xml")
     }
 }
 

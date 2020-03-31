@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import com.parabola.countdown_timer_feature.SleepTimerImpl;
 import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.interactor.ArtistInteractor;
+import com.parabola.domain.interactor.SearchInteractor;
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;
@@ -15,6 +16,7 @@ import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.interactor.player.PlayerSetting;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.ArtistRepository;
+import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.player_feature.PlayerInteractorImpl;
@@ -72,5 +74,12 @@ public final class InteractorModule {
     @Provides
     ArtistInteractor provideArtistInteractor(ArtistRepository artistRepo, SortingRepository sortingRepo) {
         return new ArtistInteractor(artistRepo, sortingRepo);
+    }
+
+    @Singleton
+    @Provides
+    SearchInteractor provideSearchInteractor(ArtistRepository artistRepo, AlbumRepository albumRepo,
+                                             TrackRepository trackRepo, PlaylistRepository playlistRepo) {
+        return new SearchInteractor(artistRepo, albumRepo, trackRepo, playlistRepo);
     }
 }

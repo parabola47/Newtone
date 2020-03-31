@@ -28,6 +28,7 @@ import com.parabola.newtone.ui.fragment.AlbumFragment;
 import com.parabola.newtone.ui.fragment.ArtistFragment;
 import com.parabola.newtone.ui.fragment.ArtistTracksFragment;
 import com.parabola.newtone.ui.fragment.FolderFragment;
+import com.parabola.newtone.ui.fragment.SearchFragment;
 import com.parabola.newtone.ui.fragment.SettingFragment;
 import com.parabola.newtone.ui.fragment.playlist.FavoritesPlaylistFragment;
 import com.parabola.newtone.ui.fragment.playlist.FoldersListFragment;
@@ -215,6 +216,16 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void openRequestStoragePermissionScreen() {
         activity.requestStoragePermission();
+    }
+
+    @Override
+    public void openSearchScreen() {
+        SearchFragment searchFragment = SearchFragment.newInstance();
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(R.id.nav_host_fragment, searchFragment)
+                .addToBackStack(null)
+                .setPrimaryNavigationFragment(searchFragment)
+                .commit();
     }
 
     @Override

@@ -15,6 +15,8 @@ public interface AlbumRepository {
         return getAll(null);
     }
 
+    Single<List<Album>> getByQuery(String query, int limit);
+
     Single<List<Album>> getByArtist(int artistId, Sorting sorting);
     default Single<List<Album>> getByArtist(int artistId) {
         return getByArtist(artistId, null);

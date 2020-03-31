@@ -34,6 +34,7 @@ public interface MainRouter {
     void openAlbumFromBackStackIfAvailable(int albumId);
     void openPlaylist(int playlistId);
     void openRequestStoragePermissionScreen();
+    void openSearchScreen();
     //    SYSTEM PLAYLISTS
     void openRecentlyAdded();
     void openFavourites();

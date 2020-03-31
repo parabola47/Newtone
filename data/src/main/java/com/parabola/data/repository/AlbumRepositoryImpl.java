@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 
@@ -34,6 +33,7 @@ import static android.provider.MediaStore.Audio.AlbumColumns.ARTIST;
 import static android.provider.MediaStore.Audio.AlbumColumns.ARTIST_ID;
 import static android.provider.MediaStore.Audio.AlbumColumns.LAST_YEAR;
 import static android.provider.MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS;
+import static android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
 public final class AlbumRepositoryImpl implements AlbumRepository {
     private static final String TAG = AlbumRepositoryImpl.class.getSimpleName();
@@ -66,7 +66,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     public Single<Album> getById(int albumId) {
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        EXTERNAL_CONTENT_URI,
                         ALBUM_QUERY_SELECTIONS,
                         SELECTION_BY_ID,
                         new String[]{String.valueOf(albumId)},
@@ -84,7 +84,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
 
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        EXTERNAL_CONTENT_URI,
                         ALBUM_QUERY_SELECTIONS,
                         null,
                         null,
@@ -108,10 +108,30 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
 
 
     @Override
+    public Single<List<Album>> getByQuery(String query, int limit) {
+        if (!accessRepo.hasPermission(Type.FILE_STORAGE)) {
+            return Single.just(Collections.emptyList());
+        }
+
+        String selection = ALBUM + " LIKE ?";
+
+        Uri uri = EXTERNAL_CONTENT_URI.buildUpon()
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+        return Single.fromCallable(() ->
+                contentResolver.query(
+                        uri, ALBUM_QUERY_SELECTIONS,
+                        selection, new String[]{"%" + query + "%"}, null))
+                .doAfterSuccess(Cursor::close)
+                .map(this::extractAlbums);
+    }
+
+    @Override
     public Single<List<Album>> getByArtist(int artistId, Sorting sorting) {
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        EXTERNAL_CONTENT_URI,
                         ALBUM_QUERY_SELECTIONS,
                         ARTIST_ID + "=?",
                         new String[]{String.valueOf(artistId)},
@@ -150,7 +170,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     private Bitmap extractBitmap(int albumId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
-                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId);
+                Uri uri = ContentUris.withAppendedId(EXTERNAL_CONTENT_URI, albumId);
                 Size size = new Size(700, 700);
 
                 return contentResolver
@@ -167,7 +187,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     //работает только в Android P и ниже
     private String getArtLink(int albumId) {
         try (Cursor cursor = contentResolver.query(
-                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                EXTERNAL_CONTENT_URI,
                 new String[]{ALBUM_ART},
                 SELECTION_BY_ID,
                 new String[]{String.valueOf(albumId)},
