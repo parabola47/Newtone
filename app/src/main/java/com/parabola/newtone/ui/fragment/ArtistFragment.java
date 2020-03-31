@@ -145,16 +145,12 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     public void setViewType(AlbumViewType viewType) {
         switch (viewType) {
             case LIST:
-                albumsList.post(() -> {
-                    albumsAdapter.showAsList();
-                    albumsList.addItemDecoration(verticalItemDecoration);
-                });
+                albumsAdapter.showAsList();
+                albumsList.addItemDecoration(verticalItemDecoration);
                 break;
             case GRID:
-                albumsList.post(() -> {
-                    albumsList.removeItemDecoration(verticalItemDecoration);
-                    albumsAdapter.showAsGrid(calculateSpanCount());
-                });
+                albumsList.removeItemDecoration(verticalItemDecoration);
+                albumsAdapter.showAsGrid(calculateSpanCount());
                 break;
             default: throw new IllegalArgumentException(viewType.toString());
         }
