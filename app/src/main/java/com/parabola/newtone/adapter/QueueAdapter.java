@@ -62,17 +62,18 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
                 .orElse(trackItem.getFileNameWithoutExtension());
         holder.trackTitle.setText(trackTitle);
 
-        String artistName = Optional.ofNullable(trackItem.getArtistName())
-                .orElse(context.getString(R.string.unknown_artist));
-        holder.artist.setText(artistName);
+        String additionalInfo = trackItemView.isAlbumTitleShows
+                ? context.getString(R.string.track_item_artist_with_album, trackItem.getArtistName(), trackItem.getAlbumTitle())
+                : trackItem.getArtistName();
+        holder.additionalTrackInfo.setText(additionalInfo);
 
         if (isSelected(holder.getAdapterPosition())) {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
+            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
             holder.itemView.setBackgroundResource(R.color.colorAccent);
             holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
             holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
         } else {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
             holder.itemView.setBackgroundResource(R.color.colorListItemDefaultBackground);
             holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
             holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
@@ -95,7 +96,7 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
 
     private void buildItemLayout(ViewHolder holder) {
         holder.trackTitle.setTextSize(trackItemView.textSize);
-        holder.artist.setTextSize(trackItemView.textSize - 2);
+        holder.additionalTrackInfo.setTextSize(trackItemView.textSize - 2);
 
         int paddingPx = (int) convertDpToPixel(trackItemView.borderPadding, holder.itemView.getContext());
         holder.itemView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
@@ -169,7 +170,7 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.track_title) TextView trackTitle;
-        @BindView(R.id.artist) TextView artist;
+        @BindView(R.id.additionalTrackInfo) TextView additionalTrackInfo;
         @BindView(R.id.burger_img) ImageView burgerImg;
         @BindView(R.id.remove_img) ImageView removeImg;
 

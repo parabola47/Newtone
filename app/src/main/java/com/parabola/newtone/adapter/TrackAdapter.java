@@ -61,9 +61,11 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         String trackTitle = Optional.ofNullable(trackItem.getTitle())
                 .orElse(trackItem.getFileNameWithoutExtension());
         holder.trackTitle.setText(trackTitle);
-        String artistName = Optional.ofNullable(trackItem.getArtistName())
-                .orElse(context.getString(R.string.unknown_artist));
-        holder.artist.setText(artistName);
+        String additionalInfo = trackItemView.isAlbumTitleShows
+                ? context.getString(R.string.track_item_artist_with_album, trackItem.getArtistName(), trackItem.getAlbumTitle())
+                : trackItem.getArtistName();
+
+        holder.additionalTrackInfo.setText(additionalInfo);
         holder.duration.setText(
                 TimeFormatterTool.formatMillisecondsToMinutes(trackItem.getDurationMs()));
 
@@ -73,11 +75,11 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
 
 
         if (isSelected(holder.getAdapterPosition())) {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
+            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
             holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
             holder.itemView.setBackgroundResource(R.color.colorAccent);
         } else {
-            holder.artist.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
             holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
             holder.itemView.setBackgroundResource(R.color.colorListItemDefaultBackground);
         }
@@ -102,7 +104,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         }
 
         holder.trackTitle.setTextSize(trackItemView.textSize);
-        holder.artist.setTextSize(trackItemView.textSize - 2);
+        holder.additionalTrackInfo.setTextSize(trackItemView.textSize - 2);
         holder.duration.setTextSize(trackItemView.textSize - 4);
 
 
@@ -141,7 +143,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
     static class TrackViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.track_title) TextView trackTitle;
-        @BindView(R.id.artist) TextView artist;
+        @BindView(R.id.additionalTrackInfo) TextView additionalTrackInfo;
         @BindView(R.id.song_duration) TextView duration;
         @BindView(R.id.cover) ShapeableImageView cover;
 

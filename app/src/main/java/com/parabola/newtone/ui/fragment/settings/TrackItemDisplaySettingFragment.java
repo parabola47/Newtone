@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.fragment.settings;
 
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -27,6 +27,7 @@ import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import javax.inject.Inject;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -43,7 +44,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     @BindView(R.id.cover) ShapeableImageView cover;
     @BindView(R.id.track_title) TextView trackTitle;
-    @BindView(R.id.artist) TextView artist;
+    @BindView(R.id.additionalTrackInfo) TextView additionalTrackInfo;
     @BindView(R.id.song_duration) TextView duration;
     @BindView(R.id.trackHolder) View trackHolder;
 
@@ -60,7 +61,10 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @BindView(R.id.borderPaddingSeekBar) SeekBar borderPaddingSeekBar;
 
     @BindView(R.id.showCoverSwitch) SwitchCompat showCoverSwitch;
+    @BindView(R.id.showAlbumTitleSwitch) SwitchCompat showAlbumTitleSwitch;
 
+    @BindString(R.string.default_artist) String defaultArtist;
+    @BindString(R.string.default_album) String defaultAlbum;
 
     @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject MainRouter router;
@@ -89,7 +93,6 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
         cover.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.album_default));
         trackTitle.setText(R.string.default_track_title);
-        artist.setText(R.string.default_artist);
         duration.setText(R.string.default_duration);
         trackHolder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorListItemDefaultBackground));
 
@@ -118,22 +121,30 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
                 refreshBorderPadding(progress);
             }
         });
-        showCoverSwitch.setOnCheckedChangeListener((switchButton, isChecked) -> refreshCoverShow(isChecked));
+        showCoverSwitch.setOnCheckedChangeListener((switchButton, isChecked) -> {
+            refreshCoverShow(isChecked);
+            onChangeCoverShow(isChecked);
+        });
+        showAlbumTitleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> refreshAlbumTitleShow(isChecked));
 
         TrackItemView trackItemView = viewSettingsInteractor.getTrackItemViewSettings();
 
-        coverSizeSeekBar.setProgress(trackItemView.coverSize - COVER_SIZE_MIN);
-        coverCornersSeekBar.setProgress(trackItemView.coverCornersRadius);
         textSizeSeekBar.setProgress(trackItemView.textSize - TEXT_SIZE_MIN);
         borderPaddingSeekBar.setProgress(trackItemView.borderPadding - BORDER_PADDING_MIN);
+        showAlbumTitleSwitch.setChecked(trackItemView.isAlbumTitleShows);
         showCoverSwitch.setChecked(trackItemView.isCoverShows);
+        coverSizeSeekBar.setProgress(trackItemView.coverSize - COVER_SIZE_MIN);
+        coverCornersSeekBar.setProgress(trackItemView.coverCornersRadius);
 
 
-        refreshCoverSize(coverSizeSeekBar.getProgress());
-        refreshCoverCorners(coverCornersSeekBar.getProgress());
         refreshTextSize(textSizeSeekBar.getProgress());
         refreshBorderPadding(borderPaddingSeekBar.getProgress());
-        refreshCoverShow(showCoverSwitch.isChecked());
+        refreshAlbumTitleShow(showAlbumTitleSwitch.isChecked());
+        boolean isShowCoverChecked = showCoverSwitch.isChecked();
+        refreshCoverShow(isShowCoverChecked);
+        onChangeCoverShow(isShowCoverChecked);
+        refreshCoverSize(coverSizeSeekBar.getProgress());
+        refreshCoverCorners(coverCornersSeekBar.getProgress());
 
         return root;
     }
@@ -147,6 +158,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
                 .setPositiveButton(R.string.dialog_reset, (d, which) -> {
                     coverSizeSeekBar.setProgress(40 - COVER_SIZE_MIN);
                     coverCornersSeekBar.setProgress(4);
+                    showAlbumTitleSwitch.setChecked(false);
                     textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
                     borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
                     showCoverSwitch.setChecked(true);
@@ -193,12 +205,24 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
         textSizeValue.setText(String.valueOf(textSizeSp));
 
         trackTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
-        artist.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 2);
+        additionalTrackInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 2);
         duration.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 4);
     }
 
     private void refreshCoverShow(boolean show) {
         cover.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void refreshAlbumTitleShow(boolean show) {
+        String text = show ? getString(R.string.track_item_artist_with_album, defaultArtist, defaultAlbum)
+                : getString(R.string.default_artist);
+
+        additionalTrackInfo.setText(text);
+    }
+
+    private void onChangeCoverShow(boolean show) {
+        coverSizeSeekBar.setEnabled(show);
+        coverCornersSeekBar.setEnabled(show);
     }
 
     private void refreshBorderPadding(int progress) {
@@ -215,6 +239,12 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
     }
 
 
+    @OnClick(R.id.showAlbumTitleBar)
+    public void onClickShowAlbumBar() {
+        showAlbumTitleSwitch.toggle();
+    }
+
+
     @Override
     public void onDestroy() {
         if (isRemoving())
@@ -228,6 +258,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
         TrackItemView trackItemView = new TrackItemView(
                 textSizeSeekBar.getProgress() + TEXT_SIZE_MIN,
                 borderPaddingSeekBar.getProgress() + BORDER_PADDING_MIN,
+                showAlbumTitleSwitch.isChecked(),
                 showCoverSwitch.isChecked(),
                 coverSizeSeekBar.getProgress() + COVER_SIZE_MIN,
                 coverCornersSeekBar.getProgress());

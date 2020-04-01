@@ -29,7 +29,7 @@ import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
 import com.parabola.newtone.ui.activity.MainActivity;
 import com.parabola.newtone.ui.dialog.SortingDialog;
-import com.parabola.newtone.ui.dialog.TrackItemDisplaySettingFragment;
+import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment;
 
 public interface AppComponentInjects {
 

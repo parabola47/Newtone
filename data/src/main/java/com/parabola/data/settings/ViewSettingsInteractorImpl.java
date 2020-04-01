@@ -30,6 +30,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         TrackItemView trackItemView = new TrackItemView(
                 getTrackItemTextSize(),
                 getTrackItemBorderPadding(),
+                getIsAlbumTitleShows(),
                 getIsTrackItemCoverShows(),
                 getTrackItemCoverSize(),
                 getTrackItemCoverCornersRadius());
@@ -39,6 +40,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
     //    T R A C K    I T E M S
     private static final String TRACK_ITEM_TEXT_SIZE_KEY = "com.parabola.data.settings.TRACK_ITEM_TEXT_SIZE";
     private static final String TRACK_ITEM_BORDER_PADDING_KEY = "com.parabola.data.settings.TRACK_ITEM_BORDER_PADDING";
+    private static final String TRACK_ITEM_ALBUM_TITLE_SHOWS_KEY = "com.parabola.data.settings.TRACK_ITEM_ALBUM_TITLE_SHOWS";
     private static final String TRACK_ITEM_COVER_SHOWS_KEY = "com.parabola.data.settings.TRACK_ITEM_COVER_SHOWS";
     private static final String TRACK_ITEM_COVER_SIZE_KEY = "com.parabola.data.settings.TRACK_ITEM_COVER_SIZE";
     private static final String TRACK_ITEM_COVER_CORNER_RADIUS_KEY = "com.parabola.data.settings.TRACK_ITEM_COVER_CORNER_RADIUS";
@@ -52,6 +54,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
     public void setTrackItemView(TrackItemView trackItemView) {
         setTrackItemTextSize(trackItemView.textSize);
         setTrackItemBorderPadding(trackItemView.borderPadding);
+        setIsAlbumTitleShows(trackItemView.isAlbumTitleShows);
         setIsTrackItemCoverShows(trackItemView.isCoverShows);
         setTrackItemCoverSize(trackItemView.coverSize);
         setTrackItemCoverCornersRadius(trackItemView.coverCornersRadius);
@@ -83,6 +86,17 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
     private void setTrackItemBorderPadding(int paddingDp) {
         prefs.edit()
                 .putInt(TRACK_ITEM_BORDER_PADDING_KEY, paddingDp)
+                .apply();
+    }
+
+    @Override
+    public boolean getIsAlbumTitleShows() {
+        return prefs.getBoolean(TRACK_ITEM_ALBUM_TITLE_SHOWS_KEY, false);
+    }
+
+    private void setIsAlbumTitleShows(boolean show) {
+        prefs.edit()
+                .putBoolean(TRACK_ITEM_ALBUM_TITLE_SHOWS_KEY, show)
                 .apply();
     }
 

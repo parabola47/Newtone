@@ -10,6 +10,7 @@ public interface ViewSettingsInteractor {
 
     int getTrackItemTextSize();
     int getTrackItemBorderPadding();
+    boolean getIsAlbumTitleShows();
     boolean getIsTrackItemCoverShows();
     int getTrackItemCoverSize();
     int getTrackItemCoverCornersRadius();
@@ -17,13 +18,16 @@ public interface ViewSettingsInteractor {
     class TrackItemView {
         public final int textSize;
         public final int borderPadding;
+        public final boolean isAlbumTitleShows;
         public final boolean isCoverShows;
         public final int coverSize;
         public final int coverCornersRadius;
 
-        public TrackItemView(int textSize, int borderPadding, boolean isCoverShows, int coverSize, int coverCornersRadius) {
+        public TrackItemView(int textSize, int borderPadding, boolean isAlbumTitleShows,
+                             boolean isCoverShows, int coverSize, int coverCornersRadius) {
             this.textSize = textSize;
             this.borderPadding = borderPadding;
+            this.isAlbumTitleShows = isAlbumTitleShows;
             this.isCoverShows = isCoverShows;
             this.coverSize = coverSize;
             this.coverCornersRadius = coverCornersRadius;
