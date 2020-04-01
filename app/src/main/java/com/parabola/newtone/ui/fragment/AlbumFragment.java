@@ -186,7 +186,7 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setAlbumArt(Object artCover) {
-        Glide.with(this)
+        Glide.with(requireActivity().getApplicationContext())
                 .load((Bitmap) artCover)
                 .placeholder(R.drawable.album_default)
                 .into(albumCover);

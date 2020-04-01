@@ -105,7 +105,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumerSingleObserver<>(
-                        (bitmap, error) -> Glide.with(holder.albumCover)
+                        (bitmap, error) -> Glide.with(holder.albumCover.getContext().getApplicationContext())
                                 .load(bitmap)
                                 .placeholder(R.drawable.album_default)
                                 .into(holder.albumCover)));
@@ -130,7 +130,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumerSingleObserver<>(
-                        (bitmap, error) -> Glide.with(holder.albumCover)
+                        (bitmap, error) -> Glide.with(holder.albumCover.getContext().getApplicationContext())
                                 .load(bitmap)
                                 .placeholder(R.drawable.album_default)
                                 .into(holder.albumCover)));

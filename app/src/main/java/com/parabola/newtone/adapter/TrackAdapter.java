@@ -118,7 +118,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BiConsumerSingleObserver<>((bitmap, error) ->
-                        Glide.with(holder.cover)
+                        Glide.with(holder.cover.getContext().getApplicationContext())
                                 .load(bitmap)
                                 .placeholder(R.drawable.album_default)
                                 .into(holder.cover)));
