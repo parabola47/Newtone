@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -84,7 +85,7 @@ public final class StartFragment extends MvpAppCompatFragment
         tabTrackFragment.scrollToCurrentTrack();
     }
 
-    @BindColor(R.color.colorTabIconTintSelected) int selectedTabIconTint;
+    @BindColor(R.color.colorAccent) int selectedTabIconTint;
     @BindColor(R.color.colorTabIconTintDefault) int defaultTabIconTint;
 
     private void setupTabLayout() {
@@ -95,23 +96,26 @@ public final class StartFragment extends MvpAppCompatFragment
         buildTabItem(tabLayout, 2, R.string.tab_tracks, R.drawable.ic_clef);
         buildTabItem(tabLayout, 3, R.string.tab_playlists, R.drawable.ic_playlist);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        fragmentPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                View tabView = requireNonNull(tab.getCustomView());
-                ((ImageView) tabView.findViewById(R.id.icon)).setColorFilter(selectedTabIconTint);
-                ((TextView) tabView.findViewById(R.id.title)).setTextColor(selectedTabIconTint);
+            public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
+                for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                    float tabOffset = 0f;
+                    if (i == position)
+                        tabOffset = 1 - offset;
+                    else if (i == position + 1 && position + 1 < tabLayout.getTabCount())
+                        tabOffset = offset;
+
+                    refreshTabColor(requireNonNull(tabLayout.getTabAt(i)), tabOffset);
+                }
             }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                View tabView = requireNonNull(tab.getCustomView());
-                ((ImageView) tabView.findViewById(R.id.icon)).setColorFilter(defaultTabIconTint);
-                ((TextView) tabView.findViewById(R.id.title)).setTextColor(defaultTabIconTint);
-            }
+            private void refreshTabColor(TabLayout.Tab tab, float offset) {
+                int color = ColorUtils.blendARGB(defaultTabIconTint, selectedTabIconTint, offset);
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                View tabView = requireNonNull(tab.getCustomView());
+                ((ImageView) tabView.findViewById(R.id.icon)).setColorFilter(color);
+                ((TextView) tabView.findViewById(R.id.title)).setTextColor(color);
             }
         });
     }

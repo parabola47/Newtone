@@ -21,8 +21,8 @@
     <!--T  A  B-->
     <color name="colorTabDefault">@color/colorNewtoneBar</color>
     <color name="colorTabSelected">#666666</color>
-    <color name="colorTabIconTintSelected">@color/colorNewtoneWhite</color>
     <color name="colorTabIconTintDefault">#AAAAAA</color>
+    <color name="colorTabRippleColor">#444444</color>
 
 
     <!--L  I  S  T  S-->

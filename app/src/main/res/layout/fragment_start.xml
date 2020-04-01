@@ -16,39 +16,43 @@
             android:layout_width="match_parent"
             android:layout_height="72dp"
             android:elevation="24dp"
-            app:tabBackground="@drawable/tab_bg_color"
+            app:tabBackground="@color/colorTabDefault"
+            app:tabGravity="fill"
             app:tabIconTint="@color/colorTabIconTintDefault"
-            app:tabIndicatorHeight="0dp"
-            app:tabSelectedTextColor="@color/colorTabIconTintSelected"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorHeight="4dp"
+            app:tabRippleColor="@color/colorTabRippleColor"
+            app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small"
             app:tabTextColor="@color/colorTabIconTintDefault">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_artist"
                 android:contentDescription="@string/tab_artists"
+                android:icon="@drawable/ic_artist"
                 android:text="@string/tab_artists" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_album"
                 android:contentDescription="@string/tab_albums"
+                android:icon="@drawable/ic_album"
                 android:text="@string/tab_albums" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_clef"
                 android:contentDescription="@string/tab_tracks"
+                android:icon="@drawable/ic_clef"
                 android:text="@string/tab_tracks" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_playlist"
                 android:contentDescription="@string/tab_playlists"
+                android:icon="@drawable/ic_playlist"
                 android:text="@string/tab_playlists" />
 
         </com.google.android.material.tabs.TabLayout>
