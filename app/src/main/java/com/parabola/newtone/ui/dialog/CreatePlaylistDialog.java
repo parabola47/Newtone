@@ -1,9 +1,11 @@
 package com.parabola.newtone.ui.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,6 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
+
+import static java.util.Objects.requireNonNull;
 
 public final class CreatePlaylistDialog extends BaseDialogFragment
         implements CreatePlaylistView {
@@ -43,6 +47,12 @@ public final class CreatePlaylistDialog extends BaseDialogFragment
 
 
     @Override
+    public void focusOnEditText() {
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        requireNonNull(imm).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    @Override
     public void setPlaylistTitleIsEmptyError() {
         String emptyTitleError = getString(R.string.error_playlist_title_is_empty);
         playlistTitleEdt.setError(emptyTitleError);
@@ -51,6 +61,13 @@ public final class CreatePlaylistDialog extends BaseDialogFragment
     @Override
     public void showToast(String toastText) {
         Toast.makeText(requireContext(), toastText, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        requireNonNull(imm).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        super.onDestroyView();
     }
 
     @Override

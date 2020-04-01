@@ -27,6 +27,11 @@ public final class CreatePlaylistPresenter extends MvpPresenter<CreatePlaylistVi
     }
 
     @Override
+    protected void onFirstViewAttach() {
+        getViewState().focusOnEditText();
+    }
+
+    @Override
     public void onDestroy() {
         disposables.dispose();
     }

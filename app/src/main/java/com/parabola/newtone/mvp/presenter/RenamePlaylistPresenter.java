@@ -30,6 +30,7 @@ public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistVi
 
     @Override
     protected void onFirstViewAttach() {
+        getViewState().focusOnEditText();
         disposables.add(playlistRepo.getById(playlistId)
                 .subscribe(playlist -> {
                     getViewState().setPlaylistTitle(playlist.getTitle());

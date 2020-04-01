@@ -18,22 +18,22 @@
         android:padding="2dp"
         android:text="@string/rename_playlist_title" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/playlist_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
-        android:minHeight="48dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:importantForAutofill="no"
         android:inputType="text"
         android:maxLines="1"
+        android:minHeight="48dp"
         android:singleLine="true"
         tools:ignore="LabelFor">
 
         <requestFocus />
-    </EditText>
+    </androidx.appcompat.widget.AppCompatEditText>
 
     <LinearLayout
         android:layout_width="match_parent"
