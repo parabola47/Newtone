@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingVertical="12dp"
+    android:paddingVertical="4dp"
     tools:context=".ui.dialog.fx.FxEqualizerFragment">
 
     <androidx.appcompat.widget.SwitchCompat
@@ -25,6 +25,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="12dp"
         android:orientation="horizontal"
+        android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="4"
         tools:listitem="@layout/item_eq_band" />

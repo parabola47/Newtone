@@ -29,15 +29,13 @@ public interface AudioEffectsInteractor {
     boolean isBassBoostAvailable();
     boolean isBassBoostEnabled();
     void setBassBoostEnable(boolean enable);
-    short getBassBoostCurrentLevel();
-    short getBassBoostMaxLevel();
+    Observable<Short> observeBassBoostLevel();
     void setBassBoostLevel(short strength); //от 0 до 1000
 
     boolean isVirtualizerAvailable();
     boolean isVirtualizerEnabled();
     void setVirtualizerEnable(boolean enable);
-    short getVirtualizerCurrentLevel();
-    short getVirtualizerMaxLevel();
+    Observable<Short> observeVirtualizerLevel();
     void setVirtualizerLevel(short strength); //от 0 до 1000
 
 

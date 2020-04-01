@@ -67,8 +67,6 @@ public final class SleepTimerDialog extends BaseDialogFragment
             case R.id.min30: return 30 * 60 * 1000;
             case R.id.min45: return 45 * 60 * 1000;
             case R.id.h1: return 60 * 60 * 1000;
-            case R.id.h2: return 2 * 60 * 60 * 1000;
-            case R.id.h4: return 4 * 60 * 60 * 1000;
             default: return -1;
         }
     }

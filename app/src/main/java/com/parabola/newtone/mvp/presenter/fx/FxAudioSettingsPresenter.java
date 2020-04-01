@@ -25,37 +25,25 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
 
     @Override
     protected void onFirstViewAttach() {
-        float savedSpeed = fxInteractor.getSavedPlaybackSpeed();
-        getViewState().setPlaybackSpeedSeekbar((int) ((savedSpeed * 100f) - 50));
-
-        float savedPitch = fxInteractor.getSavedPlaybackPitch();
-        getViewState().setPlaybackPitchSeekbar((int) ((savedPitch * 100f) - 50));
-
         //BASS BOOST
         if (fxInteractor.isBassBoostAvailable()) {
-            int bassBoostMaxStrength = fxInteractor.getBassBoostMaxLevel();
-            int bassBoostCurrentLevel = fxInteractor.getBassBoostCurrentLevel();
-            getViewState().setMaxBassBoostSeekbar(bassBoostMaxStrength);
             getViewState().setBassBoostSwitch(fxInteractor.isBassBoostEnabled());
-            getViewState().setBassBoostSeekbar(bassBoostCurrentLevel);
         } else {
             getViewState().hideBassBoostPanel();
         }
 
         //VIRTUALIZER
         if (fxInteractor.isVirtualizerAvailable()) {
-            int virtualizerMaxStrength = fxInteractor.getVirtualizerMaxLevel();
-            int virtualizerCurrentLevel = fxInteractor.getVirtualizerCurrentLevel();
-            getViewState().setMaxVirtualizerSeekbar(virtualizerMaxStrength);
             getViewState().setVirtualizerSwitch(fxInteractor.isVirtualizerEnabled());
-            getViewState().setVirtualizerSeekbar(virtualizerCurrentLevel);
         } else {
             getViewState().hideVirtualizerPanel();
         }
 
         disposables.addAll(
                 observePlaybackSpeed(), observePlaybackSpeedEnabling(),
-                observePlaybackPitch(), observerPlaybackPitchEnabling());
+                observePlaybackPitch(), observerPlaybackPitchEnabling(),
+                observeVirtualizerLevel(),
+                observeBassBoostLevel());
     }
 
     @Override
@@ -65,7 +53,10 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
 
     private Disposable observePlaybackSpeed() {
         return fxInteractor.observePlaybackSpeed()
-                .subscribe(getViewState()::setPlaybackSpeedText);
+                .subscribe(savedSpeed -> {
+                    getViewState().setPlaybackSpeedText(savedSpeed);
+                    getViewState().setPlaybackSpeedSeekbar((int) ((savedSpeed * 100f) - 50));
+                });
     }
 
     private Disposable observePlaybackSpeedEnabling() {
@@ -75,7 +66,10 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
 
     private Disposable observePlaybackPitch() {
         return fxInteractor.observePlaybackPitch()
-                .subscribe(getViewState()::setPlaybackPitchText);
+                .subscribe(savedPitch -> {
+                    getViewState().setPlaybackPitchText(savedPitch);
+                    getViewState().setPlaybackPitchSeekbar((int) ((savedPitch * 100f) - 50));
+                });
     }
 
     private Disposable observerPlaybackPitchEnabling() {
@@ -84,12 +78,23 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
     }
 
 
-    public void onPlaybackSpeedSwitchCheck(boolean enable) {
+    private Disposable observeBassBoostLevel() {
+        return fxInteractor.observeBassBoostLevel()
+                .subscribe(getViewState()::setBassBoostSeekbar);
+    }
+
+    private Disposable observeVirtualizerLevel() {
+        return fxInteractor.observeVirtualizerLevel()
+                .subscribe(getViewState()::setVirtualizerSeekbar);
+    }
+
+
+    public void onPlaybackSpeedSwitchClick(boolean enable) {
         fxInteractor.setPlaybackSpeedEnabled(enable);
     }
 
 
-    public void onPlaybackPitchSwitchCheck(boolean enable) {
+    public void onPlaybackPitchSwitchClick(boolean enable) {
         fxInteractor.setPlaybackPitchEnabled(enable);
     }
 
@@ -110,10 +115,12 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
 
     public void onBassBoostProgressChange(int progress) {
         fxInteractor.setBassBoostLevel((short) progress);
+        getViewState().setBassBoostSeekbar(progress);
     }
 
-    public void onBassBoostSwitchCheck(boolean enable) {
+    public void onBassBoostSwitchClick(boolean enable) {
         fxInteractor.setBassBoostEnable(enable);
+        getViewState().setBassBoostSwitch(enable);
     }
 
     public void onVirtualizerProgressChange(int progress) {
@@ -121,7 +128,8 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
     }
 
 
-    public void onVirtualizerSwitchCheck(boolean enable) {
+    public void onVirtualizerSwitchClick(boolean enable) {
         fxInteractor.setVirtualizerEnable(enable);
+        getViewState().setVirtualizerSwitch(enable);
     }
 }

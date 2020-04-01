@@ -25,6 +25,9 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     private final BehaviorSubject<Boolean> playbackPitchEnabledUpdates;
     private final BehaviorSubject<Float> savedPlaybackPitch;
 
+    private final BehaviorSubject<Short> savedVirtualizerLevelUpdates;
+    private final BehaviorSubject<Short> savedBassBoostLevelUpdates;
+
     private final SimpleExoPlayer exoPlayer;
     private final PlayerSettingSaver settings;
 
@@ -52,6 +55,9 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
         playbackSpeedEnabledUpdates = BehaviorSubject.createDefault(settings.getSavedPlaybackSpeedEnabled());
         playbackPitchEnabledUpdates = BehaviorSubject.createDefault(settings.getSavedPlaybackPitchEnabled());
+
+        savedVirtualizerLevelUpdates = BehaviorSubject.createDefault(settings.getSavedVirtualizerStrength());
+        savedBassBoostLevelUpdates = BehaviorSubject.createDefault(settings.getSavedBassBoostStrength());
 
         this.exoPlayer.addListener(new Player.EventListener() {
             @Override
@@ -203,13 +209,8 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     }
 
     @Override
-    public short getBassBoostCurrentLevel() {
-        return bassBoost != null ? bassBoost.getRoundedStrength() : 0;
-    }
-
-    @Override
-    public short getBassBoostMaxLevel() {
-        return 1000;
+    public Observable<Short> observeBassBoostLevel() {
+        return savedBassBoostLevelUpdates;
     }
 
     @Override
@@ -218,6 +219,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
             bassBoost.setStrength(strength);
 
         settings.setBassBoostStrength(strength);
+        savedBassBoostLevelUpdates.onNext(strength);
     }
 
 
@@ -241,13 +243,8 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     }
 
     @Override
-    public short getVirtualizerCurrentLevel() {
-        return virtualizer != null ? virtualizer.getRoundedStrength() : 0;
-    }
-
-    @Override
-    public short getVirtualizerMaxLevel() {
-        return 1000;
+    public Observable<Short> observeVirtualizerLevel() {
+        return savedVirtualizerLevelUpdates;
     }
 
     @Override
@@ -256,6 +253,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
             virtualizer.setStrength(strength);
 
         settings.setVirtualizerStrength(strength);
+        savedVirtualizerLevelUpdates.onNext(strength);
     }
 
     //    EQ

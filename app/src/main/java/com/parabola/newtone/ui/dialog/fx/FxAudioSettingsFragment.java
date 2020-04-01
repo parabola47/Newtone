@@ -70,28 +70,32 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
                 (buttonView, isChecked) -> playbackSpeedCroller.setEnabled(isChecked));
         playbackPitchSwitch.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> playbackPitchCroller.setEnabled(isChecked));
+        bassBoostSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> bassBoostSeekBar.setEnabled(isChecked));
+        virtualizerSwitchButton.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> virtualizerSeekBar.setEnabled(isChecked));
 
         return layout;
     }
 
     @OnClick(R.id.playbackSpeedSwitch)
     public void onClickPlaybackSpeedSwitch() {
-        presenter.onPlaybackSpeedSwitchCheck(playbackSpeedSwitch.isChecked());
+        presenter.onPlaybackSpeedSwitchClick(playbackSpeedSwitch.isChecked());
     }
 
     @OnClick(R.id.playbackPitchSwitch)
     public void onClickPlaybackPitchSwitch() {
-        presenter.onPlaybackPitchSwitchCheck(playbackPitchSwitch.isChecked());
+        presenter.onPlaybackPitchSwitchClick(playbackPitchSwitch.isChecked());
     }
 
     @OnClick(R.id.bassBoostSwitchButton)
     public void onClickBassBoostSwitch() {
-        presenter.onBassBoostSwitchCheck(bassBoostSwitch.isChecked());
+        presenter.onBassBoostSwitchClick(bassBoostSwitch.isChecked());
     }
 
     @OnClick(R.id.virtualizerSwitchButton)
     public void onClickVirtualizerSwitch() {
-        presenter.onVirtualizerSwitchCheck(virtualizerSwitchButton.isChecked());
+        presenter.onVirtualizerSwitchClick(virtualizerSwitchButton.isChecked());
     }
 
     @ProvidePresenter
@@ -145,13 +149,9 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setMaxBassBoostSeekbar(int maxStrength) {
-        bassBoostSeekBar.setMax(maxStrength);
-    }
-
-    @Override
     public void setBassBoostSwitch(boolean bassBoostEnabled) {
         bassBoostSwitch.setChecked(bassBoostEnabled);
+        bassBoostSeekBar.setEnabled(bassBoostEnabled);
     }
 
     @Override
@@ -164,14 +164,11 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
         virtualizerSeekBar.setProgress(currentLevel);
     }
 
-    @Override
-    public void setMaxVirtualizerSeekbar(int maxStrength) {
-        virtualizerSeekBar.setMax(maxStrength);
-    }
 
     @Override
     public void setVirtualizerSwitch(boolean virtualizerEnabled) {
         virtualizerSwitchButton.setChecked(virtualizerEnabled);
+        virtualizerSeekBar.setEnabled(virtualizerEnabled);
     }
 
 }

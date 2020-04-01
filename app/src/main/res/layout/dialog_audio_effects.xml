@@ -3,23 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="460dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/dialog_bg"
     android:orientation="vertical"
-    android:paddingLeft="24dp"
-    android:paddingTop="16dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="8dp"
+    android:padding="8dp"
     tools:context=".ui.dialog.fx.AudioEffectsDialog">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         app:tabBackground="@drawable/tab_bg_color"
-        app:tabIndicatorHeight="0dp"
-        app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small">
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="64dp"
@@ -33,10 +30,11 @@
 
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <com.parabola.newtone.ui.view.WrapContentHeightViewPager
         android:id="@+id/audio_effects_pager"
         android:layout_width="match_parent"
-        android:layout_height="364dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@android:color/transparent" />
 
     <LinearLayout

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingVertical="12dp"
+    android:paddingVertical="4dp"
     tools:context=".ui.dialog.fx.FxAudioSettingsFragment">
 
     <androidx.appcompat.widget.SwitchCompat
@@ -71,7 +71,8 @@
             android:id="@+id/bassBoostSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:max="1000"
+            android:max="1000"
+            android:paddingVertical="4dp"
             tools:progress="100" />
 
         <TextView
@@ -110,7 +111,8 @@
             android:id="@+id/virtualizerSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:max="1000"
+            android:max="1000"
+            android:paddingVertical="4dp"
             tools:progress="100" />
 
         <TextView
