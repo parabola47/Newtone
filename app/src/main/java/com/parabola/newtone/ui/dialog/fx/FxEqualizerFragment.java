@@ -58,7 +58,6 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
     public void onClickEqSwitcher() {
         boolean isChecked = eqSwitch.isChecked();
         presenter.onClickEqSwitcher(isChecked);
-
     }
 
 
@@ -71,6 +70,7 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
     @Override
     public void setEqChecked(boolean enabled) {
         eqSwitch.setChecked(enabled);
+        bandsAdapter.setEnabling(enabled);
     }
 
     private int maxEqLevel;
@@ -96,6 +96,12 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
     class BandAdapter extends RecyclerView.Adapter<BandAdapter.ViewHolder> {
 
         private final List<EqBand> bands = new ArrayList<>();
+        private boolean enabling;
+
+        private void setEnabling(boolean enabling) {
+            this.enabling = enabling;
+            notifyDataSetChanged();
+        }
 
         @NonNull
         @Override
@@ -110,6 +116,7 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
 
             holder.eqSeekbar.setMax(maxEqLevel - minEqLevel);
             holder.eqSeekbar.setProgress(band.currentLevel - minEqLevel);
+            holder.eqSeekbar.setEnabled(enabling);
             holder.eqHz.setText(String.valueOf(band.frequency < 1000 ? band.frequency : (band.frequency / 1000 + "k")));
             holder.eqDb.setText(String.format(Locale.getDefault(), "%d", band.currentLevel));
 
@@ -118,6 +125,7 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     int newLevel = progress + minEqLevel;
+                    band.currentLevel = (short) newLevel;
                     presenter.onChangeBandLevel(band.id, (short) newLevel);
 
                     holder.eqDb.setText(String.format(Locale.getDefault(), "%d", newLevel));

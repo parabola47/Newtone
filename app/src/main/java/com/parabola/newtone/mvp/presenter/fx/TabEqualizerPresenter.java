@@ -29,6 +29,7 @@ public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> 
 
     public void onClickEqSwitcher(boolean enabled) {
         fxInteractor.setEqEnable(enabled);
+        getViewState().setEqChecked(fxInteractor.isEqEnabled());
     }
 
     public void onChangeBandLevel(int bandId, short newLevel) {
