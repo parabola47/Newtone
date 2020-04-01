@@ -5,10 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_bg"
     android:orientation="vertical"
-    android:paddingLeft="24dp"
-    android:paddingTop="16dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="8dp"
+    android:padding="16dp"
     tools:context=".ui.dialog.TimeToSleepInfoDialog">
 
     <TextView

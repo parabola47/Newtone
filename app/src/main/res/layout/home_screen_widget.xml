@@ -24,11 +24,10 @@
             android:layout_width="108dp"
             android:layout_height="108dp"
             android:layout_margin="8dp"
-            tools:src="@drawable/album_default"
-            android:contentDescription="@string/album_cover_desc" />
+            android:contentDescription="@string/album_cover_desc"
+            tools:src="@drawable/album_default" />
 
         <LinearLayout
-            android:id="@+id/meta"
             android:layout_width="match_parent"
             android:layout_height="98dp"
             android:layout_marginLeft="8dp"
@@ -74,7 +73,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/buttons_panel"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -88,8 +86,8 @@
             android:layout_height="36dp"
             android:layout_margin="4dp"
             android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_loop"
-            android:contentDescription="@string/repeat_mode_content_desc"/>
+            android:contentDescription="@string/repeat_mode_content_desc"
+            android:src="@drawable/ic_loop" />
 
         <ImageButton
             android:id="@+id/prev"
@@ -97,8 +95,8 @@
             android:layout_height="36dp"
             android:layout_margin="4dp"
             android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_prev"
-            android:contentDescription="@string/start_prev_content_desc"/>
+            android:contentDescription="@string/start_prev_content_desc"
+            android:src="@drawable/ic_prev" />
 
         <ImageButton
             android:id="@+id/play"
@@ -106,8 +104,8 @@
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_play"
-            android:contentDescription="@string/player_toggle_content_desc"/>
+            android:contentDescription="@string/player_toggle_content_desc"
+            android:src="@drawable/ic_play" />
 
         <ImageButton
             android:id="@+id/next"
@@ -115,16 +113,16 @@
             android:layout_height="36dp"
             android:layout_margin="4dp"
             android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_next"
-            android:contentDescription="@string/start_next_content_desc"/>
+            android:contentDescription="@string/start_next_content_desc"
+            android:src="@drawable/ic_next" />
 
         <ImageButton
             android:id="@+id/shuffle"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="?android:selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_shuffled"
-            android:contentDescription="@string/shuffle_mode_content_desc"/>
+            android:contentDescription="@string/shuffle_mode_content_desc"
+            android:src="@drawable/ic_shuffled" />
     </LinearLayout>
 
 </LinearLayout>

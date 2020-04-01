@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingVertical="4dp"
+    android:padding="4dp"
     tools:context=".ui.dialog.fx.FxEqualizerFragment">
 
     <androidx.appcompat.widget.SwitchCompat

@@ -9,10 +9,7 @@
     <color name="colorNewtoneWhite">#DEDEDE</color>
     <color name="colorNewtoneBackground">#000000</color>
     <color name="colorNewtoneBar">#202020</color>
-    <color name="colorNewtoneDialogBackground">#444444</color>
-
-    <!--M E N U    C O L O R S-->
-    <color name="colorMenuItemBackground">#262626</color>
+    <color name="colorNewtoneDialogBackground">#222222</color>
 
 
     <!--S T A R T    S C R E E N-->
@@ -20,7 +17,6 @@
     <color name="colorPlayerBarBackground">@color/colorNewtoneBar</color>
     <!--T  A  B-->
     <color name="colorTabDefault">@color/colorNewtoneBar</color>
-    <color name="colorTabSelected">#666666</color>
     <color name="colorTabIconTintDefault">#AAAAAA</color>
     <color name="colorTabRippleColor">#444444</color>
 

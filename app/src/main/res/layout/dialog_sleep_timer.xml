@@ -6,10 +6,7 @@
     android:background="@drawable/dialog_bg"
     android:gravity="center"
     android:orientation="vertical"
-    android:paddingLeft="24dp"
-    android:paddingTop="16dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="8dp"
+    android:padding="16dp"
     tools:context=".ui.dialog.SleepTimerDialog">
 
     <TextView
@@ -70,7 +67,6 @@
     </RadioGroup>
 
     <LinearLayout
-        android:id="@+id/cancel_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|end">

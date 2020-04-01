@@ -46,7 +46,7 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 
 public final class PlayerFragment extends MvpAppCompatFragment
         implements PlayerView {
@@ -152,14 +152,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 presenter.onClickMenuAdditionalInfo();
                 break;
             case R.id.delete:
-                AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.track_menu_delete_dialog_title)
-                        .setMessage(R.string.track_menu_delete_dialog_message)
-                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete())
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .create();
-                dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_bg));
-                dialog.getWindow().setLayout((int) convertDpToPixel(250, requireContext()), ViewGroup.LayoutParams.WRAP_CONTENT);
+                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDelete());
                 dialog.show();
                 break;
         }

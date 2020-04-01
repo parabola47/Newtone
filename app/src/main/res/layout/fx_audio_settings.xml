@@ -76,7 +76,6 @@
             tools:progress="100" />
 
         <TextView
-            android:id="@+id/bassBoostTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/bassBoostSeekBar"
@@ -116,7 +115,6 @@
             tools:progress="100" />
 
         <TextView
-            android:id="@+id/virtualizerTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/virtualizerSeekBar"

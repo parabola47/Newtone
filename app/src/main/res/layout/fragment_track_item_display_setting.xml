@@ -28,7 +28,6 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/textSizeBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="8dp"
@@ -75,7 +74,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/borderPaddingBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -187,7 +185,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/coverSizeBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -235,7 +232,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/coverCornersBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"

@@ -14,9 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:tabBackground="@drawable/tab_bg_color"
         app:tabGravity="center"
-        app:tabIndicatorHeight="0dp">
+        app:tabIndicatorHeight="4dp"
+        app:tabRippleColor="@color/colorTabRippleColor">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="64dp"
@@ -38,7 +38,6 @@
         android:background="@android:color/transparent" />
 
     <LinearLayout
-        android:id="@+id/cancel_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end">

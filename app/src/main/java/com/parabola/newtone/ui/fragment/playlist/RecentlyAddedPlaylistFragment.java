@@ -32,6 +32,8 @@ import butterknife.ButterKnife;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
+
 public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         implements RecentlyAddedPlaylistView {
 
@@ -174,12 +176,7 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.track_menu_delete_dialog_title)
-                        .setMessage(R.string.track_menu_delete_dialog_message)
-                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .create();
+                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
                 dialog.show();
                 break;
         }
