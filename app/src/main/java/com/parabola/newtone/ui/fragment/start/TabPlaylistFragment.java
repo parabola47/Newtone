@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.ListPopupWindow;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ import com.parabola.newtone.adapter.PlaylistAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
 import com.parabola.newtone.mvp.view.TabPlaylistView;
+import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 public final class TabPlaylistFragment extends MvpAppCompatFragment
-        implements TabPlaylistView {
+        implements TabPlaylistView, Scrollable {
 
     @BindView(R.id.playlists) RecyclerView playlists;
     @BindView(R.id.sys_playlists) RecyclerView sysPlaylists;
@@ -102,6 +104,11 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
     @Override
     public void refreshPlaylists(List<Playlist> playlists) {
         playlistAdapter.replaceAll(playlists);
+    }
+
+    @Override
+    public void smoothScrollToTop() {
+        ((NestedScrollView) requireView()).smoothScrollTo(0, 0);
     }
 
     public class SystemPlaylistAdapter extends RecyclerView.Adapter<SystemPlaylistAdapter.SystemPlaylistViewHolder> {

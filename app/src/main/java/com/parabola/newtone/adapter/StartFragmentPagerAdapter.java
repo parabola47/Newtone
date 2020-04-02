@@ -26,6 +26,13 @@ public final class StartFragmentPagerAdapter extends FragmentPagerAdapter {
         this.context = context;
     }
 
+    public void initTabsFragments(Fragment[] tabFragments) {
+        if (tabFragments.length != TABS_COUNT)
+            throw new IllegalArgumentException("Size of array tabFragments is " + tabFragments.length + ". It must be " + TABS_COUNT);
+
+        System.arraycopy(tabFragments, 0, this.tabFragments, 0, this.tabFragments.length);
+    }
+
     public Fragment selectItem(int position) {
         return tabFragments[position];
     }

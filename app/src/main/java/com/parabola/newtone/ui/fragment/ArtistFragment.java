@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +34,7 @@ import moxy.presenter.ProvidePresenter;
 import static com.parabola.newtone.util.AndroidTool.getScreenWidthDp;
 
 public final class ArtistFragment extends BaseSwipeToBackFragment
-        implements ArtistView, Sortable {
+        implements ArtistView, Sortable, Scrollable {
     private static final String TAG = ArtistFragment.class.getSimpleName();
 
     @InjectPresenter ArtistPresenter presenter;
@@ -92,6 +93,12 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
         return root;
     }
+
+    @OnClick(R.id.action_bar)
+    public void onClickActionBar() {
+        smoothScrollToTop();
+    }
+
 
     @OnClick(R.id.all_tracks_bar)
     public void onClickAllTracksBar() {
@@ -169,4 +176,11 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     public String getListType() {
         return SortingDialog.ARTIST_ALBUMS_SORTING;
     }
+
+
+    @Override
+    public void smoothScrollToTop() {
+        ((NestedScrollView) requireView().findViewById(R.id.artistView)).smoothScrollTo(0, 0);
+    }
+
 }

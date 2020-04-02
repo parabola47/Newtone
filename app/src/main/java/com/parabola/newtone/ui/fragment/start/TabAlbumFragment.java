@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
@@ -19,6 +20,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabAlbumPresenter;
 import com.parabola.newtone.mvp.view.TabAlbumView;
 import com.parabola.newtone.ui.dialog.SortingDialog;
+import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.ui.fragment.Sortable;
 
 import java.util.List;
@@ -30,9 +32,10 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.getScreenWidthDp;
+import static java.util.Objects.requireNonNull;
 
 public final class TabAlbumFragment extends MvpAppCompatFragment
-        implements TabAlbumView, Sortable {
+        implements TabAlbumView, Sortable, Scrollable {
 
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
     private DividerItemDecoration verticalItemDecoration;
@@ -121,4 +124,18 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     public String getListType() {
         return SortingDialog.ALL_ALBUMS_SORTING;
     }
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) albumsList.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            albumsList.scrollToPosition(screenItemsCount * 3);
+        }
+
+        albumsList.smoothScrollToPosition(0);
+    }
+
 }

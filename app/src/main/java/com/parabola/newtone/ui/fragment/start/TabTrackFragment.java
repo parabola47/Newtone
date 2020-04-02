@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
@@ -21,6 +22,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
 import com.parabola.newtone.mvp.view.TabTrackView;
 import com.parabola.newtone.ui.dialog.SortingDialog;
+import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.ui.fragment.Sortable;
 
 import java.util.List;
@@ -33,9 +35,10 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
+import static java.util.Objects.requireNonNull;
 
 public final class TabTrackFragment extends MvpAppCompatFragment
-        implements TabTrackView, Sortable {
+        implements TabTrackView, Sortable, Scrollable {
 
     private static final String LOG_TAG = TabTrackFragment.class.getSimpleName();
 
@@ -170,4 +173,18 @@ public final class TabTrackFragment extends MvpAppCompatFragment
     public String getListType() {
         return SortingDialog.ALL_TRACKS_SORTING;
     }
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            tracksList.scrollToPosition(screenItemsCount * 3);
+        }
+
+        tracksList.smoothScrollToPosition(0);
+    }
+
 }

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
@@ -30,13 +31,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
+import static java.util.Objects.requireNonNull;
 
 public final class ArtistTracksFragment extends BaseSwipeToBackFragment
-        implements ArtistTracksView, Sortable {
+        implements ArtistTracksView, Sortable, Scrollable {
 
     @InjectPresenter ArtistTracksPresenter presenter;
 
@@ -63,6 +66,11 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
         tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
 
         return root;
+    }
+
+    @OnClick(R.id.action_bar)
+    public void onClickActionBar() {
+        smoothScrollToTop();
     }
 
 
@@ -177,4 +185,19 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
     public String getListType() {
         return SortingDialog.ARTIST_TRACKS_SORTING;
     }
+
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            tracksList.scrollToPosition(screenItemsCount * 3);
+        }
+
+        tracksList.smoothScrollToPosition(0);
+    }
+
 }

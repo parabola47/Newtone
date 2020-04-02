@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -23,6 +22,8 @@ import com.parabola.newtone.adapter.StartFragmentPagerAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.StartPresenter;
 import com.parabola.newtone.mvp.view.StartView;
+import com.parabola.newtone.ui.fragment.Scrollable;
+import com.parabola.newtone.util.OnTabSelectedAdapter;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -36,7 +37,7 @@ import static java.util.Objects.requireNonNull;
 
 public final class StartFragment extends MvpAppCompatFragment
         implements StartView {
-    private static final String TAG = StartFragment.class.getSimpleName();
+    private static final String LOG_TAG = StartFragment.class.getSimpleName();
 
     @BindView(R.id.fragment_pager) ViewPager fragmentPager;
     @BindView(R.id.tabs) TabLayout tabLayout;
@@ -44,7 +45,7 @@ public final class StartFragment extends MvpAppCompatFragment
 
     @InjectPresenter StartPresenter presenter;
 
-    private FragmentPagerAdapter fragmentPagerAdapter;
+    private StartFragmentPagerAdapter fragmentPagerAdapter;
 
 
     public StartFragment() {
@@ -62,6 +63,18 @@ public final class StartFragment extends MvpAppCompatFragment
         fragmentPager.setAdapter(fragmentPagerAdapter);
         setupTabLayout();
         fragmentPager.setOffscreenPageLimit(tabLayout.getTabCount());
+
+        //берём старые фрагменты, если экран не создаётся с нуля
+        if (savedInstanceState != null) {
+            Fragment[] tabFragments = new Fragment[4];
+            for (Fragment fragment : getChildFragmentManager().getFragments()) {
+                if (fragment instanceof TabArtistFragment) tabFragments[0] = fragment;
+                if (fragment instanceof TabAlbumFragment) tabFragments[1] = fragment;
+                if (fragment instanceof TabTrackFragment) tabFragments[2] = fragment;
+                if (fragment instanceof TabPlaylistFragment) tabFragments[3] = fragment;
+            }
+            fragmentPagerAdapter.initTabsFragments(tabFragments);
+        }
 
         return layout;
     }
@@ -81,7 +94,7 @@ public final class StartFragment extends MvpAppCompatFragment
     }
 
     public void scrollOnTabTrackToCurrentTrack() {
-        TabTrackFragment tabTrackFragment = (TabTrackFragment) ((StartFragmentPagerAdapter) fragmentPagerAdapter).selectItem(2);
+        TabTrackFragment tabTrackFragment = (TabTrackFragment) fragmentPagerAdapter.selectItem(2);
         tabTrackFragment.scrollToCurrentTrack();
     }
 
@@ -95,6 +108,13 @@ public final class StartFragment extends MvpAppCompatFragment
         buildTabItem(tabLayout, 1, R.string.tab_albums, R.drawable.ic_album);
         buildTabItem(tabLayout, 2, R.string.tab_tracks, R.drawable.ic_clef);
         buildTabItem(tabLayout, 3, R.string.tab_playlists, R.drawable.ic_playlist);
+
+        tabLayout.addOnTabSelectedListener(new OnTabSelectedAdapter() {
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                ((Scrollable) fragmentPagerAdapter.getItem(tab.getPosition())).smoothScrollToTop();
+            }
+        });
 
         fragmentPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Artist;
@@ -17,6 +18,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabArtistPresenter;
 import com.parabola.newtone.mvp.view.TabArtistView;
 import com.parabola.newtone.ui.dialog.SortingDialog;
+import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.ui.fragment.Sortable;
 
 import java.util.List;
@@ -27,8 +29,11 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static java.util.Objects.requireNonNull;
+
 public final class TabArtistFragment extends MvpAppCompatFragment
-        implements TabArtistView, Sortable {
+        implements TabArtistView, Sortable, Scrollable {
+    private static final String LOG_TAG = TabArtistFragment.class.getSimpleName();
 
     @BindView(R.id.artists_list) RecyclerView artistsList;
 
@@ -89,4 +94,18 @@ public final class TabArtistFragment extends MvpAppCompatFragment
     public String getListType() {
         return SortingDialog.ALL_ARTISTS_SORTING;
     }
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) artistsList.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            artistsList.scrollToPosition(screenItemsCount * 3);
+        }
+
+        artistsList.smoothScrollToPosition(0);
+    }
+
 }

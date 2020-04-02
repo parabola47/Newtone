@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Folder;
@@ -20,17 +21,21 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FoldersListPresenter;
 import com.parabola.newtone.mvp.view.FoldersListView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class FoldersListFragment extends BaseSwipeToBackFragment
-        implements FoldersListView {
+        implements FoldersListView, Scrollable {
 
     @InjectPresenter FoldersListPresenter presenter;
 
@@ -68,6 +73,12 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
         return root;
     }
 
+    @OnClick(R.id.action_bar)
+    public void onClickActionBar() {
+        smoothScrollToTop();
+    }
+
+
     @Override
     public void refreshFolders(List<Folder> folders) {
         String foldersCountStr = getResources()
@@ -90,6 +101,20 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
     FoldersListPresenter providePresenter() {
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         return new FoldersListPresenter(appComponent);
+    }
+
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) foldersList.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            foldersList.scrollToPosition(screenItemsCount * 3);
+        }
+
+        foldersList.smoothScrollToPosition(0);
     }
 
 }

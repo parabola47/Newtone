@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -32,13 +33,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
+import static java.util.Objects.requireNonNull;
 
 public final class AlbumFragment extends BaseSwipeToBackFragment
-        implements AlbumView, Sortable {
+        implements AlbumView, Sortable, Scrollable {
 
     @InjectPresenter AlbumPresenter presenter;
 
@@ -91,6 +94,12 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
         return root;
     }
+
+    @OnClick(R.id.action_bar)
+    public void onClickActionBar() {
+        smoothScrollToTop();
+    }
+
 
     private void showTrackContextMenu(ViewGroup rootView, int x, int y, int itemPosition) {
         Track selectedTrack = tracksAdapter.get(itemPosition);
@@ -207,5 +216,18 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
     @Override
     public String getListType() {
         return SortingDialog.ALBUM_TRACKS_SORTING;
+    }
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            tracksList.scrollToPosition(screenItemsCount * 3);
+        }
+
+        tracksList.smoothScrollToPosition(0);
     }
 }

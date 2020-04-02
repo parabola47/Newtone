@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
@@ -24,18 +25,21 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
+import static java.util.Objects.requireNonNull;
 
 public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
-        implements RecentlyAddedPlaylistView {
+        implements RecentlyAddedPlaylistView, Scrollable {
 
     private final TrackAdapter tracklistAdapter = new TrackAdapter();
     @InjectPresenter RecentlyAddedPlaylistPresenter presenter;
@@ -68,6 +72,11 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         playlistTitle.setText(R.string.playlist_recently_added);
 
         return root;
+    }
+
+    @OnClick(R.id.action_bar)
+    public void onClickActionBar() {
+        smoothScrollToTop();
     }
 
     @Override
@@ -180,6 +189,20 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
                 dialog.show();
                 break;
         }
+    }
+
+
+    @Override
+    public void smoothScrollToTop() {
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracklistView.getLayoutManager());
+        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+
+        if (firstItemPosition > screenItemsCount * 3) {
+            tracklistView.scrollToPosition(screenItemsCount * 3);
+        }
+
+        tracklistView.smoothScrollToPosition(0);
     }
 
 }
