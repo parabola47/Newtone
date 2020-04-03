@@ -34,6 +34,7 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
     @BindView(R.id.title) TextView titleTextView;
 
     @BindView(R.id.duration) TextView durationTextView;
+    @BindView(R.id.genreTitleWrapper) ViewGroup genreTitleWrapper;
     @BindView(R.id.genreTitle) TextView genreTextView;
     @BindView(R.id.year) TextView yearTextView;
     @BindView(R.id.filepath) TextView filepathTextView;
@@ -88,7 +89,10 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
         titleTextView.setText(track.getTitle());
 
         durationTextView.setText(TimeFormatterTool.formatMillisecondsToMinutes(track.getDurationMs()));
-        genreTextView.setText(track.getGenreName());
+        if (track.getGenreName().isEmpty())
+            genreTitleWrapper.setVisibility(View.GONE);
+        else
+            genreTextView.setText(track.getGenreName());
         yearTextView.setText(String.valueOf(track.getYear()));
         filepathTextView.setText(track.getFilePath());
 

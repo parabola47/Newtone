@@ -66,4 +66,17 @@
         <item name="progress_secondary_stroke_width">0</item>
     </style>
 
+    <style name="TrackAdditionalInfoTextStyle" parent="Widget.Design.TextInputLayout">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:clickable">false</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:editable">false</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:focusable">false</item>
+        <item name="android:inputType">none</item>
+        <item name="maxLines">1</item>
+        <item name="singleLine">true</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
 </resources>

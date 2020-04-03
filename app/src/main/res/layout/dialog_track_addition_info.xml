@@ -2,18 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
     android:background="@drawable/dialog_bg"
-    android:padding="16dp"
+    android:paddingHorizontal="24dp"
+    android:paddingVertical="16dp"
     tools:context=".ui.dialog.TrackAdditionalInfoDialog">
 
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/albumCover"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/album_default" />
 
@@ -22,28 +25,18 @@
         android:id="@+id/artistWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintLeft_toRightOf="@+id/albumCover"
+        android:layout_marginTop="16dp"
+        android:hint="@string/track_add_info_artist"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/albumCover">
+        app:layout_constraintTop_toBottomOf="@+id/albumCover">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/artist"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:editable="false"
-            android:ellipsize="end"
-            android:focusable="false"
             android:hint="@string/track_add_info_artist"
-            android:inputType="none"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="Tool" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,28 +45,18 @@
         android:id="@+id/albumTitleWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:hint="@string/track_add_info_album"
         app:layout_constraintBottom_toTopOf="@id/titleWrapper"
-        app:layout_constraintLeft_toRightOf="@+id/albumCover"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/albumPositionWrapper"
         app:layout_constraintTop_toBottomOf="@+id/artistWrapper">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/albumTitle"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:editable="false"
-            android:ellipsize="end"
-            android:focusable="false"
             android:hint="@string/track_add_info_album"
-            android:inputType="none"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="10,000 days" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,19 +72,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/albumPosition"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:editable="false"
-            android:focusable="false"
             android:gravity="center"
             android:hint="@string/track_add_info_album_position"
-            android:inputType="none"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="12" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -110,54 +85,18 @@
         android:id="@+id/titleWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/albumCover"
+        android:hint="@string/track_add_info_title"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/albumTitleWrapper">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/title"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:editable="false"
-            android:ellipsize="end"
-            android:focusable="false"
             android:hint="@string/track_add_info_title"
-            android:inputType="none"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="Rosetta Stoned" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/durationWrapper"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="@string/track_add_info_duration"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/yearWrapper"
-        app:layout_constraintTop_toBottomOf="@+id/albumCover">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/duration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:gravity="center"
-            android:hint="@string/track_add_info_duration"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            tools:text="11:12" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -165,31 +104,39 @@
         android:id="@+id/genreTitleWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:gravity="top|center"
         android:hint="@string/track_add_info_genre"
-        app:layout_constraintBottom_toBottomOf="@id/albumCover"
-        app:layout_constraintLeft_toRightOf="@id/albumCover"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleWrapper">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/genreTitle"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:editable="false"
-            android:ellipsize="end"
-            android:focusable="false"
             android:hint="@string/track_add_info_genre"
-            android:inputType="none"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="Progressive Rock" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/durationWrapper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/track_add_info_duration"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/yearWrapper"
+        app:layout_constraintTop_toBottomOf="@+id/genreTitleWrapper">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/duration"
+            style="@style/TrackAdditionalInfoTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="@string/track_add_info_duration"
+            tools:text="11:12" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -205,42 +152,12 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/year"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
             android:gravity="center"
             android:hint="@string/track_add_info_year"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="2006" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/filepathWrapper"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="@string/track_add_info_filepath"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bitrateWrapper">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/filepath"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:hint="@string/track_add_info_filepath"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            tools:text="/sdcard/0/Music/Tool/10000 days/rosetta-stoned.mp3" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -248,6 +165,7 @@
         android:id="@+id/fileSizeWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="@string/track_add_info_fileSize"
         app:layout_constraintBottom_toBottomOf="@id/bitrateWrapper"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/bitrateWrapper"
@@ -255,16 +173,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fileSize"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
             android:gravity="center"
             android:hint="@string/track_add_info_fileSize"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="26294 kB" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -273,23 +186,18 @@
         android:id="@+id/bitrateWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:hint="@string/track_add_info_bitrate"
         app:layout_constraintLeft_toRightOf="@id/fileSizeWrapper"
         app:layout_constraintRight_toLeftOf="@id/sampleRateWrapper"
         app:layout_constraintTop_toBottomOf="@+id/durationWrapper">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/bitrate"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
             android:gravity="center"
             android:hint="@string/track_add_info_bitrate"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="320 kbps" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -306,22 +214,40 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/sampleRate"
+            style="@style/TrackAdditionalInfoTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
             android:gravity="center"
             android:hint="@string/track_add_info_sample_rate"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="44100 Hz" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/filepathWrapper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/track_add_info_filepath"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bitrateWrapper">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/filepath"
+            style="@style/TrackAdditionalInfoTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/track_add_info_filepath"
+            android:maxLines="16"
+            android:singleLine="false"
+            tools:text="/sdcard/0/Music/Tool/10000 days/rosetta-stoned.mp3" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
+        android:id="@+id/cancel_bar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:orientation="horizontal"
