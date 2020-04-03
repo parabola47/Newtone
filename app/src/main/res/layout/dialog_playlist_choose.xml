@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@drawable/dialog_bg"
-    android:minWidth="300dp"
+    android:minWidth="@dimen/alert_dialog_min_width"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.dialog.ChoosePlaylistDialog">
@@ -56,7 +56,8 @@
     <ListView
         android:id="@+id/playlist"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:divider="#444444"
         android:dividerHeight="1px"
         tools:listitem="@layout/item_playlist_lv" />

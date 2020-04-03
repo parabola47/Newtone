@@ -5,6 +5,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static java.util.Objects.requireNonNull;
 
 public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragment {
     private static final String LOG_CAT = TrackItemDisplaySettingFragment.class.getSimpleName();
@@ -165,6 +167,11 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();
+
+        Window window = requireNonNull(alertDialog.getWindow());
+        window.getDecorView().setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.dialog_bg));
+        int widthPx = (int) requireContext().getResources().getDimension(R.dimen.alert_dialog_min_width);
+        window.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         alertDialog.show();
     }

@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_bg"
     android:gravity="center"
+    android:minWidth="@dimen/alert_dialog_min_width"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.dialog.SortingDialog">

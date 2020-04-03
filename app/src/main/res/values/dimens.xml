@@ -2,4 +2,5 @@
 <resources>
     <dimen name="custom_action_bar_height">64dp</dimen>
     <dimen name="default_album_corner_size">4dp</dimen>
+    <dimen name="alert_dialog_min_width">300dp</dimen>
 </resources>

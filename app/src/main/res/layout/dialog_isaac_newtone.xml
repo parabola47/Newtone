@@ -8,7 +8,7 @@
     android:layout_marginRight="8dp"
     android:background="@drawable/dialog_bg"
     android:gravity="center"
-    android:minWidth="300dp"
+    android:minWidth="@dimen/alert_dialog_min_width"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.dialog.IsaacNewtoneDialog">

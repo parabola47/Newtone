@@ -14,15 +14,13 @@ import androidx.core.content.ContextCompat;
 
 import com.parabola.newtone.R;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class AndroidTool {
 
     private AndroidTool() {
         throw new AssertionError();
     }
-
-    private static final int DELETE_TRACK_DIALOG_WIDTH_DP = 300;
 
     public static AlertDialog createDeleteTrackDialog(Context context,
                                                       DialogInterface.OnClickListener onClickDeleteListener) {
@@ -33,10 +31,10 @@ public final class AndroidTool {
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();
 
-        Window window = Objects.requireNonNull(dialog.getWindow());
+        Window window = requireNonNull(dialog.getWindow());
         window.getDecorView().setBackground(ContextCompat.getDrawable(context, R.drawable.dialog_bg));
-        int widthPx = (int) convertDpToPixel(DELETE_TRACK_DIALOG_WIDTH_DP, context);
-        window.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int pxWidth = (int) context.getResources().getDimension(R.dimen.alert_dialog_min_width);
+        window.setLayout(pxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         return dialog;
     }
