@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingVertical="4dp"
+    tools:context=".ui.dialog.fx.FxAudioSettingsFragment">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/playbackSpeedSwitch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/fx_tempo"
+        app:layout_constraintLeft_toLeftOf="@id/playbackSpeedCroller"
+        app:layout_constraintRight_toRightOf="@id/playbackSpeedCroller"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.parabola.newtone.ui.view.Croller
+        android:id="@+id/playbackSpeedCroller"
+        style="@style/FxSettingCroller"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:label="x1.00"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/playbackPitchCroller"
+        app:layout_constraintTop_toBottomOf="@+id/playbackSpeedSwitch"
+        app:layout_constraintWidth_max="96dp"
+        app:max="150"
+        app:min="0"
+        app:start_progress="50" />
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/playbackPitchSwitch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/fx_pitch"
+        app:layout_constraintLeft_toLeftOf="@+id/playbackPitchCroller"
+        app:layout_constraintRight_toRightOf="@id/playbackPitchCroller"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.parabola.newtone.ui.view.Croller
+        android:id="@+id/playbackPitchCroller"
+        style="@style/FxSettingCroller"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:label="x1.00"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/playbackSpeedCroller"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playbackPitchSwitch"
+        app:layout_constraintWidth_max="96dp"
+        app:max="150"
+        app:min="0"
+        app:start_progress="50" />
+
+
+    <com.parabola.newtone.ui.view.Croller
+        android:id="@+id/virtualizerCroller"
+        style="@style/FxDiscreteSettingCroller"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:label="@string/fx_virtualizer"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/bassBoostCroller"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playbackSpeedCroller"
+        app:layout_constraintWidth_max="96dp"
+        app:max="20"
+        app:min="0" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/virtualizerSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="@+id/virtualizerCroller"
+        app:layout_constraintRight_toRightOf="@id/virtualizerCroller"
+        app:layout_constraintTop_toBottomOf="@+id/virtualizerCroller" />
+
+
+    <com.parabola.newtone.ui.view.Croller
+        android:id="@+id/bassBoostCroller"
+        style="@style/FxDiscreteSettingCroller"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:label="@string/fx_bassBoost"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/virtualizerCroller"
+        app:layout_constraintTop_toBottomOf="@+id/playbackSpeedCroller"
+        app:layout_constraintWidth_max="96dp"
+        app:max="20"
+        app:min="0" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/bassBoostSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="@+id/bassBoostCroller"
+        app:layout_constraintRight_toRightOf="@+id/bassBoostCroller"
+        app:layout_constraintTop_toBottomOf="@+id/bassBoostCroller" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

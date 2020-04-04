@@ -32,9 +32,11 @@
             android:layout_height="0dp"
             android:clickable="false"
             android:splitTrack="false"
+            android:thumb="@drawable/eq_thumb_selector"
             app:seekBarRotation="CW270"
             tools:max="30"
             tools:progress="15" />
+
     </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
 </LinearLayout>

@@ -66,6 +66,17 @@
         <item name="progress_secondary_stroke_width">0</item>
     </style>
 
+    <style name="FxDiscreteSettingCroller">
+        <item name="indicator_color">@color/colorAccent</item>
+        <item name="indicator_disable_color">@android:color/darker_gray</item>
+        <item name="is_continuous">false</item>
+        <item name="label_size">10sp</item>
+        <item name="label_color">@android:color/white</item>
+        <item name="label_disabled_color">@android:color/darker_gray</item>
+        <item name="progress_primary_color">@color/colorAccent</item>
+        <item name="progress_primary_disable_color">@android:color/darker_gray</item>
+    </style>
+
     <style name="TrackAdditionalInfoTextStyle" parent="Widget.Design.TextInputLayout">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:clickable">false</item>

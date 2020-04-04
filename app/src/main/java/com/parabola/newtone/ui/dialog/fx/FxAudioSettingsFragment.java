@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,87 +15,61 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.view.fx.FxAudioSettingsView;
 import com.parabola.newtone.ui.view.Croller;
-import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 public final class FxAudioSettingsFragment extends MvpAppCompatFragment
         implements FxAudioSettingsView {
-    private static final String TAG = FxAudioSettingsFragment.class.getSimpleName();
+    private static final String LOG_TAG = FxAudioSettingsFragment.class.getSimpleName();
 
     @InjectPresenter FxAudioSettingsPresenter presenter;
 
     @BindView(R.id.playbackSpeedCroller) Croller playbackSpeedCroller;
     @BindView(R.id.playbackSpeedSwitch) SwitchCompat playbackSpeedSwitch;
+
     @BindView(R.id.playbackPitchCroller) Croller playbackPitchCroller;
     @BindView(R.id.playbackPitchSwitch) SwitchCompat playbackPitchSwitch;
 
-    @BindView(R.id.bassBoostPanel) ViewGroup bassBoostPanel;
-    @BindView(R.id.bassBoostSeekBar) SeekBar bassBoostSeekBar;
+    @BindView(R.id.bassBoostCroller) Croller bassBoostCroller;
     @BindView(R.id.bassBoostSwitchButton) SwitchCompat bassBoostSwitch;
 
-    @BindView(R.id.virtualizerPanel) ViewGroup virtualizerPanel;
-    @BindView(R.id.virtualizerSeekBar) SeekBar virtualizerSeekBar;
-    @BindView(R.id.virtualizerSwitchButton) SwitchCompat virtualizerSwitchButton;
+    @BindView(R.id.virtualizerCroller) Croller virtualizerCroller;
+    @BindView(R.id.virtualizerSwitchButton) SwitchCompat virtualizerSwitch;
 
+
+    private static final int BASS_BOOST_PROGRESS_STEP = 20;
+    private static final int VIRTUALIZER_PROGRESS_STEP = 20;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fx_audio_settings, container, false);
+        View layout = inflater.inflate(R.layout.tab_fx_audio_settings, container, false);
         ButterKnife.bind(this, layout);
 
         playbackSpeedCroller.setOnProgressChangedListener(presenter::onPlaybackSpeedProgressChanged);
         playbackPitchCroller.setOnProgressChangedListener(presenter::onPlaybackPitchProgressChanged);
-        bassBoostSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                presenter.onBassBoostProgressChange(progress);
-            }
-        });
-        virtualizerSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                presenter.onVirtualizerProgressChange(progress);
-            }
-        });
-        playbackSpeedSwitch.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> playbackSpeedCroller.setEnabled(isChecked));
-        playbackPitchSwitch.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> playbackPitchCroller.setEnabled(isChecked));
-        bassBoostSwitch.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> bassBoostSeekBar.setEnabled(isChecked));
-        virtualizerSwitchButton.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> virtualizerSeekBar.setEnabled(isChecked));
+        bassBoostCroller.setOnProgressChangedListener(progress ->
+                presenter.onBassBoostProgressChange(progress * BASS_BOOST_PROGRESS_STEP));
+        virtualizerCroller.setOnProgressChangedListener(progress ->
+                presenter.onVirtualizerProgressChange(progress * VIRTUALIZER_PROGRESS_STEP));
+
+        playbackSpeedSwitch.setOnCheckedChangeListener((view, isChecked) ->
+                presenter.onPlaybackSpeedSwitchClick(isChecked));
+        playbackPitchSwitch.setOnCheckedChangeListener((view, isChecked) ->
+                presenter.onPlaybackPitchSwitchClick(isChecked));
+        bassBoostSwitch.setOnCheckedChangeListener((view, isChecked) ->
+                presenter.onBassBoostSwitchClick(isChecked));
+        virtualizerSwitch.setOnCheckedChangeListener((view, isChecked) ->
+                presenter.onVirtualizerSwitchClick(isChecked));
 
         return layout;
     }
 
-    @OnClick(R.id.playbackSpeedSwitch)
-    public void onClickPlaybackSpeedSwitch() {
-        presenter.onPlaybackSpeedSwitchClick(playbackSpeedSwitch.isChecked());
-    }
-
-    @OnClick(R.id.playbackPitchSwitch)
-    public void onClickPlaybackPitchSwitch() {
-        presenter.onPlaybackPitchSwitchClick(playbackPitchSwitch.isChecked());
-    }
-
-    @OnClick(R.id.bassBoostSwitchButton)
-    public void onClickBassBoostSwitch() {
-        presenter.onBassBoostSwitchClick(bassBoostSwitch.isChecked());
-    }
-
-    @OnClick(R.id.virtualizerSwitchButton)
-    public void onClickVirtualizerSwitch() {
-        presenter.onVirtualizerSwitchClick(virtualizerSwitchButton.isChecked());
-    }
 
     @ProvidePresenter
     FxAudioSettingsPresenter providePresenter() {
@@ -140,35 +113,37 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
     @Override
     public void hideBassBoostPanel() {
-        bassBoostPanel.setVisibility(View.GONE);
+        bassBoostSwitch.setVisibility(View.GONE);
+        bassBoostCroller.setVisibility(View.GONE);
     }
 
     @Override
     public void setBassBoostSeekbar(int currentLevel) {
-        bassBoostSeekBar.setProgress(currentLevel);
+        bassBoostCroller.setProgress(currentLevel / VIRTUALIZER_PROGRESS_STEP);
     }
 
     @Override
     public void setBassBoostSwitch(boolean bassBoostEnabled) {
         bassBoostSwitch.setChecked(bassBoostEnabled);
-        bassBoostSeekBar.setEnabled(bassBoostEnabled);
+        bassBoostCroller.setEnabled(bassBoostEnabled);
     }
 
     @Override
     public void hideVirtualizerPanel() {
-        virtualizerPanel.setVisibility(View.GONE);
+        virtualizerSwitch.setVisibility(View.GONE);
+        virtualizerCroller.setVisibility(View.GONE);
     }
 
     @Override
     public void setVirtualizerSeekbar(int currentLevel) {
-        virtualizerSeekBar.setProgress(currentLevel);
+        virtualizerCroller.setProgress(currentLevel / VIRTUALIZER_PROGRESS_STEP);
     }
 
 
     @Override
     public void setVirtualizerSwitch(boolean virtualizerEnabled) {
-        virtualizerSwitchButton.setChecked(virtualizerEnabled);
-        virtualizerSeekBar.setEnabled(virtualizerEnabled);
+        virtualizerSwitch.setChecked(virtualizerEnabled);
+        virtualizerCroller.setEnabled(virtualizerEnabled);
     }
 
 }

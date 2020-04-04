@@ -25,7 +25,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
@@ -50,14 +49,9 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
         eqBandList.setAdapter(bandsAdapter);
+        eqSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> presenter.onClickEqSwitcher(isChecked));
 
         return layout;
-    }
-
-    @OnClick(R.id.eq_switcher)
-    public void onClickEqSwitcher() {
-        boolean isChecked = eqSwitch.isChecked();
-        presenter.onClickEqSwitcher(isChecked);
     }
 
 
