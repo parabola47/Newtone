@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
@@ -50,7 +51,7 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     @BindView(R.id.main) TextView albumTitleTxt;
     @BindView(R.id.additional_info) TextView artistNameTxt;
-    @BindView(R.id.image) ImageView albumCover;
+    @BindView(R.id.image) ShapeableImageView albumCover;
 
     private final TrackAdapter tracksAdapter = new TrackAdapter();
 
@@ -88,6 +89,9 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
         tracksList.setAdapter(tracksAdapter);
         tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         albumCover.setVisibility(View.VISIBLE);
+        albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
+                .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.album_fragment_cover_corner_size))
+                .build());
 
         tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);

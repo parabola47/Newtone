@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +19,8 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
@@ -50,6 +51,7 @@ import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 
 public final class PlayerFragment extends MvpAppCompatFragment
         implements PlayerView {
+    private static final String LOG_TAG = PlayerFragment.class.getSimpleName();
 
     @InjectPresenter PlayerPresenter presenter;
 
@@ -356,7 +358,11 @@ public final class PlayerFragment extends MvpAppCompatFragment
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            ImageView albumCover = new ImageView(container.getContext());
+            ShapeableImageView albumCover = new ShapeableImageView(container.getContext());
+            float cornerSizePx = container.getContext().getResources().getDimension(R.dimen.player_fragment_album_cover_corner_size);
+            albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
+                    .setAllCorners(CornerFamily.ROUNDED, cornerSizePx)
+                    .build());
 
             Single.fromCallable(() -> (Bitmap) tracks.get(position).getArtImage())
                     .subscribeOn(Schedulers.io())

@@ -41,7 +41,7 @@
                     android:contentDescription="@string/back_btn_content_desc"
                     app:srcCompat="@drawable/ic_arrow_left" />
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/image"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
