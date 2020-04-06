@@ -36,8 +36,6 @@
     <!--MAIN MENU-->
     <string name="menu_search">Search…</string>
     <string name="menu_sorting_by">Sort by…</string>
-    <string name="menu_grid_view">Grid view</string>
-    <string name="menu_list_view">List view</string>
     <string name="menu_add_playlist">Add playlist</string>
     <string name="menu_settings">Settings</string>
 
@@ -189,6 +187,14 @@
     <string name="search_screen_tracks_group">Tracks</string>
     <string name="search_screen_playlists_group">Playlists</string>
 
+    <!--DEFAULT ITEM VALUES-->
+    <string name="default_track_title">21 Century Schizoid Man</string>
+    <string name="default_album">In the Court of the Crimson King</string>
+    <string name="default_artist">King Crimson</string>
+    <string name="default_duration">7:20</string>
+    <string name="default_album_tracks_count">5</string>
+
+
     <!--SETTING-->
     <string name="setting_title">Settings</string>
     <string name="setting_notification_color_title">Notification color</string>
@@ -196,6 +202,8 @@
     <string name="setting_notification_artwork_show_title">Notification artwork</string>
     <string name="setting_notification_artwork_show_desc">Show album artwork in notification</string>
     <string name="setting_privacy_policy_title">Privacy Policy</string>
+    <string name="reset_to_default_button">Reset to default</string>
+    <string name="reset_settings_dialog_title">Reset settings</string>
 
     <!--TRACK ITEM DISPLAY SETTING-->
     <string name="track_item_display_setting_screen_title">Track view settings</string>
@@ -205,14 +213,19 @@
     <string name="track_item_show_cover_setting">Show cover</string>
     <string name="track_item_cover_size_setting">Cover size</string>
     <string name="track_item_cover_corners_setting">Cover corners</string>
-    <string name="track_item_reset_to_default_button">Reset to default</string>
-    <string name="track_item_reset_settings_dialog_title">Reset settings</string>
     <string name="track_item_reset_settings_dialog_message">Are you sure you want to reset track item settings?</string>
     <string name="track_item_artist_with_album">%s - %s</string>
-    <string name="default_track_title">21 Century Schizoid Man</string>
-    <string name="default_album">In the Court of the Crimson King</string>
-    <string name="default_artist">King Crimson</string>
-    <string name="default_duration">7:20</string>
+
+
+    <!--ALBUM ITEM DISPLAY SETTING-->
+    <string name="album_item_display_setting_screen_title">Album view settings</string>
+    <string name="album_item_grid_view_type_setting">Grid</string>
+    <string name="album_item_list_view_type_setting">List</string>
+    <string name="album_item_text_size_setting">Text size</string>
+    <string name="album_item_border_padding_setting">Border padding</string>
+    <string name="album_item_cover_size_setting">Cover size</string>
+    <string name="album_item_cover_corners_setting">Cover corners</string>
+    <string name="album_item_reset_settings_dialog_message">Are you sure you want to reset album item settings?</string>
 
 
     <!--CONTENT DESCRIPTION-->

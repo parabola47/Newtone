@@ -1,40 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.fragment.settings.TrackItemDisplaySettingFragment">
+    tools:context=".ui.fragment.settings.AlbumItemDisplaySettingFragment">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="144dp"
-        android:background="#444444"
-        android:elevation="8dp"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <include
-            android:id="@+id/trackHolder"
-            layout="@layout/item_track"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:background="#444444"
+            android:elevation="8dp"
+            android:gravity="center">
 
-    </FrameLayout>
+            <include
+                android:id="@+id/albumListHolder"
+                layout="@layout/item_album_list" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <include
+                android:id="@+id/albumGridHolder"
+                layout="@layout/item_album_grid" />
+
+        </FrameLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+                android:id="@+id/viewTypeToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                app:checkedBackgroundColor="@color/colorAccent"
+                app:separatorVisible="false"
+                app:textToggleLeft="@string/album_item_grid_view_type_setting"
+                app:textToggleRight="@string/album_item_list_view_type_setting"
+                app:uncheckedBackgroundColor="#222"
+                app:uncheckedTextColor="@android:color/darker_gray" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:background="#222"
                 android:padding="4dp">
 
@@ -49,7 +65,7 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/track_item_text_size_setting" />
+                    android:text="@string/album_item_text_size_setting" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textSizeValue"
@@ -96,7 +112,7 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/track_item_border_padding_setting" />
+                    android:text="@string/album_item_border_padding_setting" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/borderPaddingValue"
@@ -125,70 +141,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/showAlbumTitleBar"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="4dp"
-                android:background="#222"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:paddingHorizontal="16dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@id/showAlbumTitleSwitch"
-                    android:layout_toLeftOf="@id/showAlbumTitleSwitch"
-                    android:text="@string/track_item_show_album_title_setting" />
-
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/showAlbumTitleSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/showCoverBar"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="4dp"
-                android:background="#222"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:paddingHorizontal="16dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@id/showCoverSwitch"
-                    android:layout_toLeftOf="@id/showCoverSwitch"
-                    android:text="@string/track_item_show_cover_setting" />
-
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/showCoverSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -207,7 +159,7 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/track_item_cover_size_setting" />
+                    android:text="@string/album_item_cover_size_setting" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/coverSizeValue"
@@ -218,7 +170,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
-                    tools:text="40" />
+                    tools:text="64" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
                     android:id="@+id/coverSizeSeekBar"
@@ -231,7 +183,7 @@
                     android:layout_toLeftOf="@+id/coverSizeValue"
                     android:max="32"
                     android:paddingVertical="4dp"
-                    tools:progress="8" />
+                    tools:progress="32" />
 
             </RelativeLayout>
 
@@ -253,7 +205,7 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/track_item_cover_corners_setting" />
+                    android:text="@string/album_item_cover_corners_setting" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/coverCornersValue"
@@ -291,6 +243,5 @@
 
         </LinearLayout>
 
-    </ScrollView>
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
-import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
@@ -31,7 +32,7 @@ import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-import static com.parabola.newtone.util.AndroidTool.getScreenWidthDp;
+import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
 
 public final class ArtistFragment extends BaseSwipeToBackFragment
         implements ArtistView, Sortable, Scrollable {
@@ -72,7 +73,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        verticalItemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+        verticalItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
     }
 
     @NonNull
@@ -149,27 +150,15 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
 
     @Override
-    public void setViewType(AlbumViewType viewType) {
-        switch (viewType) {
-            case LIST:
-                albumsAdapter.showAsList();
+    public void setAlbumViewSettings(AlbumItemView albumViewSettings) {
+        if (albumViewSettings.viewType == AlbumViewType.GRID) {
+            albumsList.removeItemDecoration(verticalItemDecoration);
+            albumsAdapter.setViewSettings(albumViewSettings, calculateAlbumColumnCount(requireActivity()));
+        } else {
+            if (albumsList.getItemDecorationCount() == 0)
                 albumsList.addItemDecoration(verticalItemDecoration);
-                break;
-            case GRID:
-                albumsList.removeItemDecoration(verticalItemDecoration);
-                albumsAdapter.showAsGrid(calculateSpanCount());
-                break;
-            default: throw new IllegalArgumentException(viewType.toString());
+            albumsAdapter.setViewSettings(albumViewSettings, 1);
         }
-    }
-
-    private int calculateSpanCount() {
-        float widthDp = getScreenWidthDp(requireContext(), requireActivity().getWindowManager());
-
-        int columnsCount = 2;
-        if (widthDp > 500) columnsCount = ((int) widthDp / 200);
-
-        return columnsCount;
     }
 
     @Override

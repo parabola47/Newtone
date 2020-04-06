@@ -21,14 +21,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/album_default" />
+        tools:src="@drawable/album_default" />
 
     <FrameLayout
         android:id="@+id/albumTitleWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginHorizontal="4dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toTopOf="@+id/authorWrapper"
         app:layout_constraintLeft_toLeftOf="@+id/albumCover"
@@ -40,8 +39,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/text_view_circle_corners_bg"
             android:maxLines="1"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:paddingHorizontal="4dp"
             android:singleLine="true"
             android:textSize="18sp"
             tools:text="Happy With What You Have To Be Happy With" />
@@ -53,12 +51,11 @@
         android:id="@+id/authorWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginHorizontal="4dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/albumCover"
-        app:layout_constraintEnd_toEndOf="@id/albumCover"
-        app:layout_constraintStart_toStartOf="@+id/albumCover">
+        app:layout_constraintLeft_toLeftOf="@+id/albumCover"
+        app:layout_constraintRight_toRightOf="@id/albumCover">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/author"
@@ -66,8 +63,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/text_view_circle_corners_bg"
             android:maxLines="1"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:paddingHorizontal="4dp"
             android:singleLine="true"
             android:textSize="12sp"
             tools:text="King Crimson" />

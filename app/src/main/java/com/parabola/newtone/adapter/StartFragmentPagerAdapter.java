@@ -33,9 +33,6 @@ public final class StartFragmentPagerAdapter extends FragmentPagerAdapter {
         System.arraycopy(tabFragments, 0, this.tabFragments, 0, this.tabFragments.length);
     }
 
-    public Fragment selectItem(int position) {
-        return tabFragments[position];
-    }
 
     @Override
     @NonNull

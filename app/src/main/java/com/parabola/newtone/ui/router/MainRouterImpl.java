@@ -33,6 +33,7 @@ import com.parabola.newtone.ui.fragment.playlist.FoldersListFragment;
 import com.parabola.newtone.ui.fragment.playlist.PlaylistFragment;
 import com.parabola.newtone.ui.fragment.playlist.QueueFragment;
 import com.parabola.newtone.ui.fragment.playlist.RecentlyAddedPlaylistFragment;
+import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment;
 import com.parabola.newtone.ui.fragment.settings.SettingFragment;
 import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment;
 import com.parabola.newtone.ui.fragment.start.StartFragment;
@@ -243,6 +244,18 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void openTrackItemDisplaySettings() {
         TrackItemDisplaySettingFragment fragment = TrackItemDisplaySettingFragment.newInstance();
+
+        activity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
+                .add(R.id.nav_host_fragment, fragment)
+                .addToBackStack(null)
+                .setPrimaryNavigationFragment(fragment)
+                .commit();
+    }
+
+    @Override
+    public void openAlbumItemDisplaySettings() {
+        AlbumItemDisplaySettingFragment fragment = AlbumItemDisplaySettingFragment.newInstance();
 
         activity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)

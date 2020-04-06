@@ -39,8 +39,9 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
     @Override
     protected void onFirstViewAttach() {
         disposables.addAll(
-                observeAllAlbumsSorting(), observeTrackDeleting(),
-                observeTabAlbumViewType());
+                observeAllAlbumsSorting(),
+                observeAlbumItemViewUpdates(),
+                observeTrackDeleting());
     }
 
     @Override
@@ -64,9 +65,9 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
                 .subscribe(getViewState()::refreshAlbums);
     }
 
-    private Disposable observeTabAlbumViewType() {
-        return viewSettingsInteractor.observeTabAlbumViewType()
-                .subscribe(getViewState()::setViewType);
+    private Disposable observeAlbumItemViewUpdates() {
+        return viewSettingsInteractor.observeAlbumItemViewUpdates()
+                .subscribe(getViewState()::setAlbumViewSettings);
     }
 
     public void onItemClick(int albumId) {

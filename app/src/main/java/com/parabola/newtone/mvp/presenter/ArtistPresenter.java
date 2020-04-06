@@ -50,7 +50,7 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
     protected void onFirstViewAttach() {
         disposables.addAll(
                 loadArtist(),
-                observeArtistAlbumsViewType(),
+                observeAlbumItemViewUpdates(),
                 observeArtistAlbumsSorting(),
                 observeTrackDeleting());
     }
@@ -85,9 +85,9 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
                         error -> router.backToRoot());
     }
 
-    private Disposable observeArtistAlbumsViewType() {
-        return viewSettingsInteractor.observeArtistAlbumsViewType()
-                .subscribe(getViewState()::setViewType);
+    private Disposable observeAlbumItemViewUpdates() {
+        return viewSettingsInteractor.observeAlbumItemViewUpdates()
+                .subscribe(getViewState()::setAlbumViewSettings);
     }
 
 

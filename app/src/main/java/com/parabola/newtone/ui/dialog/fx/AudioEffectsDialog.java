@@ -20,9 +20,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static java.util.Objects.requireNonNull;
+
 public final class AudioEffectsDialog extends BaseDialogFragment {
 
-    private FragmentPagerAdapter audioEffectsPagerAdapter;
+    private AudioEffectsPagerAdapter audioEffectsPagerAdapter;
 
     @BindView(R.id.tabs) TabLayout tabLayout;
     @BindView(R.id.audio_effects_pager) ViewPager audioEffectsPager;
@@ -38,9 +40,18 @@ public final class AudioEffectsDialog extends BaseDialogFragment {
         audioEffectsPager.setOffscreenPageLimit(audioEffectsPagerAdapter.getCount());
         tabLayout.setupWithViewPager(audioEffectsPager);
 
+        requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.fx_eq_icon);
+        requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.fx_ic_tune);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.fx_eq_icon);
-        tabLayout.getTabAt(1).setIcon(R.drawable.fx_ic_tune);
+        //берём старые фрагменты, если экран не создаётся с нуля
+        if (savedInstanceState != null) {
+            Fragment[] tabFragments = new Fragment[2];
+            for (Fragment fragment : getChildFragmentManager().getFragments()) {
+                if (fragment instanceof FxEqualizerFragment) tabFragments[0] = fragment;
+                if (fragment instanceof FxAudioSettingsFragment) tabFragments[1] = fragment;
+            }
+            audioEffectsPagerAdapter.initTabsFragments(tabFragments);
+        }
 
         return layout;
     }
@@ -51,19 +62,35 @@ public final class AudioEffectsDialog extends BaseDialogFragment {
     }
 
     public static class AudioEffectsPagerAdapter extends FragmentPagerAdapter {
-        private Fragment[] fragments;
+        private final Fragment[] fragments = new Fragment[TABS_COUNT];
+        private static final int TABS_COUNT = 2;
+
 
         public AudioEffectsPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            fragments = new Fragment[2];
-            fragments[0] = new FxEqualizerFragment();
-            fragments[1] = new FxAudioSettingsFragment();
+        }
+
+
+        void initTabsFragments(Fragment[] tabFragments) {
+            if (tabFragments.length != TABS_COUNT)
+                throw new IllegalArgumentException("Size of array tabFragments is " + tabFragments.length + ". It must be " + TABS_COUNT);
+
+            System.arraycopy(tabFragments, 0, this.fragments, 0, this.fragments.length);
         }
 
         @Override
         @NonNull
         public Fragment getItem(int position) {
-            return fragments[position];
+            switch (position) {
+                case 0:
+                    if (fragments[0] == null) fragments[0] = new FxEqualizerFragment();
+                    return fragments[0];
+                case 1:
+                    if (fragments[1] == null) fragments[1] = new FxAudioSettingsFragment();
+                    return fragments[1];
+                default:
+                    throw new IllegalArgumentException("Fragment on position " + position + " not exists");
+            }
         }
 
         @Override

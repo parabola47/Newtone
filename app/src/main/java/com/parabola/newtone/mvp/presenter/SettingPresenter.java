@@ -59,6 +59,10 @@ public class SettingPresenter extends MvpPresenter<SettingView> {
         router.openTrackItemDisplaySettings();
     }
 
+    public void onClickAlbumItemViewSettings() {
+        router.openAlbumItemDisplaySettings();
+    }
+
     public void onClickPrivacyPolicy() {
         router.openPrivacyPolicyWebPage();
     }
@@ -66,4 +70,5 @@ public class SettingPresenter extends MvpPresenter<SettingView> {
     public void onClickNewtoneTenTimes() {
         router.openNewtoneDialog();
     }
+
 }

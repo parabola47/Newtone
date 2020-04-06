@@ -24,18 +24,15 @@ import androidx.fragment.app.Fragment;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.parabola.data.PermissionChangeReceiver;
 import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.settings.ViewSettingsInteractor.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.MainPresenter;
 import com.parabola.newtone.mvp.view.MainView;
-import com.parabola.newtone.ui.fragment.ArtistFragment;
 import com.parabola.newtone.ui.fragment.SearchFragment;
 import com.parabola.newtone.ui.fragment.Sortable;
 import com.parabola.newtone.ui.fragment.settings.SettingFragment;
-import com.parabola.newtone.ui.fragment.start.TabAlbumFragment;
 import com.parabola.newtone.ui.fragment.start.TabPlaylistFragment;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -126,18 +123,6 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
                     return currentFragment instanceof Sortable;
                 case R.id.add_playlist:
                     return currentFragment instanceof TabPlaylistFragment;
-                case R.id.grid_view:
-                    if (currentFragment instanceof TabAlbumFragment && viewSettingsInteractor.getTabAlbumViewType() == AlbumViewType.LIST)
-                        return true;
-                    if (currentFragment instanceof ArtistFragment && viewSettingsInteractor.getArtistAlbumsViewType() == AlbumViewType.LIST)
-                        return true;
-                    return false;
-                case R.id.list_view:
-                    if (currentFragment instanceof TabAlbumFragment && viewSettingsInteractor.getTabAlbumViewType() == AlbumViewType.GRID)
-                        return true;
-                    if (currentFragment instanceof ArtistFragment && viewSettingsInteractor.getArtistAlbumsViewType() == AlbumViewType.GRID)
-                        return true;
-                    return false;
                 case R.id.settings:
                     return !router.hasInstanceInStack(SettingFragment.class);
             }
@@ -166,18 +151,6 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
             case R.id.sorting:
                 Sortable sortable = (Sortable) currentFragment;
                 router.openSortingDialog(sortable.getListType());
-                break;
-            case R.id.grid_view:
-                if (currentFragment instanceof TabAlbumFragment)
-                    viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.GRID);
-                else if (currentFragment instanceof ArtistFragment)
-                    viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.GRID);
-                break;
-            case R.id.list_view:
-                if (currentFragment instanceof TabAlbumFragment)
-                    viewSettingsInteractor.setTabAlbumViewType(AlbumViewType.LIST);
-                else if (currentFragment instanceof ArtistFragment)
-                    viewSettingsInteractor.setArtistAlbumsViewType(AlbumViewType.LIST);
                 break;
             case R.id.add_playlist:
                 presenter.onClickMenuAddPlaylist();

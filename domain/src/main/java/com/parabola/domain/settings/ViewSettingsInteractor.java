@@ -1,9 +1,12 @@
 package com.parabola.domain.settings;
 
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
+
 import io.reactivex.Observable;
 
 public interface ViewSettingsInteractor {
 
+    //T R A C K    I T E M S
     TrackItemView getTrackItemViewSettings();
     void setTrackItemView(TrackItemView trackItemView);
     Observable<TrackItemView> observeTrackItemViewUpdates();
@@ -14,6 +17,19 @@ public interface ViewSettingsInteractor {
     boolean getIsTrackItemCoverShows();
     int getTrackItemCoverSize();
     int getTrackItemCoverCornersRadius();
+
+
+    //A L B U M    I T E M S
+    AlbumItemView getAlbumItemViewSettings();
+    void setAlbumItemViewSettings(AlbumItemView albumItemView);
+    Observable<AlbumItemView> observeAlbumItemViewUpdates();
+
+    AlbumViewType getAlbumItemViewType();
+    int getAlbumItemTextSize();
+    int getAlbumItemBorderPadding();
+    int getAlbumItemCoverSize();
+    int getAlbumItemCoverCornersRadius();
+
 
     class TrackItemView {
         public final int textSize;
@@ -34,21 +50,26 @@ public interface ViewSettingsInteractor {
         }
     }
 
+    class AlbumItemView {
+        public final AlbumViewType viewType;
+        public final int textSize;
+        public final int borderPadding;
+        public final int coverSize;
+        public final int coverCornersRadius;
 
-    default AlbumViewType getDefaultAlbumViewType() {
-        return AlbumViewType.GRID;
+        public AlbumItemView(AlbumViewType viewType,
+                             int textSize, int borderPadding,
+                             int coverSize, int coverCornersRadius) {
+            this.viewType = viewType;
+            this.textSize = textSize;
+            this.borderPadding = borderPadding;
+            this.coverSize = coverSize;
+            this.coverCornersRadius = coverCornersRadius;
+        }
+
+        public enum AlbumViewType {
+            GRID, LIST
+        }
     }
 
-    AlbumViewType getTabAlbumViewType();
-    void setTabAlbumViewType(AlbumViewType viewType);
-    Observable<AlbumViewType> observeTabAlbumViewType();
-
-
-    AlbumViewType getArtistAlbumsViewType();
-    void setArtistAlbumsViewType(AlbumViewType viewType);
-    Observable<AlbumViewType> observeArtistAlbumsViewType();
-
-    enum AlbumViewType {
-        GRID, LIST
-    }
 }

@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -94,7 +93,7 @@ public final class StartFragment extends MvpAppCompatFragment
     }
 
     public void scrollOnTabTrackToCurrentTrack() {
-        TabTrackFragment tabTrackFragment = (TabTrackFragment) fragmentPagerAdapter.selectItem(2);
+        TabTrackFragment tabTrackFragment = (TabTrackFragment) fragmentPagerAdapter.getItem(2);
         tabTrackFragment.scrollToCurrentTrack();
     }
 
@@ -150,7 +149,7 @@ public final class StartFragment extends MvpAppCompatFragment
         ((TextView) layout.findViewById(R.id.title))
                 .setTextColor(tab.isSelected() ? selectedTabIconTint : defaultTabIconTint);
         ((ImageView) layout.findViewById(R.id.icon))
-                .setImageDrawable(ContextCompat.getDrawable(requireContext(), tabIconResId));
+                .setImageResource(tabIconResId);
         ((ImageView) layout.findViewById(R.id.icon))
                 .setColorFilter(tab.isSelected() ? selectedTabIconTint : defaultTabIconTint);
 

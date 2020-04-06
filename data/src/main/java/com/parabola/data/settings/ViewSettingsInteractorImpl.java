@@ -3,28 +3,22 @@ package com.parabola.data.settings;
 import android.content.SharedPreferences;
 
 import com.parabola.domain.settings.ViewSettingsInteractor;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
+
+import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
 
 public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor {
 
     private final SharedPreferences prefs;
 
-
-    private static final String TAB_ALBUM_VIEW_TYPE_KEY = "com.parabola.data.settings.TAB_ALBUM_VIEW_TYPE";
-    private final BehaviorSubject<AlbumViewType> tabAlbumViewTypeObserver;
-
-    private static final String ARTIST_ALBUMS_VIEW_TYPE_KEY = "com.parabola.data.settings.ARTIST_ALBUMS_VIEW_TYPE";
-    private final BehaviorSubject<AlbumViewType> artistAlbumsViewTypeObserver;
-
-
     private final BehaviorSubject<TrackItemView> trackItemViewObserver;
+    private final BehaviorSubject<AlbumItemView> albumItemViewObserver;
 
     public ViewSettingsInteractorImpl(SharedPreferences sharedPreferences) {
         this.prefs = sharedPreferences;
-        this.tabAlbumViewTypeObserver = BehaviorSubject.createDefault(getTabAlbumViewType());
-        this.artistAlbumsViewTypeObserver = BehaviorSubject.createDefault(getArtistAlbumsViewType());
 
 
         TrackItemView trackItemView = new TrackItemView(
@@ -35,6 +29,15 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
                 getTrackItemCoverSize(),
                 getTrackItemCoverCornersRadius());
         trackItemViewObserver = BehaviorSubject.createDefault(trackItemView);
+
+
+        AlbumItemView albumItemView = new AlbumItemView(
+                getAlbumItemViewType(),
+                getAlbumItemTextSize(),
+                getAlbumItemBorderPadding(),
+                getAlbumItemCoverSize(),
+                getAlbumItemCoverCornersRadius());
+        albumItemViewObserver = BehaviorSubject.createDefault(albumItemView);
     }
 
     //    T R A C K    I T E M S
@@ -52,12 +55,14 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
 
     @Override
     public void setTrackItemView(TrackItemView trackItemView) {
-        setTrackItemTextSize(trackItemView.textSize);
-        setTrackItemBorderPadding(trackItemView.borderPadding);
-        setIsAlbumTitleShows(trackItemView.isAlbumTitleShows);
-        setIsTrackItemCoverShows(trackItemView.isCoverShows);
-        setTrackItemCoverSize(trackItemView.coverSize);
-        setTrackItemCoverCornersRadius(trackItemView.coverCornersRadius);
+        prefs.edit()
+                .putInt(TRACK_ITEM_TEXT_SIZE_KEY, trackItemView.textSize)
+                .putInt(TRACK_ITEM_BORDER_PADDING_KEY, trackItemView.borderPadding)
+                .putBoolean(TRACK_ITEM_ALBUM_TITLE_SHOWS_KEY, trackItemView.isAlbumTitleShows)
+                .putBoolean(TRACK_ITEM_COVER_SHOWS_KEY, trackItemView.isCoverShows)
+                .putInt(TRACK_ITEM_COVER_SIZE_KEY, trackItemView.coverSize)
+                .putInt(TRACK_ITEM_COVER_CORNER_RADIUS_KEY, trackItemView.coverCornersRadius)
+                .apply();
 
         trackItemViewObserver.onNext(trackItemView);
     }
@@ -72,21 +77,9 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         return prefs.getInt(TRACK_ITEM_TEXT_SIZE_KEY, 16);
     }
 
-    private void setTrackItemTextSize(int sizeDp) {
-        prefs.edit()
-                .putInt(TRACK_ITEM_TEXT_SIZE_KEY, sizeDp)
-                .apply();
-    }
-
     @Override
     public int getTrackItemBorderPadding() {
         return prefs.getInt(TRACK_ITEM_BORDER_PADDING_KEY, 16);
-    }
-
-    private void setTrackItemBorderPadding(int paddingDp) {
-        prefs.edit()
-                .putInt(TRACK_ITEM_BORDER_PADDING_KEY, paddingDp)
-                .apply();
     }
 
     @Override
@@ -94,21 +87,9 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         return prefs.getBoolean(TRACK_ITEM_ALBUM_TITLE_SHOWS_KEY, false);
     }
 
-    private void setIsAlbumTitleShows(boolean show) {
-        prefs.edit()
-                .putBoolean(TRACK_ITEM_ALBUM_TITLE_SHOWS_KEY, show)
-                .apply();
-    }
-
     @Override
     public boolean getIsTrackItemCoverShows() {
         return prefs.getBoolean(TRACK_ITEM_COVER_SHOWS_KEY, true);
-    }
-
-    private void setIsTrackItemCoverShows(boolean show) {
-        prefs.edit()
-                .putBoolean(TRACK_ITEM_COVER_SHOWS_KEY, show)
-                .apply();
     }
 
     @Override
@@ -116,74 +97,66 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         return prefs.getInt(TRACK_ITEM_COVER_SIZE_KEY, 40);
     }
 
-    private void setTrackItemCoverSize(int coverSizeDp) {
-        prefs.edit()
-                .putInt(TRACK_ITEM_COVER_SIZE_KEY, coverSizeDp)
-                .apply();
-    }
-
     @Override
     public int getTrackItemCoverCornersRadius() {
         return prefs.getInt(TRACK_ITEM_COVER_CORNER_RADIUS_KEY, 4);
     }
 
-    private void setTrackItemCoverCornersRadius(int coverCornersRadiusDp) {
+
+    //A L B U M S    I T E M S
+    private static final String ALBUM_ITEM_VIEW_TYPE_KEY = "com.parabola.data.settings.ALBUM_ITEM_VIEW_TYPE";
+    private static final String ALBUM_ITEM_TEXT_SIZE_KEY = "com.parabola.data.settings.ALBUM_ITEM_TEXT_SIZE";
+    private static final String ALBUM_ITEM_BORDER_PADDING_KEY = "com.parabola.data.settings.ALBUM_ITEM_BORDER_PADDING";
+    private static final String ALBUM_ITEM_COVER_SIZE_KEY = "com.parabola.data.settings.ALBUM_ITEM_COVER_SIZE";
+    private static final String ALBUM_ITEM_COVER_CORNERS_RADIUS_KEY = "com.parabola.data.settings.ALBUM_ITEM_COVER_CORNERS_RADIUS";
+
+    @Override
+    public AlbumItemView getAlbumItemViewSettings() {
+        return albumItemViewObserver.getValue();
+    }
+
+    @Override
+    public void setAlbumItemViewSettings(AlbumItemView albumItemView) {
         prefs.edit()
-                .putInt(TRACK_ITEM_COVER_CORNER_RADIUS_KEY, coverCornersRadiusDp)
+                .putString(ALBUM_ITEM_VIEW_TYPE_KEY, albumItemView.viewType.name())
+                .putInt(ALBUM_ITEM_TEXT_SIZE_KEY, albumItemView.textSize)
+                .putInt(ALBUM_ITEM_BORDER_PADDING_KEY, albumItemView.borderPadding)
+                .putInt(ALBUM_ITEM_COVER_SIZE_KEY, albumItemView.coverSize)
+                .putInt(ALBUM_ITEM_COVER_CORNERS_RADIUS_KEY, albumItemView.coverCornersRadius)
                 .apply();
-    }
 
-
-    //    T A B    A L B U M S
-    @Override
-    public AlbumViewType getTabAlbumViewType() {
-        int savedValue = prefs.getInt(TAB_ALBUM_VIEW_TYPE_KEY, getDefaultAlbumViewType().ordinal());
-
-        for (AlbumViewType albumViewType : AlbumViewType.values()) {
-            if (albumViewType.ordinal() == savedValue)
-                return albumViewType;
-        }
-
-        return getDefaultAlbumViewType();
+        albumItemViewObserver.onNext(albumItemView);
     }
 
     @Override
-    public void setTabAlbumViewType(AlbumViewType viewType) {
-        prefs.edit()
-                .putInt(TAB_ALBUM_VIEW_TYPE_KEY, viewType.ordinal())
-                .apply();
-        tabAlbumViewTypeObserver.onNext(viewType);
+    public Observable<AlbumItemView> observeAlbumItemViewUpdates() {
+        return albumItemViewObserver;
     }
 
     @Override
-    public Observable<AlbumViewType> observeTabAlbumViewType() {
-        return tabAlbumViewTypeObserver;
-    }
-
-
-    //    A R T I S T    A L B U M S
-    @Override
-    public AlbumViewType getArtistAlbumsViewType() {
-        int savedValue = prefs.getInt(ARTIST_ALBUMS_VIEW_TYPE_KEY, getDefaultAlbumViewType().ordinal());
-
-        for (AlbumViewType albumViewType : AlbumViewType.values()) {
-            if (albumViewType.ordinal() == savedValue)
-                return albumViewType;
-        }
-
-        return getDefaultAlbumViewType();
+    public AlbumViewType getAlbumItemViewType() {
+        return AlbumViewType.valueOf(prefs.getString(ALBUM_ITEM_VIEW_TYPE_KEY, GRID.name()));
     }
 
     @Override
-    public void setArtistAlbumsViewType(AlbumViewType viewType) {
-        prefs.edit()
-                .putInt(ARTIST_ALBUMS_VIEW_TYPE_KEY, viewType.ordinal())
-                .apply();
-        artistAlbumsViewTypeObserver.onNext(viewType);
+    public int getAlbumItemTextSize() {
+        return prefs.getInt(ALBUM_ITEM_TEXT_SIZE_KEY, 16);
     }
 
     @Override
-    public Observable<AlbumViewType> observeArtistAlbumsViewType() {
-        return artistAlbumsViewTypeObserver;
+    public int getAlbumItemBorderPadding() {
+        return prefs.getInt(ALBUM_ITEM_BORDER_PADDING_KEY, 16);
     }
+
+
+    @Override
+    public int getAlbumItemCoverSize() {
+        return prefs.getInt(ALBUM_ITEM_COVER_SIZE_KEY, 64);
+    }
+
+    @Override
+    public int getAlbumItemCoverCornersRadius() {
+        return prefs.getInt(ALBUM_ITEM_COVER_CORNERS_RADIUS_KEY, 4);
+    }
+
 }

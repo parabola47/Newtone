@@ -46,6 +46,7 @@ public interface MainRouter {
     //    SETTINGS
     void openSettings();
     void openTrackItemDisplaySettings();
+    void openAlbumItemDisplaySettings();
 
 
     //    FROM FOLDERS LIST

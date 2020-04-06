@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
-import com.parabola.domain.settings.ViewSettingsInteractor;
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
@@ -150,7 +150,7 @@ public final class TabTrackFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setItemViewSettings(ViewSettingsInteractor.TrackItemView viewSettings) {
+    public void setItemViewSettings(TrackItemView viewSettings) {
         tracksAdapter.setViewSettings(viewSettings);
     }
 

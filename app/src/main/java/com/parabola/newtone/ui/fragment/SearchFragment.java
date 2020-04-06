@@ -20,6 +20,8 @@ import com.parabola.domain.model.Artist;
 import com.parabola.domain.model.Playlist;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
@@ -93,7 +95,9 @@ public final class SearchFragment extends MvpAppCompatFragment
         playlistView.setAdapter(playlistAdapter);
         playlistView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        albumAdapter.showAsList();
+        AlbumItemView newAlbumItemView = new AlbumItemView(AlbumViewType.LIST, 16, 16, 64, 4);
+        albumAdapter.setViewSettings(newAlbumItemView, 1);
+
 
         artistAdapter.setItemClickListener(position -> {
             searchView.clearFocus();

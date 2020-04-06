@@ -1,5 +1,6 @@
 package com.parabola.newtone.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -22,6 +23,7 @@ public final class AndroidTool {
         throw new AssertionError();
     }
 
+
     public static AlertDialog createDeleteTrackDialog(Context context,
                                                       DialogInterface.OnClickListener onClickDeleteListener) {
         AlertDialog dialog = new AlertDialog.Builder(context)
@@ -39,12 +41,38 @@ public final class AndroidTool {
         return dialog;
     }
 
-    public static float getScreenWidthDp(Context context, WindowManager windowManager) {
+
+    public static final int MIN_GRID_ALBUM_VIEW_COLUMN_COUNT = 2;
+
+    /**
+     * Вычисление количества альбомов, которые должны быть помещены в одну строку на текущем экране.<p>
+     * Если ширина экрана меньше или равна 500, то возвращается {@link #MIN_GRID_ALBUM_VIEW_COLUMN_COUNT}.<p>
+     * Если же ширина экрана больше 500, то отображаемое количество будет численно равно отношению ширины экрана к 200
+     * с округлением в меньшую сторону
+     *
+     * @return количество альбомов, которые должны быть показаны в одной строке
+     */
+    public static int calculateAlbumColumnCount(Activity activity) {
+        float screenWidthDp = getScreenWidthDp(activity, activity.getWindowManager());
+
+        int columnsCount = MIN_GRID_ALBUM_VIEW_COLUMN_COUNT;
+        if (screenWidthDp > 500) columnsCount = ((int) screenWidthDp / 200);
+
+        return columnsCount;
+    }
+
+
+    public static float getScreenWidthPx(WindowManager windowManager) {
         Point point = new Point();
         windowManager.getDefaultDisplay().getSize(point);
 
-        return convertPixelsToDp(point.x, context);
+        return point.x;
     }
+
+    public static float getScreenWidthDp(Context context, WindowManager windowManager) {
+        return convertPixelsToDp(getScreenWidthPx(windowManager), context);
+    }
+
 
     public static float convertDpToPixel(float dp, Context context) {
         Resources resources = context.getResources();

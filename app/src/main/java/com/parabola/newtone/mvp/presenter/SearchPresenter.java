@@ -40,8 +40,8 @@ public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
     protected void onFirstViewAttach() {
         getViewState().clearAllLists();
         getViewState().focusOnSearchView();
-        disposables.add(
-                observeTrackItemViewUpdates());
+
+        disposables.addAll(observeTrackItemViewUpdates());
     }
 
     private Disposable observeTrackItemViewUpdates() {

@@ -93,7 +93,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
         otherInfoTxt.setVisibility(View.GONE);
 
 
-        cover.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.album_default));
+        cover.setImageResource(R.drawable.album_default);
         trackTitle.setText(R.string.default_track_title);
         duration.setText(R.string.default_duration);
         trackHolder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorListItemDefaultBackground));
@@ -155,7 +155,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @OnClick(R.id.setDefault)
     public void onClickSetDefault() {
         AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.track_item_reset_settings_dialog_title)
+                .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.track_item_reset_settings_dialog_message)
                 .setPositiveButton(R.string.dialog_reset, (d, which) -> {
                     coverSizeSeekBar.setProgress(40 - COVER_SIZE_MIN);
@@ -170,7 +170,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
         Window window = requireNonNull(alertDialog.getWindow());
         window.getDecorView().setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.dialog_bg));
-        int widthPx = (int) requireContext().getResources().getDimension(R.dimen.alert_dialog_min_width);
+        int widthPx = (int) getResources().getDimension(R.dimen.alert_dialog_min_width);
         window.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         alertDialog.show();

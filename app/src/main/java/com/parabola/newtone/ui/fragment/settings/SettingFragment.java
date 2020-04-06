@@ -101,6 +101,11 @@ public final class SettingFragment extends BaseSwipeToBackFragment
         presenter.onClickTrackItemViewSettings();
     }
 
+    @OnClick(R.id.album_item_view_bar)
+    public void onClickAlbumItemViewSettings() {
+        presenter.onClickAlbumItemViewSettings();
+    }
+
     @OnClick(R.id.privacy_policy_bar)
     public void onClickPrivacyPolicy() {
         presenter.onClickPrivacyPolicy();
