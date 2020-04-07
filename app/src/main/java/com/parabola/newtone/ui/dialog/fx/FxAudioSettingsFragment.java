@@ -16,8 +16,6 @@ import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.view.fx.FxAudioSettingsView;
 import com.parabola.newtone.ui.view.Croller;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import moxy.MvpAppCompatFragment;
@@ -98,7 +96,7 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
     @Override
     public void setPlaybackSpeedText(float speed) {
-        playbackSpeedCroller.setLabel(String.format(Locale.getDefault(), "x%.2f", speed));
+        playbackSpeedCroller.setLabel(getString(R.string.fx_tempo, speed));
     }
 
     @Override
@@ -108,7 +106,7 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
 
     @Override
     public void setPlaybackPitchText(float pitch) {
-        playbackPitchCroller.setLabel(String.format(Locale.getDefault(), "x%.2f", pitch));
+        playbackPitchCroller.setLabel(getString(R.string.fx_pitch, pitch));
     }
 
     @Override
