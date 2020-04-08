@@ -232,6 +232,9 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public void start(List<Track> tracklist, int trackPosition, boolean startImmediately, long playbackPositionMs) {
+        if (trackPosition >= tracklist.size())
+            return;
+
         boolean isPlaylistChanged = !isNewPlaylistIdentical(tracklist);
         boolean isCurrentTrackChanged;
 
