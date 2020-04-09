@@ -148,16 +148,17 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     private Disposable observeTrackMoving() {
         return playerInteractor.onMoveTrack()
                 .observeOn(schedulers.ui())
-                .subscribe(oldNewPositionEntry -> {
-                    getViewState().moveTrack(oldNewPositionEntry.getKey(), oldNewPositionEntry.getValue());
+                .subscribe(movedTrackItem -> {
+                    getViewState().moveTrack(movedTrackItem.oldPosition, movedTrackItem.newPosition);
                     getViewState().setAlbumImagePosition(playerInteractor.currentTrackPosition(), enableSlideScrolling);
                 });
     }
 
     private Disposable observeTrackRemoving() {
         return playerInteractor.onRemoveTrack()
+                .map(removedTrackItem -> removedTrackItem.position)
                 .observeOn(schedulers.ui())
-                .subscribe(idPositionEntry -> getViewState().removeTrack(idPositionEntry.getValue()));
+                .subscribe(getViewState()::removeTrack);
     }
 
     public void onClickTimerButton() {

@@ -43,7 +43,8 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
                 observeTrackItemViewUpdates(),
                 observeCurrentTrackUpdates(),
                 observeTrackRemoving(),
-                observeTrackMoving());
+                observeTrackMoving()
+        );
         getViewState().goToItem(playerInteractor.currentTrackPosition());
     }
 
@@ -85,9 +86,10 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
 
     private Disposable observeTrackRemoving() {
         return playerInteractor.onRemoveTrack()
+                .map(removedTrackItem -> removedTrackItem.position)
                 .observeOn(schedulers.ui())
-                .subscribe(idPositionEntry -> {
-                    getViewState().removeTrackByPosition(idPositionEntry.getValue());
+                .subscribe(removedTrackPosition -> {
+                    getViewState().removeTrackByPosition(removedTrackPosition);
                     getViewState().setTrackCount(playerInteractor.tracksCount());
                     getViewState().setCurrentTrackPosition(playerInteractor.currentTrackPosition());
                 });

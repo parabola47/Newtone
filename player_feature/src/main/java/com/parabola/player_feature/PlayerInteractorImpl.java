@@ -39,11 +39,9 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;
 
 import java.io.File;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
@@ -319,10 +317,10 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         return (int) concatenatedSource.getMediaSource(exoPlayer.getCurrentWindowIndex()).getTag();
     }
 
-    private final PublishSubject<Entry<Integer, Integer>> onMoveTrackObserver = PublishSubject.create();
+    private final PublishSubject<MovedTrackItem> onMoveTrackObserver = PublishSubject.create();
 
     @Override
-    public Observable<Entry<Integer, Integer>> onMoveTrack() {
+    public Observable<MovedTrackItem> onMoveTrack() {
         return onMoveTrackObserver;
     }
 
@@ -331,8 +329,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         return Completable.fromAction(() -> {
             concatenatedSource.moveMediaSource(oldPosition, newPosition);
 
-            Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(oldPosition, newPosition);
-            onMoveTrackObserver.onNext(entry);
+            onMoveTrackObserver.onNext(PlayerInteractor.createMoveTrackItem(oldPosition, newPosition));
             currentTracklistUpdate.onNext(getTrackIds());
 
             settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
@@ -340,21 +337,19 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     }
 
 
-    private final PublishSubject<Entry<Integer, Integer>> onRemoveTrackObserver = PublishSubject.create();
+    private final PublishSubject<RemovedTrackItem> onRemoveTrackObserver = PublishSubject.create();
 
     @Override
-    public Observable<Entry<Integer, Integer>> onRemoveTrack() {
+    public Observable<RemovedTrackItem> onRemoveTrack() {
         return onRemoveTrackObserver;
     }
 
     @Override
     public Completable remove(int trackPosition) {
         return Completable.fromAction(() -> {
-            Integer trackId = (Integer) concatenatedSource.getMediaSource(trackPosition).getTag();
-            concatenatedSource.removeMediaSource(trackPosition);
+            Integer trackId = (Integer) concatenatedSource.removeMediaSource(trackPosition).getTag();
 
-            Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(trackId, trackPosition);
-            onRemoveTrackObserver.onNext(entry);
+            onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(requireNonNull(trackId), trackPosition));
             currentTracklistUpdate.onNext(getTrackIds());
 
             settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
@@ -369,8 +364,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                 hasRemoved = true;
                 concatenatedSource.removeMediaSource(i);
 
-                Entry<Integer, Integer> entry = new SimpleImmutableEntry<>(deletedTrackId, i);
-                onRemoveTrackObserver.onNext(entry);
+                onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(deletedTrackId, i));
             }
         }
         if (hasRemoved) {
