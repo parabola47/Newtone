@@ -99,6 +99,17 @@
         app:layout_constraintTop_toTopOf="@id/drop_down"
         app:srcCompat="@drawable/ic_setting" />
 
+
+    <!--используется как якорь для всплывающего PopupMenu-->
+    <View
+        android:id="@+id/menu_tmp"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:clickable="false"
+        android:focusable="false"
+        app:layout_constraintRight_toRightOf="@+id/track_settings"
+        app:layout_constraintTop_toTopOf="@+id/track_settings" />
+
     <com.parabola.newtone.ui.view.LockableViewPager
         android:id="@+id/album_container"
         android:layout_width="0dp"

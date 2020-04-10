@@ -87,15 +87,25 @@ public final class FolderFragment extends BaseSwipeToBackFragment
             }
         });
         popupWindow.setAdapter(adapter);
-        popupWindow.setAnchorView(rootView);
-        popupWindow.setHorizontalOffset(x);
+
+        View tempView = new View(requireContext());
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(0, 0);
+        tempView.setLayoutParams(lp);
+        tempView.setX(x);
+        tempView.setY(y);
+        rootView.addView(tempView);
+        popupWindow.setAnchorView(tempView);
+
         popupWindow.setModal(true);
         popupWindow.setWidth(adapter.measureContentWidth());
         popupWindow.setOnItemClickListener((parent, view, position, id) -> {
             handleSelectedMenu(adapter.getItem(position), selectedTrack, itemPosition);
             popupWindow.dismiss();
         });
-        popupWindow.setOnDismissListener(() -> tracksAdapter.invalidateItem(itemPosition));
+        popupWindow.setOnDismissListener(() -> {
+            tracksAdapter.invalidateItem(itemPosition);
+            rootView.removeView(tempView);
+        });
 
         popupWindow.show();
         rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));

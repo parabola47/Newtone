@@ -127,8 +127,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
         ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(requireContext(), R.menu.player_menu);
         popupWindow.setAdapter(adapter);
-        popupWindow.setAnchorView(trackSettings);
-        popupWindow.setVerticalOffset(-trackSettings.getWidth());
+        popupWindow.setAnchorView(requireView().findViewById(R.id.menu_tmp));
         popupWindow.setModal(true);
         popupWindow.setWidth(adapter.measureContentWidth());
         popupWindow.setOnItemClickListener((parent, view, position, id) -> {

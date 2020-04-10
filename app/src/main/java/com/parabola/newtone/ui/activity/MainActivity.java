@@ -109,7 +109,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     }
 
     @OnClick(R.id.menu_button)
-    public void onClickMenuButton(ImageView menuButton) {
+    public void onClickMenuButton() {
         Fragment currentFragment = router.currentFragment();
 
         ListPopupWindow popupWindow = new ListPopupWindow(this);
@@ -130,8 +130,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         });
 
         popupWindow.setAdapter(adapter);
-        popupWindow.setAnchorView(menuButton);
-        popupWindow.setVerticalOffset(menuButton.getHeight());
+        popupWindow.setAnchorView(playerBar.findViewById(R.id.menu_tmp));
         popupWindow.setModal(true);
         popupWindow.setWidth(adapter.measureContentWidth());
         popupWindow.setOnItemClickListener((parent, view, position, id) -> {

@@ -23,8 +23,8 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:padding="6dp"
         android:contentDescription="@string/player_toggle_content_desc"
+        android:padding="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -80,6 +80,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_kebab"
         app:tint="@color/colorNewtoneWhite" />
+
+    <!--используется как якорь для всплывающего PopupMenu-->
+    <View
+        android:id="@+id/menu_tmp"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:clickable="false"
+        android:focusable="false"
+        app:layout_constraintBottom_toBottomOf="@+id/menu_button"
+        app:layout_constraintRight_toRightOf="@+id/menu_button" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
