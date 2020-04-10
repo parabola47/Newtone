@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -71,6 +74,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
 
     private final Context context;
+    private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private final TrackRepository trackRepo;
     private final Intent notificationClickIntent;
     private final Bitmap defaultNotificationAlbumArt;
@@ -240,8 +244,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             isCurrentTrackChanged = true;
 
             concatenatedSource.clear();
-            for (int i = 0; i < tracklist.size(); i++) {
-                concatenatedSource.addMediaSource(mediaSourceFromTrack(tracklist.get(i)));
+            for (Track track : tracklist) {
+                concatenatedSource.addMediaSource(mediaSourceFromTrack(track));
             }
         } else {
             isCurrentTrackChanged = currentTrackPosition() != trackPosition;
@@ -327,7 +331,11 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     @Override
     public Completable moveTrack(int oldPosition, int newPosition) {
         return Completable.fromAction(() -> {
-            concatenatedSource.moveMediaSource(oldPosition, newPosition);
+            AtomicBoolean isFinished = new AtomicBoolean(false);
+            concatenatedSource.moveMediaSource(oldPosition, newPosition, mainThreadHandler,
+                    () -> isFinished.set(true));
+
+            while (!isFinished.get()) ;
 
             onMoveTrackObserver.onNext(PlayerInteractor.createMoveTrackItem(oldPosition, newPosition));
             currentTracklistUpdate.onNext(getTrackIds());

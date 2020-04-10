@@ -110,6 +110,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     public void remove(int position) {
         items.remove(position);
         notifyItemRemoved(position);
+        notifyItemChanged(position);
     }
 
     @Override
@@ -145,6 +146,8 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     @Override
     public void setSelected(int position) {
         OptionalInt oldSelectedPosition = items.getSelectedItemIndex();
+        if (oldSelectedPosition.isPresent() && oldSelectedPosition.getAsInt() == position)
+            return;
 
         items.setSelectedItemIndex(position);
         notifyItemChanged(position);

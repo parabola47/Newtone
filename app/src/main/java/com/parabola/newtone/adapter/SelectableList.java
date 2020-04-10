@@ -2,6 +2,7 @@ package com.parabola.newtone.adapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import java8.util.Optional;
@@ -48,7 +49,15 @@ public final class SelectableList<E> {
     }
 
     public void move(int from, int to) {
-        add(to, remove(from));
+        elements.add(to, elements.remove(from));
+
+        if (selectedItemIndex == from) {
+            selectedItemIndex = to;
+        } else if (selectedItemIndex > from && selectedItemIndex <= to) {
+            selectedItemIndex--;
+        } else if (selectedItemIndex < from && selectedItemIndex >= to) {
+            selectedItemIndex++;
+        }
     }
 
     public E remove(int index) {
@@ -129,7 +138,7 @@ public final class SelectableList<E> {
     }
 
     public List<E> getAsList() {
-        return new ArrayList<>(elements);
+        return Collections.unmodifiableList(elements);
     }
 
     public void clearSelected() {
