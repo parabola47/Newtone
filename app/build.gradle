@@ -90,5 +90,5 @@ dependencies {
     //    Round corner ProgressBar
     implementation 'com.akexorcist:RoundCornerProgressBar:2.0.3'
     //    ToggleButton
-    implementation 'com.llollox:androidtoggleswitch:2.0.1'
+    implementation 'us.belka:androidtoggleswitch:1.2.2'
 }

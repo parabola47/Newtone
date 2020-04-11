@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
-import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
@@ -29,6 +28,7 @@ import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import javax.inject.Inject;
 
+import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.BindView;
@@ -108,7 +108,7 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         layoutParams.width = getGridAlbumWidth();
         albumGridHolder.findViewById(R.id.albumCover).setLayoutParams(layoutParams);
 
-        viewTypeToggle.setOnChangeListener(this::refreshViewType);
+        viewTypeToggle.setOnToggleSwitchChangeListener((position, isChecked) -> refreshViewType(position));
         textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -139,7 +139,7 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         int viewTypeCheckPosition = savedInstanceState != null
                 ? savedInstanceState.getInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY)
                 : albumItemView.viewType.ordinal();
-        viewTypeToggle.setCheckedPosition(viewTypeCheckPosition);
+        viewTypeToggle.setCheckedTogglePosition(viewTypeCheckPosition);
         textSizeSeekBar.setProgress(albumItemView.textSize - TEXT_SIZE_MIN);
         borderPaddingSeekBar.setProgress(albumItemView.borderPadding - BORDER_PADDING_MIN);
         coverSizeSeekBar.setProgress(albumItemView.coverSize - COVER_SIZE_MIN);
@@ -158,7 +158,7 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY, viewTypeToggle.getCheckedPosition());
+        outState.putInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY, viewTypeToggle.getCheckedTogglePosition());
     }
 
     @OnClick(R.id.setDefault)
@@ -167,8 +167,7 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
                 .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.album_item_reset_settings_dialog_message)
                 .setPositiveButton(R.string.dialog_reset, (d, which) -> {
-                    viewTypeToggle.setCheckedPosition(0);
-                    refreshViewType(0);
+                    viewTypeToggle.setCheckedTogglePosition(0, true);
                     textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
                     borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
                     coverSizeSeekBar.setProgress(64 - COVER_SIZE_MIN);
@@ -278,7 +277,7 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         //сохраняем состояние
         AlbumViewType albumViewType = null;
         for (AlbumViewType item : AlbumViewType.values()) {
-            if (item.ordinal() == viewTypeToggle.getCheckedPosition()) {
+            if (item.ordinal() == viewTypeToggle.getCheckedTogglePosition()) {
                 albumViewType = item;
                 break;
             }

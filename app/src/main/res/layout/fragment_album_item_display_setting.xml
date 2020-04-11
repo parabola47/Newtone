@@ -34,18 +34,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+            <belka.us.androidtoggleswitch.widgets.ToggleSwitch
                 android:id="@+id/viewTypeToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                app:checkedBackgroundColor="@color/colorAccent"
-                app:separatorVisible="false"
+                android:textSize="16sp"
+                app:activeBgColor="@color/colorAccent"
+                app:inactiveBgColor="#222"
+                app:inactiveTextColor="@android:color/darker_gray"
                 app:textToggleLeft="@string/album_item_grid_view_type_setting"
                 app:textToggleRight="@string/album_item_list_view_type_setting"
-                app:uncheckedBackgroundColor="#222"
-                app:uncheckedTextColor="@android:color/darker_gray" />
+                app:toggleWidth="96dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
