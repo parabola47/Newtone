@@ -144,14 +144,8 @@ public final class StartFragment extends MvpAppCompatFragment
                 .inflate(R.layout.tab_item_view, tabLayout, false);
         TabLayout.Tab tab = requireNonNull(tabLayout.getTabAt(tabIndex));
 
-        ((TextView) layout.findViewById(R.id.title))
-                .setText(tabTitleResId);
-        ((TextView) layout.findViewById(R.id.title))
-                .setTextColor(tab.isSelected() ? selectedTabIconTint : defaultTabIconTint);
-        ((ImageView) layout.findViewById(R.id.icon))
-                .setImageResource(tabIconResId);
-        ((ImageView) layout.findViewById(R.id.icon))
-                .setColorFilter(tab.isSelected() ? selectedTabIconTint : defaultTabIconTint);
+        ((TextView) layout.findViewById(R.id.title)).setText(tabTitleResId);
+        ((ImageView) layout.findViewById(R.id.icon)).setImageResource(tabIconResId);
 
         tab.setCustomView(layout);
     }
