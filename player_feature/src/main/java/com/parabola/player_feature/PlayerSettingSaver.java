@@ -1,7 +1,6 @@
 package com.parabola.player_feature;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 
@@ -88,9 +87,7 @@ class PlayerSettingSaver {
 
     private static final String SAVED_PLAYLIST_DELIMITER = ";";
 
-    //TODO посмотреть время выполнения, возможно стоит оптимизировать
     void setSavedPlaylist(ConcatenatingMediaSource mediaSource, int currentWindowIndex) {
-        long startTime = System.currentTimeMillis();
         StringBuilder str = new StringBuilder();
 
         for (int i = 0; i < mediaSource.getSize(); i++) {
@@ -105,9 +102,6 @@ class PlayerSettingSaver {
                 .putString(SAVED_PLAYLIST_KEY, str.toString())
                 .putInt(SAVED_PLAYLIST_POSITION_KEY, currentWindowIndex)
                 .apply();
-
-        long endTime = System.currentTimeMillis();
-        Log.d(LOG_TAG, "SAVE PLAYLIST WITH SIZE " + mediaSource.getSize() + " AT " + (endTime - startTime) + " MS");
     }
 
     void setCurrentWindowIndex(int currentWindowIndex) {
@@ -117,8 +111,6 @@ class PlayerSettingSaver {
     }
 
     List<Integer> getSavedPlaylist() {
-        long startTime = System.currentTimeMillis();
-
         String savedString = prefs.getString(SAVED_PLAYLIST_KEY, "");
         if (savedString.isEmpty()) {
             return Collections.emptyList();
@@ -130,9 +122,6 @@ class PlayerSettingSaver {
         for (String s : idsStr) {
             ids.add(Integer.parseInt(s));
         }
-
-        long endTime = System.currentTimeMillis();
-        Log.d(LOG_TAG, "GET SAVED PLAYLIST WITH SIZE " + ids.size() + " AT " + (endTime - startTime) + " MS");
 
         return ids;
     }

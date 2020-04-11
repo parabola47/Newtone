@@ -138,6 +138,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     private Disposable observeTracklistChanging() {
         return playerInteractor.onTracklistChanged()
                 .flatMapSingle(trackRepo::getByIds)
+                .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {
                     getViewState().refreshTracks(tracks);

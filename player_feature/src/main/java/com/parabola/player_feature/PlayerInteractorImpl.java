@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -93,10 +92,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     private static final long PLAYBACK_UPDATE_TIME_MS = 200;
 
-    //TODO посмотреть время выполнения, возможно стоит оптимизировать
     public PlayerInteractorImpl(Context context, SharedPreferences preferences,
                                 TrackRepository trackRepo, Intent notificationClickIntent, Bitmap defaultNotificationAlbumArt) {
-        long startTime = System.currentTimeMillis();
         exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
                 .build();
@@ -153,9 +150,6 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                 }));
 
         PlayerService.playerInteractor = this;
-
-        long endTime = System.currentTimeMillis();
-        Log.d(LOG_TAG, "PLAYER INTERACTOR CONSTRUCTOR END EXECUTION WITH " + (endTime - startTime) + " MS");
     }
 
 

@@ -11,6 +11,7 @@ import com.parabola.data.model.PlaylistData;
 import com.parabola.data.utils.RxCursorIterable;
 import com.parabola.domain.exception.AlreadyExistsException;
 import com.parabola.domain.exception.ItemNotFoundException;
+import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Playlist;
 import com.parabola.domain.repository.PermissionHandler;
@@ -43,11 +44,11 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
         this.accessRepo = accessRepo;
 
         this.accessRepo.observePermissionUpdates(Type.FILE_STORAGE)
-                .subscribe(hasStorageAccess -> {
+                .subscribe(new ConsumerObserver<>(hasStorageAccess -> {
                     if (hasStorageAccess) {
                         playlistsUpdates.onNext(Irrelevant.INSTANCE);
                     }
-                });
+                }));
     }
 
 
@@ -114,7 +115,6 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                     .map(c -> {
                         PlaylistData.TrackItemData trackItem = new PlaylistData.TrackItemData();
                         trackItem.trackId = c.getInt(c.getColumnIndexOrThrow(Members.AUDIO_ID));
-                        //TODO инициализировать trackItem.additionDate
 
                         return (Playlist.TrackItem) trackItem;
                     })
@@ -268,7 +268,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                         Uri uri = Members.getContentUri("external", playlistId);
 
                         try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
-                            int base = cursor.getCount();
+                            int base = cursor != null ? cursor.getCount() : 0;
 
                             ContentValues values = new ContentValues();
                             values.put(Members.PLAY_ORDER, base + trackId);

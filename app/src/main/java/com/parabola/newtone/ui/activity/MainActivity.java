@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,11 +67,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        long time = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        time = System.currentTimeMillis() - time;
-        Log.i(TAG, "MainActivityTimeLoading: " + time);
         ButterKnife.bind(this);
         ((MainApplication) getApplication()).getAppComponent().inject(this);
 
