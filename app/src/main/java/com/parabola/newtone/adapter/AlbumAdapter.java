@@ -81,7 +81,8 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
 
         Album albumItem = get(holder.getAdapterPosition());
 
-        buildItemLayout(holder);
+        if (albumItemView != null)
+            buildItemLayout(holder);
 
         if (holder instanceof GridAlbumViewHolder)
             handleAsGrid((GridAlbumViewHolder) holder, albumItem);

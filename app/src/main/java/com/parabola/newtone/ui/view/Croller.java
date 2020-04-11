@@ -255,8 +255,8 @@ public class Croller extends View {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        midx = getWidth() / 2;
-        midy = getHeight() / 2;
+        midx = getWidth() / 2f;
+        midy = getHeight() / 2f;
     }
 
     @Override
@@ -513,7 +513,7 @@ public class Croller extends View {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (getParent() != null && event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (getParent() != null && event.getAction() == MotionEvent.ACTION_DOWN && isEnabled) {
             getParent().requestDisallowInterceptTouchEvent(true);
         }
         return super.dispatchTouchEvent(event);
@@ -760,11 +760,7 @@ public class Croller extends View {
     }
 
     public void setMax(int max) {
-        if (max < min) {
-            this.max = min;
-        } else {
-            this.max = max;
-        }
+        this.max = Math.max(max, min);
         invalidate();
     }
 
@@ -775,10 +771,8 @@ public class Croller extends View {
     public void setMin(int min) {
         if (min < 0) {
             this.min = 0;
-        } else if (min > max) {
-            this.min = max;
         } else {
-            this.min = min;
+            this.min = Math.min(min, max);
         }
         invalidate();
     }

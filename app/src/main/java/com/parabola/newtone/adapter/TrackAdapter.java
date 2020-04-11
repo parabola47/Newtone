@@ -61,7 +61,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         String trackTitle = Optional.ofNullable(trackItem.getTitle())
                 .orElse(trackItem.getFileNameWithoutExtension());
         holder.trackTitle.setText(trackTitle);
-        String additionalInfo = trackItemView.isAlbumTitleShows
+        String additionalInfo = (trackItemView != null && trackItemView.isAlbumTitleShows)
                 ? context.getString(R.string.track_item_artist_with_album, trackItem.getArtistName(), trackItem.getAlbumTitle())
                 : trackItem.getArtistName();
 
