@@ -73,7 +73,7 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
             holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
             holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
         } else {
-            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultItemSecondaryText));
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorListItemDefaultBackground));
             holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
             holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));

@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Artist;
+import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ArtistAdapter;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabArtistPresenter;
 import com.parabola.newtone.mvp.view.TabArtistView;
@@ -39,7 +39,7 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
     @InjectPresenter TabArtistPresenter presenter;
 
-    private final BaseAdapter<Artist> artistsAdapter = new ArtistAdapter();
+    private final ArtistAdapter artistsAdapter = new ArtistAdapter();
 
     public TabArtistFragment() {
         // Required empty public constructor
@@ -53,7 +53,7 @@ public final class TabArtistFragment extends MvpAppCompatFragment
         View layout = inflater.inflate(R.layout.fragment_tab_artist, container, false);
         ButterKnife.bind(this, layout);
 
-        artistsList.setAdapter((RecyclerView.Adapter) artistsAdapter);
+        artistsList.setAdapter(artistsAdapter);
         artistsList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         artistsAdapter.setItemClickListener(position -> {
@@ -83,6 +83,11 @@ public final class TabArtistFragment extends MvpAppCompatFragment
     @Override
     public void refreshArtists(List<Artist> artists) {
         artistsAdapter.replaceAll(artists);
+    }
+
+    @Override
+    public void setItemViewSettings(ArtistItemView viewSettings) {
+        artistsAdapter.setViewSettings(viewSettings);
     }
 
     @Override

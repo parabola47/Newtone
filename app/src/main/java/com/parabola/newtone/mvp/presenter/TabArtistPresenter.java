@@ -5,6 +5,7 @@ import com.parabola.domain.interactor.ArtistInteractor;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabArtistView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -26,6 +27,7 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
     @Inject ArtistInteractor artistInteractor;
     @Inject SortingRepository sortingRepo;
     @Inject TrackRepository trackRepo;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     @Inject SchedulerProvider schedulers;
 
@@ -38,7 +40,9 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
     @Override
     protected void onFirstViewAttach() {
         disposables.addAll(
-                observeAllArtistsSorting(), observeTrackDeleting());
+                observeAllArtistsSorting(),
+                observeTrackItemViewUpdates(),
+                observeTrackDeleting());
     }
 
     @Override
@@ -54,6 +58,11 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(getViewState()::refreshArtists);
+    }
+
+    private Disposable observeTrackItemViewUpdates() {
+        return viewSettingsInteractor.observeArtistItemViewUpdates()
+                .subscribe(getViewState()::setItemViewSettings);
     }
 
     private Disposable observeTrackDeleting() {

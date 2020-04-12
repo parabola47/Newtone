@@ -14,7 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.parabola.newtone.R;
-import com.parabola.newtone.ui.dialog.BaseDialogFragment;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

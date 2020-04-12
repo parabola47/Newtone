@@ -193,6 +193,7 @@
     <string name="default_artist">King Crimson</string>
     <string name="default_duration">7:20</string>
     <string name="default_album_tracks_count">5</string>
+    <string name="default_artist_info">13 albums, 58 tracks</string>
 
 
     <!--SETTING-->
@@ -226,6 +227,14 @@
     <string name="album_item_cover_size_setting">Cover size</string>
     <string name="album_item_cover_corners_setting">Cover corners</string>
     <string name="album_item_reset_settings_dialog_message">Are you sure you want to reset album item settings?</string>
+
+
+    <!--ARTIST ITEM DISPLAY SETTING-->
+    <string name="artist_item_display_setting_screen_title">Artist view settings</string>
+    <string name="artist_item_text_size_setting">Text size</string>
+    <string name="artist_item_border_padding_setting">Border padding</string>
+    <string name="artist_item_reset_settings_dialog_message">Are you sure you want to reset artist item settings?</string>
+    <string name="artist_item_addition_info">%s, %s</string>
 
 
     <!--CONTENT DESCRIPTION-->

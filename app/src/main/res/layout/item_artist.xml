@@ -8,8 +8,7 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/artist"
@@ -17,9 +16,9 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:singleLine="true"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorDefaultItemPrimaryText"
         android:textSize="16sp"
-        tools:text="King Crimson" />
+        tools:text="@string/default_artist" />
 
     <TextView
         android:id="@+id/artist_info"
@@ -27,8 +26,7 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:singleLine="true"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textSize="14sp"
-        tools:text="13 albums, 58 tracks" />
+        tools:text="@string/default_artist_info" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

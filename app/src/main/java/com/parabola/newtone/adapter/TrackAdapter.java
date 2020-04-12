@@ -79,8 +79,8 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
             holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
         } else {
-            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
-            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultTrackOtherInfo));
+            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultItemSecondaryText));
+            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultItemSecondaryText));
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorListItemDefaultBackground));
         }
     }

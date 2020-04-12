@@ -11,6 +11,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter;
 import com.parabola.newtone.mvp.view.TimeToSleepInfoView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

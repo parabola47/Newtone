@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.fragment.settings.ArtistItemDisplaySettingFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:background="#444444"
+        android:elevation="8dp"
+        android:gravity="center">
+
+        <include
+            android:id="@+id/artistHolder"
+            layout="@layout/item_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="8dp"
+                android:background="#222"
+                android:padding="4dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/textSizeSeekBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/artist_item_text_size_setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textSizeValue"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/textSizeSeekBar"
+                    android:layout_alignBottom="@+id/textSizeSeekBar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    tools:text="16" />
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/textSizeSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/textSizeValue"
+                    android:layout_toLeftOf="@+id/textSizeValue"
+                    android:max="12"
+                    android:paddingVertical="4dp"
+                    tools:progress="4" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="4dp"
+                android:background="#222"
+                android:padding="4dp">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/borderPaddingSeekBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/artist_item_border_padding_setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/borderPaddingValue"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/borderPaddingSeekBar"
+                    android:layout_alignBottom="@+id/borderPaddingSeekBar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    tools:text="16" />
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/borderPaddingSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/borderPaddingValue"
+                    android:layout_toLeftOf="@+id/borderPaddingValue"
+                    android:max="16"
+                    android:paddingVertical="4dp"
+                    tools:progress="8" />
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/setDefault"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/reset_to_default_button" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

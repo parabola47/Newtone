@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.parabola.newtone.R;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

@@ -14,6 +14,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.CreatePlaylistPresenter;
 import com.parabola.newtone.mvp.view.CreatePlaylistView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

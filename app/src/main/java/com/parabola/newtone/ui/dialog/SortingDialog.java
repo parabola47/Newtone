@@ -15,6 +15,7 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import javax.inject.Inject;
 

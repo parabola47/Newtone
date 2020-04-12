@@ -20,6 +20,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter;
 import com.parabola.newtone.mvp.view.ChoosePlaylistView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;

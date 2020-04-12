@@ -10,6 +10,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.DeletePlaylistPresenter;
 import com.parabola.newtone.mvp.view.DeletePlaylistView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;

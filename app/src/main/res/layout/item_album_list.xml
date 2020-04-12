@@ -29,14 +29,13 @@
         android:layout_marginRight="16dp"
         android:maxLines="1"
         android:singleLine="true"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textColor="@color/colorDefaultTrackTitle"
+        android:textColor="@color/colorDefaultItemPrimaryText"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/author"
         app:layout_constraintLeft_toRightOf="@id/albumCover"
         app:layout_constraintRight_toLeftOf="@id/tracks_count"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Happy With What You Have To Be Happy With" />
+        tools:text="@string/default_album" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/author"
@@ -46,13 +45,12 @@
         android:layout_marginRight="16dp"
         android:maxLines="1"
         android:singleLine="true"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/album_title"
         app:layout_constraintRight_toLeftOf="@id/tracks_count"
         app:layout_constraintTop_toBottomOf="@id/album_title"
-        tools:text="King Crimson" />
+        tools:text="@string/default_artist" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tracks_count"
@@ -62,6 +60,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="17 tracks" />
+        tools:text="@string/default_album_tracks_count" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

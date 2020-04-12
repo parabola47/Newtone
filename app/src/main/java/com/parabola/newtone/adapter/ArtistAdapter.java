@@ -8,12 +8,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Artist;
+import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
 import com.parabola.newtone.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import java8.util.Optional;
+
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 
 public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter.ArtistViewHolder>
@@ -28,11 +31,21 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
         return new ArtistViewHolder(v);
     }
 
+    private ArtistItemView artistItemView;
+
+    public void setViewSettings(ArtistItemView artistItemView) {
+        this.artistItemView = artistItemView;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ArtistViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
 
         Artist artistItem = get(holder.getAdapterPosition());
+
+        if (artistItemView != null)
+            buildItemLayout(holder);
 
         String artistName = Optional.ofNullable(artistItem.getName())
                 .orElse(holder.artistTxt.getContext().getString(R.string.unknown_artist));
@@ -41,16 +54,26 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
         holder.artistInfo.setText(getTracksAndAlbumsCount(artistItem));
     }
 
+    private void buildItemLayout(ArtistViewHolder holder) {
+        holder.artistTxt.setTextSize(artistItemView.textSize);
+        holder.artistInfo.setTextSize(artistItemView.textSize - 2);
+
+
+        int paddingPx = (int) convertDpToPixel(artistItemView.borderPadding, holder.itemView.getContext());
+        holder.itemView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+    }
+
     private String getTracksAndAlbumsCount(Artist artist) {
         int tracksCount = artist.getTracksCount();
         int albumsCount = artist.getAlbumsCount();
 
-        String tracksCountStr =
-                recyclerView.getResources().getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
-        String albumsCountStr =
-                recyclerView.getContext().getResources().getQuantityString(R.plurals.albums_count, albumsCount, albumsCount);
+        String tracksCountStr = recyclerView.getResources()
+                .getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
+        String albumsCountStr = recyclerView.getResources()
+                .getQuantityString(R.plurals.albums_count, albumsCount, albumsCount);
 
-        return String.format("%s, %s", albumsCountStr, tracksCountStr);
+        return recyclerView.getResources()
+                .getString(R.string.artist_item_addition_info, albumsCountStr, tracksCountStr);
     }
 
     @Override

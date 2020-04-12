@@ -26,8 +26,8 @@
     <color name="colorListItemDefaultBackground">#0D0D0D</color>
     <color name="colorSearchGroupBackground">#404040</color>
     <!--T R A C K-->
-    <color name="colorDefaultTrackTitle">@android:color/white</color>
-    <color name="colorDefaultTrackOtherInfo">@android:color/darker_gray</color>
+    <color name="colorDefaultItemPrimaryText">@android:color/white</color>
+    <color name="colorDefaultItemSecondaryText">@android:color/darker_gray</color>
     <color name="colorTrackContextMenuBackground">@color/colorAccentDark</color>
     <color name="colorSelectedTrackTextColor">@android:color/white</color>
     <!--S C R O L L B A R-->

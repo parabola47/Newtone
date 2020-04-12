@@ -13,7 +13,7 @@ import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
 @InjectViewState
-public class SettingPresenter extends MvpPresenter<SettingView> {
+public final class SettingPresenter extends MvpPresenter<SettingView> {
     @Inject MainRouter router;
 
     @Inject PlayerSetting playerSetting;
@@ -61,6 +61,10 @@ public class SettingPresenter extends MvpPresenter<SettingView> {
 
     public void onClickAlbumItemViewSettings() {
         router.openAlbumItemDisplaySettings();
+    }
+
+    public void onClickArtistItemViewSettings() {
+        router.openArtistItemDisplaySettings();
     }
 
     public void onClickPrivacyPolicy() {

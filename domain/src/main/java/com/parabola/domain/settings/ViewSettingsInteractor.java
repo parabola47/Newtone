@@ -31,6 +31,15 @@ public interface ViewSettingsInteractor {
     int getAlbumItemCoverCornersRadius();
 
 
+    //A R T I S T    I T E M S
+    ArtistItemView getArtistItemViewSettings();
+    void setArtistItemViewSettings(ArtistItemView artistItemView);
+    Observable<ArtistItemView> observeArtistItemViewUpdates();
+
+    int getArtistItemTextSize();
+    int getArtistItemBorderPadding();
+
+
     class TrackItemView {
         public final int textSize;
         public final int borderPadding;
@@ -69,6 +78,16 @@ public interface ViewSettingsInteractor {
 
         public enum AlbumViewType {
             GRID, LIST
+        }
+    }
+
+    class ArtistItemView {
+        public final int textSize;
+        public final int borderPadding;
+
+        public ArtistItemView(int textSize, int borderPadding) {
+            this.textSize = textSize;
+            this.borderPadding = borderPadding;
         }
     }
 

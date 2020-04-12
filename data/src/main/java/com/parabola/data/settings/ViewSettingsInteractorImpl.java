@@ -16,6 +16,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
 
     private final BehaviorSubject<TrackItemView> trackItemViewObserver;
     private final BehaviorSubject<AlbumItemView> albumItemViewObserver;
+    private final BehaviorSubject<ArtistItemView> artistItemViewObserver;
 
     public ViewSettingsInteractorImpl(SharedPreferences sharedPreferences) {
         this.prefs = sharedPreferences;
@@ -38,6 +39,12 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
                 getAlbumItemCoverSize(),
                 getAlbumItemCoverCornersRadius());
         albumItemViewObserver = BehaviorSubject.createDefault(albumItemView);
+
+
+        ArtistItemView artistItemView = new ArtistItemView(
+                getArtistItemTextSize(),
+                getArtistItemBorderPadding());
+        artistItemViewObserver = BehaviorSubject.createDefault(artistItemView);
     }
 
     //    T R A C K    I T E M S
@@ -159,4 +166,38 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         return prefs.getInt(ALBUM_ITEM_COVER_CORNERS_RADIUS_KEY, 4);
     }
 
+
+    //A R T I S T    I T E M S
+    private static final String ARTIST_ITEM_TEXT_SIZE_KEY = "com.parabola.data.settings.ARTIST_ITEM_TEXT_SIZE";
+    private static final String ARTIST_ITEM_BORDER_PADDING_KEY = "com.parabola.data.settings.ARTIST_ITEM_BORDER_PADDING";
+
+    @Override
+    public ArtistItemView getArtistItemViewSettings() {
+        return artistItemViewObserver.getValue();
+    }
+
+    @Override
+    public void setArtistItemViewSettings(ArtistItemView artistItemView) {
+        prefs.edit()
+                .putInt(ARTIST_ITEM_TEXT_SIZE_KEY, artistItemView.textSize)
+                .putInt(ARTIST_ITEM_BORDER_PADDING_KEY, artistItemView.borderPadding)
+                .apply();
+
+        artistItemViewObserver.onNext(artistItemView);
+    }
+
+    @Override
+    public Observable<ArtistItemView> observeArtistItemViewUpdates() {
+        return artistItemViewObserver;
+    }
+
+    @Override
+    public int getArtistItemTextSize() {
+        return prefs.getInt(ARTIST_ITEM_TEXT_SIZE_KEY, 16);
+    }
+
+    @Override
+    public int getArtistItemBorderPadding() {
+        return prefs.getInt(ARTIST_ITEM_BORDER_PADDING_KEY, 16);
+    }
 }
