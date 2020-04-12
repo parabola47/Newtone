@@ -34,6 +34,7 @@ import moxy.presenter.ProvidePresenter;
 
 public final class TabPlaylistFragment extends MvpAppCompatFragment
         implements TabPlaylistView, Scrollable {
+    private static final String LOG_TAG = TabPlaylistFragment.class.getSimpleName();
 
     @BindView(R.id.playlists) RecyclerView playlists;
     @BindView(R.id.sys_playlists) RecyclerView sysPlaylists;
@@ -72,8 +73,15 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
         ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
         ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.playlist_menu);
         popupWindow.setAdapter(menuAdapter);
-        popupWindow.setAnchorView(rootView);
-        popupWindow.setHorizontalOffset((int) x);
+
+        View tempView = new View(requireContext());
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(0, 0);
+        tempView.setLayoutParams(lp);
+        tempView.setX(x - rootView.getPaddingLeft());
+        tempView.setY(y - rootView.getPaddingTop());
+        rootView.addView(tempView);
+        popupWindow.setAnchorView(tempView);
+
         popupWindow.setModal(true);
         popupWindow.setWidth(menuAdapter.measureContentWidth());
         popupWindow.setOnItemClickListener((parent, view, position, id) -> {
@@ -88,7 +96,10 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
             }
             popupWindow.dismiss();
         });
-        popupWindow.setOnDismissListener(() -> playlistAdapter.invalidateItem(itemPosition));
+        popupWindow.setOnDismissListener(() -> {
+            playlistAdapter.invalidateItem(itemPosition);
+            rootView.removeView(tempView);
+        });
 
         popupWindow.show();
         rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));

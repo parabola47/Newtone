@@ -91,8 +91,8 @@ public final class FolderFragment extends BaseSwipeToBackFragment
         View tempView = new View(requireContext());
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(0, 0);
         tempView.setLayoutParams(lp);
-        tempView.setX(x);
-        tempView.setY(y);
+        tempView.setX(x - rootView.getPaddingLeft());
+        tempView.setY(y - rootView.getPaddingTop());
         rootView.addView(tempView);
         popupWindow.setAnchorView(tempView);
 
