@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_bg"
     android:orientation="vertical"
-    android:padding="8dp"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp"
     tools:context=".ui.dialog.fx.AudioEffectsDialog">
 
     <com.google.android.material.tabs.TabLayout
