@@ -16,6 +16,7 @@ import com.parabola.newtone.mvp.view.ArtistTracksView;
 import com.parabola.newtone.ui.router.MainRouter;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -85,15 +86,18 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
     }
 
     private Disposable observeSortingUpdates() {
+        AtomicBoolean needToShowSection = new AtomicBoolean(false);
+
         return sortingRepo.observeArtistTracksSorting()
                 //включаем/отключаем показ секции в списке, если отсортирован по названию
-                .doOnNext(sorting -> getViewState().setSectionShowing(sorting == TrackRepository.Sorting.BY_TITLE))
+                .doOnNext(sorting -> needToShowSection.set(sorting == TrackRepository.Sorting.BY_TITLE))
                 .flatMapSingle(sorting -> trackInteractor.getByArtist(artistId))
                 // ожидаем пока прогрузится анимация входа
                 .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {
+                    getViewState().setSectionShowing(needToShowSection.get());
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });

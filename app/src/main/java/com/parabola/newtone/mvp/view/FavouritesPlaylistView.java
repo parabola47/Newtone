@@ -6,17 +6,14 @@ import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import java.util.List;
 
 import moxy.MvpView;
-import moxy.viewstate.strategy.AddToEndSingleStrategy;
-import moxy.viewstate.strategy.StateStrategyType;
+import moxy.viewstate.strategy.alias.AddToEndSingle;
 
-@StateStrategyType(AddToEndSingleStrategy.class)
+@AddToEndSingle
 public interface FavouritesPlaylistView extends MvpView {
 
     void refreshTracks(List<Track> tracks);
     void setItemViewSettings(TrackItemView viewSettings);
 
     void setCurrentTrack(int trackId);
-
-    void clearItems();
 
 }

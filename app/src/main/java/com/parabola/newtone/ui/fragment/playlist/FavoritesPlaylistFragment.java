@@ -101,10 +101,6 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         tracklistAdapter.setSelectedCondition(track -> track.getId() == trackId);
     }
 
-    @Override
-    public void clearItems() {
-        tracklistAdapter.clear();
-    }
 
     @ProvidePresenter
     FavouritesPlaylistPresenter providePresenter() {

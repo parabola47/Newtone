@@ -115,15 +115,6 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         tracklistAdapter.setSelectedCondition(track -> track.getId() == trackId);
     }
 
-    @Override
-    public void clearCurrentItem() {
-        tracklistAdapter.clearSelected();
-    }
-
-    @Override
-    public void clearItems() {
-        tracklistAdapter.clear();
-    }
 
     @ProvidePresenter
     RecentlyAddedPlaylistPresenter providePresenter() {

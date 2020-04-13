@@ -18,6 +18,4 @@ public interface RecentlyAddedPlaylistView extends MvpView {
 
     void setCurrentTrack(int trackId);
 
-    void clearCurrentItem();
-    void clearItems();
 }

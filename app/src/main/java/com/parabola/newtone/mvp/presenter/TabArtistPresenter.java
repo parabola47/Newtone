@@ -10,6 +10,8 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabArtistView;
 import com.parabola.newtone.ui.router.MainRouter;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -51,13 +53,18 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
     }
 
     private Disposable observeAllArtistsSorting() {
+        AtomicBoolean needToShowSection = new AtomicBoolean(false);
+
         return sortingRepo.observeAllArtistsSorting()
                 //включаем/отключаем показ секции в списке, если отсортирован по имени
-                .doOnNext(sorting -> getViewState().setSectionShowing(sorting == ArtistRepository.Sorting.BY_NAME))
+                .doOnNext(sorting -> needToShowSection.set(sorting == ArtistRepository.Sorting.BY_NAME))
                 .flatMapSingle(sorting -> artistInteractor.getAll())
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshArtists);
+                .subscribe(artists -> {
+                    getViewState().setSectionShowing(needToShowSection.get());
+                    getViewState().refreshArtists(artists);
+                });
     }
 
     private Disposable observeTrackItemViewUpdates() {

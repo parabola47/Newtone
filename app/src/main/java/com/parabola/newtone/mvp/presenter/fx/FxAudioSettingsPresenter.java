@@ -125,6 +125,7 @@ public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettings
 
     public void onVirtualizerProgressChange(int progress) {
         fxInteractor.setVirtualizerLevel((short) progress);
+        getViewState().setVirtualizerSeekbar(progress);
     }
 
 

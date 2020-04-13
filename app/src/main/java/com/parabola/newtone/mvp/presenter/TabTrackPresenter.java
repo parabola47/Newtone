@@ -13,6 +13,7 @@ import com.parabola.newtone.mvp.view.TabTrackView;
 import com.parabola.newtone.ui.router.MainRouter;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -65,13 +66,16 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
     }
 
     private Disposable observeAllTracksSorting() {
+        AtomicBoolean needToShowSection = new AtomicBoolean(false);
+
         return sortingRepo.observeAllTracksSorting()
                 //включаем/отключаем показ секции в списке, если отсортирован по названию
-                .doOnNext(sorting -> getViewState().setSectionShowing(sorting == TrackRepository.Sorting.BY_TITLE))
+                .doOnNext(sorting -> needToShowSection.set(sorting == TrackRepository.Sorting.BY_TITLE))
                 .flatMapSingle(sorting -> trackInteractor.getAll())
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {
+                    getViewState().setSectionShowing(needToShowSection.get());
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });
