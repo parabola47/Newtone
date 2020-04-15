@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/play"
         android:icon="@drawable/ic_play"
         android:title="@string/track_menu_play" />
+
+    <item
+        android:id="@+id/add_to_favorites"
+        android:icon="@drawable/ic_favourite_white"
+        android:title="@string/track_menu_add_to_favourites" />
+
+    <item
+        android:id="@+id/remove_from_favourites"
+        android:icon="@drawable/ic_favourite"
+        android:title="@string/track_menu_remove_from_favourites" />
 
     <item
         android:id="@+id/add_to_playlist"
@@ -16,17 +25,6 @@
         android:id="@+id/remove_from_playlist"
         android:icon="@drawable/ic_close"
         android:title="@string/track_menu_remove_from_playlist" />
-
-    <item
-        android:id="@+id/add_to_favorites"
-        android:icon="@drawable/ic_favourite_white"
-        app:iconTint="@color/colorNewtoneWhite"
-        android:title="@string/track_menu_add_to_favourites" />
-
-    <item
-        android:id="@+id/remove_from_favourites"
-        android:icon="@drawable/ic_favourite"
-        android:title="@string/track_menu_remove_from_favourites" />
 
     <item
         android:id="@+id/share_track"

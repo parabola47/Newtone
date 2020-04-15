@@ -1,0 +1,250 @@
+<resources>
+    <string name="app_name">Newtone</string>
+
+
+    <!--TABS BY_NAME-->
+    <string name="tab_artists">Артисты</string>
+    <string name="tab_albums">Альбомы</string>
+    <string name="tab_tracks">Треки</string>
+    <string name="tab_playlists">Списки</string>
+
+    <!--PERMISSION REQUEST SCREEN-->
+    <string name="request_permission_button">Запросить</string>
+    <string name="request_permission_desc">Приложению требуется доступ к медиа файлам</string>
+    <string name="request_permission_toast">Предоставьте доступ к хранилищу в пункте меню \"Разрешения\"</string>
+
+    <!--SYSTEM PLAYLISTS -->
+    <string name="playlist_favourites">Избранные</string>
+    <string name="playlist_recently_added">Недавно добавленные</string>
+    <string name="playlist_queue">Очередь</string>
+    <string name="playlist_folders">Папки</string>
+
+
+    <!--IMAGE DESCRIPTIONS-->
+    <string name="album_cover_desc">Обложка альбома</string>
+    <string name="add_playlist_desc">Создать плейлист</string>
+
+
+    <!--NULL OBJECTS-->
+    <string name="unknown_artist">Неизвестный исполнитель</string>
+    <string name="unknown_album">Неизвестный альбом</string>
+
+
+    <!--MAIN MENU-->
+    <string name="menu_search">Поиск</string>
+    <string name="menu_sorting_by">Сортировка</string>
+    <string name="menu_add_playlist">Создать плейлист</string>
+    <string name="menu_settings">Настройки</string>
+
+    <!--TRACK MENU-->
+    <string name="track_menu_play">Играть</string>
+    <string name="track_menu_add_to_favourites">Нравится</string>
+    <string name="track_menu_remove_from_favourites">Не нравится</string>
+    <string name="track_menu_add_to_playlist">Добавить в плейлист</string>
+    <string name="track_menu_remove_from_playlist">Удалить из плейлиста</string>
+    <string name="track_menu_share_track">Поделиться</string>
+    <string name="track_menu_additional_info">Информация о треке</string>
+    <string name="track_menu_share_track_intent_title">Поделиться аудио файлом</string>
+    <string name="track_menu_delete">Удалить</string>
+    <string name="track_menu_delete_dialog_title">Удалить трек?</string>
+    <string name="track_menu_delete_dialog_message">Этот трек будет удалён из файлового хранилища</string>
+
+    <!--PLAYLIST MENU-->
+    <string name="playlist_menu_rename">Переименовать</string>
+    <string name="playlist_menu_delete">Удалить</string>
+
+    <!--PLAYER MENU-->
+    <string name="player_menu_add_to_playlist">Добавить в плейлист</string>
+    <string name="player_menu_lyrics">Слова</string>
+    <string name="player_menu_delete">Удалить</string>
+    <string name="player_menu_share">Поделиться</string>
+    <string name="player_menu_additional_info">Информация о треке</string>
+
+    <!--               !!!!                 -->
+    <!--          BLOCK OF SORTING          -->
+    <!--               !!!!                 -->
+    <string name="sort_title">Сортировка</string>
+    <string name="sort_reverse">Наоборот</string>
+    <string-array name="sort_tracks">
+        <item>По названию</item>
+        <item>По исполнителю</item>
+        <item>По продолжительности</item>
+        <item>По дате добавления</item>
+        <item>По позиции в альбоме</item>
+    </string-array>
+    <string-array name="sort_albums">
+        <item>По названию</item>
+        <item>По исполнителю</item>
+        <item>По году</item>
+    </string-array>
+    <string-array name="sort_artists">
+        <item>По имени</item>
+        <item>По количеству треков</item>
+    </string-array>
+
+
+    <!--PLURALS-->
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d трек</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+    <plurals name="albums_count">
+        <item quantity="one">%1$d альбом</item>
+        <item quantity="few">%1$d альбома</item>
+        <item quantity="many">%1$d альбомов</item>
+        <item quantity="other">%1$d альбомов</item>
+    </plurals>
+    <plurals name="folders_count">
+        <item quantity="one">%1$d папка</item>
+        <item quantity="few">%1$d папки</item>
+        <item quantity="many">%1$d папок</item>
+        <item quantity="other">%1$d папок</item>
+    </plurals>
+
+    <!--ARTIST FRAGMENT-->
+    <string name="all_artist_tracks">Все треки</string>
+
+    <!--DIALOGUE DEFAULT-->
+    <string name="dialog_ok">ОК</string>
+    <string name="dialog_create">Создать</string>
+    <string name="dialog_rename">Переименовать</string>
+    <string name="dialog_delete">Удалить</string>
+    <string name="dialog_cancel">Закрыть</string>
+    <string name="dialog_reset">Сбросить</string>
+
+    <!--CREATE PLAYLIST DIALOG SCREEN-->
+    <string name="create_playlist_title">Создать плейлист</string>
+    <string name="error_playlist_title_is_empty">Имя плейлиста не может быть пустым</string>
+    <string name="toast_playlist_already_exist">Плейлист с таким именем уже есть</string>
+    <string name="toast_playlist_created" formatted="true">Плейлист \"%1$s\" создан</string>
+
+    <!--RENAME PLAYLIST DIALOG SCREEN-->
+    <string name="rename_playlist_title">Переименовать плейлист</string>
+    <string name="rename_toast_playlist_already_exist">Плейлист с таким именем уже есть</string>
+
+    <!--DELETE PLAYLIST DIALOG SCREEN-->
+    <string name="delete_playlist_title">Удалить плейлист?</string>
+    <string name="delete_playlist_desc">Этот список будет удалён</string>
+
+
+    <!--SLEEP TIMER DIALOG SCREEN-->
+    <string name="sleep_timer_dialog_title">Таймер сна</string>
+    <string name="toast_sleep_timer_already_launched">Таймер сна уже запущен</string>
+    <string name="toast_sleep_timer_on_start">Запущен таймер сна на %s</string>
+    <string name="min5">5 минут</string>
+    <string name="min10">10 минут</string>
+    <string name="min15">15 минут</string>
+    <string name="min20">20 минут</string>
+    <string name="min30">30 минут</string>
+    <string name="min45">45 минут</string>
+    <string name="hour1">1 час</string>
+    <string name="title_sleep_info_dialog">Информация о таймере</string>
+    <string name="time_to_end_sleep_info_dialog">Таймер завершится через %1$s</string>
+
+    <!--CHOOSE PLAYLIST DIALOG SCREEN-->
+    <string name="choose_playlist_dialog_title">Выберите плейлист</string>
+    <string name="choose_playlist_dialog_create_playlist">Создать плейлист</string>
+
+    <!--AUDIO EFFECTS DIALOG-->
+    <!--TAB EQUALIZER SETTING-->
+    <string name="equalizer">Эквалайзер</string>
+    <!--TAB AUDIO SETTING-->
+    <string name="fx_tempo">Темп x%.2f</string>
+    <string name="fx_pitch">Питч x%.2f</string>
+    <string name="fx_bassBoost">Басс</string>
+    <string name="fx_virtualizer">Виртуализация</string>
+
+    <!--TRACK ADDITIONAL INFO DIALOG-->
+    <string name="track_add_info_artist">Исполнить</string>
+    <string name="track_add_info_album">Альбом</string>
+    <string name="track_add_info_album_position">Позиция</string>
+    <string name="track_add_info_title">Название</string>
+    <string name="track_add_info_genre">Жанр</string>
+    <string name="track_add_info_duration">Длительность</string>
+    <string name="track_add_info_year">Год</string>
+    <string name="track_add_info_fileSize">Размер</string>
+    <string name="track_add_info_bitrate">Битрейт</string>
+    <string name="track_add_info_sample_rate">Частота</string>
+    <string name="track_add_info_filepath">Расположение файла</string>
+    <string name="track_add_info_file_size_format">%d кБ</string>
+    <string name="track_add_info_bitrate_format">%d кб/с</string>
+    <string name="track_add_info_sample_rate_format">%d Гц</string>
+
+    <!--SEARCH SCREEN-->
+    <string name="search_bar_title">Поиск</string>
+    <string name="search_screen_artists_group">Артисты</string>
+    <string name="search_screen_albums_group">Альбомы</string>
+    <string name="search_screen_tracks_group">Треки</string>
+    <string name="search_screen_playlists_group">Плейлисты</string>
+
+    <!--DEFAULT ITEM VALUES-->
+    <string name="default_track_title">21 Century Schizoid Man</string>
+    <string name="default_album">In the Court of the Crimson King</string>
+    <string name="default_artist">King Crimson</string>
+    <string name="default_duration">7:20</string>
+    <string name="default_album_tracks_count">5</string>
+    <string name="default_artist_info">13 альбомов, 58 треков</string>
+
+
+    <!--SETTING-->
+    <string name="setting_title">Настройки</string>
+    <string name="setting_notification_color_title">Цвет уведомления</string>
+    <string name="setting_notification_color_desc">Менять цвет в зависимости от обложки альбома</string>
+    <string name="setting_notification_artwork_show_title">Обложка альбома</string>
+    <string name="setting_notification_artwork_show_desc">Показывать обложку альбома в уведомлении</string>
+    <string name="setting_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="reset_to_default_button">Восстановить по умолчанию</string>
+    <string name="reset_settings_dialog_title">Сбросить настройки</string>
+
+    <!--TRACK ITEM DISPLAY SETTING-->
+    <string name="track_item_display_setting_screen_title">Отображение треков</string>
+    <string name="track_item_text_size_setting">Размер текста</string>
+    <string name="track_item_border_padding_setting">Отступ от границ</string>
+    <string name="track_item_show_album_title_setting">Показывать названия альбома</string>
+    <string name="track_item_show_cover_setting">Показывать обложку альбома</string>
+    <string name="track_item_cover_size_setting">Размер обложки</string>
+    <string name="track_item_cover_corners_setting">Углы обложки</string>
+    <string name="track_item_reset_settings_dialog_message">Вы точно хотите сброить опции отображения треков?</string>
+    <string name="track_item_artist_with_album">%s - %s</string>
+
+
+    <!--ALBUM ITEM DISPLAY SETTING-->
+    <string name="album_item_display_setting_screen_title">Отображение альбомов</string>
+    <string name="album_item_grid_view_type_setting">Сетка</string>
+    <string name="album_item_list_view_type_setting">Список</string>
+    <string name="album_item_text_size_setting">Размер текста</string>
+    <string name="album_item_border_padding_setting">Отступ от границ</string>
+    <string name="album_item_cover_size_setting">Размер обложки</string>
+    <string name="album_item_cover_corners_setting">Углы обложки</string>
+    <string name="album_item_reset_settings_dialog_message">Вы точно хотите сброить опции отображения альбомов?</string>
+
+
+    <!--ARTIST ITEM DISPLAY SETTING-->
+    <string name="artist_item_display_setting_screen_title">Отображение исполнителей</string>
+    <string name="artist_item_text_size_setting">Размер текста</string>
+    <string name="artist_item_border_padding_setting">Отступ от границ</string>
+    <string name="artist_item_reset_settings_dialog_message">Вы точно хотите сброить опции отображения исполнителей?</string>
+    <string name="artist_item_addition_info">%s, %s</string>
+
+
+    <!--CONTENT DESCRIPTION-->
+    <string name="back_btn_content_desc">Назад</string>
+    <string name="queue_item_burger_content_desc">Переместить трек</string>
+    <string name="queue_item_remove_content_desc">Исключить трек</string>
+    <string name="player_toggle_content_desc">Продолжить/приостановить воспроизведение</string>
+    <string name="main_menu_button_content_desc">Главное меню</string>
+    <string name="artists_list_content_desc">Список исполнителей</string>
+    <string name="albums_list_content_desc">Список альбомов</string>
+    <string name="tracks_list_content_desc">Список треков</string>
+    <string name="folders_list_content_desc">Список папок</string>
+    <string name="playlist_title_content_desc">Список плейлистов</string>
+    <string name="drop_down_button_content_desc">Раскрывающаяся панель</string>
+    <string name="system_playlist_content_desc">Системный плейлист</string>
+    <string name="repeat_mode_content_desc">Режим повтора</string>
+    <string name="shuffle_mode_content_desc">Случайный порядок воспроизведения</string>
+    <string name="start_prev_content_desc">Предыдущий трек</string>
+    <string name="start_next_content_desc">Следующий трек</string>
+
+</resources>

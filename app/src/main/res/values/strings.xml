@@ -14,13 +14,10 @@
     <string name="request_permission_toast">Grant storage access in \"Permissions\" menu</string>
 
     <!--SYSTEM PLAYLISTS -->
-    <string name="playlist_recently_added">Recently Added</string>
     <string name="playlist_favourites">Favourites</string>
+    <string name="playlist_recently_added">Recently Added</string>
     <string name="playlist_queue">Queue</string>
     <string name="playlist_folders">Folders</string>
-
-    <!--PLAYER SCREEN-->
-    <string name="toast_time_to_end_player_screen">%1$s left until end</string>
 
 
     <!--IMAGE DESCRIPTIONS-->
@@ -34,17 +31,17 @@
 
 
     <!--MAIN MENU-->
-    <string name="menu_search">Search…</string>
-    <string name="menu_sorting_by">Sort by…</string>
-    <string name="menu_add_playlist">Add playlist</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_sorting_by">Sorting</string>
+    <string name="menu_add_playlist">Create playlist</string>
     <string name="menu_settings">Settings</string>
 
     <!--TRACK MENU-->
     <string name="track_menu_play">Play</string>
-    <string name="track_menu_add_to_playlist">Add to playlist…</string>
-    <string name="track_menu_remove_from_playlist">Remove from playlist</string>
     <string name="track_menu_add_to_favourites">Favourite</string>
     <string name="track_menu_remove_from_favourites">Not favourite</string>
+    <string name="track_menu_add_to_playlist">Add to playlist</string>
+    <string name="track_menu_remove_from_playlist">Remove from playlist</string>
     <string name="track_menu_share_track">Share</string>
     <string name="track_menu_additional_info">Additional info</string>
     <string name="track_menu_share_track_intent_title">Share audio file</string>
@@ -69,20 +66,20 @@
     <string name="sort_title">Sorting</string>
     <string name="sort_reverse">Reverse</string>
     <string-array name="sort_tracks">
-        <item>Title</item>
-        <item>Artist</item>
-        <item>Duration</item>
-        <item>Adding date</item>
-        <item>Position in album</item>
+        <item>By title</item>
+        <item>By artist</item>
+        <item>By duration</item>
+        <item>By adding date</item>
+        <item>By position in album</item>
     </string-array>
     <string-array name="sort_albums">
-        <item>Title</item>
-        <item>Artist</item>
-        <item>Year</item>
+        <item>By title</item>
+        <item>By artist</item>
+        <item>By year</item>
     </string-array>
     <string-array name="sort_artists">
-        <item>Title</item>
-        <item>Tracks count</item>
+        <item>By title</item>
+        <item>By tracks count</item>
     </string-array>
 
 
@@ -136,9 +133,9 @@
 
 
     <!--SLEEP TIMER DIALOG SCREEN-->
-    <string name="sleep_timer_dialog_title">Select time</string>
+    <string name="sleep_timer_dialog_title">Sleep timer</string>
     <string name="toast_sleep_timer_already_launched">Sleep timer already launched</string>
-    <string name="toast_sleep_timer_on_start">Music will stop in %s</string>
+    <string name="toast_sleep_timer_on_start">Sleep timer ends in %1$s</string>
     <string name="min5">5 min</string>
     <string name="min10">10 min</string>
     <string name="min15">15 min</string>
@@ -146,10 +143,8 @@
     <string name="min30">30 min</string>
     <string name="min45">45 min</string>
     <string name="hour1">1 hour</string>
-
-    <!--TIME TO SLEEP INFO DIALOG SCREEN-->
     <string name="title_sleep_info_dialog">Timer Info</string>
-    <string name="time_to_end_sleep_info_dialog">Time to end: %1$s</string>
+    <string name="time_to_end_sleep_info_dialog">Timer ends in %1$s</string>
 
     <!--CHOOSE PLAYLIST DIALOG SCREEN-->
     <string name="choose_playlist_dialog_title">Select playlist</string>
@@ -169,13 +164,13 @@
     <string name="track_add_info_album">Album</string>
     <string name="track_add_info_album_position">Position</string>
     <string name="track_add_info_title">Title</string>
-    <string name="track_add_info_duration">Duration</string>
     <string name="track_add_info_genre">Genre</string>
+    <string name="track_add_info_duration">Duration</string>
     <string name="track_add_info_year">Year</string>
-    <string name="track_add_info_filepath">Filepath</string>
     <string name="track_add_info_fileSize">Size</string>
     <string name="track_add_info_bitrate">Bitrate</string>
     <string name="track_add_info_sample_rate">Sample rate</string>
+    <string name="track_add_info_filepath">Filepath</string>
     <string name="track_add_info_file_size_format">%d kB</string>
     <string name="track_add_info_bitrate_format">%d kbps</string>
     <string name="track_add_info_sample_rate_format">%d Hz</string>
@@ -252,7 +247,7 @@
     <string name="system_playlist_content_desc">System playlist</string>
     <string name="repeat_mode_content_desc">Repeat mode</string>
     <string name="shuffle_mode_content_desc">Shuffle mode</string>
-    <string name="start_prev_content_desc">Start previous track</string>
-    <string name="start_next_content_desc">Start next track</string>
+    <string name="start_prev_content_desc">Previous track</string>
+    <string name="start_next_content_desc">Next track</string>
 
 </resources>

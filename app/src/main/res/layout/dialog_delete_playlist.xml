@@ -6,7 +6,8 @@
     android:background="@drawable/dialog_bg"
     android:minWidth="@dimen/alert_dialog_min_width"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:paddingHorizontal="24dp"
+    android:paddingVertical="16dp"
     tools:context=".ui.dialog.DeletePlaylistDialog">
 
     <TextView

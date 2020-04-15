@@ -39,7 +39,7 @@ public final class SelectableList<E> {
         return result;
     }
 
-    public void addAll(Collection<E> newElements) {
+    public void addAll(Collection<? extends E> newElements) {
         elements.addAll(newElements);
     }
 

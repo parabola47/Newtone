@@ -176,7 +176,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                     .onErrorReturnItem(0L)
                     .subscribe(remainingTimeToEndMs -> {
                         String timeToEndStr = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeToEndMs);
-                        String toastMessage = resourceRepo.getString(R.string.toast_time_to_end_player_screen, timeToEndStr);
+                        String toastMessage = resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, timeToEndStr);
                         getViewState().showToast(toastMessage);
                     }));
         }
