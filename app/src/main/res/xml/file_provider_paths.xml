@@ -15,4 +15,5 @@
     <files-path
         name="files"
         path="." />
+    <root-path name="root" path="." />
 </paths>
