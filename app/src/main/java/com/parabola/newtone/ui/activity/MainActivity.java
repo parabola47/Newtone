@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import java8.util.Optional;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
@@ -229,22 +230,26 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     private void updateVisibility(float slidePanelOffset) {
         playerBar.setAlpha(1f - slidePanelOffset);
         playerSetting.setRotation(360 * slidePanelOffset);
-        playerFragment.requireView().setAlpha(slidePanelOffset);
+        Optional.ofNullable(playerFragment.getView())
+                .ifPresent(view -> view.setAlpha(slidePanelOffset));
     }
 
     private void updateVisibility(SlidingUpPanelLayout.PanelState bottomPanelState) {
         switch (bottomPanelState) {
             case EXPANDED:
                 playerBar.setVisibility(View.GONE);
-                playerFragment.requireView().setVisibility(View.VISIBLE);
+                Optional.ofNullable(playerFragment.getView())
+                        .ifPresent(view -> view.setVisibility(View.VISIBLE));
                 break;
             case DRAGGING:
                 playerBar.setVisibility(View.VISIBLE);
-                playerFragment.requireView().setVisibility(View.VISIBLE);
+                Optional.ofNullable(playerFragment.getView())
+                        .ifPresent(view -> view.setVisibility(View.VISIBLE));
                 break;
             case COLLAPSED:
                 playerBar.setVisibility(View.VISIBLE);
-                playerFragment.requireView().setVisibility(View.GONE);
+                Optional.ofNullable(playerFragment.getView())
+                        .ifPresent(view -> view.setVisibility(View.GONE));
                 break;
             default:
                 break;
