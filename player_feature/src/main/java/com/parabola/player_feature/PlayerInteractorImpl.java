@@ -73,7 +73,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
 
     private final Context context;
-    private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private final TrackRepository trackRepo;
     private final Intent notificationClickIntent;
     private final Bitmap defaultNotificationAlbumArt;

@@ -1,5 +1,6 @@
 package com.parabola.player_feature;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
@@ -24,6 +25,7 @@ public class PlayerService extends Service {
     private static final String ACTION_STOP_SERVICE = "com.parabola.newtone.STOP_SERVICE";
 
 
+    @SuppressLint("StaticFieldLeak")
     static PlayerInteractorImpl playerInteractor;
 
     private int notificationId;
@@ -38,19 +40,19 @@ public class PlayerService extends Service {
                 PlayerService.this.notificationId = notificationId;
                 PlayerService.this.notification = notification;
 
-                Intent intent = new Intent(PlayerService.this, PlayerService.class)
+                Intent intent = new Intent(getApplicationContext(), PlayerService.class)
                         .setAction(ongoing ? ACTION_START_FOREGROUND : ACTION_STOP_FOREGROUND);
 
                 if (ongoing && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    startForegroundService(intent);
-                else startService(intent);
+                    getApplicationContext().startForegroundService(intent);
+                else getApplicationContext().startService(intent);
             }
 
             @Override
             public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                Intent intent = new Intent(PlayerService.this, PlayerService.class)
+                Intent intent = new Intent(getApplicationContext(), PlayerService.class)
                         .setAction(ACTION_STOP_SERVICE);
-                startService(intent);
+                getApplicationContext().startService(intent);
             }
         });
     }
