@@ -40,13 +40,15 @@
                 android:text="@string/setting_notification_artwork_show_desc"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notification_artwork_show_switch"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:clickable="false" />
         </RelativeLayout>
 
         <View
@@ -84,13 +86,15 @@
                 android:text="@string/setting_notification_color_desc"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notification_color_switch"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:clickable="false" />
         </RelativeLayout>
 
         <View

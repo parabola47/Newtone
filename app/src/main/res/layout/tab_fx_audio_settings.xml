@@ -13,15 +13,6 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/playbackSpeedSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintLeft_toLeftOf="@id/playbackSpeedCroller"
-            app:layout_constraintRight_toRightOf="@id/playbackSpeedCroller"
-            app:layout_constraintTop_toBottomOf="@+id/playbackSpeedCroller" />
-
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackSpeedCroller"
             style="@style/FxSettingCroller"
@@ -37,15 +28,15 @@
             app:min="0"
             app:start_progress="50" />
 
-
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/playbackPitchSwitch"
+            android:id="@+id/playbackSpeedSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:gravity="center"
-            app:layout_constraintLeft_toLeftOf="@+id/playbackPitchCroller"
-            app:layout_constraintRight_toRightOf="@id/playbackPitchCroller"
-            app:layout_constraintTop_toBottomOf="@+id/playbackPitchCroller" />
+            app:layout_constraintLeft_toLeftOf="@id/playbackSpeedCroller"
+            app:layout_constraintRight_toRightOf="@id/playbackSpeedCroller"
+            app:layout_constraintTop_toBottomOf="@+id/playbackSpeedCroller" />
 
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackPitchCroller"
@@ -62,6 +53,15 @@
             app:min="0"
             app:start_progress="50" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/playbackPitchSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="@+id/playbackPitchCroller"
+            app:layout_constraintRight_toRightOf="@id/playbackPitchCroller"
+            app:layout_constraintTop_toBottomOf="@+id/playbackPitchCroller" />
 
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/virtualizerCroller"
@@ -81,6 +81,7 @@
             android:id="@+id/virtualizerSwitchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="@+id/virtualizerCroller"
             app:layout_constraintRight_toRightOf="@id/virtualizerCroller"
@@ -105,6 +106,7 @@
             android:id="@+id/bassBoostSwitchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:gravity="center_horizontal"
             app:layout_constraintLeft_toLeftOf="@+id/bassBoostCroller"
             app:layout_constraintRight_toRightOf="@+id/bassBoostCroller"

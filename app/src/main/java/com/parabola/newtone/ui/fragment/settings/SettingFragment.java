@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.parabola.newtone.BuildConfig;
 import com.parabola.newtone.MainApplication;
@@ -42,8 +42,8 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     @InjectPresenter SettingPresenter presenter;
 
 
-    @BindView(R.id.notification_color_switch) Switch notificationColorSwitch;
-    @BindView(R.id.notification_artwork_show_switch) Switch notificationArtworkShowSwitch;
+    @BindView(R.id.notification_color_switch) SwitchCompat notificationColorSwitch;
+    @BindView(R.id.notification_artwork_show_switch) SwitchCompat notificationArtworkShowSwitch;
     @BindView(R.id.app_info_version) TextView appInfoVersion;
 
     public SettingFragment() {
@@ -85,13 +85,13 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     }
 
 
-    @OnClick({R.id.notification_color_bar, R.id.notification_color_switch})
+    @OnClick(R.id.notification_color_bar)
     public void onClickNotificationColorSetting() {
         presenter.onClickNotificationColorSetting();
     }
 
 
-    @OnClick({R.id.notification_artwork_show_bar, R.id.notification_artwork_show_switch})
+    @OnClick(R.id.notification_artwork_show_bar)
     public void onClickNotificationArtworkShowSetting() {
         presenter.onClickNotificationArtworkShowSetting();
     }
