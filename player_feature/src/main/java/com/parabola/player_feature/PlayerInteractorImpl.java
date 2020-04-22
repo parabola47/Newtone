@@ -110,7 +110,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
         exoPlayer.setAudioAttributes(audioAttributes, true);
         exoPlayer.setHandleAudioBecomingNoisy(true);    // приостанавливаем воспроизведении при отключении наушников
-
+        exoPlayer.setWakeMode(C.WAKE_MODE_LOCAL);
 
         MediaSessionCompat mediaSession = setupMediaSession(context);
         notificationManager = setupNotificationManager(context, mediaSession);
