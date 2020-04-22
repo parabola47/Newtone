@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
@@ -44,7 +45,7 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
     @BindView(R.id.bitrate) TextView bitrateTextView;
     @BindView(R.id.sampleRate) TextView sampleRateTextView;
 
-    @BindView(R.id.albumCover) ImageView albumCoverImageView;
+    @BindView(R.id.albumCover) ShapeableImageView albumCoverImageView;
 
 
     @InjectPresenter TrackAdditionalInfoPresenter presenter;
@@ -66,6 +67,10 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.dialog_track_addition_info, container, false);
         ButterKnife.bind(this, layout);
+
+        albumCoverImageView.setShapeAppearanceModel(albumCoverImageView.getShapeAppearanceModel().toBuilder()
+                .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.track_add_info_dialog_cover_corner_size))
+                .build());
 
         return layout;
     }

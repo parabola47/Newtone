@@ -10,7 +10,7 @@
     tools:context=".ui.dialog.TrackAdditionalInfoDialog">
 
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/albumCover"
         android:layout_width="192dp"
         android:layout_height="192dp"
