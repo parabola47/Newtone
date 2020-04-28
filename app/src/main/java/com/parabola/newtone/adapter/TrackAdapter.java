@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
@@ -23,10 +21,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.observers.BiConsumerSingleObserver;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.TrackViewHolder>
@@ -74,14 +73,21 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
             loadCoverAsync(holder, trackItem);
 
 
-        if (isSelected(holder.getAdapterPosition())) {
-            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
-            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+        if (isContextSelected(holder.getAdapterPosition())) {
+            holder.trackTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.duration.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+        } else if (isSelected(holder.getAdapterPosition())) {
+            holder.trackTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.duration.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemSelectedBackground));
         } else {
-            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultItemSecondaryText));
-            holder.duration.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultItemSecondaryText));
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorListItemDefaultBackground));
+            holder.trackTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.duration.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
         }
     }
 
@@ -117,11 +123,9 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
                 .cast(Bitmap.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumerSingleObserver<>((bitmap, error) ->
-                        Glide.with(holder.cover.getContext().getApplicationContext())
-                                .load(bitmap)
-                                .placeholder(R.drawable.album_default)
-                                .into(holder.cover)));
+                .subscribe(new ConsumerSingleObserver<>(
+                        bitmap -> holder.cover.setImageBitmap(bitmap),
+                        error -> holder.cover.setImageResource(R.drawable.album_default)));
     }
 
 

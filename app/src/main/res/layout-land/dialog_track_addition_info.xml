@@ -2,10 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:background="@drawable/dialog_bg"
+    android:layout_gravity="center"
     android:padding="16dp"
     tools:context=".ui.dialog.TrackAdditionalInfoDialog">
 
@@ -16,13 +15,14 @@
         android:layout_height="192dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/filepathWrapper"
         tools:src="@drawable/album_default" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         android:minWidth="256dp"
         app:layout_constraintBottom_toBottomOf="@id/albumCover"
         app:layout_constraintLeft_toRightOf="@+id/albumCover"
@@ -30,257 +30,358 @@
         app:layout_constraintTop_toTopOf="@+id/albumCover">
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/artistWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_artist"
-            app:layout_constraintBottom_toTopOf="@+id/albumTitleWrapper"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/albumWrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/artist"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/track_add_info_artist"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_artist"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="Tool" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/albumTitleWrapper"
+        <LinearLayout
+            android:id="@+id/albumWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_album"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/titleWrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/albumPositionWrapper"
             app:layout_constraintTop_toBottomOf="@+id/artistWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/albumTitle"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/track_add_info_album"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_album"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/album"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="10,000 days" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/albumPositionWrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_album_position"
-            app:layout_constraintBottom_toBottomOf="@id/albumTitleWrapper"
-            app:layout_constraintLeft_toRightOf="@+id/albumTitleWrapper"
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            app:layout_constraintBottom_toBottomOf="@id/albumWrapper"
+            app:layout_constraintLeft_toRightOf="@+id/albumWrapper"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/albumTitleWrapper">
+            app:layout_constraintTop_toTopOf="@+id/albumWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/albumPosition"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="@string/track_add_info_album_position"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_album_position"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/albumPosition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="12" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/titleWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_title"
-            app:layout_constraintBottom_toTopOf="@+id/genreTitleWrapper"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/genreWrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/albumTitleWrapper">
+            app:layout_constraintTop_toBottomOf="@id/albumWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/title"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/track_add_info_title"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_title"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="Rosetta Stoned" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/genreTitleWrapper"
+        <LinearLayout
+            android:id="@+id/genreWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_genre"
+            android:includeFontPadding="false"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@id/durationWrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/genreTitle"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/track_add_info_genre"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_genre"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="Progressive Rock" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/durationWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/track_add_info_duration"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/bitrateWrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/yearWrapper"
-            app:layout_constraintTop_toBottomOf="@+id/genreTitleWrapper">
+            app:layout_constraintTop_toBottomOf="@+id/genreWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/duration"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="@string/track_add_info_duration"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_duration"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="11:12" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/yearWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_year"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@id/durationWrapper"
             app:layout_constraintLeft_toRightOf="@id/durationWrapper"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/durationWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/year"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="@string/track_add_info_year"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_year"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="2006" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/fileSizeWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_fileSize"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@id/bitrateWrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/bitrateWrapper"
             app:layout_constraintTop_toTopOf="@+id/bitrateWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/fileSize"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="@string/track_add_info_fileSize"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_fileSize"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fileSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="26294 kB" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/bitrateWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_bitrate"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/fileSizeWrapper"
             app:layout_constraintRight_toLeftOf="@id/sampleRateWrapper"
             app:layout_constraintTop_toBottomOf="@+id/durationWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bitrate"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="@string/track_add_info_bitrate"
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_bitrate"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/bitrate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
                 tools:text="320 kbps" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:id="@+id/sampleRateWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_sample_rate"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@id/bitrateWrapper"
             app:layout_constraintLeft_toRightOf="@id/bitrateWrapper"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/bitrateWrapper">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/sampleRate"
-                style="@style/TrackAdditionalInfoTextStyle"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="@string/track_add_info_sample_rate"
-                tools:text="44100 Hz" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:includeFontPadding="false"
+                android:text="@string/track_add_info_sample_rate"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sampleRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
+                tools:text="44100 Hz" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:id="@+id/filepathWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="@string/track_add_info_filepath"
-        app:layout_constraintBottom_toTopOf="@+id/cancel_bar"
+        android:includeFontPadding="false"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/albumCover">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/filepath"
-            style="@style/TrackAdditionalInfoTextStyle"
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/track_add_info_filepath"
-            android:maxLines="16"
-            android:singleLine="false"
-            tools:text="/sdcard/0/Music/Tool/10000 days/rosetta-stoned.mp3" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/cancel_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filepathWrapper">
+            android:includeFontPadding="false"
+            android:text="@string/track_add_info_filepath"
+            android:textColor="?android:attr/textColorHint"
+            android:textSize="12sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/cancel"
-            style="@style/TextViewDialogAction"
-            android:layout_width="wrap_content"
+            android:id="@+id/filepath"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/dialog_cancel" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            android:includeFontPadding="false"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="14sp"
+            tools:text="/sdcard/0/Music/Tool/10000 days/rosetta-stoned.mp3" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

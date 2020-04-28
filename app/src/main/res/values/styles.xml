@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -20,19 +21,6 @@
         <item name="android:padding">16dp</item>
     </style>
 
-    <style name="TextViewDialogAction">
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:minHeight">48dp</item>
-        <item name="android:minWidth">48dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textAppearance">@style/Base.TextAppearance.AppCompat.Small</item>
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-    </style>
 
     <style name="PlayerTextView">
         <item name="android:layout_margin">4dp</item>
@@ -54,10 +42,13 @@
     <style name="FxSettingCroller">
         <item name="indicator_color">@color/colorAccent</item>
         <item name="indicator_disable_color">@android:color/darker_gray</item>
-        <item name="is_continuous">true</item>
         <item name="label_size">10sp</item>
-        <item name="label_color">@android:color/white</item>
+        <item name="label_color">?android:attr/textColorSecondary</item>
         <item name="label_disabled_color">@android:color/darker_gray</item>
+    </style>
+
+    <style name="FxSettingContinuousCroller" parent="FxSettingCroller">
+        <item name="is_continuous">true</item>
         <item name="progress_primary_color">@android:color/transparent</item>
         <item name="progress_primary_disable_color">@android:color/transparent</item>
         <item name="progress_primary_stroke_width">0</item>
@@ -66,28 +57,16 @@
         <item name="progress_secondary_stroke_width">0</item>
     </style>
 
-    <style name="FxDiscreteSettingCroller">
-        <item name="indicator_color">@color/colorAccent</item>
-        <item name="indicator_disable_color">@android:color/darker_gray</item>
+    <style name="FxDiscreteSettingCroller" parent="FxSettingCroller">
         <item name="is_continuous">false</item>
-        <item name="label_size">10sp</item>
-        <item name="label_color">@android:color/white</item>
-        <item name="label_disabled_color">@android:color/darker_gray</item>
         <item name="progress_primary_color">@color/colorAccent</item>
         <item name="progress_primary_disable_color">@android:color/darker_gray</item>
     </style>
 
-    <style name="TrackAdditionalInfoTextStyle" parent="Widget.Design.TextInputLayout">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:clickable">false</item>
-        <item name="android:cursorVisible">false</item>
-        <item name="android:editable">false</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:focusable">false</item>
-        <item name="android:inputType">none</item>
-        <item name="maxLines">1</item>
-        <item name="singleLine">true</item>
-        <item name="android:singleLine">true</item>
+    <style name="MaterialToggleButton" parent="@style/Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeWidth">0dp</item>
+        <item name="backgroundTint">@color/mtrl_toggle_btn_bg_color_selector</item>
+        <item name="android:textColor">@color/mtrl_toggle_btn_text_color_selector</item>
     </style>
 
 </resources>

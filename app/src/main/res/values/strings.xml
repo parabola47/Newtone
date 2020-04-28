@@ -22,7 +22,6 @@
 
     <!--IMAGE DESCRIPTIONS-->
     <string name="album_cover_desc">Album Cover</string>
-    <string name="add_playlist_desc">Create new playlist</string>
 
 
     <!--NULL OBJECTS-->
@@ -56,10 +55,9 @@
     <!--PLAYER MENU-->
     <string name="player_menu_add_to_playlist">Add to playlist</string>
     <string name="player_menu_lyrics">Lyrics</string>
-    <string name="player_menu_delete">Delete</string>
     <string name="player_menu_share">Share</string>
     <string name="player_menu_additional_info">Additional info</string>
-
+    <string name="player_menu_delete">Delete</string>
     <!--               !!!!                 -->
     <!--          BLOCK OF SORTING          -->
     <!--               !!!!                 -->
@@ -82,29 +80,6 @@
         <item>By tracks count</item>
     </string-array>
 
-
-    <!--PLURALS-->
-    <plurals name="tracks_count">
-        <item quantity="zero">no tracks</item>
-        <item quantity="one">%1$d track</item>
-        <item quantity="two">%1$d tracks</item>
-        <item quantity="few">%1$d tracks</item>
-        <item quantity="many">%1$d tracks</item>
-        <item quantity="other">%1$d tracks</item>
-    </plurals>
-    <plurals name="albums_count">
-        <item quantity="zero">no albums</item>
-        <item quantity="one">%1$d album</item>
-        <item quantity="other">%1$d albums</item>
-    </plurals>
-    <plurals name="folders_count">
-        <item quantity="zero">no folders</item>
-        <item quantity="one">%1$d folder</item>
-        <item quantity="two">%1$d folders</item>
-        <item quantity="few">%1$d folders</item>
-        <item quantity="many">%1$d folders</item>
-        <item quantity="other">%1$d folders</item>
-    </plurals>
 
     <!--ARTIST FRAGMENT-->
     <string name="all_artist_tracks">All tracks</string>
@@ -136,13 +111,15 @@
     <string name="sleep_timer_dialog_title">Sleep timer</string>
     <string name="toast_sleep_timer_already_launched">Sleep timer already launched</string>
     <string name="toast_sleep_timer_on_start">Sleep timer ends in %1$s</string>
-    <string name="min5">5 min</string>
-    <string name="min10">10 min</string>
-    <string name="min15">15 min</string>
-    <string name="min20">20 min</string>
-    <string name="min30">30 min</string>
-    <string name="min45">45 min</string>
-    <string name="hour1">1 hour</string>
+    <string-array name="sleep_timer_values">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>30 minutes</item>
+        <item>45 minutes</item>
+        <item>1 hour</item>
+    </string-array>
     <string name="title_sleep_info_dialog">Timer Info</string>
     <string name="time_to_end_sleep_info_dialog">Timer ends in %1$s</string>
 
@@ -193,6 +170,9 @@
 
     <!--SETTING-->
     <string name="setting_title">Settings</string>
+    <string name="setting_color_theme_title">Color theme</string>
+    <string name="setting_color_theme_desc_dark">Dark</string>
+    <string name="setting_color_theme_desc_light">Light</string>
     <string name="setting_notification_color_title">Notification color</string>
     <string name="setting_notification_color_desc">Change color depending on the cover</string>
     <string name="setting_notification_artwork_show_title">Notification artwork</string>
@@ -242,7 +222,6 @@
     <string name="albums_list_content_desc">Albums list</string>
     <string name="tracks_list_content_desc">Tracks list</string>
     <string name="folders_list_content_desc">Folders list</string>
-    <string name="playlist_title_content_desc">Playlist title</string>
     <string name="drop_down_button_content_desc">Drop down panel</string>
     <string name="system_playlist_content_desc">System playlist</string>
     <string name="repeat_mode_content_desc">Repeat mode</string>

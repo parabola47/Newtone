@@ -82,13 +82,8 @@ dependencies {
     //    STREAM JAVA 8 SUPPORT
     implementation 'net.sourceforge.streamsupport:streamsupport:1.7.2'
 
-    //    GLIDE
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     //    Vertical ProgressBar
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
     //    Round corner ProgressBar
     implementation 'com.akexorcist:RoundCornerProgressBar:2.0.3'
-    //    ToggleButton
-    implementation 'us.belka:androidtoggleswitch:1.2.2'
 }

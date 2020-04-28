@@ -2,14 +2,14 @@ package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.exception.AlreadyExistsException;
 import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.ResourceRepository;
-import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.RenamePlaylistView;
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.CallbackCompletableObserver;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -19,9 +19,6 @@ public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistVi
     private final int playlistId;
     @Inject PlaylistRepository playlistRepo;
 
-    @Inject ResourceRepository resourceRepo;
-
-    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public RenamePlaylistPresenter(AppComponent appComponent, int playlistId) {
         appComponent.inject(this);
@@ -30,32 +27,29 @@ public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistVi
 
     @Override
     protected void onFirstViewAttach() {
-        getViewState().focusOnEditText();
-        disposables.add(playlistRepo.getById(playlistId)
-                .subscribe(playlist -> {
-                    getViewState().setPlaylistTitle(playlist.getTitle());
-                    getViewState().setTitleSelected();
-                }));
-    }
+        getViewState().focusOnInputField();
 
-    public void onClickCancel() {
-        getViewState().closeScreen();
+        playlistRepo.getById(playlistId)
+                .subscribe(new ConsumerSingleObserver<>(
+                        playlist -> {
+                            getViewState().setPlaylistTitle(playlist.getTitle());
+                            getViewState().setTitleSelected();
+                        }, Functions.ERROR_CONSUMER));
     }
 
     public void onClickRenamePlaylist(String newPlaylistTitle) {
         newPlaylistTitle = newPlaylistTitle.trim();
         if (newPlaylistTitle.isEmpty()) {
-            getViewState().setPlaylistTitleIsEmptyError();
+            getViewState().showPlaylistTitleIsEmptyError();
             return;
         }
 
-        disposables.add(playlistRepo.rename(playlistId, newPlaylistTitle)
-                .subscribe(getViewState()::closeScreen,
+        playlistRepo.rename(playlistId, newPlaylistTitle)
+                .subscribe(new CallbackCompletableObserver(
                         error -> {
-                            if (error instanceof AlreadyExistsException) {
-                                String toastText = resourceRepo.getString(R.string.rename_toast_playlist_already_exist);
-                                getViewState().showToast(toastText);
-                            }
-                        }));
+                            if (error instanceof AlreadyExistsException)
+                                getViewState().showPlaylistTitleAlreadyExistsError();
+                        },
+                        getViewState()::closeScreen));
     }
 }

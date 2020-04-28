@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,7 +53,6 @@ public final class TabArtistFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
         artistsList.setAdapter(artistsAdapter);
-        artistsList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         artistsAdapter.setItemClickListener(position -> {
             int artistId = artistsAdapter.get(position).getId();

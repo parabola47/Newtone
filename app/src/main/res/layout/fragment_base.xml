@@ -39,6 +39,7 @@
                     android:layout_marginRight="4dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/back_btn_content_desc"
+                    android:tint="@color/colorActionBarIconTint"
                     app:srcCompat="@drawable/ic_arrow_left" />
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -64,6 +65,7 @@
                         android:layout_height="wrap_content"
                         android:maxLines="1"
                         android:singleLine="true"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="18sp"
                         tools:text="Main info" />
 
@@ -79,6 +81,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_toStartOf="@id/otherInfo"
                             android:layout_toLeftOf="@+id/otherInfo"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textSize="14sp"
                             tools:text="Additional info" />
 
@@ -88,6 +91,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textSize="14sp"
                             tools:text="Other info" />
 

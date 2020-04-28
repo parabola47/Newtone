@@ -1,5 +1,6 @@
 package com.parabola.newtone.ui.dialog;
 
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
@@ -18,26 +20,25 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter;
 import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.util.TimeFormatterTool;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import moxy.MvpAppCompatDialogFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-public final class TrackAdditionalInfoDialog extends BaseDialogFragment
+public final class TrackAdditionalInfoDialog extends MvpAppCompatDialogFragment
         implements TrackAdditionalInfoView {
 
     @BindView(R.id.artist) TextView artistTextView;
-    @BindView(R.id.albumTitle) TextView albumTitleTextView;
+    @BindView(R.id.album) TextView albumTextView;
     @BindView(R.id.albumPosition) TextView albumPositionTextView;
     @BindView(R.id.title) TextView titleTextView;
 
     @BindView(R.id.duration) TextView durationTextView;
-    @BindView(R.id.genreTitleWrapper) ViewGroup genreTitleWrapper;
-    @BindView(R.id.genreTitle) TextView genreTextView;
+    @BindView(R.id.genreWrapper) ViewGroup genreWrapper;
+    @BindView(R.id.genre) TextView genreTextView;
     @BindView(R.id.year) TextView yearTextView;
     @BindView(R.id.filepath) TextView filepathTextView;
 
@@ -64,21 +65,20 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.dialog_track_addition_info, container, false);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        View layout = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_track_addition_info, null);
         ButterKnife.bind(this, layout);
 
         albumCoverImageView.setShapeAppearanceModel(albumCoverImageView.getShapeAppearanceModel().toBuilder()
                 .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.track_add_info_dialog_cover_corner_size))
                 .build());
 
-        return layout;
+        return new MaterialAlertDialogBuilder(requireContext())
+                .setView(layout)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .create();
     }
 
-    @OnClick(R.id.cancel)
-    public void onClickCancel() {
-        presenter.onClickCancel();
-    }
 
     @ProvidePresenter
     TrackAdditionalInfoPresenter providePresenter() {
@@ -90,13 +90,13 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
     @Override
     public void setTrack(Track track) {
         artistTextView.setText(track.getArtistName());
-        albumTitleTextView.setText(track.getAlbumTitle());
+        albumTextView.setText(track.getAlbumTitle());
         albumPositionTextView.setText(String.valueOf(track.getPositionInCd()));
         titleTextView.setText(track.getTitle());
 
         durationTextView.setText(TimeFormatterTool.formatMillisecondsToMinutes(track.getDurationMs()));
         if (track.getGenreName().isEmpty())
-            genreTitleWrapper.setVisibility(View.GONE);
+            genreWrapper.setVisibility(View.GONE);
         else
             genreTextView.setText(track.getGenreName());
         yearTextView.setText(String.valueOf(track.getYear()));
@@ -106,10 +106,11 @@ public final class TrackAdditionalInfoDialog extends BaseDialogFragment
         bitrateTextView.setText(getString(R.string.track_add_info_bitrate_format, track.getBitrate()));
         sampleRateTextView.setText(getString(R.string.track_add_info_sample_rate_format, track.getSampleRate()));
 
-        Glide.with(this)
-                .load((Bitmap) track.getArtImage())
-                .placeholder(R.drawable.album_default)
-                .into(albumCoverImageView);
+        Bitmap artImage = track.getArtImage();
+
+        if (artImage != null)
+            albumCoverImageView.setImageBitmap(artImage);
+        else albumCoverImageView.setImageResource(R.drawable.album_default);
     }
 
     @Override

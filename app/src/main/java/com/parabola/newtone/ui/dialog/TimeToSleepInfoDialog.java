@@ -1,31 +1,29 @@
 package com.parabola.newtone.ui.dialog;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter;
 import com.parabola.newtone.mvp.view.TimeToSleepInfoView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import moxy.MvpAppCompatDialogFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-public final class TimeToSleepInfoDialog extends BaseDialogFragment
+public final class TimeToSleepInfoDialog extends MvpAppCompatDialogFragment
         implements TimeToSleepInfoView {
 
     @InjectPresenter TimeToSleepInfoPresenter presenter;
 
-
-    @BindView(R.id.time_to_end_txt) TextView timeToEndTxt;
+    private TextView timeToEndTxt;
 
 
     public static TimeToSleepInfoDialog newInstance() {
@@ -34,24 +32,20 @@ public final class TimeToSleepInfoDialog extends BaseDialogFragment
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.dialog_time_to_sleep, container, false);
-        ButterKnife.bind(this, layout);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        timeToEndTxt = new AppCompatTextView(requireContext());
+        int horizontalPadding = (int) getResources().getDimension(R.dimen.alert_dialog_view_horizontal_padding);
+        int verticalPadding = (int) getResources().getDimension(R.dimen.alert_dialog_top_title_padding);
+        timeToEndTxt.setPadding(horizontalPadding, verticalPadding, horizontalPadding, 0);
 
-        return layout;
+        return new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.title_sleep_info_dialog)
+                .setView(timeToEndTxt)
+                .setPositiveButton(R.string.dialog_reset, (d, w) ->
+                        presenter.onClickReset())
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .create();
     }
-
-    @OnClick(R.id.reset)
-    public void onClickReset() {
-        presenter.onClickReset();
-    }
-
-    @OnClick(R.id.cancel)
-    public void onClickCancel() {
-        presenter.onClickCancel();
-    }
-
 
     @ProvidePresenter
     TimeToSleepInfoPresenter providePresenter() {

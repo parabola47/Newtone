@@ -15,16 +15,16 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="72dp"
+            android:backgroundTint="@color/colorTabBackground"
             android:elevation="24dp"
-            app:tabBackground="@color/colorTabDefault"
             app:tabGravity="fill"
             app:tabIconTint="@color/colorTabIconTintDefault"
             app:tabIndicatorColor="@color/colorAccent"
             app:tabIndicatorFullWidth="false"
             app:tabIndicatorHeight="4dp"
             app:tabRippleColor="@color/colorTabRippleColor"
-            app:tabSelectedTextColor="@color/colorAccent"
-            app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small"
+            app:tabSelectedTextColor="@color/colorTabIconTintSelected"
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Small"
             app:tabTextColor="@color/colorTabIconTintDefault">
 
             <com.google.android.material.tabs.TabItem
@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@android:color/black" />
+            android:background="@color/colorNewtoneBackground" />
 
     </LinearLayout>
 

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:statusBarColor">@color/colorNewtoneBackground</item>
 
         <item name="android:windowBackground">@color/colorNewtoneBackground</item>
         <item name="android:windowIsTranslucent">true</item>
+
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
     </style>
 </resources>

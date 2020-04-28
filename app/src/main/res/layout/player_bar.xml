@@ -13,8 +13,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:rcBackgroundColor="#4F4F4F"
-        app:rcProgressColor="@color/colorAccent"
+        app:rcBackgroundColor="@color/colorPlayerBarProgressBackground"
+        app:rcProgressColor="@color/colorPlayerBarProgressMain"
         app:rcRadius="2dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -79,7 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_kebab"
-        app:tint="@color/colorNewtoneWhite" />
+        app:tint="@color/colorNewtoneIconTint" />
 
     <!--используется как якорь для всплывающего PopupMenu-->
     <View

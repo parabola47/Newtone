@@ -1,32 +1,35 @@
 package com.parabola.newtone.ui.dialog;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.R;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import moxy.MvpAppCompatDialogFragment;
 
-public final class IsaacNewtoneDialog extends BaseDialogFragment {
+import static androidx.core.content.ContextCompat.getDrawable;
+
+public final class IsaacNewtoneDialog extends MvpAppCompatDialogFragment {
+
+    private ImageView newtoneImage;
 
     @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.dialog_isaac_newtone, container, false);
-        ButterKnife.bind(this, layout);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        newtoneImage = new AppCompatImageView(requireContext());
+        newtoneImage.setImageDrawable(getDrawable(requireContext(), R.drawable.isaac_newtone));
 
-        return layout;
+        return new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.app_name)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setView(newtoneImage)
+                .create();
     }
 
-    @OnClick(R.id.cancel)
-    public void onClickCancel() {
-        dismiss();
-    }
 }

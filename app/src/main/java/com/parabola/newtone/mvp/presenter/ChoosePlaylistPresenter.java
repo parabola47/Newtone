@@ -9,6 +9,8 @@ import com.parabola.newtone.ui.router.MainRouter;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.observers.CallbackCompletableObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -30,11 +32,7 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
 
     @Override
     protected void onFirstViewAttach() {
-        disposables.add(playlistRepo.observePlaylistsUpdates()
-                .flatMapSingle(o -> playlistRepo.getAll())
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshPlaylists));
+        disposables.addAll(observePlaylistsUpdates());
     }
 
     @Override
@@ -42,16 +40,22 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
         disposables.dispose();
     }
 
+
+    private Disposable observePlaylistsUpdates() {
+        return playlistRepo.observePlaylistsUpdates()
+                .flatMapSingle(o -> playlistRepo.getAll())
+                .subscribeOn(schedulers.io())
+                .observeOn(schedulers.ui())
+                .subscribe(getViewState()::refreshPlaylists);
+    }
+
+
     public void onClickCreateNewPlaylist() {
         router.openCreatePlaylistDialog();
     }
 
     public void onClickPlaylistItem(int playlistId) {
-        disposables.add(playlistRepo.addTrackToPlaylist(playlistId, trackId)
-                .subscribe(getViewState()::closeScreen));
-    }
-
-    public void onClickCancel() {
-        getViewState().closeScreen();
+        playlistRepo.addTrackToPlaylist(playlistId, trackId)
+                .subscribe(new CallbackCompletableObserver(getViewState()::closeScreen));
     }
 }

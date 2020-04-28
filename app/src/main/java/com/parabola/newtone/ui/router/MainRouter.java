@@ -59,7 +59,6 @@ public interface MainRouter {
     //    DIALOGUES
     void openCreatePlaylistDialog();
     void openRenamePlaylistDialog(int playlistId);
-    void openDeletePlaylistDialog(int playlistId);
     void openStartSleepTimerDialog();
     void openSleepTimerInfoDialog();
     void openAddToPlaylistDialog(int trackId);

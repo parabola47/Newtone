@@ -5,15 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.settings.ViewSettingsInteractor;
@@ -28,7 +27,6 @@ import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import javax.inject.Inject;
 
-import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.BindView;
@@ -47,7 +45,7 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @BindView(R.id.additional_info) TextView additionalInfoTxt;
     @BindView(R.id.otherInfo) TextView otherInfoTxt;
 
-    @BindView(R.id.viewTypeToggle) ToggleSwitch viewTypeToggle;
+    @BindView(R.id.viewTypeToggle) MaterialButtonToggleGroup viewTypeToggle;
     private static final String VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY = "VIEW_TYPE_BUNDLE_CHECK_POSITION";
 
     @BindView(R.id.albumGridHolder) ViewGroup albumGridHolder;
@@ -108,7 +106,9 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         layoutParams.width = getGridAlbumWidth();
         albumGridHolder.findViewById(R.id.albumCover).setLayoutParams(layoutParams);
 
-        viewTypeToggle.setOnToggleSwitchChangeListener((position, isChecked) -> refreshViewType(position));
+        viewTypeToggle.addOnButtonCheckedListener((group, checkedButtonId, isChecked) -> {
+            if (isChecked) refreshViewType(checkedButtonId);
+        });
         textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -136,16 +136,19 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
         AlbumItemView albumItemView = viewSettingsInteractor.getAlbumItemViewSettings();
 
-        int viewTypeCheckPosition = savedInstanceState != null
-                ? savedInstanceState.getInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY)
-                : albumItemView.viewType.ordinal();
-        viewTypeToggle.setCheckedTogglePosition(viewTypeCheckPosition);
+        int checkedButtonId;
+        if (savedInstanceState != null)
+            checkedButtonId = savedInstanceState.getInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY);
+        else checkedButtonId = albumItemView.viewType == AlbumViewType.GRID
+                ? R.id.gridButton : R.id.listButton;
+
+        viewTypeToggle.check(checkedButtonId);
         textSizeSeekBar.setProgress(albumItemView.textSize - TEXT_SIZE_MIN);
         borderPaddingSeekBar.setProgress(albumItemView.borderPadding - BORDER_PADDING_MIN);
         coverSizeSeekBar.setProgress(albumItemView.coverSize - COVER_SIZE_MIN);
         coverCornersSeekBar.setProgress(albumItemView.coverCornersRadius);
 
-        refreshViewType(viewTypeCheckPosition);
+        refreshViewType(checkedButtonId);
         refreshTextSize(textSizeSeekBar.getProgress());
         refreshBorderPadding(borderPaddingSeekBar.getProgress());
         refreshCoverSize(coverSizeSeekBar.getProgress());
@@ -158,30 +161,23 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY, viewTypeToggle.getCheckedTogglePosition());
+        outState.putInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY, viewTypeToggle.getCheckedButtonId());
     }
 
     @OnClick(R.id.setDefault)
     public void onClickSetDefault() {
-        AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.album_item_reset_settings_dialog_message)
-                .setPositiveButton(R.string.dialog_reset, (d, which) -> {
-                    viewTypeToggle.setCheckedTogglePosition(0, true);
+                .setPositiveButton(R.string.dialog_reset, (d, w) -> {
+                    viewTypeToggle.check(R.id.gridButton);
                     textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
                     borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
                     coverSizeSeekBar.setProgress(64 - COVER_SIZE_MIN);
                     coverCornersSeekBar.setProgress(4);
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
-
-        Window window = requireNonNull(alertDialog.getWindow());
-        window.getDecorView().setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.dialog_bg));
-        int widthPx = (int) requireContext().getResources().getDimension(R.dimen.alert_dialog_min_width);
-        window.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        alertDialog.show();
+                .show();
     }
 
 
@@ -190,24 +186,25 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         router.goBack();
     }
 
+
     private static final int COVER_SIZE_MIN = 32;
     private static final int TEXT_SIZE_MIN = 12;
     private static final int BORDER_PADDING_MIN = 8;
 
-    //0 - grid, 1 - list
-    private void refreshViewType(int viewType) {
-        if (viewType == 0) {
+
+    private void refreshViewType(int checkedButtonId) {
+        if (checkedButtonId == R.id.gridButton) {
             albumGridHolder.setVisibility(View.VISIBLE);
             albumListHolder.setVisibility(View.INVISIBLE);
             borderPaddingSeekBar.setEnabled(false);
             coverSizeSeekBar.setEnabled(false);
-        } else if (viewType == 1) {
+        } else if (checkedButtonId == R.id.listButton) {
             albumGridHolder.setVisibility(View.INVISIBLE);
             albumListHolder.setVisibility(View.VISIBLE);
             borderPaddingSeekBar.setEnabled(true);
             coverSizeSeekBar.setEnabled(true);
         } else {
-            throw new IllegalArgumentException("viewType equals to " + viewType);
+            throw new IllegalArgumentException("checkedButtonId equals to " + checkedButtonId);
         }
     }
 
@@ -275,13 +272,10 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     private void onFinishing() {
         //сохраняем состояние
-        AlbumViewType albumViewType = null;
-        for (AlbumViewType item : AlbumViewType.values()) {
-            if (item.ordinal() == viewTypeToggle.getCheckedTogglePosition()) {
-                albumViewType = item;
-                break;
-            }
-        }
+        AlbumViewType albumViewType = viewTypeToggle.getCheckedButtonId() == R.id.gridButton
+                ? AlbumViewType.GRID
+                : AlbumViewType.LIST;
+
 
         AlbumItemView albumItemView = new AlbumItemView(
                 requireNonNull(albumViewType),

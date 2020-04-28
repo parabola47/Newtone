@@ -14,7 +14,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#444444"
+            android:background="@color/colorItemDisplaySettingsBackground"
             android:elevation="8dp"
             android:gravity="center">
 
@@ -32,27 +32,40 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+            <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/viewTypeToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:textSize="16sp"
-                app:activeBgColor="@color/colorAccent"
-                app:inactiveBgColor="#222"
-                app:inactiveTextColor="@android:color/darker_gray"
-                app:textToggleLeft="@string/album_item_grid_view_type_setting"
-                app:textToggleRight="@string/album_item_list_view_type_setting"
-                app:toggleWidth="96dp" />
+                android:gravity="center"
+                android:visibility="visible"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/gridButton"
+                    style="@style/MaterialToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/album_item_grid_view_type_setting"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/listButton"
+                    style="@style/MaterialToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/album_item_list_view_type_setting"
+                    android:textAllCaps="false" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="#222"
+                android:background="@color/colorListItemDefaultBackground"
                 android:padding="4dp">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -66,7 +79,8 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/album_item_text_size_setting" />
+                    android:text="@string/album_item_text_size_setting"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textSizeValue"
@@ -77,6 +91,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
+                    android:textColor="?android:attr/textColorPrimary"
                     tools:text="16" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -98,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="#222"
+                android:background="@color/colorListItemDefaultBackground"
                 android:padding="4dp">
 
 
@@ -113,7 +128,8 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/album_item_border_padding_setting" />
+                    android:text="@string/album_item_border_padding_setting"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/borderPaddingValue"
@@ -124,6 +140,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
+                    android:textColor="?android:attr/textColorPrimary"
                     tools:text="16" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -145,7 +162,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="#222"
+                android:background="@color/colorListItemDefaultBackground"
                 android:padding="4dp">
 
 
@@ -160,7 +177,8 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/album_item_cover_size_setting" />
+                    android:text="@string/album_item_cover_size_setting"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/coverSizeValue"
@@ -171,6 +189,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
+                    android:textColor="?android:attr/textColorPrimary"
                     tools:text="64" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -192,7 +211,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="#222"
+                android:background="@color/colorListItemDefaultBackground"
                 android:padding="4dp">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -206,7 +225,8 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/album_item_cover_corners_setting" />
+                    android:text="@string/album_item_cover_corners_setting"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/coverCornersValue"
@@ -217,6 +237,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
+                    android:textColor="?android:attr/textColorPrimary"
                     tools:text="4" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -234,12 +255,13 @@
 
             </RelativeLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/setDefault"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:backgroundTint="@android:color/darker_gray"
                 android:minHeight="64dp"
-                android:paddingHorizontal="16dp"
                 android:text="@string/reset_to_default_button" />
 
         </LinearLayout>

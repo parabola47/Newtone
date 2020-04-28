@@ -6,7 +6,8 @@ import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -14,7 +15,6 @@ import moxy.MvpPresenter;
 public final class TrackAdditionalInfoPresenter extends MvpPresenter<TrackAdditionalInfoView> {
 
     private final int trackId;
-    private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Inject TrackRepository trackRepo;
 
@@ -25,16 +25,8 @@ public final class TrackAdditionalInfoPresenter extends MvpPresenter<TrackAdditi
 
     @Override
     protected void onFirstViewAttach() {
-        disposables.add(trackRepo.getById(trackId)
-                .subscribe(getViewState()::setTrack));
+        trackRepo.getById(trackId).subscribe(new ConsumerSingleObserver<>(
+                getViewState()::setTrack, Functions.ERROR_CONSUMER));
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
-    }
-
-    public void onClickCancel() {
-        getViewState().closeScreen();
-    }
 }

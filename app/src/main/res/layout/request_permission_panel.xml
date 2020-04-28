@@ -3,22 +3,29 @@
     android:id="@+id/requestPermissionPanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#444"
+    android:background="@color/colorNewtoneBackground"
+    android:clickable="false"
+    android:focusable="false"
     android:gravity="center"
     android:orientation="vertical">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="32dp"
         android:paddingBottom="32dp"
         android:text="@string/request_permission_desc"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="18sp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/requestPermissionBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/request_permission_button" />
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="32dp"
+        android:text="@string/request_permission_button"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>

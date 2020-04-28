@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
@@ -59,8 +58,6 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         playlistTitle.setText(R.string.playlist_queue);
 
         queueList.setAdapter(queueAdapter);
-        queueList.addItemDecoration(
-                new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         queueAdapter.setItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
         queueAdapter.setRemoveClickListener(presenter::onRemoveItem);
         queueAdapter.setDragListener(new BaseAdapter.DragListener() {

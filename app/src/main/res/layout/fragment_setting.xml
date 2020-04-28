@@ -10,6 +10,40 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
+        <RelativeLayout
+            android:id="@+id/color_theme_bar"
+            style="@style/SettingItemContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/color_theme_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/setting_color_theme_title"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/color_theme_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/color_theme_title"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                tools:text="@string/setting_color_theme_desc_dark" />
+
+        </RelativeLayout>
+
+
         <RelativeLayout
             android:id="@+id/notification_artwork_show_bar"
             style="@style/SettingItemContainer"
@@ -26,8 +60,8 @@
                 android:layout_toStartOf="@id/notification_artwork_show_switch"
                 android:layout_toLeftOf="@+id/notification_artwork_show_switch"
                 android:text="@string/setting_notification_artwork_show_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -37,8 +71,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toStartOf="@id/notification_artwork_show_switch"
                 android:layout_toLeftOf="@+id/notification_artwork_show_switch"
-                android:text="@string/setting_notification_artwork_show_desc"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:text="@string/setting_notification_artwork_show_desc" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notification_artwork_show_switch"
@@ -49,12 +82,9 @@
                 android:layout_centerVertical="true"
                 android:background="@null"
                 android:clickable="false" />
+
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
         <RelativeLayout
             android:id="@+id/notification_color_bar"
@@ -72,8 +102,8 @@
                 android:layout_toStartOf="@id/notification_color_switch"
                 android:layout_toLeftOf="@+id/notification_color_switch"
                 android:text="@string/setting_notification_color_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,8 +113,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toStartOf="@id/notification_color_switch"
                 android:layout_toLeftOf="@+id/notification_color_switch"
-                android:text="@string/setting_notification_color_desc"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:text="@string/setting_notification_color_desc" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/notification_color_switch"
@@ -96,11 +125,6 @@
                 android:background="@null"
                 android:clickable="false" />
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
 
         <RelativeLayout
@@ -116,15 +140,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/track_item_display_setting_screen_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
         <RelativeLayout
             android:id="@+id/album_item_view_bar"
@@ -139,15 +159,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/album_item_display_setting_screen_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
         <RelativeLayout
             android:id="@+id/artist_item_view_bar"
@@ -162,15 +178,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/artist_item_display_setting_screen_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
         <RelativeLayout
             android:id="@+id/privacy_policy_bar"
@@ -185,15 +197,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/setting_privacy_policy_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
         <RelativeLayout
             android:id="@+id/app_info_bar"
@@ -209,8 +217,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/app_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/white" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/app_info_version"
@@ -219,14 +227,8 @@
                 android:layout_below="@+id/app_info_title"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:text="v.0.0.1. Build-1" />
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#222" />
 
     </LinearLayout>
 

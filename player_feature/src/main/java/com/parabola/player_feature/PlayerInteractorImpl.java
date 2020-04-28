@@ -76,7 +76,6 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private final TrackRepository trackRepo;
     private final Intent notificationClickIntent;
-    private final Bitmap defaultNotificationAlbumArt;
 
 
     private final Player.EventListener exoPlayerEventListener = new NewtonePlayerEventListener();
@@ -93,14 +92,13 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private static final long PLAYBACK_UPDATE_TIME_MS = 200;
 
     public PlayerInteractorImpl(Context context, SharedPreferences preferences,
-                                TrackRepository trackRepo, Intent notificationClickIntent, Bitmap defaultNotificationAlbumArt) {
+                                TrackRepository trackRepo, Intent notificationClickIntent) {
         exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
                 .build();
         this.context = context;
         this.trackRepo = trackRepo;
         this.notificationClickIntent = notificationClickIntent;
-        this.defaultNotificationAlbumArt = defaultNotificationAlbumArt;
 
 
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -566,6 +564,12 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         }
     }
 
+    private Bitmap defaultNotificationAlbumArt;
+
+    public void setDefaultNotificationAlbumArt(Bitmap bitmap) {
+        this.defaultNotificationAlbumArt = bitmap;
+        notificationManager.invalidate();
+    }
 
     private class NewtoneMediaDescriptorAdapter implements PlayerNotificationManager.MediaDescriptionAdapter {
         private Track currentTrack = EmptyItems.NO_TRACK;

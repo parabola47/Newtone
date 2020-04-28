@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/dialog_bg"
+    android:background="@color/colorNewtoneDialogBackground"
     android:orientation="vertical"
-    android:paddingVertical="8dp"
     android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp"
     tools:context=".ui.dialog.fx.AudioEffectsDialog">
 
     <com.google.android.material.tabs.TabLayout
@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:backgroundTint="@android:color/transparent"
         app:tabGravity="center"
         app:tabIndicatorHeight="4dp"
         app:tabRippleColor="@color/colorTabRippleColor">
@@ -43,9 +44,9 @@
         android:layout_height="wrap_content"
         android:gravity="end">
 
-        <TextView
+        <Button
             android:id="@+id/cancel"
-            style="@style/TextViewDialogAction"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dialog_cancel" />

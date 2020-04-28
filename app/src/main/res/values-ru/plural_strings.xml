@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d трек</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+
+    <plurals name="albums_count">
+        <item quantity="one">%1$d альбом</item>
+        <item quantity="few">%1$d альбома</item>
+        <item quantity="many">%1$d альбомов</item>
+        <item quantity="other">%1$d альбомов</item>
+    </plurals>
+
+    <plurals name="folders_count">
+        <item quantity="one">%1$d папка</item>
+        <item quantity="few">%1$d папки</item>
+        <item quantity="many">%1$d папок</item>
+        <item quantity="other">%1$d папок</item>
+    </plurals>
+
+</resources>

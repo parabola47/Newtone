@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.di.app.modules.AndroidAppModule;
 import com.parabola.newtone.di.app.modules.ConfigModule;
@@ -51,6 +52,7 @@ public interface AppComponent extends AppComponentInjects {
     PlayerInteractor providePlayerInteractor();
     SleepTimerInteractor provideSleepTimerInteractor();
     TrackRepository provideTrackRepo();
+    ViewSettingsInteractor provideViewSettingsInteractor();
 
 
     @Named(TOGGLE_PLAYER_STATE_INTENT)

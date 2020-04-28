@@ -44,6 +44,11 @@ public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
         disposables.addAll(observeTrackItemViewUpdates());
     }
 
+    @Override
+    public void onDestroy() {
+        disposables.dispose();
+    }
+
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setTrackItemViewSettings);

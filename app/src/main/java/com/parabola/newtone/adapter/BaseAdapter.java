@@ -4,7 +4,6 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import java8.util.Optional;
 import java8.util.OptionalInt;
 import java8.util.function.Predicate;
 
@@ -30,13 +29,23 @@ public interface BaseAdapter<T> {
     void setSectionEnabled(boolean sectionEnabled);
     char getSection(int position);
 
+
+    //CONTEXT SELECTED
+    void clearContextSelected();
+    boolean isContextSelected(int position);
+    void setContextSelected(int position);
+    OptionalInt getContextSelectedPosition();
+
+
+    //JUST SELECTED
     void clearSelected();
     boolean isSelected(int position);
     void setSelected(int position);
     void setSelectedCondition(Predicate<T> predicate);
-    Optional<T> getSelectedItem();
     OptionalInt getSelectedPosition();
 
+
+    //LISTENERS
     void setItemClickListener(ItemClickListener listener);
     void setItemLongClickListener(ItemLongClickListener listener);
     void setRemoveClickListener(RemoveClickListener listener);

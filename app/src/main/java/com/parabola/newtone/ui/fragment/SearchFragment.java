@@ -1,18 +1,19 @@
 package com.parabola.newtone.ui.fragment;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
@@ -41,6 +42,7 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static java.util.Objects.requireNonNull;
 
 public final class SearchFragment extends MvpAppCompatFragment
@@ -87,13 +89,9 @@ public final class SearchFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
         artistsView.setAdapter(artistAdapter);
-        artistsView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         albumsView.setAdapter(albumAdapter);
-        albumsView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         tracksView.setAdapter(trackAdapter);
-        tracksView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         playlistView.setAdapter(playlistAdapter);
-        playlistView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         AlbumItemView newAlbumItemView = new AlbumItemView(AlbumViewType.LIST, 16, 16, 64, 4);
         albumAdapter.setViewSettings(newAlbumItemView, 1);
@@ -134,6 +132,12 @@ public final class SearchFragment extends MvpAppCompatFragment
                 return false;
             }
         });
+        int iconTint = getColor(requireContext(), R.color.colorActionBarIconTint);
+        ((ImageView) searchView.findViewById(R.id.search_close_btn)).setColorFilter(iconTint, PorterDuff.Mode.SRC_ATOP);
+        int textColor = getColor(requireContext(), R.color.colorNewtoneSecondaryText);
+        ((TextView) searchView.findViewById(R.id.search_src_text)).setTextColor(textColor);
+        int textHintColor = getColor(requireContext(), android.R.color.darker_gray);
+        ((TextView) searchView.findViewById(R.id.search_src_text)).setHintTextColor(textHintColor);
 
         requireActivity().getSupportFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
 

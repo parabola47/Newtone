@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import java8.util.Optional;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.ViewHolder> {
@@ -68,15 +68,17 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
         holder.additionalTrackInfo.setText(additionalInfo);
 
         if (isSelected(holder.getAdapterPosition())) {
-            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorSelectedTrackTextColor));
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
-            holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
-            holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
+            holder.trackTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemSelectedBackground));
+            holder.burgerImg.setColorFilter(getColor(context, android.R.color.white));
+            holder.removeImg.setColorFilter(getColor(context, android.R.color.white));
         } else {
-            holder.additionalTrackInfo.setTextColor(ContextCompat.getColor(context, R.color.colorDefaultItemSecondaryText));
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorListItemDefaultBackground));
-            holder.burgerImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
-            holder.removeImg.setColorFilter(ContextCompat.getColor(context, android.R.color.darker_gray));
+            holder.trackTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
+            holder.burgerImg.setColorFilter(getColor(context, android.R.color.darker_gray));
+            holder.removeImg.setColorFilter(getColor(context, android.R.color.darker_gray));
         }
 
 

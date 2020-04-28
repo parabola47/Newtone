@@ -6,9 +6,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,7 +58,6 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
 
         tracksList.setAdapter(tracksAdapter);
-        tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
@@ -110,12 +107,12 @@ public final class TabTrackFragment extends MvpAppCompatFragment
             popupWindow.dismiss();
         });
         popupWindow.setOnDismissListener(() -> {
-            tracksAdapter.invalidateItem(itemPosition);
+            tracksAdapter.clearContextSelected();
             rootView.removeView(tempView);
         });
 
+        tracksAdapter.setContextSelected(itemPosition);
         popupWindow.show();
-        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
     }
 
 
@@ -141,8 +138,8 @@ public final class TabTrackFragment extends MvpAppCompatFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
-                dialog.show();
+                createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
+                        .show();
                 break;
         }
     }

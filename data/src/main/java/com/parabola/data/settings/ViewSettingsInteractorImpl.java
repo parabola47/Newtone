@@ -2,17 +2,23 @@ package com.parabola.data.settings;
 
 import android.content.SharedPreferences;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
 import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
 
 public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor {
 
     private final SharedPreferences prefs;
+
+    private final BehaviorSubject<ColorTheme> colorThemeObserver;
 
     private final BehaviorSubject<TrackItemView> trackItemViewObserver;
     private final BehaviorSubject<AlbumItemView> albumItemViewObserver;
@@ -20,6 +26,10 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
 
     public ViewSettingsInteractorImpl(SharedPreferences sharedPreferences) {
         this.prefs = sharedPreferences;
+
+        ColorTheme colorTheme = getColorTheme();
+        AppCompatDelegate.setDefaultNightMode(colorTheme == ColorTheme.DARK ? MODE_NIGHT_YES : MODE_NIGHT_NO);
+        colorThemeObserver = BehaviorSubject.createDefault(colorTheme);
 
 
         TrackItemView trackItemView = new TrackItemView(
@@ -45,6 +55,33 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
                 getArtistItemTextSize(),
                 getArtistItemBorderPadding());
         artistItemViewObserver = BehaviorSubject.createDefault(artistItemView);
+    }
+
+
+    //C O L O R    T H E M E
+    private static final String COLOR_THEME_KEY = "com.parabola.data.settings.COLOR_THEME";
+
+    @Override
+    public ColorTheme getColorTheme() {
+        String savedColorTheme = prefs
+                .getString(COLOR_THEME_KEY, DEFAULT_COLOR_THEME.name());
+        return ColorTheme.valueOf(savedColorTheme);
+    }
+
+    @Override
+    public void setColorTheme(ColorTheme colorTheme) {
+        prefs.edit()
+                .putString(COLOR_THEME_KEY, colorTheme.name())
+                .apply();
+
+        AppCompatDelegate.setDefaultNightMode(colorTheme == ColorTheme.DARK ? MODE_NIGHT_YES : MODE_NIGHT_NO);
+
+        colorThemeObserver.onNext(colorTheme);
+    }
+
+    @Override
+    public Observable<ColorTheme> observeColorTheme() {
+        return colorThemeObserver;
     }
 
     //    T R A C K    I T E M S

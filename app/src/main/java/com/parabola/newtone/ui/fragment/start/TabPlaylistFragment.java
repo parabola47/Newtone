@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Playlist;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
@@ -57,13 +57,11 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
         playlists.setAdapter((RecyclerView.Adapter) playlistAdapter);
-        playlists.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         playlistAdapter.setItemClickListener(position -> presenter.onClickPlaylistItem(playlistAdapter.get(position).getId()));
         playlistAdapter.setItemLongClickListener(this::showTrackContextMenu);
 
         sysPlaylists.setAdapter(sysPlaylistAdapter);
-        sysPlaylists.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         return layout;
     }
@@ -91,18 +89,23 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
                     presenter.onClickMenuRenamePlaylist(playlistId);
                     break;
                 case R.id.delete_playlist:
-                    presenter.onClickMenuDeletePlaylist(playlistId);
+                    new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.delete_playlist_title)
+                            .setMessage(R.string.delete_playlist_desc)
+                            .setPositiveButton(R.string.dialog_delete, (dialog, which) -> presenter.onClickMenuDeletePlaylist(playlistId))
+                            .setNegativeButton(R.string.dialog_cancel, null)
+                            .show();
                     break;
             }
             popupWindow.dismiss();
         });
         popupWindow.setOnDismissListener(() -> {
-            playlistAdapter.invalidateItem(itemPosition);
+            playlistAdapter.clearContextSelected();
             rootView.removeView(tempView);
         });
 
+        playlistAdapter.setContextSelected(itemPosition);
         popupWindow.show();
-        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
     }
 
     @ProvidePresenter

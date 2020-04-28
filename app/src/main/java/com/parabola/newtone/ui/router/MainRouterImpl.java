@@ -15,7 +15,6 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.ui.activity.MainActivity;
 import com.parabola.newtone.ui.dialog.ChoosePlaylistDialog;
 import com.parabola.newtone.ui.dialog.CreatePlaylistDialog;
-import com.parabola.newtone.ui.dialog.DeletePlaylistDialog;
 import com.parabola.newtone.ui.dialog.IsaacNewtoneDialog;
 import com.parabola.newtone.ui.dialog.RenamePlaylistDialog;
 import com.parabola.newtone.ui.dialog.SleepTimerDialog;
@@ -395,12 +394,6 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void openRenamePlaylistDialog(int playlistId) {
         RenamePlaylistDialog dialogFragment = RenamePlaylistDialog.newInstance(playlistId);
-        dialogFragment.show(activity.getSupportFragmentManager(), null);
-    }
-
-    @Override
-    public void openDeletePlaylistDialog(int playlistId) {
-        DeletePlaylistDialog dialogFragment = DeletePlaylistDialog.newInstance(playlistId);
         dialogFragment.show(activity.getSupportFragmentManager(), null);
     }
 

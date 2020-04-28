@@ -22,7 +22,6 @@
 
     <!--IMAGE DESCRIPTIONS-->
     <string name="album_cover_desc">Обложка альбома</string>
-    <string name="add_playlist_desc">Создать плейлист</string>
 
 
     <!--NULL OBJECTS-->
@@ -56,10 +55,9 @@
     <!--PLAYER MENU-->
     <string name="player_menu_add_to_playlist">Добавить в плейлист</string>
     <string name="player_menu_lyrics">Слова</string>
-    <string name="player_menu_delete">Удалить</string>
     <string name="player_menu_share">Поделиться</string>
     <string name="player_menu_additional_info">Информация о треке</string>
-
+    <string name="player_menu_delete">Удалить</string>
     <!--               !!!!                 -->
     <!--          BLOCK OF SORTING          -->
     <!--               !!!!                 -->
@@ -82,26 +80,6 @@
         <item>По количеству треков</item>
     </string-array>
 
-
-    <!--PLURALS-->
-    <plurals name="tracks_count">
-        <item quantity="one">%1$d трек</item>
-        <item quantity="few">%1$d трека</item>
-        <item quantity="many">%1$d треков</item>
-        <item quantity="other">%1$d треков</item>
-    </plurals>
-    <plurals name="albums_count">
-        <item quantity="one">%1$d альбом</item>
-        <item quantity="few">%1$d альбома</item>
-        <item quantity="many">%1$d альбомов</item>
-        <item quantity="other">%1$d альбомов</item>
-    </plurals>
-    <plurals name="folders_count">
-        <item quantity="one">%1$d папка</item>
-        <item quantity="few">%1$d папки</item>
-        <item quantity="many">%1$d папок</item>
-        <item quantity="other">%1$d папок</item>
-    </plurals>
 
     <!--ARTIST FRAGMENT-->
     <string name="all_artist_tracks">Все треки</string>
@@ -133,13 +111,15 @@
     <string name="sleep_timer_dialog_title">Таймер сна</string>
     <string name="toast_sleep_timer_already_launched">Таймер сна уже запущен</string>
     <string name="toast_sleep_timer_on_start">Запущен таймер сна на %s</string>
-    <string name="min5">5 минут</string>
-    <string name="min10">10 минут</string>
-    <string name="min15">15 минут</string>
-    <string name="min20">20 минут</string>
-    <string name="min30">30 минут</string>
-    <string name="min45">45 минут</string>
-    <string name="hour1">1 час</string>
+    <string-array name="sleep_timer_values">
+        <item>5 минут</item>
+        <item>10 минут</item>
+        <item>15 минут</item>
+        <item>20 минут</item>
+        <item>30 минут</item>
+        <item>45 минут</item>
+        <item>1 час</item>
+    </string-array>
     <string name="title_sleep_info_dialog">Информация о таймере</string>
     <string name="time_to_end_sleep_info_dialog">Таймер завершится через %1$s</string>
 
@@ -157,7 +137,7 @@
     <string name="fx_virtualizer">Виртуализация</string>
 
     <!--TRACK ADDITIONAL INFO DIALOG-->
-    <string name="track_add_info_artist">Исполнить</string>
+    <string name="track_add_info_artist">Исполнитель</string>
     <string name="track_add_info_album">Альбом</string>
     <string name="track_add_info_album_position">Позиция</string>
     <string name="track_add_info_title">Название</string>
@@ -190,6 +170,9 @@
 
     <!--SETTING-->
     <string name="setting_title">Настройки</string>
+    <string name="setting_color_theme_title">Цветовая схема</string>
+    <string name="setting_color_theme_desc_dark">Тёмная</string>
+    <string name="setting_color_theme_desc_light">Светлая</string>
     <string name="setting_notification_color_title">Цвет уведомления</string>
     <string name="setting_notification_color_desc">Менять цвет в зависимости от обложки альбома</string>
     <string name="setting_notification_artwork_show_title">Обложка альбома</string>
@@ -239,7 +222,6 @@
     <string name="albums_list_content_desc">Список альбомов</string>
     <string name="tracks_list_content_desc">Список треков</string>
     <string name="folders_list_content_desc">Список папок</string>
-    <string name="playlist_title_content_desc">Список плейлистов</string>
     <string name="drop_down_button_content_desc">Раскрывающаяся панель</string>
     <string name="system_playlist_content_desc">Системный плейлист</string>
     <string name="repeat_mode_content_desc">Режим повтора</string>

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Album;
@@ -22,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.observers.BiConsumerSingleObserver;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
 
@@ -134,11 +133,9 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .cast(Bitmap.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumerSingleObserver<>(
-                        (bitmap, error) -> Glide.with(holder.cover.getContext().getApplicationContext())
-                                .load(bitmap)
-                                .placeholder(R.drawable.album_default)
-                                .into(holder.cover)));
+                .subscribe(new ConsumerSingleObserver<>(
+                        bitmap -> holder.cover.setImageBitmap(bitmap),
+                        error -> holder.cover.setImageResource(R.drawable.album_default)));
     }
 
     private void handleAsList(ListAlbumViewHolder holder, Album albumItem) {
@@ -159,11 +156,9 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .cast(Bitmap.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BiConsumerSingleObserver<>(
-                        (bitmap, error) -> Glide.with(holder.cover.getContext().getApplicationContext())
-                                .load(bitmap)
-                                .placeholder(R.drawable.album_default)
-                                .into(holder.cover)));
+                .subscribe(new ConsumerSingleObserver<>(
+                        bitmap -> holder.cover.setImageBitmap(bitmap),
+                        error -> holder.cover.setImageResource(R.drawable.album_default)));
     }
 
 

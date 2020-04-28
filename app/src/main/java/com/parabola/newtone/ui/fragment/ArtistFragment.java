@@ -1,6 +1,5 @@
 package com.parabola.newtone.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
-import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
@@ -32,6 +29,7 @@ import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
 import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
 
 public final class ArtistFragment extends BaseSwipeToBackFragment
@@ -48,7 +46,6 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
 
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
-    private DividerItemDecoration verticalItemDecoration;
 
     private static final String ARTIST_ID_ARG_KEY = "artistId";
 
@@ -70,11 +67,6 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
         return requireArguments().getInt(ARTIST_ID_ARG_KEY);
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        verticalItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-    }
 
     @NonNull
     @Override
@@ -150,15 +142,11 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
 
     @Override
-    public void setAlbumViewSettings(AlbumItemView albumViewSettings) {
-        if (albumViewSettings.viewType == AlbumViewType.GRID) {
-            albumsList.removeItemDecoration(verticalItemDecoration);
-            albumsAdapter.setViewSettings(albumViewSettings, calculateAlbumColumnCount(requireActivity()));
-        } else {
-            if (albumsList.getItemDecorationCount() == 0)
-                albumsList.addItemDecoration(verticalItemDecoration);
-            albumsAdapter.setViewSettings(albumViewSettings, 1);
-        }
+    public void setAlbumViewSettings(AlbumItemView viewSettings) {
+        int spanCount = viewSettings.viewType == GRID
+                ? calculateAlbumColumnCount(requireActivity())
+                : 1;
+        albumsAdapter.setViewSettings(viewSettings, spanCount);
     }
 
     @Override

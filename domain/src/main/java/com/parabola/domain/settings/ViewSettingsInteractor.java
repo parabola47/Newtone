@@ -6,6 +6,14 @@ import io.reactivex.Observable;
 
 public interface ViewSettingsInteractor {
 
+    //C O L O R    T H E M E
+    ColorTheme DEFAULT_COLOR_THEME = ColorTheme.DARK;
+
+    ColorTheme getColorTheme();
+    void setColorTheme(ColorTheme colorTheme);
+    Observable<ColorTheme> observeColorTheme();
+
+
     //T R A C K    I T E M S
     TrackItemView getTrackItemViewSettings();
     void setTrackItemView(TrackItemView trackItemView);
@@ -39,6 +47,10 @@ public interface ViewSettingsInteractor {
     int getArtistItemTextSize();
     int getArtistItemBorderPadding();
 
+
+    enum ColorTheme {
+        DARK, LIGHT
+    }
 
     class TrackItemView {
         public final int textSize;

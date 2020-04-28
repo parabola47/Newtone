@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,8 +62,6 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
 
         foldersList.setAdapter((RecyclerView.Adapter) foldersAdapter);
-        foldersList.addItemDecoration(
-                new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         foldersAdapter.setItemClickListener(position ->
                 presenter.onClickFolderItem(foldersAdapter.get(position).getAbsolutePath()));
 

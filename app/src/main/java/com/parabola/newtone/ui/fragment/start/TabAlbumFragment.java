@@ -1,19 +1,15 @@
 package com.parabola.newtone.ui.fragment.start;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
-import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
@@ -32,6 +28,7 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
 import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
 import static java.util.Objects.requireNonNull;
 
@@ -40,7 +37,6 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     private static final String LOG_TAG = TabAlbumFragment.class.getSimpleName();
 
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
-    private DividerItemDecoration verticalItemDecoration;
 
     @BindView(R.id.albums_list) RecyclerView albumsList;
 
@@ -50,11 +46,6 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        verticalItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,15 +89,11 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setAlbumViewSettings(AlbumItemView albumViewSettings) {
-        if (albumViewSettings.viewType == AlbumViewType.GRID) {
-            albumsList.removeItemDecoration(verticalItemDecoration);
-            albumsAdapter.setViewSettings(albumViewSettings, calculateAlbumColumnCount(requireActivity()));
-        } else {
-            if (albumsList.getItemDecorationCount() == 0)
-                albumsList.addItemDecoration(verticalItemDecoration);
-            albumsAdapter.setViewSettings(albumViewSettings, 1);
-        }
+    public void setAlbumViewSettings(AlbumItemView viewSettings) {
+        int spanCount = viewSettings.viewType == GRID
+                ? calculateAlbumColumnCount(requireActivity())
+                : 1;
+        albumsAdapter.setViewSettings(viewSettings, spanCount);
     }
 
 

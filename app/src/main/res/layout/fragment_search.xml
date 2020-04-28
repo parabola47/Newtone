@@ -24,6 +24,7 @@
             android:layout_marginRight="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back_btn_content_desc"
+            android:tint="@color/colorActionBarIconTint"
             app:srcCompat="@drawable/ic_arrow_left" />
 
         <androidx.appcompat.widget.SearchView
@@ -31,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:iconifiedByDefault="false"
+            app:queryBackground="@null"
             app:queryHint="@string/search_bar_title"
             app:searchHintIcon="@null"
             app:searchIcon="@null" />

@@ -97,7 +97,7 @@ public final class StartFragment extends MvpAppCompatFragment
         tabTrackFragment.scrollToCurrentTrack();
     }
 
-    @BindColor(R.color.colorAccent) int selectedTabIconTint;
+    @BindColor(R.color.colorTabIconTintSelected) int selectedTabIconTint;
     @BindColor(R.color.colorTabIconTintDefault) int defaultTabIconTint;
 
     private void setupTabLayout() {

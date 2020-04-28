@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="144dp"
-        android:background="#444444"
+        android:background="@color/colorItemDisplaySettingsBackground"
         android:elevation="8dp"
         android:gravity="center">
 
@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="8dp"
-                android:background="#222"
+                android:background="@color/colorListItemDefaultBackground"
                 android:padding="4dp">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -49,7 +49,8 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/artist_item_text_size_setting" />
+                    android:text="@string/artist_item_text_size_setting"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textSizeValue"
@@ -60,6 +61,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
+                    android:textColor="?android:attr/textColorPrimary"
                     tools:text="16" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -81,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="#222"
+                android:background="@color/colorListItemDefaultBackground"
                 android:padding="4dp">
 
 
@@ -96,7 +98,8 @@
                     android:layout_alignParentRight="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
-                    android:text="@string/artist_item_border_padding_setting" />
+                    android:text="@string/artist_item_border_padding_setting"
+                    android:textColor="?android:attr/textColorPrimary" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/borderPaddingValue"
@@ -107,6 +110,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
+                    android:textColor="?android:attr/textColorPrimary"
                     tools:text="16" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -124,16 +128,15 @@
 
             </RelativeLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/setDefault"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:backgroundTint="@android:color/darker_gray"
                 android:minHeight="64dp"
-                android:paddingHorizontal="16dp"
                 android:text="@string/reset_to_default_button" />
 
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
+import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -85,9 +88,10 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     private Disposable observeFavouritesChanged() {
         return trackRepo.observeFavouritesChanged()
                 //Пропускаем, если id текущего трека равен пустому треку
-                .filter(irrelevant -> currentTrackId != EmptyItems.NO_TRACK.getId())
+                .filter(irrelevant -> currentTrackId != NO_TRACK.getId())
                 .flatMapSingle(irrelevant -> trackRepo.getById(currentTrackId))
-                .subscribe(track -> getViewState().setIsFavourite(track.isFavourite()));
+                .map(Track::isFavourite)
+                .subscribe(getViewState()::setIsFavourite);
     }
 
     private Disposable observeCurrentTrack() {
@@ -172,13 +176,12 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
     public void onLongClickTimerButton() {
         if (timerInteractor.launched()) {
-            disposables.add(timerInteractor.remainingTimeToEnd()
+            timerInteractor.remainingTimeToEnd()
                     .onErrorReturnItem(0L)
-                    .subscribe(remainingTimeToEndMs -> {
-                        String timeToEndStr = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeToEndMs);
-                        String toastMessage = resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, timeToEndStr);
-                        getViewState().showToast(toastMessage);
-                    }));
+                    .map(TimeFormatterTool::formatMillisecondsToMinutes)
+                    .map(timeToEndStr -> resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, timeToEndStr))
+                    .subscribe(new ConsumerSingleObserver<>(
+                            getViewState()::showToast, Functions.ERROR_CONSUMER));
         }
     }
 
@@ -242,23 +245,25 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     public void onClickArtist() {
-        disposables.add(trackRepo.getById(currentTrackId)
-                .subscribe(track -> {
-                    router.openArtistFromBackStackIfAvailable(track.getArtistId());
-                    router.collapseBottomSlider();
-                    router.goToTab(0, false);
-                    router.goToArtistInTab(track.getArtistId());
-                }));
+        trackRepo.getById(currentTrackId)
+                .subscribe(new ConsumerSingleObserver<>(
+                        track -> {
+                            router.openArtistFromBackStackIfAvailable(track.getArtistId());
+                            router.collapseBottomSlider();
+                            router.goToTab(0, false);
+                            router.goToArtistInTab(track.getArtistId());
+                        }, Functions.ERROR_CONSUMER));
     }
 
     public void onClickAlbum() {
-        disposables.add(trackRepo.getById(currentTrackId)
-                .subscribe(track -> {
-                    router.openAlbumFromBackStackIfAvailable(track.getAlbumId());
-                    router.collapseBottomSlider();
-                    router.goToTab(1, false);
-                    router.goToAlbumInTab(track.getAlbumId());
-                }));
+        trackRepo.getById(currentTrackId)
+                .subscribe(new ConsumerSingleObserver<>(
+                        track -> {
+                            router.openAlbumFromBackStackIfAvailable(track.getAlbumId());
+                            router.collapseBottomSlider();
+                            router.goToTab(1, false);
+                            router.goToAlbumInTab(track.getAlbumId());
+                        }, Functions.ERROR_CONSUMER));
     }
 
     public void onClickTrackTitle() {
@@ -279,8 +284,9 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
 
     public void onClickMenuLyrics() {
-        disposables.add(trackRepo.getById(currentTrackId)
-                .subscribe(track -> router.openLyricsSearch(track)));
+        trackRepo.getById(currentTrackId)
+                .subscribe(new ConsumerSingleObserver<>(
+                        router::openLyricsSearch, Functions.ERROR_CONSUMER));
     }
 
     public void onClickMenuDelete() {
@@ -288,8 +294,10 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     public void onClickMenuShareTrack() {
-        disposables.add(trackRepo.getById(currentTrackId)
-                .subscribe(track -> router.openShareTrack(track.getFilePath())));
+        trackRepo.getById(currentTrackId)
+                .map(Track::getFilePath)
+                .subscribe(new ConsumerSingleObserver<>(
+                        router::openShareTrack, Functions.ERROR_CONSUMER));
     }
 
     public void onClickMenuAdditionalInfo() {

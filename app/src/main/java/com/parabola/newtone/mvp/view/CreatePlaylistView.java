@@ -6,11 +6,12 @@ import moxy.viewstate.strategy.alias.OneExecution;
 @OneExecution
 public interface CreatePlaylistView extends MvpView {
 
-    void focusOnEditText();
+    void focusOnInputField();
 
-    void setPlaylistTitleIsEmptyError();
+    void showPlaylistTitleIsEmptyError();
+    void showPlaylistTitleAlreadyExistsError();
 
-    void showToast(String toastText);
+    void showPlaylistCreatedToast(String playlistTitle);
 
     void closeScreen();
 }

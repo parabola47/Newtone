@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="48dp"
@@ -15,6 +16,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
         android:scaleType="fitCenter"
+        app:tint="@color/colorContextMenuIcon"
         tools:src="@drawable/ic_setting" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -24,6 +26,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:layout_weight="1"
+        android:textColor="@color/colorContextMenuText"
         android:textSize="14sp"
         tools:text="Settings" />
 

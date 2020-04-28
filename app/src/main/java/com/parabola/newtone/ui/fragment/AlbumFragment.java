@@ -9,13 +9,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
@@ -87,7 +84,6 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         tracksList.setAdapter(tracksAdapter);
-        tracksList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         albumCover.setVisibility(View.VISIBLE);
         albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
                 .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.album_fragment_cover_corner_size))
@@ -138,12 +134,12 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
             popupWindow.dismiss();
         });
         popupWindow.setOnDismissListener(() -> {
-            tracksAdapter.invalidateItem(itemPosition);
+            tracksAdapter.clearContextSelected();
             rootView.removeView(tempView);
         });
 
+        tracksAdapter.setContextSelected(itemPosition);
         popupWindow.show();
-        rootView.setBackgroundColor(getResources().getColor(R.color.colorTrackContextMenuBackground));
     }
 
 
@@ -169,8 +165,8 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
-                dialog.show();
+                createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
+                        .show();
                 break;
         }
     }
@@ -206,11 +202,11 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setAlbumArt(Object artCover) {
-        Glide.with(requireActivity().getApplicationContext())
-                .load((Bitmap) artCover)
-                .placeholder(R.drawable.album_default)
-                .into(albumCover);
+        if (artCover != null)
+            albumCover.setImageBitmap((Bitmap) artCover);
+        else albumCover.setImageResource(R.drawable.album_default);
     }
+
 
     @Override
     public void refreshTracks(List<Track> tracks) {

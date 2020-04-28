@@ -5,14 +5,12 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
 import com.parabola.newtone.MainApplication;
@@ -29,7 +27,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-import static java.util.Objects.requireNonNull;
 
 public final class ArtistItemDisplaySettingFragment extends BaseSwipeToBackFragment {
     private static final String LOG_TAG = ArtistItemDisplaySettingFragment.class.getSimpleName();
@@ -104,7 +101,7 @@ public final class ArtistItemDisplaySettingFragment extends BaseSwipeToBackFragm
 
     @OnClick(R.id.setDefault)
     public void onClickSetDefault() {
-        AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.artist_item_reset_settings_dialog_message)
                 .setPositiveButton(R.string.dialog_reset, (d, which) -> {
@@ -112,14 +109,7 @@ public final class ArtistItemDisplaySettingFragment extends BaseSwipeToBackFragm
                     borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
-
-        Window window = requireNonNull(alertDialog.getWindow());
-        window.getDecorView().setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.dialog_bg));
-        int widthPx = (int) getResources().getDimension(R.dimen.alert_dialog_min_width);
-        window.setLayout(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        alertDialog.show();
+                .show();
     }
 
 

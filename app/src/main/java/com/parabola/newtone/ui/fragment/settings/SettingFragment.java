@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
 import com.parabola.newtone.BuildConfig;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
@@ -28,6 +30,7 @@ import moxy.presenter.ProvidePresenter;
 
 public final class SettingFragment extends BaseSwipeToBackFragment
         implements SettingView {
+    private static final String LOG_TAG = SettingFragment.class.getSimpleName();
 
     private static final String VERSION_INFO;
 
@@ -41,10 +44,12 @@ public final class SettingFragment extends BaseSwipeToBackFragment
 
     @InjectPresenter SettingPresenter presenter;
 
-
-    @BindView(R.id.notification_color_switch) SwitchCompat notificationColorSwitch;
+    @BindView(R.id.color_theme_desc) TextView colorThemeDesc;
     @BindView(R.id.notification_artwork_show_switch) SwitchCompat notificationArtworkShowSwitch;
+    @BindView(R.id.notification_color_switch) SwitchCompat notificationColorSwitch;
+    @BindView(R.id.notification_color_bar) ViewGroup notificationColorBar;
     @BindView(R.id.app_info_version) TextView appInfoVersion;
+
 
     public SettingFragment() {
         // Required empty public constructor
@@ -74,16 +79,54 @@ public final class SettingFragment extends BaseSwipeToBackFragment
         presenter.onClickBack();
     }
 
+
+    private ColorTheme currentColorTheme;
+
     @Override
-    public void setNotificationColorSwitchChecked(boolean isChecked) {
-        notificationColorSwitch.setChecked(isChecked);
+    public void setCurrentColorTheme(ColorTheme colorTheme) {
+        this.currentColorTheme = colorTheme;
     }
+
+    @Override
+    public void setColorThemeDescription(String colorThemeDescription) {
+        colorThemeDesc.setText(colorThemeDescription);
+    }
+
+    @OnClick(R.id.color_theme_bar)
+    public void onClickColorThemeSetting() {
+        String[] values = new String[]{
+                getString(R.string.setting_color_theme_desc_dark),
+                getString(R.string.setting_color_theme_desc_light)};
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.setting_color_theme_title)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setSingleChoiceItems(values, currentColorTheme.ordinal(), (dialog, which) -> {
+                    presenter.onSelectColorTheme(ColorTheme.values()[which]);
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
 
     @Override
     public void setNotificationArtworkSwitchChecked(boolean isChecked) {
         notificationArtworkShowSwitch.setChecked(isChecked);
+        setNotificationColorBarEnabling(isChecked);
     }
 
+
+    private void setNotificationColorBarEnabling(boolean checked) {
+        notificationColorBar.setEnabled(checked);
+        for (int i = 0; i < notificationColorBar.getChildCount(); i++) {
+            notificationColorBar.getChildAt(i).setEnabled(checked);
+        }
+    }
+
+    @Override
+    public void setNotificationColorSwitchChecked(boolean isChecked) {
+        notificationColorSwitch.setChecked(isChecked);
+    }
 
     @OnClick(R.id.notification_color_bar)
     public void onClickNotificationColorSetting() {
@@ -95,6 +138,7 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     public void onClickNotificationArtworkShowSetting() {
         presenter.onClickNotificationArtworkShowSetting();
     }
+
 
     @OnClick(R.id.track_item_view_bar)
     public void onClickTrackItemViewSettings() {
@@ -111,6 +155,7 @@ public final class SettingFragment extends BaseSwipeToBackFragment
         presenter.onClickArtistItemViewSettings();
     }
 
+
     @OnClick(R.id.privacy_policy_bar)
     public void onClickPrivacyPolicy() {
         presenter.onClickPrivacyPolicy();
@@ -125,6 +170,7 @@ public final class SettingFragment extends BaseSwipeToBackFragment
             presenter.onClickNewtoneTenTimes();
         }
     }
+
 
     @ProvidePresenter
     public SettingPresenter providePresenter() {

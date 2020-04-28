@@ -14,15 +14,15 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.parabola.newtone.R;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import moxy.MvpAppCompatDialogFragment;
 
 import static java.util.Objects.requireNonNull;
 
-public final class AudioEffectsDialog extends BaseDialogFragment {
+public final class AudioEffectsDialog extends MvpAppCompatDialogFragment {
 
     private AudioEffectsPagerAdapter audioEffectsPagerAdapter;
 

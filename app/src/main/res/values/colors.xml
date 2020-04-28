@@ -4,48 +4,72 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#009688</color>
     <color name="colorAccentDark">#00574B</color>
+    <color name="colorStatusBar">@color/colorNewtoneBackground</color>
 
     <!--M A I N    C O L O R S-->
-    <color name="colorNewtoneWhite">#DEDEDE</color>
-    <color name="colorNewtoneBackground">#000000</color>
+    <color name="colorNewtoneBackground">@android:color/black</color>
     <color name="colorNewtoneBar">#202020</color>
     <color name="colorNewtoneDialogBackground">#222222</color>
+    <color name="colorNewtonePrimaryText">@android:color/white</color>
+    <color name="colorNewtoneSecondaryText">#BEBEBE</color>
+    <color name="colorNewtoneIconTint">#DFDFDF</color>
 
 
-    <!--S T A R T    S C R E E N-->
+    <!--A C T I O N    B A R-->
     <color name="colorActionBarBackground">@color/colorNewtoneBar</color>
+    <color name="colorActionBarIconTint">@color/colorNewtoneIconTint</color>
+
+
+    <!--P L A Y E R    B A R-->
     <color name="colorPlayerBarBackground">@color/colorNewtoneBar</color>
+    <color name="colorPlayerBarProgressBackground">#4F4F4F</color>
+    <color name="colorPlayerBarProgressMain">@color/colorAccent</color>
+
+
     <!--T  A  B-->
-    <color name="colorTabDefault">@color/colorNewtoneBar</color>
+    <color name="colorTabBackground">@color/colorNewtoneBar</color>
     <color name="colorTabIconTintDefault">#AAAAAA</color>
-    <color name="colorTabRippleColor">#444444</color>
+    <color name="colorTabIconTintSelected">@color/colorAccent</color>
+    <color name="colorTabRippleColor">@color/colorAccent</color>
 
 
     <!--L  I  S  T  S-->
-    <color name="colorArtistAllTrackBackground">#556662</color>
+    <color name="colorArtistAllTrackBackground">@color/colorAccentDark</color>
+    <color name="colorArtistAllTrackText">#DDDDDD</color>
     <color name="colorListItemDefaultBackground">#0D0D0D</color>
+    <color name="colorListContextMenuBackground">@color/colorAccentDark</color>
+    <color name="colorListItemSelectedBackground">@color/colorAccent</color>
+    <color name="colorListItemSelectedText">@android:color/white</color>
+    <!--A L B U M-->
+    <color name="colorAlbumGridTextContainerBackground">#0D0D0D</color>
+    <!--S E A R C H-->
     <color name="colorSearchGroupBackground">#404040</color>
-    <!--T R A C K-->
-    <color name="colorDefaultItemPrimaryText">@android:color/white</color>
-    <color name="colorDefaultItemSecondaryText">@android:color/darker_gray</color>
-    <color name="colorTrackContextMenuBackground">@color/colorAccentDark</color>
-    <color name="colorSelectedTrackTextColor">@android:color/white</color>
+
     <!--S C R O L L B A R-->
     <color name="colorScrollbarBackground">#666666</color>
-    <color name="colorPopupBackground">@color/colorNewtoneWhite</color>
-    <color name="colorPopupText">#000000</color>
+    <color name="colorPopupBackground">#DFDFDF</color>
+    <color name="colorPopupText">@android:color/black</color>
     <color name="colorThumb">@color/colorAccent</color>
 
 
     <!--P L A Y E R    S C R E E N-->
-    <color name="colorPlayerActionIconDefault">#AFAFAF</color>
+    <color name="colorPlayerActionIconDefault">#BFBFBF</color>
     <color name="colorPlayerActionIconActive">@color/colorAccent</color>
     <!--P L A Y E R    S E E K B A R-->
     <color name="colorThumbPlayer">#B0B0B0</color>
     <color name="colorProgress">@color/colorAccent</color>
     <color name="colorSeekBackground">#CCCCCC</color>
     <!--D E F A U L T    A L B U M    C O V E R-->
-    <color name="colorDefaultAlbumBackground">#181818</color>
-    <color name="colorDefaultAlbumForeground">#383838</color>
+    <color name="colorDefaultAlbumBackground">#202020</color>
+    <color name="colorDefaultAlbumForeground">#404040</color>
+
+
+    <!--S E T T I N G S-->
+    <color name="colorItemDisplaySettingsBackground">#404040</color>
+    <color name="colorToggleButtonDefaultBackground">#222222</color>
+
+    <!--C O N T E X T    M E N U-->
+    <color name="colorContextMenuIcon">#DFDFDF</color>
+    <color name="colorContextMenuText">#DFDFDF</color>
 
 </resources>

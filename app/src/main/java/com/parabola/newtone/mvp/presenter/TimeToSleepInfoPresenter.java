@@ -19,9 +19,7 @@ import moxy.MvpPresenter;
 public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfoView> {
 
     @Inject SleepTimerInteractor timerInteractor;
-
     @Inject ResourceRepository resourceRepo;
-
     @Inject SchedulerProvider schedulers;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -29,6 +27,7 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
     public TimeToSleepInfoPresenter(AppComponent appComponent) {
         appComponent.inject(this);
     }
+
 
     @Override
     protected void onFirstViewAttach() {
@@ -46,29 +45,23 @@ public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfo
 
     private Disposable observeRemainingTime() {
         return timerInteractor.observeRemainingTimeToEnd()
+                .map(TimeFormatterTool::formatMillisecondsToMinutes)
+                .map(remainingTimeFormatted -> resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, remainingTimeFormatted))
                 .observeOn(schedulers.ui())
-                .subscribe(remainingTimeMs -> {
-                    String newTime = TimeFormatterTool.formatMillisecondsToMinutes(remainingTimeMs);
-                    String timeToEndText = resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, newTime);
-                    getViewState().updateTimeToEndText(timeToEndText);
-                });
+                .subscribe(getViewState()::updateTimeToEndText);
     }
 
 
     private Disposable closeScreenWhenTimerFinished() {
         return timerInteractor.onTimerFinished()
                 .observeOn(schedulers.ui())
-                .subscribe(irrelevant -> getViewState().closeScreen());
+                .subscribe(i -> getViewState().closeScreen());
     }
 
 
     public void onClickReset() {
-        disposables.add(timerInteractor.reset()
-                .subscribe(getViewState()::closeScreen));
+        timerInteractor.reset()
+                .subscribe();
     }
 
-
-    public void onClickCancel() {
-        getViewState().closeScreen();
-    }
 }

@@ -5,6 +5,8 @@
     android:id="@+id/tabPlaylistView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:overScrollMode="always"
     tools:context=".ui.fragment.start.TabPlaylistFragment">
 
     <LinearLayout
@@ -17,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="4"
             tools:listitem="@layout/item_system_playlist" />
@@ -26,8 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:nestedScrollingEnabled="false"
-            android:splitMotionEvents="false"
+            android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="10"
             tools:listitem="@layout/item_playlist" />
 
     </LinearLayout>

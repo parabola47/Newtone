@@ -4,15 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.DisplayMetrics;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.R;
 
 import static java.util.Objects.requireNonNull;
@@ -26,19 +30,12 @@ public final class AndroidTool {
 
     public static AlertDialog createDeleteTrackDialog(Context context,
                                                       DialogInterface.OnClickListener onClickDeleteListener) {
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        return new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.track_menu_delete_dialog_title)
                 .setMessage(R.string.track_menu_delete_dialog_message)
                 .setPositiveButton(R.string.dialog_delete, onClickDeleteListener)
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();
-
-        Window window = requireNonNull(dialog.getWindow());
-        window.getDecorView().setBackground(ContextCompat.getDrawable(context, R.drawable.dialog_bg));
-        int pxWidth = (int) context.getResources().getDimension(R.dimen.alert_dialog_min_width);
-        window.setLayout(pxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        return dialog;
     }
 
 
@@ -84,6 +81,21 @@ public final class AndroidTool {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+
+    public static Bitmap getBitmapFromVectorDrawable(Resources resources, int drawableId, int width, int height) {
+        Drawable drawable = requireNonNull(VectorDrawableCompat.create(resources, drawableId, null));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, width, height);
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
 }

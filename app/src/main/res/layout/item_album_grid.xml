@@ -41,6 +41,7 @@
             android:maxLines="1"
             android:paddingHorizontal="4dp"
             android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
             tools:text="@string/default_album" />
 
@@ -65,6 +66,7 @@
             android:maxLines="1"
             android:paddingHorizontal="4dp"
             android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp"
             tools:text="@string/default_artist" />
     </FrameLayout>

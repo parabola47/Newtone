@@ -1,13 +1,16 @@
 package com.parabola.newtone.ui.dialog;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
@@ -15,15 +18,14 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import moxy.MvpAppCompatDialogFragment;
 
-public final class SortingDialog extends BaseDialogFragment {
+public final class SortingDialog extends MvpAppCompatDialogFragment {
 
     public static final String ALL_TRACKS_SORTING = "ALL_TRACKS_SORTING";
     public static final String ALBUM_TRACKS_SORTING = "ALBUM_TRACKS_SORTING";
@@ -55,6 +57,7 @@ public final class SortingDialog extends BaseDialogFragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,18 +67,24 @@ public final class SortingDialog extends BaseDialogFragment {
         appComponent.inject(this);
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.dialog_sorting, container, false);
-        ButterKnife.bind(this, layout);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        View customView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_sorting, null);
+        ButterKnife.bind(this, customView);
         showRadioButtons(sortingListType);
 
-        return layout;
+        return new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.sort_title)
+                .setView(customView)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setPositiveButton(R.string.dialog_ok, (d, w) ->
+                        onClickOk())
+                .create();
     }
 
 
-    @OnClick(R.id.ok)
-    public void onClickOk() {
+    private void onClickOk() {
         int checkedRadioButtonId = sortingRadioGroup.getCheckedRadioButtonId();
         boolean isReverse = reverseCheckBox.isChecked();
         switch (sortingListType) {
@@ -89,7 +98,8 @@ public final class SortingDialog extends BaseDialogFragment {
             case ARTIST_ALBUMS_SORTING:
                 saveNewSortingForAlbums(checkedRadioButtonId, isReverse);
                 break;
-            case ALL_ARTISTS_SORTING: saveNewSortingForAllArtists(checkedRadioButtonId, isReverse);
+            case ALL_ARTISTS_SORTING:
+                saveNewSortingForAllArtists(checkedRadioButtonId, isReverse);
                 break;
             default: throw new IllegalStateException();
         }
@@ -181,11 +191,6 @@ public final class SortingDialog extends BaseDialogFragment {
                 break;
             default: throw new IllegalStateException();
         }
-    }
-
-    @OnClick(R.id.cancel)
-    public void onClickCancel() {
-        dismiss();
     }
 
 

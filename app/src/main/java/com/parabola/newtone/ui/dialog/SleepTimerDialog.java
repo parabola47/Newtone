@@ -1,34 +1,30 @@
 package com.parabola.newtone.ui.dialog;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.SleepTimerPresenter;
 import com.parabola.newtone.mvp.view.SleepTimerView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import moxy.MvpAppCompatDialogFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-public final class SleepTimerDialog extends BaseDialogFragment
+public final class SleepTimerDialog extends MvpAppCompatDialogFragment
         implements SleepTimerView {
+    private static final String LOG_TAG = SleepTimerDialog.class.getSimpleName();
 
     @InjectPresenter SleepTimerPresenter presenter;
-
-    @BindView(R.id.time_radio) RadioGroup timeGroup;
 
     public SleepTimerDialog() {
     }
@@ -37,37 +33,33 @@ public final class SleepTimerDialog extends BaseDialogFragment
         return new SleepTimerDialog();
     }
 
+
     @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.dialog_sleep_timer, container, false);
-        ButterKnife.bind(this, layout);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        AtomicInteger selectedIndex = new AtomicInteger(2);
 
-        return layout;
+        return new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.sleep_timer_dialog_title)
+                .setSingleChoiceItems(R.array.sleep_timer_values, selectedIndex.get(), (d, index) ->
+                        selectedIndex.set(index))
+                .setPositiveButton(R.string.dialog_ok, (d, which) -> {
+                    long timeToSleepMs = getTimeMsByIndex(selectedIndex.get());
+                    presenter.startTimer(timeToSleepMs);
+                })
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .create();
     }
 
-    @OnClick(R.id.ok)
-    public void onClickOk() {
-        int id = timeGroup.getCheckedRadioButtonId();
-        long timeToSleepMs = getTimeById(id);
-
-        presenter.startTimer(timeToSleepMs);
-    }
-
-    @OnClick(R.id.cancel)
-    public void onClickCancel() {
-        presenter.onClickCancel();
-    }
-
-    private long getTimeById(int id) {
-        switch (id) {
-            case R.id.min5: return 5 * 60 * 1000;
-            case R.id.min10: return 10 * 60 * 1000;
-            case R.id.min15: return 15 * 60 * 1000;
-            case R.id.min20: return 20 * 60 * 1000;
-            case R.id.min30: return 30 * 60 * 1000;
-            case R.id.min45: return 45 * 60 * 1000;
-            case R.id.h1: return 60 * 60 * 1000;
+    private long getTimeMsByIndex(int index) {
+        switch (index) {
+            case 0: return 5 * 60 * 1000;
+            case 1: return 10 * 60 * 1000;
+            case 2: return 15 * 60 * 1000;
+            case 3: return 20 * 60 * 1000;
+            case 4: return 30 * 60 * 1000;
+            case 5: return 45 * 60 * 1000;
+            case 6: return 60 * 60 * 1000;
             default: return -1;
         }
     }
@@ -83,8 +75,4 @@ public final class SleepTimerDialog extends BaseDialogFragment
         Toast.makeText(requireContext(), toastText, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void closeScreen() {
-        dismiss();
-    }
 }

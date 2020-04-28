@@ -1,7 +1,6 @@
 package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.di.app.AppComponent;
@@ -18,13 +17,12 @@ import moxy.MvpPresenter;
 @InjectViewState
 public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
 
-    @Inject PlaylistRepository playlistRepo;
-    @Inject TrackRepository trackRepo;
-    @Inject PermissionHandler accessRepo;
-
     @Inject MainRouter router;
 
+    @Inject PlaylistRepository playlistRepo;
+    @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
+
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     public TabPlaylistPresenter(AppComponent appComponent) {
@@ -66,7 +64,8 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
     }
 
     public void onClickMenuDeletePlaylist(int deletedPlaylistId) {
-        router.openDeletePlaylistDialog(deletedPlaylistId);
+        playlistRepo.remove(deletedPlaylistId)
+                .subscribe();
     }
 
     public void onClickRecentlyAdded() {

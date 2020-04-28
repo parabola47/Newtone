@@ -12,13 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Track;
@@ -41,7 +39,7 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.observers.BiConsumerSingleObserver;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
@@ -67,7 +65,6 @@ public final class PlayerFragment extends MvpAppCompatFragment
     @BindView(R.id.loop) ImageButton loopButton;
     @BindView(R.id.shuffle) ImageButton shuffleButton;
     @BindView(R.id.timer) ImageButton timerButton;
-    @BindView(R.id.track_settings) ImageButton trackSettings;
 
     @BindView(R.id.album_container) LockableViewPager albumCoverPager;
 
@@ -153,8 +150,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 presenter.onClickMenuAdditionalInfo();
                 break;
             case R.id.delete:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDelete());
-                dialog.show();
+                createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDelete())
+                        .show();
                 break;
         }
     }
@@ -366,11 +363,9 @@ public final class PlayerFragment extends MvpAppCompatFragment
             Single.fromCallable(() -> (Bitmap) tracks.get(position).getArtImage())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new BiConsumerSingleObserver<>(
-                            (bitmap, throwable) -> Glide.with(albumCover)
-                                    .load(bitmap)
-                                    .placeholder(R.drawable.album_default)
-                                    .into(albumCover)));
+                    .subscribe(new ConsumerSingleObserver<>(
+                            albumCover::setImageBitmap,
+                            error -> albumCover.setImageResource(R.drawable.album_default)));
 
             container.addView(albumCover, 0);
 

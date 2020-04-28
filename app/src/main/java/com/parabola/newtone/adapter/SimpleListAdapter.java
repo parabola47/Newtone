@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import java8.util.Optional;
 import java8.util.OptionalInt;
 import java8.util.function.Predicate;
 
@@ -122,14 +121,47 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
         }
     }
 
+
+    private int contextSelectedPosition = -1;
+
+    @Override
+    public void clearContextSelected() {
+        getContextSelectedPosition().ifPresent(position -> {
+            contextSelectedPosition = -1;
+            notifyItemChanged(position);
+        });
+    }
+
+    @Override
+    public boolean isContextSelected(int position) {
+        return position == contextSelectedPosition;
+    }
+
+    @Override
+    public void setContextSelected(int position) {
+        if (position < 0 || position >= size())
+            throw new IndexOutOfBoundsException("Position:  " + position + ". Must be between 0 and " + (size() - 1));
+
+        contextSelectedPosition = position;
+        notifyItemChanged(contextSelectedPosition);
+    }
+
+    @Override
+    public OptionalInt getContextSelectedPosition() {
+        if (contextSelectedPosition == -1) {
+            return OptionalInt.empty();
+        }
+
+        return OptionalInt.of(contextSelectedPosition);
+    }
+
     @Override
     public void clearSelected() {
         OptionalInt selectedItemIndex = items.getSelectedItemIndex();
 
         items.clearSelected();
 
-        selectedItemIndex
-                .ifPresent(value -> notifyItemChanged(selectedItemIndex.getAsInt()));
+        selectedItemIndex.ifPresent(this::notifyItemChanged);
     }
 
     @Override
@@ -170,10 +202,6 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
         clearSelected();
     }
 
-    @Override
-    public Optional<T> getSelectedItem() {
-        return items.getSelectedItem();
-    }
 
     @Override
     public OptionalInt getSelectedPosition() {

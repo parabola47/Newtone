@@ -15,7 +15,7 @@
 
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackSpeedCroller"
-            style="@style/FxSettingCroller"
+            style="@style/FxSettingContinuousCroller"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:label="Tempo x1.00"
@@ -31,7 +31,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/playbackSpeedSwitch"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:background="@null"
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="@id/playbackSpeedCroller"
@@ -40,7 +40,7 @@
 
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackPitchCroller"
-            style="@style/FxSettingCroller"
+            style="@style/FxSettingContinuousCroller"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:label="Pitch x1.00"
@@ -56,7 +56,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/playbackPitchSwitch"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:background="@null"
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="@+id/playbackPitchCroller"
@@ -80,7 +80,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/virtualizerSwitchButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:background="@null"
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="@+id/virtualizerCroller"
@@ -105,9 +105,9 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/bassBoostSwitchButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:background="@null"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             app:layout_constraintLeft_toLeftOf="@+id/bassBoostCroller"
             app:layout_constraintRight_toRightOf="@+id/bassBoostCroller"
             app:layout_constraintTop_toBottomOf="@+id/bassBoostCroller" />
