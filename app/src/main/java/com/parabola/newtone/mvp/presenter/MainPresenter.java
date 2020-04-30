@@ -91,7 +91,22 @@ public final class MainPresenter extends MvpPresenter<MainView> {
         playerInteractor.toggle();
     }
 
+
+    //MENU
+    public void onClickMenuSearch() {
+        router.openSearchScreen();
+    }
+
+    public void onClickMenuSorting(String listType) {
+        router.openSortingDialog(listType);
+    }
+
     public void onClickMenuAddPlaylist() {
         router.openCreatePlaylistDialog();
     }
+
+    public void onClickMenuSettings() {
+        router.openSettings();
+    }
+
 }

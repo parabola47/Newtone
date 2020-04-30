@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.repository.AlbumRepository;
@@ -23,9 +24,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import moxy.MvpAppCompatDialogFragment;
 
-public final class SortingDialog extends MvpAppCompatDialogFragment {
+public final class SortingDialog extends DialogFragment {
 
     public static final String ALL_TRACKS_SORTING = "ALL_TRACKS_SORTING";
     public static final String ALBUM_TRACKS_SORTING = "ALBUM_TRACKS_SORTING";

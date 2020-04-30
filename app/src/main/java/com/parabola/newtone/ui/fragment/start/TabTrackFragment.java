@@ -6,7 +6,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +21,7 @@ import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
 import com.parabola.newtone.mvp.view.TabTrackView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.ui.fragment.Sortable;
@@ -138,8 +141,11 @@ public final class TabTrackFragment extends MvpAppCompatFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
-                        .show();
+                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
+                        presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
+
+                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
+                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
                 break;
         }
     }

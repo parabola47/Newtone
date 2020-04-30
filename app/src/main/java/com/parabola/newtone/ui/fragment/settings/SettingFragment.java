@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
@@ -18,6 +20,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.SettingPresenter;
 import com.parabola.newtone.mvp.view.SettingView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 
 import java.util.Locale;
@@ -98,14 +101,17 @@ public final class SettingFragment extends BaseSwipeToBackFragment
                 getString(R.string.setting_color_theme_desc_dark),
                 getString(R.string.setting_color_theme_desc_light)};
 
-        new MaterialAlertDialogBuilder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.setting_color_theme_title)
                 .setNegativeButton(R.string.dialog_cancel, null)
-                .setSingleChoiceItems(values, currentColorTheme.ordinal(), (dialog, which) -> {
+                .setSingleChoiceItems(values, currentColorTheme.ordinal(), (d, which) -> {
                     presenter.onSelectColorTheme(ColorTheme.values()[which]);
-                    dialog.dismiss();
+                    d.dismiss();
                 })
-                .show();
+                .create();
+
+        DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
+        dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
     }
 
 

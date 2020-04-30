@@ -15,7 +15,6 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.ui.activity.MainActivity;
 import com.parabola.newtone.ui.dialog.ChoosePlaylistDialog;
 import com.parabola.newtone.ui.dialog.CreatePlaylistDialog;
-import com.parabola.newtone.ui.dialog.IsaacNewtoneDialog;
 import com.parabola.newtone.ui.dialog.RenamePlaylistDialog;
 import com.parabola.newtone.ui.dialog.SleepTimerDialog;
 import com.parabola.newtone.ui.dialog.SortingDialog;
@@ -36,6 +35,7 @@ import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment
 import com.parabola.newtone.ui.fragment.settings.ArtistItemDisplaySettingFragment;
 import com.parabola.newtone.ui.fragment.settings.SettingFragment;
 import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment;
+import com.parabola.newtone.ui.fragment.settings.dialog.IsaacNewtoneDialog;
 import com.parabola.newtone.ui.fragment.start.StartFragment;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 

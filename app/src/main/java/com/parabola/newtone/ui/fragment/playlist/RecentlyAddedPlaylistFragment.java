@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,7 @@ import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import com.parabola.newtone.ui.fragment.Scrollable;
 
@@ -182,8 +185,11 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                createDeleteTrackDialog(requireContext(), (d, w) -> presenter.onClickMenuDeleteTrack(selectedTrack.getId()))
-                        .show();
+                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
+                        presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
+
+                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
+                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
                 break;
         }
     }

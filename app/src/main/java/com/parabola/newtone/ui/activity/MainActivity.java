@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.parabola.data.PermissionChangeReceiver;
-import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
@@ -60,7 +59,6 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @BindView(R.id.player_toggle) ImageView playerToggle;
 
     @Inject MainRouter router;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     @InjectPresenter MainPresenter presenter;
 
@@ -142,17 +140,17 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     private void handleSelectedMenu(MenuItem menuItem, Fragment currentFragment) {
         switch (menuItem.getItemId()) {
             case R.id.search:
-                router.openSearchScreen();
+                presenter.onClickMenuSearch();
                 break;
             case R.id.sorting:
                 Sortable sortable = (Sortable) currentFragment;
-                router.openSortingDialog(sortable.getListType());
+                presenter.onClickMenuSorting(sortable.getListType());
                 break;
             case R.id.add_playlist:
                 presenter.onClickMenuAddPlaylist();
                 break;
             case R.id.settings:
-                router.openSettings();
+                presenter.onClickMenuSettings();
                 break;
         }
     }

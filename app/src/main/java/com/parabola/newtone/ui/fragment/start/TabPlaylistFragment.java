@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -22,6 +24,7 @@ import com.parabola.newtone.adapter.PlaylistAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
 import com.parabola.newtone.mvp.view.TabPlaylistView;
+import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
@@ -89,12 +92,15 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
                     presenter.onClickMenuRenamePlaylist(playlistId);
                     break;
                 case R.id.delete_playlist:
-                    new MaterialAlertDialogBuilder(requireContext())
+                    AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                             .setTitle(R.string.delete_playlist_title)
                             .setMessage(R.string.delete_playlist_desc)
-                            .setPositiveButton(R.string.dialog_delete, (dialog, which) -> presenter.onClickMenuDeletePlaylist(playlistId))
+                            .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeletePlaylist(playlistId))
                             .setNegativeButton(R.string.dialog_cancel, null)
-                            .show();
+                            .create();
+
+                    DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
+                    dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
                     break;
             }
             popupWindow.dismiss();
