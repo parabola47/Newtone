@@ -159,6 +159,9 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
                 dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
                 break;
+            case R.id.settings:
+                presenter.onClickMenuSettings();
+                break;
         }
     }
 

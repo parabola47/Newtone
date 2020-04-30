@@ -303,4 +303,9 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     public void onClickMenuAdditionalInfo() {
         router.openTrackAdditionInfo(currentTrackId);
     }
+
+    public void onClickMenuSettings() {
+        router.openSettingsIfAvailable();
+        router.collapseBottomSlider();
+    }
 }

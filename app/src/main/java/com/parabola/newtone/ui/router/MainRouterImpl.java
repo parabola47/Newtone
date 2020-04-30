@@ -242,6 +242,20 @@ public final class MainRouterImpl implements MainRouter {
     }
 
     @Override
+    public void openSettingsIfAvailable() {
+        while (!isRoot()) {
+            Fragment currentFragment = currentFragment();
+            if (currentFragment instanceof SettingFragment) {
+                return;
+            }
+
+            goBack();
+        }
+
+        openSettings();
+    }
+
+    @Override
     public void openTrackItemDisplaySettings() {
         TrackItemDisplaySettingFragment fragment = TrackItemDisplaySettingFragment.newInstance();
 
