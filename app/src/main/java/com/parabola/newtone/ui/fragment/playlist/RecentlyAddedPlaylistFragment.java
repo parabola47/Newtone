@@ -65,9 +65,9 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
 
 
         tracklistView.setAdapter(tracklistAdapter);
-        tracklistAdapter.setItemClickListener(position -> presenter.onClickTrackItem(
-                tracklistAdapter.getAll(), position));
-        tracklistAdapter.setItemLongClickListener(this::showTrackContextMenu);
+        tracklistAdapter.setOnItemClickListener(position ->
+                presenter.onClickTrackItem(tracklistAdapter.getAll(), position));
+        tracklistAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
         playlistTitle.setText(R.string.playlist_recently_added);
 

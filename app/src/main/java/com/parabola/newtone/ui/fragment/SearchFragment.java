@@ -97,21 +97,21 @@ public final class SearchFragment extends MvpAppCompatFragment
         albumAdapter.setViewSettings(newAlbumItemView, 1);
 
 
-        artistAdapter.setItemClickListener(position -> {
+        artistAdapter.setOnItemClickListener(position -> {
             searchView.clearFocus();
             int artistId = artistAdapter.get(position).getId();
             presenter.onClickArtistItem(artistId);
         });
-        albumAdapter.setItemClickListener(position -> {
+        albumAdapter.setOnItemClickListener(position -> {
             searchView.clearFocus();
             int albumId = albumAdapter.get(position).getId();
             presenter.onClickAlbumItem(albumId);
         });
-        trackAdapter.setItemClickListener(position -> {
+        trackAdapter.setOnItemClickListener(position -> {
             searchView.clearFocus();
             presenter.onClickTrackItem(trackAdapter.getAll(), position);
         });
-        playlistAdapter.setItemClickListener(position -> {
+        playlistAdapter.setOnItemClickListener(position -> {
             searchView.clearFocus();
             int playlistId = playlistAdapter.get(position).getId();
             presenter.onClickPlaylistItem(playlistId);

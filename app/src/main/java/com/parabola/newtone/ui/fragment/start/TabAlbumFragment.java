@@ -55,7 +55,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
 
         albumsList.setAdapter(albumsAdapter);
 
-        albumsAdapter.setItemClickListener(position -> {
+        albumsAdapter.setOnItemClickListener(position -> {
             int albumId = albumsAdapter.get(position).getId();
             presenter.onItemClick(albumId);
         });

@@ -1,6 +1,7 @@
 package com.parabola.newtone.adapter;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -19,20 +21,10 @@ import java8.util.function.Predicate;
 public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH>
         implements BaseAdapter<T> {
 
-
-    protected ItemClickListener itemClickListener;
-    protected ItemLongClickListener itemLongClickListener;
-    protected RemoveClickListener removeClickListener;
-    protected DragListener dragListener;
-
     private final SelectableList<T> items = new SelectableList<>();
 
     protected RecyclerView recyclerView;
-    protected boolean showSection;
 
-
-    public SimpleListAdapter() {
-    }
 
     @Override
     public int getItemCount() {
@@ -86,6 +78,9 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
         items.clear();
         notifyDataSetChanged();
     }
+
+
+    protected boolean showSection;
 
     @Override
     public void setSectionEnabled(boolean showSection) {
@@ -209,26 +204,44 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     }
 
 
-    @Override
-    public void setItemClickListener(ItemClickListener listener) {
-        itemClickListener = listener;
-    }
+    protected OnItemClickListener onItemClickListener;
 
     @Override
-    public void setItemLongClickListener(ItemLongClickListener listener) {
-        itemLongClickListener = listener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        onItemClickListener = listener;
     }
+
+
+    protected OnItemLongClickListener onItemLongClickListener;
 
     @Override
-    public void setRemoveClickListener(RemoveClickListener listener) {
-        removeClickListener = listener;
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        onItemLongClickListener = listener;
     }
+
+
+    protected OnRemoveClickListener onRemoveClickListener;
 
     @Override
-    public void setDragListener(DragListener listener) {
-        dragListener = listener;
+    public void setOnRemoveClickListener(OnRemoveClickListener listener) {
+        onRemoveClickListener = listener;
     }
 
+
+    protected OnMoveItemListener onMoveItemListener;
+
+    @Override
+    public void setOnMoveItemListener(OnMoveItemListener listener) {
+        onMoveItemListener = listener;
+    }
+
+
+    protected OnSwipeItemListener onSwipeItemListener;
+
+    @Override
+    public void setOnSwipeItemListener(OnSwipeItemListener listener) {
+        onSwipeItemListener = listener;
+    }
 
     private final float[] longClickLastTouchDownXY = new float[2];
 
@@ -236,8 +249,8 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     @CallSuper
     public void onBindViewHolder(VH holder, int position) {
         holder.itemView.setOnClickListener(v -> {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(holder.getAdapterPosition());
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(holder.getAdapterPosition());
             }
         });
         holder.itemView.setOnTouchListener((v, event) -> {
@@ -248,8 +261,8 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
             return false;
         });
         holder.itemView.setOnLongClickListener(v -> {
-            if (itemLongClickListener != null) {
-                itemLongClickListener.onItemLongClick((ViewGroup) v,
+            if (onItemLongClickListener != null) {
+                onItemLongClickListener.onItemLongClick((ViewGroup) v,
                         (int) longClickLastTouchDownXY[0], (int) longClickLastTouchDownXY[1],
                         holder.getAdapterPosition());
                 return true;
@@ -269,6 +282,78 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         recyclerView.setHasFixedSize(true);
+        touchHelper.attachToRecyclerView(recyclerView);
     }
+
+    protected final ItemTouchHelper touchHelper = new ItemTouchHelper(
+            new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+
+                boolean isFirst = true;
+                int startPosition;
+                int lastPosition;
+                int lastActionState = ItemTouchHelper.ACTION_STATE_IDLE;
+
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    int oldPosition = viewHolder.getAdapterPosition();
+                    int newPosition = target.getAdapterPosition();
+
+                    moveItem(oldPosition, newPosition);
+
+                    if (isFirst) {
+                        isFirst = false;
+                        startPosition = oldPosition;
+                    }
+                    lastPosition = newPosition;
+
+                    return true;
+                }
+
+                @Override
+                public boolean isLongPressDragEnabled() {
+                    return onMoveItemListener != null;
+                }
+
+                @Override
+                public boolean isItemViewSwipeEnabled() {
+                    return onSwipeItemListener != null;
+                }
+
+                @Override
+                public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                    super.onSelectedChanged(viewHolder, actionState);
+
+                    if (actionState == ItemTouchHelper.ACTION_STATE_IDLE
+                            && lastActionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                        isFirst = true;
+                        if (onMoveItemListener != null) {
+                            onMoveItemListener.onMoveItem(startPosition, lastPosition);
+                        }
+                        lastPosition = startPosition;
+                    }
+
+                    lastActionState = actionState;
+                }
+
+                @Override
+                public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
+                                        @NonNull RecyclerView.ViewHolder viewHolder,
+                                        float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                    if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                        float alpha = 1 - (Math.abs(dX) / recyclerView.getWidth());
+                        viewHolder.itemView.setAlpha(alpha);
+                    }
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    int oldPosition = viewHolder.getAdapterPosition();
+                    if (onSwipeItemListener != null) {
+                        onSwipeItemListener.onSwipeItem(oldPosition);
+                    }
+                }
+            });
+
 
 }

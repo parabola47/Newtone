@@ -92,8 +92,8 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
                 .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.album_fragment_cover_corner_size))
                 .build());
 
-        tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
-        tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
+        tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
+        tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
         return root;
     }

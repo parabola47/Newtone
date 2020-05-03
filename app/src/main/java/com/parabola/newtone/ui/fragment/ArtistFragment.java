@@ -79,7 +79,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
         albumsList.setAdapter(albumsAdapter);
 
-        albumsAdapter.setItemClickListener(position -> {
+        albumsAdapter.setOnItemClickListener(position -> {
             int albumId = albumsAdapter.get(position).getId();
             presenter.onAlbumItemClick(albumId);
         });

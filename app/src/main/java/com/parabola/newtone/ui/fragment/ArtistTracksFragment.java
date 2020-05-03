@@ -62,8 +62,8 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
 
         tracksList.setAdapter(tracksAdapter);
 
-        tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
-        tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
+        tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
+        tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
         return root;
     }

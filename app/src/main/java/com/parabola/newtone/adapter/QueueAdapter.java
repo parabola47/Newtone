@@ -1,7 +1,6 @@
 package com.parabola.newtone.adapter;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
@@ -24,13 +22,6 @@ import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.ViewHolder> {
-
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        touchHelper.attachToRecyclerView(recyclerView);
-    }
 
     @NonNull
     @Override
@@ -83,13 +74,13 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
 
 
         holder.removeImg.setOnClickListener(v -> {
-            if (removeClickListener != null) {
-                removeClickListener.onClickRemoveItem(holder.getAdapterPosition());
+            if (onRemoveClickListener != null) {
+                onRemoveClickListener.onClickRemoveItem(holder.getAdapterPosition());
             }
         });
         holder.burgerImg.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN
-                    && dragListener != null) {
+                    && onMoveItemListener != null) {
                 touchHelper.startDrag(holder);
             }
             return false;
@@ -103,67 +94,6 @@ public final class QueueAdapter extends SimpleListAdapter<Track, QueueAdapter.Vi
         int paddingPx = (int) convertDpToPixel(trackItemView.borderPadding, holder.itemView.getContext());
         holder.itemView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
     }
-
-    private final ItemTouchHelper touchHelper = new ItemTouchHelper(
-            new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
-
-                boolean isFirst = true;
-                int startPosition;
-                int lastPosition;
-                int lastActionState = ItemTouchHelper.ACTION_STATE_IDLE;
-
-                @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                    int oldPosition = viewHolder.getAdapterPosition();
-                    int newPosition = target.getAdapterPosition();
-
-                    moveItem(oldPosition, newPosition);
-
-                    if (isFirst) {
-                        isFirst = false;
-                        startPosition = oldPosition;
-                    }
-                    lastPosition = newPosition;
-
-                    return true;
-                }
-
-
-                @Override
-                public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                    super.onSelectedChanged(viewHolder, actionState);
-
-                    if (actionState == ItemTouchHelper.ACTION_STATE_IDLE
-                            && lastActionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                        isFirst = true;
-                        if (dragListener != null) {
-                            dragListener.onMoveItem(startPosition, lastPosition);
-                        }
-                        lastPosition = startPosition;
-                    }
-
-                    lastActionState = actionState;
-                }
-
-                @Override
-                public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
-                                        @NonNull RecyclerView.ViewHolder viewHolder,
-                                        float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                    if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                        float alpha = 1 - (Math.abs(dX) / recyclerView.getWidth());
-                        viewHolder.itemView.setAlpha(alpha);
-                    }
-                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-                }
-
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    int oldPosition = viewHolder.getAdapterPosition();
-                    if (dragListener != null) {
-                        dragListener.onSwipeItem(oldPosition);
-                    }
-                }
-            });
 
     @Override
     public char getSection(int position) {

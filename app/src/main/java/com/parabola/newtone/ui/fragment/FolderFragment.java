@@ -58,8 +58,8 @@ public final class FolderFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         tracksList.setAdapter(tracksAdapter);
-        tracksAdapter.setItemClickListener(position -> presenter.onTrackClick(tracksAdapter.getAll(), position));
-        tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
+        tracksAdapter.setOnItemClickListener(position -> presenter.onTrackClick(tracksAdapter.getAll(), position));
+        tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
         return root;
     }

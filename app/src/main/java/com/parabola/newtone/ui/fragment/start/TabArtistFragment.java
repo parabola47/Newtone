@@ -54,7 +54,7 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
         artistsList.setAdapter(artistsAdapter);
 
-        artistsAdapter.setItemClickListener(position -> {
+        artistsAdapter.setOnItemClickListener(position -> {
             int artistId = artistsAdapter.get(position).getId();
             presenter.onItemClick(artistId);
         });

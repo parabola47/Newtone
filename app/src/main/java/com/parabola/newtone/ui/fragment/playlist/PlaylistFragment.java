@@ -35,6 +35,7 @@ import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 import static java.util.Objects.requireNonNull;
 
@@ -72,8 +73,13 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         tracksList.setAdapter(tracksAdapter);
-        tracksAdapter.setItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
-        tracksAdapter.setItemLongClickListener(this::showTrackContextMenu);
+        tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
+        tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
+        tracksAdapter.setOnSwipeItemListener(position -> {
+            int removedTrackId = tracksAdapter.get(position).getId();
+            tracksAdapter.remove(position);
+            presenter.onSwipeItem(removedTrackId);
+        });
 
         return root;
     }
@@ -187,7 +193,9 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void refreshTracks(List<Track> tracks) {
-        tracksAdapter.replaceAll(tracks);
+        if (!isTracklistsIdentical(tracks, tracksAdapter.getAll())) {
+            tracksAdapter.replaceAll(tracks);
+        }
     }
 
     @Override

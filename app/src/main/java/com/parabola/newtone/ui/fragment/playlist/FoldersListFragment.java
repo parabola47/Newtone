@@ -62,7 +62,7 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
 
         foldersList.setAdapter((RecyclerView.Adapter) foldersAdapter);
-        foldersAdapter.setItemClickListener(position ->
+        foldersAdapter.setOnItemClickListener(position ->
                 presenter.onClickFolderItem(foldersAdapter.get(position).getAbsolutePath()));
 
         foldersTitle.setText(R.string.playlist_folders);

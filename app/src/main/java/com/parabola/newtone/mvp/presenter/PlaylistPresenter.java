@@ -3,6 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
+import com.parabola.domain.model.Playlist;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
@@ -61,14 +62,15 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     private Disposable refreshPlaylistInfo() {
         return playlistRepo.getById(playlistId)
+                .map(Playlist::getTitle)
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
-                .subscribe(playlist -> getViewState().setPlaylistTitle(playlist.getTitle()));
+                .subscribe(getViewState()::setPlaylistTitle);
     }
 
     private Disposable observePlaylistUpdates() {
         return playlistRepo.observePlaylistsUpdates()
-                .flatMapSingle(irrelevant -> trackInteractor.getByPlaylist(playlistId))
+                .flatMapSingle(i -> trackInteractor.getByPlaylist(playlistId))
                 // ожидаем пока прогрузится анимация входа
                 .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
                 .subscribeOn(schedulers.io())
@@ -152,5 +154,10 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     public void onClickMenuAdditionalInfo(int trackId) {
         router.openTrackAdditionInfo(trackId);
+    }
+
+    public void onSwipeItem(int trackId) {
+        playlistRepo.removeTrack(playlistId, trackId)
+                .subscribe();
     }
 }

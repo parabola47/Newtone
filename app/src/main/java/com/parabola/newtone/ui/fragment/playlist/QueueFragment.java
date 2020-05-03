@@ -14,7 +14,6 @@ import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.QueueAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.QueuePresenter;
@@ -28,6 +27,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
+
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
 
 public final class QueueFragment extends BaseSwipeToBackFragment
         implements QueueView {
@@ -58,19 +59,10 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         playlistTitle.setText(R.string.playlist_queue);
 
         queueList.setAdapter(queueAdapter);
-        queueAdapter.setItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
-        queueAdapter.setRemoveClickListener(presenter::onRemoveItem);
-        queueAdapter.setDragListener(new BaseAdapter.DragListener() {
-            @Override
-            public void onSwipeItem(int position) {
-                presenter.onRemoveItem(position);
-            }
-
-            @Override
-            public void onMoveItem(int oldPosition, int newPosition) {
-                presenter.onMoveItem(oldPosition, newPosition);
-            }
-        });
+        queueAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
+        queueAdapter.setOnRemoveClickListener(presenter::onRemoveItem);
+        queueAdapter.setOnMoveItemListener(presenter::onMoveItem);
+        queueAdapter.setOnSwipeItemListener(presenter::onRemoveItem);
 
         return root;
     }
@@ -98,7 +90,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @Override
     public void refreshTracks(List<Track> tracks) {
-        if (!isNewTracksIdenticalWithAdapter(tracks)) {
+        if (!isTracklistsIdentical(tracks, queueAdapter.getAll())) {
             queueAdapter.replaceAll(tracks);
         }
     }
@@ -108,17 +100,6 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         queueAdapter.setViewSettings(viewSettings);
     }
 
-
-    private boolean isNewTracksIdenticalWithAdapter(List<Track> tracks) {
-        if (tracks.size() != queueAdapter.size()) {
-            return false;
-        }
-        for (int i = 0; i < tracks.size(); i++) {
-            if (tracks.get(i).getId() != queueAdapter.get(i).getId())
-                return false;
-        }
-        return true;
-    }
 
     @Override
     public void setTrackCount(int tracksCount) {

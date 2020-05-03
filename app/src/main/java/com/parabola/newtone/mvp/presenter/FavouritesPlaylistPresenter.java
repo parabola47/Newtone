@@ -132,4 +132,8 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
     public void onClickMenuAdditionalInfo(int trackId) {
         router.openTrackAdditionInfo(trackId);
     }
+
+    public void onSwipeItem(int trackId) {
+        trackRepo.removeFromFavourites(trackId);
+    }
 }

@@ -46,26 +46,31 @@ public interface BaseAdapter<T> {
 
 
     //LISTENERS
-    void setItemClickListener(ItemClickListener listener);
-    void setItemLongClickListener(ItemLongClickListener listener);
-    void setRemoveClickListener(RemoveClickListener listener);
-    void setDragListener(DragListener listener);
+    void setOnItemClickListener(OnItemClickListener listener);
+    void setOnItemLongClickListener(OnItemLongClickListener listener);
+    void setOnRemoveClickListener(OnRemoveClickListener listener);
+
+    void setOnMoveItemListener(OnMoveItemListener listener);
+    void setOnSwipeItemListener(OnSwipeItemListener listener);
 
 
-    interface ItemClickListener {
+    interface OnItemClickListener {
         void onItemClick(int position);
     }
 
-    interface ItemLongClickListener {
+    interface OnItemLongClickListener {
         void onItemLongClick(ViewGroup rootView, int clickPosX, int clickPosY, int itemPosition);
     }
 
-    interface RemoveClickListener {
+    interface OnRemoveClickListener {
         void onClickRemoveItem(int position);
     }
 
-    interface DragListener {
+    interface OnSwipeItemListener {
         void onSwipeItem(int position);
+    }
+
+    interface OnMoveItemListener {
         void onMoveItem(int oldPosition, int newPosition);
     }
 
