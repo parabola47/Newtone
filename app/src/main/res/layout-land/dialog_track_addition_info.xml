@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:padding="16dp"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="8dp"
     tools:context=".ui.dialog.TrackAdditionalInfoDialog">
 
 
@@ -13,9 +14,9 @@
         android:id="@+id/albumCover"
         android:layout_width="192dp"
         android:layout_height="192dp"
+        app:layout_constraintBottom_toTopOf="@+id/filepathWrapper"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/filepathWrapper"
         tools:src="@drawable/album_default" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
