@@ -2,7 +2,6 @@ package com.parabola.newtone.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
@@ -12,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
@@ -70,7 +70,7 @@ public final class SortingDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View customView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_sorting, null);
+        View customView = View.inflate(requireContext(), R.layout.dialog_sorting, null);
         ButterKnife.bind(this, customView);
         showRadioButtons(sortingListType);
 
@@ -197,13 +197,13 @@ public final class SortingDialog extends DialogFragment {
     private final RadioGroup.LayoutParams radioButtonLayoutParams
             = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT);
 
-    public void showRadioButtons(String sortingListType) {
+    private void showRadioButtons(String sortingListType) {
         String[] sortStrings = getSortStrings(sortingListType);
         int[] sortIds = getSortIds(sortingListType);
         RadioButton[] rb = new RadioButton[sortIds.length];
 
         for (int i = 0; i < rb.length; i++) {
-            rb[i] = new RadioButton(requireContext());
+            rb[i] = new MaterialRadioButton(requireContext());
             rb[i].setLayoutParams(radioButtonLayoutParams);
             rb[i].setText(sortStrings[i]);
             rb[i].setId(sortIds[i]);

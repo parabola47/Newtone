@@ -15,8 +15,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/reverseCheckBox"
+        style="@style/Widget.MaterialComponents.CompoundButton.CheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sort_reverse" />
