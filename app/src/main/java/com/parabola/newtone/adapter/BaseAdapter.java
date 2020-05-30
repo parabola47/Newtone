@@ -1,9 +1,8 @@
 package com.parabola.newtone.adapter;
 
 import java.util.List;
-
-import java8.util.OptionalInt;
-import java8.util.function.Predicate;
+import java.util.OptionalInt;
+import java.util.function.Predicate;
 
 public interface BaseAdapter<T> {
     void add(T newItem);

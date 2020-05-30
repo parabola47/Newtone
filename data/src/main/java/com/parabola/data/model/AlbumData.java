@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 
 import com.parabola.domain.model.Album;
 
-import java8.util.function.Function;
+import java.util.function.Function;
 
 public final class AlbumData implements Album {
     public int id;

@@ -14,9 +14,10 @@ import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.R;
 
+import java.util.Optional;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import java8.util.Optional;
 
 import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;

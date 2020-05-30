@@ -24,8 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToLongFunction;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -34,9 +38,6 @@ import io.reactivex.internal.observers.CallbackCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
-import java8.util.Comparators;
-import java8.util.function.Function;
-import java8.util.function.Predicate;
 
 import static android.provider.BaseColumns._ID;
 import static android.provider.MediaStore.Audio.AudioColumns.ALBUM;
@@ -391,7 +392,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
     @Override
     public Single<List<Track>> getFavourites() {
         return Observable.fromIterable(favouriteTrackHelper.getFavourites())
-                .sorted(Comparators.reversed(Comparators.comparingLong(Map.Entry::getValue)))
+                .sorted(Comparator.comparingLong((ToLongFunction<Map.Entry<Integer, Long>>) Map.Entry::getValue).reversed())
                 .map(Map.Entry::getKey)
                 .toList()
                 .flatMap(this::getByIds);

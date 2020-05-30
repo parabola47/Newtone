@@ -12,9 +12,10 @@ import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
 import com.parabola.newtone.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import java.util.Optional;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import java8.util.Optional;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 

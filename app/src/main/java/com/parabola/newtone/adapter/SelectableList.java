@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import java8.util.Optional;
-import java8.util.OptionalInt;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 public final class SelectableList<E> {
 

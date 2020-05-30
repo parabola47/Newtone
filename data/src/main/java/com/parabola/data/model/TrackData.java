@@ -6,8 +6,8 @@ import androidx.annotation.Nullable;
 
 import com.parabola.domain.model.Track;
 
-import java8.util.function.Function;
-import java8.util.function.Predicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class TrackData implements Track {
     public int id;

@@ -9,6 +9,7 @@ android {
         targetSdkVersion 29
         versionCode 21
         versionName "0.3.1"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -25,8 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
     lintOptions {
         lintConfig file("../app/lint.xml")
@@ -48,6 +52,7 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
 
     //    SlidingPanelView
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
@@ -78,9 +83,6 @@ dependencies {
     implementation "com.github.moxy-community:moxy:2.1.2"
     implementation "com.github.moxy-community:moxy-androidx:2.1.2"
     annotationProcessor "com.github.moxy-community:moxy-compiler:2.1.2"
-
-    //    STREAM JAVA 8 SUPPORT
-    implementation 'net.sourceforge.streamsupport:streamsupport:1.7.2'
 
     //    Vertical ProgressBar
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'

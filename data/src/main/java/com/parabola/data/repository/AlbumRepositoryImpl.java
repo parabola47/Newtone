@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import io.reactivex.Single;
-import java8.util.function.Function;
 
 import static android.provider.BaseColumns._ID;
 import static android.provider.MediaStore.Audio.AlbumColumns.ALBUM;

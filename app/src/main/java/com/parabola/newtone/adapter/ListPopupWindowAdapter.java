@@ -17,7 +17,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 
 import com.parabola.newtone.R;
 
-import java8.util.function.Function;
+import java.util.function.Function;
 
 @SuppressLint("RestrictedApi")
 public class ListPopupWindowAdapter extends BaseAdapter {

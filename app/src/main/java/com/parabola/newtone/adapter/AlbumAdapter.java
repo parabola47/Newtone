@@ -17,13 +17,14 @@ import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumVi
 import com.parabola.newtone.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import java.util.Optional;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import java8.util.Optional;
 
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 

@@ -10,9 +10,9 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -22,8 +22,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
 }
@@ -36,9 +39,7 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    //    STREAM JAVA 8 SUPPORT
-    implementation 'net.sourceforge.streamsupport:streamsupport:1.7.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
 
     //    RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'

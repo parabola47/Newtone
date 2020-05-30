@@ -12,9 +12,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
-import java8.util.OptionalInt;
-import java8.util.function.Predicate;
+import java.util.OptionalInt;
+import java.util.function.Predicate;
 
 
 public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH>
@@ -178,8 +177,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
         items.setSelectedItemIndex(position);
         notifyItemChanged(position);
 
-        if (oldSelectedPosition.isPresent()
-                && oldSelectedPosition.getAsInt() != position) {
+        if (oldSelectedPosition.isPresent()) {
             notifyItemChanged(oldSelectedPosition.getAsInt());
         }
 
