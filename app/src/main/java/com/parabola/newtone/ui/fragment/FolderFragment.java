@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.ListPopupWindow;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
@@ -70,12 +70,11 @@ public final class FolderFragment extends BaseSwipeToBackFragment
     }
 
 
-    private void showTrackContextMenu(ViewGroup rootView, int x, int y, int itemPosition) {
-        Track selectedTrack = tracksAdapter.get(itemPosition);
-        ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
-        ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(requireContext(), R.menu.track_menu);
+    private void showTrackContextMenu(int position) {
+        Track selectedTrack = tracksAdapter.get(position);
+        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.track_menu);
 
-        adapter.setMenuVisibility(menuItem -> {
+        menuAdapter.setMenuVisibility(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.add_to_favorites:
                     return !selectedTrack.isFavourite();
@@ -86,29 +85,15 @@ public final class FolderFragment extends BaseSwipeToBackFragment
                 default: return true;
             }
         });
-        popupWindow.setAdapter(adapter);
 
-        View tempView = new View(requireContext());
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(0, 0);
-        tempView.setLayoutParams(lp);
-        tempView.setX(x - rootView.getPaddingLeft());
-        tempView.setY(y - rootView.getPaddingTop());
-        rootView.addView(tempView);
-        popupWindow.setAnchorView(tempView);
-
-        popupWindow.setModal(true);
-        popupWindow.setWidth(adapter.measureContentWidth());
-        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
-            handleSelectedMenu(adapter.getItem(position), selectedTrack, itemPosition);
-            popupWindow.dismiss();
-        });
-        popupWindow.setOnDismissListener(() -> {
-            tracksAdapter.clearContextSelected();
-            rootView.removeView(tempView);
-        });
-
-        tracksAdapter.setContextSelected(itemPosition);
-        popupWindow.show();
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.track_menu_title, selectedTrack.getArtistName(), selectedTrack.getTitle()))
+                .setAdapter(menuAdapter, (d, which) ->
+                        handleSelectedMenu(menuAdapter.getItem(which), selectedTrack, position))
+                .create();
+        dialog.setOnShowListener(d -> tracksAdapter.setContextSelected(position));
+        dialog.setOnDismissListener(d -> tracksAdapter.clearContextSelected());
+        dialog.show();
     }
 
     private void handleSelectedMenu(MenuItem menuItem, Track selectedTrack, int itemPosition) {

@@ -36,6 +36,7 @@
     <string name="menu_settings">Settings</string>
 
     <!--TRACK MENU-->
+    <string name="track_menu_title">%s — %s</string>    <!--артист - трек-->
     <string name="track_menu_play">Play</string>
     <string name="track_menu_add_to_favourites">Favourite</string>
     <string name="track_menu_remove_from_favourites">Not favourite</string>
@@ -191,7 +192,7 @@
     <string name="track_item_cover_size_setting">Cover size</string>
     <string name="track_item_cover_corners_setting">Cover corners</string>
     <string name="track_item_reset_settings_dialog_message">Are you sure you want to reset track item settings?</string>
-    <string name="track_item_artist_with_album">%s - %s</string>
+    <string name="track_item_artist_with_album">%s — %s</string>
 
 
     <!--ALBUM ITEM DISPLAY SETTING-->

@@ -1,7 +1,5 @@
 package com.parabola.newtone.adapter;
 
-import android.view.ViewGroup;
-
 import java.util.List;
 
 import java8.util.OptionalInt;
@@ -59,7 +57,7 @@ public interface BaseAdapter<T> {
     }
 
     interface OnItemLongClickListener {
-        void onItemLongClick(ViewGroup rootView, int clickPosX, int clickPosY, int itemPosition);
+        void onItemLongClick(int position);
     }
 
     interface OnRemoveClickListener {

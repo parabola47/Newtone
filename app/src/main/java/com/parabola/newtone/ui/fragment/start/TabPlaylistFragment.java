@@ -2,6 +2,7 @@ package com.parabola.newtone.ui.fragment.start;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,7 +62,7 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
         playlists.setAdapter((RecyclerView.Adapter) playlistAdapter);
 
         playlistAdapter.setOnItemClickListener(position -> presenter.onClickPlaylistItem(playlistAdapter.get(position).getId()));
-        playlistAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
+        playlistAdapter.setOnItemLongClickListener(this::showPlaylistContextMenu);
 
         sysPlaylists.setAdapter(sysPlaylistAdapter);
 
@@ -70,48 +70,37 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
     }
 
 
-    private void showTrackContextMenu(ViewGroup rootView, float x, float y, int itemPosition) {
-        ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
+    private void showPlaylistContextMenu(int position) {
+        Playlist playlist = playlistAdapter.get(position);
         ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.playlist_menu);
-        popupWindow.setAdapter(menuAdapter);
 
-        View tempView = new View(requireContext());
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(0, 0);
-        tempView.setLayoutParams(lp);
-        tempView.setX(x - rootView.getPaddingLeft());
-        tempView.setY(y - rootView.getPaddingTop());
-        rootView.addView(tempView);
-        popupWindow.setAnchorView(tempView);
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(playlist.getTitle())
+                .setAdapter(menuAdapter, (d, which) ->
+                        handleSelectedMenu(menuAdapter.getItem(which), playlist.getId()))
+                .create();
+        dialog.setOnShowListener(d -> playlistAdapter.setContextSelected(position));
+        dialog.setOnDismissListener(d -> playlistAdapter.clearContextSelected());
+        dialog.show();
+    }
 
-        popupWindow.setModal(true);
-        popupWindow.setWidth(menuAdapter.measureContentWidth());
-        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
-            int playlistId = playlistAdapter.get(itemPosition).getId();
-            switch (menuAdapter.getItem(position).getItemId()) {
-                case R.id.rename_playlist:
-                    presenter.onClickMenuRenamePlaylist(playlistId);
-                    break;
-                case R.id.delete_playlist:
-                    AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(R.string.delete_playlist_title)
-                            .setMessage(R.string.delete_playlist_desc)
-                            .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeletePlaylist(playlistId))
-                            .setNegativeButton(R.string.dialog_cancel, null)
-                            .create();
+    private void handleSelectedMenu(MenuItem menuItem, int selectedPlaylistId) {
+        switch (menuItem.getItemId()) {
+            case R.id.rename_playlist:
+                presenter.onClickMenuRenamePlaylist(selectedPlaylistId);
+                break;
+            case R.id.delete_playlist:
+                AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.delete_playlist_title)
+                        .setMessage(R.string.delete_playlist_desc)
+                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeletePlaylist(selectedPlaylistId))
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .create();
 
-                    DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-                    dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
-                    break;
-            }
-            popupWindow.dismiss();
-        });
-        popupWindow.setOnDismissListener(() -> {
-            playlistAdapter.clearContextSelected();
-            rootView.removeView(tempView);
-        });
-
-        playlistAdapter.setContextSelected(itemPosition);
-        popupWindow.show();
+                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
+                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
+                break;
+        }
     }
 
     @ProvidePresenter

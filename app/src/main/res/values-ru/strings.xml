@@ -36,6 +36,7 @@
     <string name="menu_settings">Настройки</string>
 
     <!--TRACK MENU-->
+    <string name="track_menu_title">%s — %s</string>    <!--артист - трек-->
     <string name="track_menu_play">Играть</string>
     <string name="track_menu_add_to_favourites">Нравится</string>
     <string name="track_menu_remove_from_favourites">Не нравится</string>
@@ -191,7 +192,7 @@
     <string name="track_item_cover_size_setting">Размер обложки</string>
     <string name="track_item_cover_corners_setting">Углы обложки</string>
     <string name="track_item_reset_settings_dialog_message">Вы точно хотите сброить опции отображения треков?</string>
-    <string name="track_item_artist_with_album">%s - %s</string>
+    <string name="track_item_artist_with_album">%s — %s</string>
 
 
     <!--ALBUM ITEM DISPLAY SETTING-->

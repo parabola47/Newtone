@@ -3,7 +3,6 @@ package com.parabola.newtone.adapter;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -243,8 +242,6 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
         onSwipeItemListener = listener;
     }
 
-    private final float[] longClickLastTouchDownXY = new float[2];
-
     @Override
     @CallSuper
     public void onBindViewHolder(VH holder, int position) {
@@ -253,18 +250,9 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
                 onItemClickListener.onItemClick(holder.getAdapterPosition());
             }
         });
-        holder.itemView.setOnTouchListener((v, event) -> {
-            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                longClickLastTouchDownXY[0] = event.getX();
-                longClickLastTouchDownXY[1] = event.getY();
-            }
-            return false;
-        });
         holder.itemView.setOnLongClickListener(v -> {
             if (onItemLongClickListener != null) {
-                onItemLongClickListener.onItemLongClick((ViewGroup) v,
-                        (int) longClickLastTouchDownXY[0], (int) longClickLastTouchDownXY[1],
-                        holder.getAdapterPosition());
+                onItemLongClickListener.onItemLongClick(holder.getAdapterPosition());
                 return true;
             }
             return false;
