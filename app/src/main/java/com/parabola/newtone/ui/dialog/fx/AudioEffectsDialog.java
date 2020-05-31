@@ -17,7 +17,6 @@ import com.parabola.newtone.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatDialogFragment;
 
 import static java.util.Objects.requireNonNull;
@@ -54,11 +53,6 @@ public final class AudioEffectsDialog extends MvpAppCompatDialogFragment {
         }
 
         return layout;
-    }
-
-    @OnClick(R.id.cancel)
-    public void onClickCancel() {
-        dismiss();
     }
 
     public static class AudioEffectsPagerAdapter extends FragmentPagerAdapter {

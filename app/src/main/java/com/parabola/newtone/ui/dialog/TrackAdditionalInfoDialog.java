@@ -75,7 +75,6 @@ public final class TrackAdditionalInfoDialog extends MvpAppCompatDialogFragment
 
         return new MaterialAlertDialogBuilder(requireContext())
                 .setView(layout)
-                .setNegativeButton(R.string.dialog_cancel, null)
                 .create();
     }
 
