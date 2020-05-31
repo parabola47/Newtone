@@ -62,7 +62,7 @@ public interface MainRouter {
     void openRenamePlaylistDialog(int playlistId);
     void openStartSleepTimerDialog();
     void openSleepTimerInfoDialog();
-    void openAddToPlaylistDialog(int trackId);
+    void openAddToPlaylistDialog(int... trackIds);
     void openSortingDialog(String sortingListType);
     void openTrackAdditionInfo(int trackId);
     void openAudioEffectsDialog();

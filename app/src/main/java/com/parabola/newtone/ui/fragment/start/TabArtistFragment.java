@@ -2,18 +2,22 @@ package com.parabola.newtone.ui.fragment.start;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ArtistAdapter;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabArtistPresenter;
 import com.parabola.newtone.mvp.view.TabArtistView;
@@ -57,12 +61,35 @@ public final class TabArtistFragment extends MvpAppCompatFragment
         artistsList.setAdapter(artistsAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
-        artistsAdapter.setOnItemClickListener(position -> {
-            int artistId = artistsAdapter.get(position).getId();
-            presenter.onItemClick(artistId);
-        });
+        artistsAdapter.setOnItemClickListener(position -> presenter.onItemClick(artistsAdapter.get(position).getId()));
+        artistsAdapter.setOnItemLongClickListener(this::showArtistContextMenu);
 
         return layout;
+    }
+
+    private void showArtistContextMenu(int position) {
+        Artist selectedArtist = artistsAdapter.get(position);
+        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.artist_menu);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(selectedArtist.getName())
+                .setAdapter(menuAdapter, (d, which) ->
+                        handleSelectedMenu(menuAdapter.getItem(which), selectedArtist))
+                .create();
+        dialog.setOnShowListener(d -> artistsAdapter.setContextSelected(position));
+        dialog.setOnDismissListener(d -> artistsAdapter.clearContextSelected());
+        dialog.show();
+    }
+
+    private void handleSelectedMenu(MenuItem menuItem, Artist selectedArtist) {
+        switch (menuItem.getItemId()) {
+            case R.id.shuffle:
+                presenter.onClickMenuShuffle(selectedArtist.getId());
+                break;
+            case R.id.add_to_playlist:
+                presenter.onClickMenuAddToPlaylist(selectedArtist.getId());
+                break;
+        }
     }
 
 

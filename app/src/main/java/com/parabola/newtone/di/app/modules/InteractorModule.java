@@ -70,8 +70,10 @@ public final class InteractorModule {
 
     @Singleton
     @Provides
-    ArtistInteractor provideArtistInteractor(ArtistRepository artistRepo, SortingRepository sortingRepo) {
-        return new ArtistInteractor(artistRepo, sortingRepo);
+    ArtistInteractor provideArtistInteractor(ArtistRepository artistRepo, TrackRepository trackRepo,
+                                             PlayerInteractor playerInteractor,
+                                             SortingRepository sortingRepo) {
+        return new ArtistInteractor(artistRepo, trackRepo, playerInteractor, sortingRepo);
     }
 
     @Singleton

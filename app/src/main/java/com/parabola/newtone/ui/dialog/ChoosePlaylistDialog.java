@@ -43,17 +43,17 @@ public final class ChoosePlaylistDialog extends MvpAppCompatDialogFragment
 
     @BindView(R.id.playlist) ListView playlists;
 
-    private static final String SELECTED_TRACK_BUNDLE_KEY = "track id";
-    private int trackId;
+    private static final String TRACK_IDS_BUNDLE_KEY = "track ids";
+    private int[] trackIds;
 
 
     public ChoosePlaylistDialog() {
     }
 
 
-    public static ChoosePlaylistDialog newInstance(int selectedTrackId) {
+    public static ChoosePlaylistDialog newInstance(int... trackIds) {
         Bundle args = new Bundle();
-        args.putInt(SELECTED_TRACK_BUNDLE_KEY, selectedTrackId);
+        args.putIntArray(TRACK_IDS_BUNDLE_KEY, trackIds);
 
         ChoosePlaylistDialog fragment = new ChoosePlaylistDialog();
         fragment.setArguments(args);
@@ -91,8 +91,8 @@ public final class ChoosePlaylistDialog extends MvpAppCompatDialogFragment
     @ProvidePresenter
     ChoosePlaylistPresenter providePresenter() {
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        trackId = requireArguments().getInt(SELECTED_TRACK_BUNDLE_KEY);
-        return new ChoosePlaylistPresenter(appComponent, trackId);
+        trackIds = requireArguments().getIntArray(TRACK_IDS_BUNDLE_KEY);
+        return new ChoosePlaylistPresenter(appComponent, trackIds);
     }
 
     @Override
@@ -142,10 +142,13 @@ public final class ChoosePlaylistDialog extends MvpAppCompatDialogFragment
             tracksCount.setText(trackCountStr);
 
 
-            boolean playlistContainThisTrack = Observable.fromIterable(playlist.getPlaylistTracks())
-                    .map(Playlist.TrackItem::getTrackId)
-                    .any(trackId -> ChoosePlaylistDialog.this.trackId == trackId)
-                    .blockingGet();
+            boolean playlistContainThisTrack = false;
+            if (trackIds.length == 1) {
+                playlistContainThisTrack = Observable.fromIterable(playlist.getPlaylistTracks())
+                        .map(Playlist.TrackItem::getTrackId)
+                        .any(trackId -> ChoosePlaylistDialog.this.trackIds[0] == trackId)
+                        .blockingGet();
+            }
 
             playlistHasTrackImg.setVisibility(playlistContainThisTrack ? View.VISIBLE : View.GONE);
 

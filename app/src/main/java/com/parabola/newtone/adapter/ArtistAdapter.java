@@ -1,5 +1,6 @@
 package com.parabola.newtone.adapter;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 
@@ -42,6 +44,7 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
     @Override
     public void onBindViewHolder(@NonNull ArtistViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
+        Context context = holder.itemView.getContext();
 
         Artist artistItem = get(holder.getAdapterPosition());
 
@@ -53,6 +56,16 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
         holder.artistTxt.setText(artistName);
 
         holder.artistInfo.setText(getTracksAndAlbumsCount(artistItem));
+
+        if (isContextSelected(holder.getAdapterPosition())) {
+            holder.artistTxt.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.artistInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+        } else {
+            holder.artistTxt.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.artistInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
+        }
     }
 
     private void buildItemLayout(ArtistViewHolder holder) {

@@ -26,6 +26,6 @@ public interface PlaylistRepository {
 
     Observable<Irrelevant> observePlaylistsUpdates();
 
-    Completable addTrackToPlaylist(int playlistId, int trackId);
+    Completable addTracksToPlaylist(int playlistId, int... tracksIds);
     Completable removeTrack(int playlistId, int trackId);
 }

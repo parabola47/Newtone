@@ -22,12 +22,12 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
 
     @Inject MainRouter router;
 
-    private final int trackId;
+    private final int[] trackIds;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    public ChoosePlaylistPresenter(AppComponent appComponent, int trackId) {
+    public ChoosePlaylistPresenter(AppComponent appComponent, int[] trackIds) {
         appComponent.inject(this);
-        this.trackId = trackId;
+        this.trackIds = trackIds;
     }
 
     @Override
@@ -55,7 +55,9 @@ public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistVi
     }
 
     public void onClickPlaylistItem(int playlistId) {
-        playlistRepo.addTrackToPlaylist(playlistId, trackId)
+        playlistRepo.addTracksToPlaylist(playlistId, trackIds)
+                .subscribeOn(schedulers.io())
+                .observeOn(schedulers.ui())
                 .subscribe(new CallbackCompletableObserver(getViewState()::closeScreen));
     }
 }

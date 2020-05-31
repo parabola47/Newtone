@@ -249,38 +249,67 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
 
     @Override
-    public Completable addTrackToPlaylist(int playlistId, int trackId) {
-        return Single
-                .fromCallable(() -> {
-                    String SELECTION = Members.AUDIO_ID + "=?";
+    public Completable addTracksToPlaylist(int playlistId, int... trackIds) {
+        Uri uri = Members.getContentUri("external", playlistId);
 
-                    try (Cursor cursor = contentResolver.query(Members.getContentUri("external", playlistId), null,
-                            SELECTION, new String[]{String.valueOf(trackId)},
-                            null)) {
-                        return cursor != null && cursor.getCount() > 0;
+        return Single
+                //если трек уже присутвовал в плейлисте, то он игнорируется
+                .fromCallable(() -> discardTracksThatPlaylistHas(uri, trackIds))
+                .map(insertTrackIds -> {
+                    try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
+                        int base = cursor != null ? cursor.getCount() : 0;
+
+                        ContentValues[] valuesArray = new ContentValues[insertTrackIds.size()];
+                        for (int i = 0; i < insertTrackIds.size(); i++) {
+                            ContentValues values = new ContentValues(2);
+                            values.put(Members.PLAY_ORDER, base + insertTrackIds.get(i));
+                            values.put(Members.AUDIO_ID, insertTrackIds.get(i));
+                            valuesArray[i] = values;
+                        }
+
+                        return contentResolver.bulkInsert(uri, valuesArray);
                     }
                 })
-                .flatMapCompletable(trackAlreadyInPlaylist -> {
-                    if (trackAlreadyInPlaylist) {
+                .flatMapCompletable(insertedTracksCount -> {
+                    if (insertedTracksCount == 0)
                         return Completable.complete();
-                    }
-                    return Completable.fromAction(() -> {
-                        Uri uri = Members.getContentUri("external", playlistId);
-
-                        try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
-                            int base = cursor != null ? cursor.getCount() : 0;
-
-                            ContentValues values = new ContentValues();
-                            values.put(Members.PLAY_ORDER, base + trackId);
-                            values.put(Members.AUDIO_ID, trackId);
-
-                            if (contentResolver.insert(uri, values) != null)
-                                playlistsUpdates.onNext(Irrelevant.INSTANCE);
-                        }
-                    });
+                    return Completable.fromAction(() -> playlistsUpdates.onNext(Irrelevant.INSTANCE));
                 });
     }
 
+    private List<Integer> discardTracksThatPlaylistHas(Uri uri, int... trackIds) {
+        List<Integer> newTrackIds = new ArrayList<>(trackIds.length);
+        for (int tracksId : trackIds) {
+            newTrackIds.add(tracksId);
+        }
+
+        try (Cursor cursor = contentResolver.query(
+                uri,
+                new String[]{Members.AUDIO_ID},
+                Members.AUDIO_ID + " IN (" + idsToString(trackIds) + ")",
+                null, null)) {
+            if (cursor == null || !cursor.moveToFirst())
+                return newTrackIds;
+
+            do {
+                newTrackIds.remove((Integer) cursor.getInt(0));
+            } while (cursor.moveToNext());
+
+            return newTrackIds;
+        }
+    }
+
+    private String idsToString(int... ids) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < ids.length; i++) {
+            builder.append(ids[i]);
+            if (i != ids.length - 1)
+                builder.append(',');
+        }
+
+        return builder.toString();
+    }
 
     @Override
     public Completable removeTrack(int playlistId, int trackId) {

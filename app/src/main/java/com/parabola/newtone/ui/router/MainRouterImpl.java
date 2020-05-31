@@ -425,8 +425,8 @@ public final class MainRouterImpl implements MainRouter {
 
 
     @Override
-    public void openAddToPlaylistDialog(int trackId) {
-        ChoosePlaylistDialog dialogFragment = ChoosePlaylistDialog.newInstance(trackId);
+    public void openAddToPlaylistDialog(int... trackIds) {
+        ChoosePlaylistDialog dialogFragment = ChoosePlaylistDialog.newInstance(trackIds);
         dialogFragment.show(activity.getSupportFragmentManager(), null);
     }
 
