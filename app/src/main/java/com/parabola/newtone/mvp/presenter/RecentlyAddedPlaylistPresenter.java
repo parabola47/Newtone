@@ -43,6 +43,7 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
         disposables.addAll(
                 refreshPlaylists(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeCurrentTrack(),
                 observeTrackDeleting());
     }
@@ -56,6 +57,11 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeCurrentTrack() {

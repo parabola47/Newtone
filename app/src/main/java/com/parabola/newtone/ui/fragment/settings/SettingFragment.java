@@ -50,6 +50,7 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     @BindView(R.id.color_theme_desc) TextView colorThemeDesc;
     @BindView(R.id.notification_artwork_show_switch) SwitchCompat notificationArtworkShowSwitch;
     @BindView(R.id.notification_color_switch) SwitchCompat notificationColorSwitch;
+    @BindView(R.id.show_item_divider_switch) SwitchCompat showListItemDividerSwitch;
     @BindView(R.id.notification_color_bar) ViewGroup notificationColorBar;
     @BindView(R.id.app_info_version) TextView appInfoVersion;
 
@@ -88,11 +89,13 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     @Override
     public void setCurrentColorTheme(ColorTheme colorTheme) {
         this.currentColorTheme = colorTheme;
-    }
-
-    @Override
-    public void setColorThemeDescription(String colorThemeDescription) {
-        colorThemeDesc.setText(colorThemeDescription);
+        int stringResId;
+        switch (colorTheme) {
+            case DARK: stringResId = R.string.setting_color_theme_desc_dark; break;
+            case LIGHT: stringResId = R.string.setting_color_theme_desc_light; break;
+            default: throw new IllegalArgumentException();
+        }
+        colorThemeDesc.setText(stringResId);
     }
 
     @OnClick(R.id.color_theme_bar)
@@ -143,6 +146,17 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     @OnClick(R.id.notification_artwork_show_bar)
     public void onClickNotificationArtworkShowSetting() {
         presenter.onClickNotificationArtworkShowSetting();
+    }
+
+
+    @Override
+    public void setShowListItemDividerSwitchChecked(boolean isChecked) {
+        showListItemDividerSwitch.setChecked(isChecked);
+    }
+
+    @OnClick(R.id.show_item_divider_bar)
+    public void onClickShowItemDivider() {
+        presenter.onClickShowItemDivider();
     }
 
 

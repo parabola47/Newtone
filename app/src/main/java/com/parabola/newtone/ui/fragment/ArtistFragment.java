@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
@@ -40,6 +41,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     @BindView(R.id.tracks_count) TextView tracksCountTxt;
     @BindView(R.id.albums_list) RecyclerView albumsList;
+    private DividerItemDecoration itemDecoration;
 
     @BindView(R.id.main) TextView artistNameTxt;
     @BindView(R.id.additional_info) TextView albumsCountTxt;
@@ -78,6 +80,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         albumsList.setAdapter(albumsAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         albumsAdapter.setOnItemClickListener(position -> {
             int albumId = albumsAdapter.get(position).getId();
@@ -147,6 +150,14 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
                 ? calculateAlbumColumnCount(requireActivity())
                 : 1;
         albumsAdapter.setViewSettings(viewSettings, spanCount);
+    }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        albumsList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            albumsList.addItemDecoration(itemDecoration);
     }
 
     @Override

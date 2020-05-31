@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +40,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
 
     @BindView(R.id.albums_list) RecyclerView albumsList;
+    private DividerItemDecoration itemDecoration;
 
     @InjectPresenter TabAlbumPresenter presenter;
 
@@ -54,6 +56,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
         albumsList.setAdapter(albumsAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         albumsAdapter.setOnItemClickListener(position -> {
             int albumId = albumsAdapter.get(position).getId();
@@ -96,6 +99,13 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
         albumsAdapter.setViewSettings(viewSettings, spanCount);
     }
 
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        albumsList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            albumsList.addItemDecoration(itemDecoration);
+    }
 
     @Override
     public String getListType() {

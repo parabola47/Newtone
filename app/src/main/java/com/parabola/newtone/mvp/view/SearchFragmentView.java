@@ -23,6 +23,7 @@ public interface SearchFragmentView extends MvpView {
 
     void refreshTracks(List<Track> tracks);
     void setTrackItemViewSettings(TrackItemView trackItemView);
+    void setItemDividerShowing(boolean showed);
 
     void refreshPlaylists(List<Playlist> playlists);
 

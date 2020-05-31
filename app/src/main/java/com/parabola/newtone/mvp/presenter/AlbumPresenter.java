@@ -54,8 +54,10 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
     protected void onFirstViewAttach() {
         disposables.addAll(
                 loadAlbum(),
-                observeCurrentTrack(), observeSortingUpdates(),
+                observeCurrentTrack(),
+                observeSortingUpdates(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeTrackDeleting());
     }
 
@@ -86,6 +88,11 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeTrackDeleting() {

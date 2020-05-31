@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,7 @@ public final class TabTrackFragment extends MvpAppCompatFragment
     private static final String LOG_TAG = TabTrackFragment.class.getSimpleName();
 
     @BindView(R.id.tracks_list) RecyclerView tracksList;
+    private DividerItemDecoration itemDecoration;
 
     @InjectPresenter TabTrackPresenter presenter;
 
@@ -61,6 +63,7 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
 
         tracksList.setAdapter(tracksAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
@@ -151,6 +154,15 @@ public final class TabTrackFragment extends MvpAppCompatFragment
     public void setItemViewSettings(TrackItemView viewSettings) {
         tracksAdapter.setViewSettings(viewSettings);
     }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        tracksList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            tracksList.addItemDecoration(itemDecoration);
+    }
+
 
     @Override
     public void setCurrentTrack(int trackId) {

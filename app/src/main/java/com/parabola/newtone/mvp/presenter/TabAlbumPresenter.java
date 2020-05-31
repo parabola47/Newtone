@@ -2,10 +2,12 @@ package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.AlbumInteractor;
+import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabAlbumView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -14,6 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import moxy.InjectViewState;
@@ -74,8 +77,14 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
     }
 
     private Disposable observeAlbumItemViewUpdates() {
-        return viewSettingsInteractor.observeAlbumItemViewUpdates()
-                .subscribe(getViewState()::setAlbumViewSettings);
+        return Observable.combineLatest(viewSettingsInteractor.observeAlbumItemViewUpdates(), viewSettingsInteractor.observeIsItemDividerShowed(),
+                (albumItemView, isItemDividerShowed) -> {
+                    getViewState().setAlbumViewSettings(albumItemView);
+                    getViewState().setItemDividerShowing(isItemDividerShowed && albumItemView.viewType == AlbumViewType.LIST);
+
+                    return Irrelevant.INSTANCE;
+                })
+                .subscribe();
     }
 
     public void onItemClick(int albumId) {

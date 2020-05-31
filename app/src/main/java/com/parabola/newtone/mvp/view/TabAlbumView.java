@@ -10,9 +10,10 @@ import moxy.viewstate.strategy.alias.AddToEndSingle;
 
 @AddToEndSingle
 public interface TabAlbumView extends MvpView {
+
     void refreshAlbums(List<Album> albums);
     void setSectionShowing(boolean enable);
 
     void setAlbumViewSettings(AlbumItemView albumViewSettings);
-
+    void setItemDividerShowing(boolean showed);
 }

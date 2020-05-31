@@ -3,6 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabPlaylistView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -22,6 +23,7 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
     @Inject PlaylistRepository playlistRepo;
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -32,7 +34,9 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
     @Override
     protected void onFirstViewAttach() {
         disposables.addAll(
-                observePlaylistsUpdates(), observeTrackDeleting());
+                observePlaylistsUpdates(),
+                observeIsItemDividerShowed(),
+                observeTrackDeleting());
     }
 
     @Override
@@ -46,6 +50,11 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(getViewState()::refreshPlaylists);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeTrackDeleting() {

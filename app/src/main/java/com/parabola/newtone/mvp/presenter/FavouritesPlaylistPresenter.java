@@ -44,6 +44,7 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
         disposables.addAll(
                 observeFavouritesChanged(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeCurrentTrackChanged(),
                 observeTrackDeleting());
     }
@@ -71,6 +72,10 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
                 .subscribe(getViewState()::setItemViewSettings);
     }
 
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
+    }
 
     private Disposable observeCurrentTrackChanged() {
         return playerInteractor.onChangeCurrentTrackId()

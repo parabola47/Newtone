@@ -2,6 +2,7 @@ package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.AlbumInteractor;
+import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.repository.ArtistRepository;
 import com.parabola.domain.repository.SortingRepository;
@@ -15,6 +16,7 @@ import java.util.AbstractMap;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -86,8 +88,14 @@ public final class ArtistPresenter extends MvpPresenter<ArtistView> {
     }
 
     private Disposable observeAlbumItemViewUpdates() {
-        return viewSettingsInteractor.observeAlbumItemViewUpdates()
-                .subscribe(getViewState()::setAlbumViewSettings);
+        return Observable.combineLatest(viewSettingsInteractor.observeAlbumItemViewUpdates(), viewSettingsInteractor.observeIsItemDividerShowed(),
+                (albumItemView, isItemDividerShowed) -> {
+                    getViewState().setAlbumViewSettings(albumItemView);
+                    getViewState().setItemDividerShowing(isItemDividerShowed && albumItemView.viewType == ViewSettingsInteractor.AlbumItemView.AlbumViewType.LIST);
+
+                    return Irrelevant.INSTANCE;
+                })
+                .subscribe();
     }
 
 

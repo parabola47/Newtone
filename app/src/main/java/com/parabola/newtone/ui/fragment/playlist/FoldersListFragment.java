@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +44,7 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
     }
 
     @BindView(R.id.folders_lv) RecyclerView foldersList;
+    private DividerItemDecoration itemDecoration;
 
     private final BaseAdapter<Folder> foldersAdapter = new FolderAdapter();
 
@@ -62,6 +64,8 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
 
         foldersList.setAdapter((RecyclerView.Adapter) foldersAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+
         foldersAdapter.setOnItemClickListener(position ->
                 presenter.onClickFolderItem(foldersAdapter.get(position).getAbsolutePath()));
 
@@ -83,6 +87,15 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
         foldersCount.setText(foldersCountStr);
         foldersAdapter.replaceAll(folders);
     }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        foldersList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            foldersList.addItemDecoration(itemDecoration);
+    }
+
 
     @Override
     protected void onClickBackButton() {

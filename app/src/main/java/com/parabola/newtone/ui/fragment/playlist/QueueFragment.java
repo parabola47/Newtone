@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
@@ -39,6 +40,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
     @BindView(R.id.additional_info) TextView songsCount;
 
     @BindView(R.id.tracks_list) RecyclerView queueList;
+    private DividerItemDecoration itemDecoration;
 
     private final QueueAdapter queueAdapter = new QueueAdapter();
 
@@ -59,6 +61,8 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         playlistTitle.setText(R.string.playlist_queue);
 
         queueList.setAdapter(queueAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+
         queueAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
         queueAdapter.setOnRemoveClickListener(presenter::onRemoveItem);
         queueAdapter.setOnMoveItemListener(presenter::onMoveItem);
@@ -98,6 +102,14 @@ public final class QueueFragment extends BaseSwipeToBackFragment
     @Override
     public void setItemViewSettings(TrackItemView viewSettings) {
         queueAdapter.setViewSettings(viewSettings);
+    }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        queueList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            queueList.addItemDecoration(itemDecoration);
     }
 
 

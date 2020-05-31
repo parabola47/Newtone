@@ -61,6 +61,7 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
                 observeCurrentTrack(),
                 observeSortingUpdates(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeTrackDeleting());
     }
 
@@ -106,6 +107,11 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeTrackDeleting() {

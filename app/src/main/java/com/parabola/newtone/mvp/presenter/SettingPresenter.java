@@ -4,7 +4,6 @@ import com.parabola.domain.interactor.player.PlayerSetting;
 import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
-import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SettingView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -32,6 +31,7 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
         disposables.addAll(
                 observeIsNotificationBackgroundColorized(),
                 observeNotificationArtworkShow(),
+                observeIsItemDividerShowed(),
                 observeColorTheme());
     }
 
@@ -42,15 +42,7 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
 
     private Disposable observeColorTheme() {
         return viewSettingsInteractor.observeColorTheme()
-                .doOnNext(getViewState()::setCurrentColorTheme)
-                .map(colorTheme -> {
-                    switch (colorTheme) {
-                        case DARK: return resourceRepo.getString(R.string.setting_color_theme_desc_dark);
-                        case LIGHT: return resourceRepo.getString(R.string.setting_color_theme_desc_light);
-                        default: return "";
-                    }
-                })
-                .subscribe(getViewState()::setColorThemeDescription);
+                .subscribe(getViewState()::setCurrentColorTheme);
     }
 
     private Disposable observeIsNotificationBackgroundColorized() {
@@ -63,9 +55,16 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
                 .subscribe(getViewState()::setNotificationArtworkSwitchChecked);
     }
 
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setShowListItemDividerSwitchChecked);
+    }
+
+
     public void onClickBack() {
         router.goBack();
     }
+
 
     public void onSelectColorTheme(ColorTheme colorTheme) {
         viewSettingsInteractor.setColorTheme(colorTheme);
@@ -77,6 +76,10 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
 
     public void onClickNotificationArtworkShowSetting() {
         playerSetting.setNotificationArtworkShow(!playerSetting.isNotificationArtworkShow());
+    }
+
+    public void onClickShowItemDivider() {
+        viewSettingsInteractor.setIsItemDividerShowed(!viewSettingsInteractor.isItemDividerShowed());
     }
 
     public void onClickTrackItemViewSettings() {

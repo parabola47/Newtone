@@ -3,6 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.repository.FolderRepository;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.FoldersListView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -20,6 +21,7 @@ public final class FoldersListPresenter extends MvpPresenter<FoldersListView> {
     @Inject MainRouter router;
     @Inject FolderRepository folderRepo;
     @Inject TrackRepository trackRepo;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SchedulerProvider schedulers;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -32,6 +34,7 @@ public final class FoldersListPresenter extends MvpPresenter<FoldersListView> {
     protected void onFirstViewAttach() {
         disposables.addAll(
                 refreshList(),
+                observeIsItemDividerShowed(),
                 observeTrackDeleting());
     }
 
@@ -49,6 +52,11 @@ public final class FoldersListPresenter extends MvpPresenter<FoldersListView> {
                 .subscribe(getViewState()::refreshFolders);
     }
 
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
+    }
+
     private Disposable observeTrackDeleting() {
         return trackRepo.observeTrackDeleting()
                 .flatMapSingle(removedTrackId -> folderRepo.getAll())
@@ -56,6 +64,7 @@ public final class FoldersListPresenter extends MvpPresenter<FoldersListView> {
                 .observeOn(schedulers.ui())
                 .subscribe(getViewState()::refreshFolders, error -> router.backToRoot());
     }
+
 
     public void onClickBack() {
         router.goBack();

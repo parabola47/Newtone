@@ -179,6 +179,8 @@
     <string name="setting_notification_color_desc">Менять цвет в зависимости от обложки альбома</string>
     <string name="setting_notification_artwork_show_title">Обложка альбома</string>
     <string name="setting_notification_artwork_show_desc">Показывать обложку альбома в уведомлении</string>
+    <string name="setting_show_item_divider_title">Разделители в списках</string>
+    <string name="setting_show_item_divider_desc">Показывать разделители между элементами в списках треков, альбомов, артистов и т.д.</string>
     <string name="setting_privacy_policy_title">Политика конфиденциальности</string>
     <string name="reset_to_default_button">Восстановить по умолчанию</string>
     <string name="reset_settings_dialog_title">Сбросить настройки</string>

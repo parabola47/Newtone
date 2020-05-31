@@ -10,8 +10,10 @@ import moxy.viewstate.strategy.alias.AddToEndSingle;
 
 @AddToEndSingle
 public interface TabArtistView extends MvpView {
+
     void refreshArtists(List<Artist> artists);
     void setItemViewSettings(ArtistItemView viewSettings);
+    void setItemDividerShowing(boolean showed);
 
     void setSectionShowing(boolean enable);
 }

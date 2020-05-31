@@ -54,6 +54,7 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
                 observeCurrentTrack(),
                 observeFolderTracksSorting(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeTrackDeleting());
     }
 
@@ -89,6 +90,11 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeTrackDeleting() {

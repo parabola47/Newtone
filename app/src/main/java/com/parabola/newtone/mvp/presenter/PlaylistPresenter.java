@@ -51,6 +51,7 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
                 refreshPlaylistInfo(),
                 observePlaylistUpdates(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeCurrentTrackUpdates(),
                 observeTrackDeleting());
     }
@@ -85,6 +86,11 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeTrackDeleting() {

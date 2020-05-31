@@ -14,6 +14,14 @@ public interface ViewSettingsInteractor {
     Observable<ColorTheme> observeColorTheme();
 
 
+    //L I S T    I T E M S
+    boolean DEFAULT_IS_ITEM_DIVIDER_SHOWED = false;
+
+    boolean isItemDividerShowed();
+    void setIsItemDividerShowed(boolean showed);
+    Observable<Boolean> observeIsItemDividerShowed();
+
+
     //T R A C K    I T E M S
     TrackItemView getTrackItemViewSettings();
     void setTrackItemView(TrackItemView trackItemView);

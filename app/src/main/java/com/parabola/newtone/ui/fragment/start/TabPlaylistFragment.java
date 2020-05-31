@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -41,6 +42,7 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
 
     @BindView(R.id.playlists) RecyclerView playlists;
     @BindView(R.id.sys_playlists) RecyclerView sysPlaylists;
+    private DividerItemDecoration itemDecoration;
 
     private final BaseAdapter<Playlist> playlistAdapter = new PlaylistAdapter();
     private final SystemPlaylistAdapter sysPlaylistAdapter = new SystemPlaylistAdapter();
@@ -60,11 +62,11 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
         ButterKnife.bind(this, layout);
 
         playlists.setAdapter((RecyclerView.Adapter) playlistAdapter);
+        sysPlaylists.setAdapter(sysPlaylistAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         playlistAdapter.setOnItemClickListener(position -> presenter.onClickPlaylistItem(playlistAdapter.get(position).getId()));
         playlistAdapter.setOnItemLongClickListener(this::showPlaylistContextMenu);
-
-        sysPlaylists.setAdapter(sysPlaylistAdapter);
 
         return layout;
     }
@@ -114,6 +116,18 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
     public void refreshPlaylists(List<Playlist> playlists) {
         playlistAdapter.replaceAll(playlists);
     }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        sysPlaylists.removeItemDecoration(itemDecoration);
+        playlists.removeItemDecoration(itemDecoration);
+
+        if (showed) {
+            sysPlaylists.addItemDecoration(itemDecoration);
+            playlists.addItemDecoration(itemDecoration);
+        }
+    }
+
 
     @Override
     public void smoothScrollToTop() {

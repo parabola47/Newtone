@@ -20,6 +20,8 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
 
     private final BehaviorSubject<ColorTheme> colorThemeObserver;
 
+    private final BehaviorSubject<Boolean> isItemDividerShowedObserver;
+
     private final BehaviorSubject<TrackItemView> trackItemViewObserver;
     private final BehaviorSubject<AlbumItemView> albumItemViewObserver;
     private final BehaviorSubject<ArtistItemView> artistItemViewObserver;
@@ -31,6 +33,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         AppCompatDelegate.setDefaultNightMode(colorTheme == ColorTheme.DARK ? MODE_NIGHT_YES : MODE_NIGHT_NO);
         colorThemeObserver = BehaviorSubject.createDefault(colorTheme);
 
+        isItemDividerShowedObserver = BehaviorSubject.createDefault(isItemDividerShowed());
 
         TrackItemView trackItemView = new TrackItemView(
                 getTrackItemTextSize(),
@@ -83,6 +86,29 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
     public Observable<ColorTheme> observeColorTheme() {
         return colorThemeObserver;
     }
+
+    //L I S T    I T E M S
+    private static final String IS_ITEM_DIVIDER_SHOWED_KEY = "com.parabola.data.settings.IS_ITEM_DIVIDER_SHOWED";
+
+    @Override
+    public boolean isItemDividerShowed() {
+        return prefs.getBoolean(IS_ITEM_DIVIDER_SHOWED_KEY, DEFAULT_IS_ITEM_DIVIDER_SHOWED);
+    }
+
+    @Override
+    public void setIsItemDividerShowed(boolean showed) {
+        prefs.edit()
+                .putBoolean(IS_ITEM_DIVIDER_SHOWED_KEY, showed)
+                .apply();
+
+        isItemDividerShowedObserver.onNext(showed);
+    }
+
+    @Override
+    public Observable<Boolean> observeIsItemDividerShowed() {
+        return isItemDividerShowedObserver;
+    }
+
 
     //    T R A C K    I T E M S
     private static final String TRACK_ITEM_TEXT_SIZE_KEY = "com.parabola.data.settings.TRACK_ITEM_TEXT_SIZE";

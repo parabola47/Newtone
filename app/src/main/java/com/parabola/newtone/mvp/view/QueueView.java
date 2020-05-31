@@ -6,20 +6,22 @@ import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import java.util.List;
 
 import moxy.MvpView;
-import moxy.viewstate.strategy.AddToEndSingleStrategy;
-import moxy.viewstate.strategy.OneExecutionStateStrategy;
-import moxy.viewstate.strategy.StateStrategyType;
+import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
-@StateStrategyType(AddToEndSingleStrategy.class)
+@AddToEndSingle
 public interface QueueView extends MvpView {
+
     void refreshTracks(List<Track> tracks);
     void setItemViewSettings(TrackItemView viewSettings);
+    void setItemDividerShowing(boolean showed);
+
     void setTrackCount(int tracksCount);
     void setCurrentTrackPosition(int currentTrackPosition);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
+    @OneExecution
     void removeTrackByPosition(int position);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
+    @OneExecution
     void goToItem(int itemPosition);
 }

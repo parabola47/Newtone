@@ -41,6 +41,7 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
         disposables.addAll(
                 observeTracklistUpdates(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeCurrentTrackUpdates(),
                 observeTrackRemoving(),
                 observeTrackMoving()
@@ -77,6 +78,10 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
                 .subscribe(getViewState()::setItemViewSettings);
     }
 
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
+    }
 
     private Disposable observeCurrentTrackUpdates() {
         return playerInteractor.onChangeCurrentTrackId()

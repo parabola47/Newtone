@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +49,8 @@ public final class FolderFragment extends BaseSwipeToBackFragment
     @BindView(R.id.additional_info) TextView tracksCount;
     @BindView(R.id.tracks_list) RecyclerView tracksList;
     @BindView(R.id.main) TextView folderTxt;
+    private DividerItemDecoration itemDecoration;
+
 
     @NonNull
     @Override
@@ -58,6 +61,8 @@ public final class FolderFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         tracksList.setAdapter(tracksAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+
         tracksAdapter.setOnItemClickListener(position -> presenter.onTrackClick(tracksAdapter.getAll(), position));
         tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
@@ -142,6 +147,15 @@ public final class FolderFragment extends BaseSwipeToBackFragment
     public void setItemViewSettings(TrackItemView viewSettings) {
         tracksAdapter.setViewSettings(viewSettings);
     }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        tracksList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            tracksList.addItemDecoration(itemDecoration);
+    }
+
 
     @Override
     public void setSectionShowing(boolean enable) {

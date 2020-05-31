@@ -17,5 +17,6 @@ public interface ArtistView extends MvpView {
     void refreshAlbums(List<Album> albums);
 
     void setAlbumViewSettings(AlbumItemView albumViewSettings);
+    void setItemDividerShowing(boolean showed);
 
 }

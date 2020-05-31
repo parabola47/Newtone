@@ -179,6 +179,8 @@
     <string name="setting_notification_color_desc">Change color depending on the cover</string>
     <string name="setting_notification_artwork_show_title">Notification artwork</string>
     <string name="setting_notification_artwork_show_desc">Show album artwork in notification</string>
+    <string name="setting_show_item_divider_title">Dividers in lists</string>
+    <string name="setting_show_item_divider_desc">Show dividers between items in lists of tracks, albums, artists etc…</string>
     <string name="setting_privacy_policy_title">Privacy Policy</string>
     <string name="reset_to_default_button">Reset to default</string>
     <string name="reset_settings_dialog_title">Reset settings</string>

@@ -41,7 +41,9 @@ public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
         getViewState().clearAllLists();
         getViewState().focusOnSearchView();
 
-        disposables.addAll(observeTrackItemViewUpdates());
+        disposables.addAll(
+                observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed());
     }
 
     @Override
@@ -52,6 +54,11 @@ public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
                 .subscribe(getViewState()::setTrackItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     public void onClickBackButton() {

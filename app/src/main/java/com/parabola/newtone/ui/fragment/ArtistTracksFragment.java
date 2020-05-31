@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +46,7 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
     @InjectPresenter ArtistTracksPresenter presenter;
 
     @BindView(R.id.tracks_list) RecyclerView tracksList;
+    private DividerItemDecoration itemDecoration;
 
     @BindView(R.id.main) TextView artistTxt;
     @BindView(R.id.additional_info) TextView tracksCountTxt;
@@ -61,6 +63,7 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         tracksList.setAdapter(tracksAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
@@ -150,6 +153,15 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
     public void setItemViewSettings(TrackItemView viewSettings) {
         tracksAdapter.setViewSettings(viewSettings);
     }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        tracksList.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            tracksList.addItemDecoration(itemDecoration);
+    }
+
 
     @Override
     public void setSectionShowing(boolean enable) {

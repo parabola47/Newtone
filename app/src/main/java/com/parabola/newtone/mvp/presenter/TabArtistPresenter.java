@@ -44,6 +44,7 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
         disposables.addAll(
                 observeAllArtistsSorting(),
                 observeTrackItemViewUpdates(),
+                observeIsItemDividerShowed(),
                 observeTrackDeleting());
     }
 
@@ -70,6 +71,11 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
     private Disposable observeTrackItemViewUpdates() {
         return viewSettingsInteractor.observeArtistItemViewUpdates()
                 .subscribe(getViewState()::setItemViewSettings);
+    }
+
+    private Disposable observeIsItemDividerShowed() {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+                .subscribe(getViewState()::setItemDividerShowing);
     }
 
     private Disposable observeTrackDeleting() {

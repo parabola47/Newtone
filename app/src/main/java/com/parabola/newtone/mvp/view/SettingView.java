@@ -7,9 +7,9 @@ import moxy.viewstate.strategy.alias.AddToEndSingle;
 
 @AddToEndSingle
 public interface SettingView extends MvpView {
-    void setColorThemeDescription(String colorThemeDescription);
     void setNotificationColorSwitchChecked(boolean isChecked);
     void setNotificationArtworkSwitchChecked(boolean isChecked);
+    void setShowListItemDividerSwitchChecked(boolean isChecked);
 
     void setCurrentColorTheme(ColorTheme colorTheme);
 }

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
@@ -52,7 +53,7 @@ public final class SearchFragment extends MvpAppCompatFragment
 
     @BindView(R.id.searchView) SearchView searchView;
     @BindView(R.id.loadDataProgressBarContainer) ViewGroup loadDataProgressBarContainer;
-
+    private DividerItemDecoration itemDecoration;
 
     @BindView(R.id.artistsView) RecyclerView artistsView;
     @BindView(R.id.artistListHeader) TextView artistListHeader;
@@ -92,6 +93,7 @@ public final class SearchFragment extends MvpAppCompatFragment
         albumsView.setAdapter(albumAdapter);
         tracksView.setAdapter(trackAdapter);
         playlistView.setAdapter(playlistAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         AlbumItemView newAlbumItemView = new AlbumItemView(AlbumViewType.LIST, 16, 16, 64, 4);
         albumAdapter.setViewSettings(newAlbumItemView, 1);
@@ -203,6 +205,22 @@ public final class SearchFragment extends MvpAppCompatFragment
     @Override
     public void setTrackItemViewSettings(ViewSettingsInteractor.TrackItemView trackItemView) {
         trackAdapter.setViewSettings(trackItemView);
+    }
+
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        artistsView.removeItemDecoration(itemDecoration);
+        albumsView.removeItemDecoration(itemDecoration);
+        tracksView.removeItemDecoration(itemDecoration);
+        playlistView.removeItemDecoration(itemDecoration);
+
+        if (showed) {
+            artistsView.addItemDecoration(itemDecoration);
+            albumsView.addItemDecoration(itemDecoration);
+            tracksView.addItemDecoration(itemDecoration);
+            playlistView.addItemDecoration(itemDecoration);
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +44,7 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         implements FavouritesPlaylistView, Scrollable {
 
     private final TrackAdapter tracklistAdapter = new TrackAdapter();
+    private DividerItemDecoration itemDecoration;
 
     @InjectPresenter FavouritesPlaylistPresenter presenter;
 
@@ -59,6 +61,8 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         ButterKnife.bind(this, root);
 
         tracklistView.setAdapter(tracklistAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+
         tracklistAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(
                 tracklistAdapter.getAll(), position));
         tracklistAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
@@ -101,6 +105,14 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
     @Override
     public void setItemViewSettings(TrackItemView viewSettings) {
         tracklistAdapter.setViewSettings(viewSettings);
+    }
+
+    @Override
+    public void setItemDividerShowing(boolean showed) {
+        tracklistView.removeItemDecoration(itemDecoration);
+
+        if (showed)
+            tracklistView.addItemDecoration(itemDecoration);
     }
 
 

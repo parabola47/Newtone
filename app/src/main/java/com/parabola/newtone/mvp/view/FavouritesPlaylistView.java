@@ -13,6 +13,7 @@ public interface FavouritesPlaylistView extends MvpView {
 
     void refreshTracks(List<Track> tracks);
     void setItemViewSettings(TrackItemView viewSettings);
+    void setItemDividerShowing(boolean showed);
 
     void setCurrentTrack(int trackId);
 
