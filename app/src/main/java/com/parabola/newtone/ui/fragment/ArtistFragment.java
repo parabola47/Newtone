@@ -94,7 +94,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     private void showAlbumContextMenu(int position) {
         Album selectedAlbum = albumsAdapter.get(position);
-        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.artist_menu);
+        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.album_menu);
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.album_menu_title, selectedAlbum.getArtistName(), selectedAlbum.getTitle()))
