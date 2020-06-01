@@ -105,7 +105,7 @@ public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
                 .toList()
                 .map(ids -> ids.stream().mapToInt(Integer::intValue).toArray())
                 .subscribe(new ConsumerSingleObserver<>(
-                        ids -> router.openAddToPlaylistDialog(ids),
+                        router::openAddToPlaylistDialog,
                         Functions.ERROR_CONSUMER
                 ));
     }

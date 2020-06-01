@@ -3,6 +3,7 @@ package com.parabola.newtone.mvp.presenter;
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.interactor.type.Irrelevant;
+import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
@@ -19,6 +20,8 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -89,5 +92,21 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
 
     public void onItemClick(int albumId) {
         router.openAlbum(albumId);
+    }
+
+    public void onClickMenuShuffle(int albumId) {
+        albumInteractor.shuffleAlbum(albumId);
+    }
+
+    public void onClickMenuAddToPlaylist(int albumId) {
+        trackRepo.getByAlbum(albumId)
+                .flatMapObservable(Observable::fromIterable)
+                .map(Track::getId)
+                .toList()
+                .map(ids -> ids.stream().mapToInt(Integer::intValue).toArray())
+                .subscribe(new ConsumerSingleObserver<>(
+                        router::openAddToPlaylistDialog,
+                        Functions.ERROR_CONSUMER
+                ));
     }
 }

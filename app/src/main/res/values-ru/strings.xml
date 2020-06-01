@@ -40,8 +40,13 @@
     <string name="artist_menu_shuffle">Перемешать</string>
     <string name="artist_menu_add_to_playlist">Добавить в плейлист</string>
 
+    <!--ALBUM MENU-->
+    <string name="album_menu_title">%s — %s</string>    <!--артист — альбом-->
+    <string name="album_menu_shuffle">Перемешать</string>
+    <string name="album_menu_add_to_playlist">Добавить в плейлист</string>
+
     <!--TRACK MENU-->
-    <string name="track_menu_title">%s — %s</string>    <!--артист - трек-->
+    <string name="track_menu_title">%s — %s</string>    <!--артист — трек-->
     <string name="track_menu_play">Играть</string>
     <string name="track_menu_add_to_favourites">Нравится</string>
     <string name="track_menu_remove_from_favourites">Не нравится</string>

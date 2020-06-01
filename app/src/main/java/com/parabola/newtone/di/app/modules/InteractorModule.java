@@ -64,8 +64,10 @@ public final class InteractorModule {
 
     @Singleton
     @Provides
-    AlbumInteractor provideAlbumInteractor(AlbumRepository albumRepo, SortingRepository sortingRepo) {
-        return new AlbumInteractor(albumRepo, sortingRepo);
+    AlbumInteractor provideAlbumInteractor(AlbumRepository albumRepo, TrackRepository trackRepo,
+                                           PlayerInteractor playerInteractor,
+                                           SortingRepository sortingRepo) {
+        return new AlbumInteractor(albumRepo, trackRepo, playerInteractor, sortingRepo);
     }
 
     @Singleton

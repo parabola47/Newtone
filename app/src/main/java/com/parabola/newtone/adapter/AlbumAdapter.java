@@ -1,5 +1,6 @@
 package com.parabola.newtone.adapter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
 
 public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.ViewHolder>
@@ -121,12 +123,13 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
     }
 
     private void handleAsGrid(GridAlbumViewHolder holder, Album albumItem) {
+        Context context = holder.albumTitle.getContext();
         String albumTitle = Optional.ofNullable(albumItem.getTitle())
-                .orElse(holder.albumTitle.getContext().getString(R.string.unknown_album));
+                .orElse(context.getString(R.string.unknown_album));
         holder.albumTitle.setText(albumTitle);
 
         String artistName = Optional.ofNullable(albumItem.getArtistName())
-                .orElse(holder.albumArtist.getContext().getString(R.string.unknown_artist));
+                .orElse(context.getString(R.string.unknown_artist));
 
         holder.albumArtist.setText(artistName);
 
@@ -137,19 +140,25 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .subscribe(new ConsumerSingleObserver<>(
                         bitmap -> holder.cover.setImageBitmap(bitmap),
                         error -> holder.cover.setImageResource(R.drawable.album_default)));
+
+        if (isContextSelected(holder.getAdapterPosition()))
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+        else
+            holder.itemView.setBackground(null);
     }
 
     private void handleAsList(ListAlbumViewHolder holder, Album albumItem) {
+        Context context = holder.albumArtist.getContext();
         String albumTitle = Optional.ofNullable(albumItem.getTitle())
-                .orElse(holder.albumTitle.getContext().getString(R.string.unknown_album));
+                .orElse(context.getString(R.string.unknown_album));
         holder.albumTitle.setText(albumTitle);
 
         String artistName = Optional.ofNullable(albumItem.getArtistName())
-                .orElse(holder.albumArtist.getContext().getString(R.string.unknown_artist));
+                .orElse(context.getString(R.string.unknown_artist));
 
         holder.albumArtist.setText(artistName);
 
-        String tracksCountString = recyclerView.getResources()
+        String tracksCountString = context.getResources()
                 .getQuantityString(R.plurals.tracks_count, albumItem.getTracksCount(), albumItem.getTracksCount());
         holder.tracksCount.setText(tracksCountString);
 
@@ -160,6 +169,18 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                 .subscribe(new ConsumerSingleObserver<>(
                         bitmap -> holder.cover.setImageBitmap(bitmap),
                         error -> holder.cover.setImageResource(R.drawable.album_default)));
+
+        if (isContextSelected(holder.getAdapterPosition())) {
+            holder.albumTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.albumArtist.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+        } else {
+            holder.albumTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.albumArtist.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
+        }
     }
 
 
