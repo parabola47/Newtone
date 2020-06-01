@@ -47,7 +47,7 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/track_title"
-        app:layout_constraintRight_toLeftOf="@id/song_duration"
+        app:layout_constraintRight_toRightOf="@id/track_title"
         app:layout_constraintTop_toBottomOf="@id/track_title"
         tools:text="@string/default_artist" />
 
@@ -55,8 +55,11 @@
         android:id="@+id/song_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/track_title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/default_duration" />
