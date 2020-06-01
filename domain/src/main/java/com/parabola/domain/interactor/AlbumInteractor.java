@@ -40,7 +40,7 @@ public final class AlbumInteractor {
     public void shuffleAlbum(int albumId) {
         trackRepo.getByAlbum(albumId)
                 .subscribe(new ConsumerSingleObserver<>(
-                        playerInteractor::startShufflePlaying,
+                        playerInteractor::startInShuffleMode,
                         Functions.ERROR_CONSUMER));
     }
 }

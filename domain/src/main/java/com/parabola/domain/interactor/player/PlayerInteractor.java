@@ -18,10 +18,7 @@ public interface PlayerInteractor {
     }
     void start(List<Track> trackList, int startTrackPosition, boolean startImmediately, long playbackPositionMs);
 
-    default void startShufflePlaying(List<Track> trackList) {
-        setShuffleMode(true);
-        start(trackList, 0, true);
-    }
+    void startInShuffleMode(List<Track> trackList);
 
     void stop();
 

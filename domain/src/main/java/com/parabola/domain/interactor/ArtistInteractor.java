@@ -36,7 +36,7 @@ public final class ArtistInteractor {
     public void shuffleArtist(int artistId) {
         trackRepo.getByArtist(artistId)
                 .subscribe(new ConsumerSingleObserver<>(
-                        playerInteractor::startShufflePlaying,
+                        playerInteractor::startInShuffleMode,
                         Functions.ERROR_CONSUMER));
     }
 

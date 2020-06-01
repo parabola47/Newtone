@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -233,12 +234,11 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         boolean isCurrentTrackChanged;
 
         if (isPlaylistChanged) {
+            exoPlayer.setPlayWhenReady(false);
             isCurrentTrackChanged = true;
 
             concatenatedSource.clear();
-            for (Track track : tracklist) {
-                concatenatedSource.addMediaSource(mediaSourceFromTrack(track));
-            }
+            concatenatedSource.addMediaSources(getMediaSourcesFromTrackTrackList(tracklist));
         } else {
             isCurrentTrackChanged = currentTrackPosition() != trackPosition;
         }
@@ -271,11 +271,33 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         return true;
     }
 
+    private List<MediaSource> getMediaSourcesFromTrackTrackList(List<Track> tracklist) {
+        return tracklist.stream()
+                .map(this::mediaSourceFromTrack)
+                .collect(Collectors.toList());
+    }
+
     private MediaSource mediaSourceFromTrack(Track track) {
         Uri uri = Uri.fromFile(new File(track.getFilePath()));
 
         return new ProgressiveMediaSource.Factory(dataSourceFactory).setTag(track.getId())
                 .createMediaSource(uri);
+    }
+
+
+    @Override
+    public void startInShuffleMode(List<Track> tracklist) {
+        exoPlayer.setPlayWhenReady(false);
+
+        concatenatedSource.clear();
+        setShuffleMode(true);
+        concatenatedSource.addMediaSources(getMediaSourcesFromTrackTrackList(tracklist));
+
+        exoPlayer.prepare(concatenatedSource);
+        currentTracklistUpdate.onNext(getTrackIds());
+
+        exoPlayer.setPlayWhenReady(true);
+        settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
     }
 
     @Override
