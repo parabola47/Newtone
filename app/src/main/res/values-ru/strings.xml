@@ -61,6 +61,7 @@
 
     <!--PLAYLIST MENU-->
     <string name="playlist_menu_rename">Переименовать</string>
+    <string name="playlist_menu_shuffle">Перемешать</string>
     <string name="playlist_menu_delete">Удалить</string>
 
     <!--PLAYER MENU-->

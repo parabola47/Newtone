@@ -1,6 +1,7 @@
 package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.executor.SchedulerProvider;
+import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
@@ -12,6 +13,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -20,6 +23,7 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
 
     @Inject MainRouter router;
 
+    @Inject PlayerInteractor playerInteractor;
     @Inject PlaylistRepository playlistRepo;
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
@@ -68,11 +72,18 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
         router.openPlaylist(selectedPlaylistId);
     }
 
-    public void onClickMenuRenamePlaylist(int playlistId) {
+    public void onClickMenuRename(int playlistId) {
         router.openRenamePlaylistDialog(playlistId);
     }
 
-    public void onClickMenuDeletePlaylist(int deletedPlaylistId) {
+    public void onClickMenuShuffle(int playlistId) {
+        trackRepo.getByPlaylist(playlistId)
+                .subscribe(new ConsumerSingleObserver<>(
+                        playerInteractor::startInShuffleMode,
+                        Functions.ERROR_CONSUMER));
+    }
+
+    public void onClickMenuDelete(int deletedPlaylistId) {
         playlistRepo.remove(deletedPlaylistId)
                 .subscribe();
     }
@@ -92,4 +103,5 @@ public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
     public void onClickFolders() {
         router.openFoldersList();
     }
+
 }

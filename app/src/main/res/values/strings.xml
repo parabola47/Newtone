@@ -61,6 +61,7 @@
 
     <!--PLAYLIST MENU-->
     <string name="playlist_menu_rename">Rename</string>
+    <string name="playlist_menu_shuffle">Shuffle</string>
     <string name="playlist_menu_delete">Delete</string>
 
     <!--PLAYER MENU-->

@@ -2,12 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/rename_playlist"
+        android:id="@+id/rename"
         android:icon="@drawable/ic_edit"
         android:title="@string/playlist_menu_rename" />
 
     <item
-        android:id="@+id/delete_playlist"
+        android:id="@+id/shuffle"
+        android:icon="@drawable/ic_shuffled"
+        android:title="@string/playlist_menu_shuffle" />
+
+    <item
+        android:id="@+id/delete"
         android:icon="@drawable/ic_delete"
         android:title="@string/playlist_menu_delete" />
 

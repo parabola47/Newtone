@@ -88,14 +88,17 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
 
     private void handleSelectedMenu(MenuItem menuItem, int selectedPlaylistId) {
         switch (menuItem.getItemId()) {
-            case R.id.rename_playlist:
-                presenter.onClickMenuRenamePlaylist(selectedPlaylistId);
+            case R.id.rename:
+                presenter.onClickMenuRename(selectedPlaylistId);
                 break;
-            case R.id.delete_playlist:
+            case R.id.shuffle:
+                presenter.onClickMenuShuffle(selectedPlaylistId);
+                break;
+            case R.id.delete:
                 AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                         .setTitle(R.string.delete_playlist_title)
                         .setMessage(R.string.delete_playlist_desc)
-                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDeletePlaylist(selectedPlaylistId))
+                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete(selectedPlaylistId))
                         .setNegativeButton(R.string.dialog_cancel, null)
                         .create();
 
