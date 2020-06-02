@@ -227,7 +227,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public void start(List<Track> tracklist, int trackPosition, boolean startImmediately, long playbackPositionMs) {
-        if (trackPosition >= tracklist.size())
+        if (tracklist.isEmpty() || trackPosition < 0 || trackPosition >= tracklist.size())
             return;
 
         boolean isPlaylistChanged = !isNewPlaylistIdentical(tracklist);
@@ -287,6 +287,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public void startInShuffleMode(List<Track> tracklist) {
+        if (tracklist.isEmpty())
+            return;
         exoPlayer.setPlayWhenReady(false);
 
         concatenatedSource.clear();
