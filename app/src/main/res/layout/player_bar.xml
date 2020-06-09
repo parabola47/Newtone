@@ -7,7 +7,7 @@
     android:background="@color/colorPlayerBarBackground">
 
     <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-        android:id="@+id/duration"
+        android:id="@+id/trackPositionProgressBar"
         android:layout_width="0dp"
         android:layout_height="4dp"
         app:layout_constraintLeft_toLeftOf="parent"

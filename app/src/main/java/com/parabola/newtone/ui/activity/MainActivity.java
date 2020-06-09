@@ -52,7 +52,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @BindView(R.id.bottom_slider) SlidingUpPanelLayout bottomSlider;
     @BindView(R.id.player_bar) ViewGroup playerBar;
     @BindView(R.id.track_settings) ImageButton playerSetting;
-    @BindView(R.id.duration) RoundCornerProgressBar durationSeekbar;
+    @BindView(R.id.trackPositionProgressBar) RoundCornerProgressBar trackPositionProgressBar;
 
     @BindView(R.id.track_title) TextView trackTitleTxt;
     @BindView(R.id.song_artist) TextView artistTxt;
@@ -282,12 +282,12 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     public void setDurationMax(int max) {
-        durationSeekbar.setMax(max);
+        trackPositionProgressBar.setMax(max);
     }
 
     @Override
     public void setDurationProgress(int progress) {
-        durationSeekbar.setProgress(progress);
+        trackPositionProgressBar.setProgress(progress);
     }
 
     @Override
