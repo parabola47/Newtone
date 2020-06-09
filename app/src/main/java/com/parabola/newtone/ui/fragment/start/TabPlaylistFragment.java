@@ -26,6 +26,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
 import com.parabola.newtone.mvp.view.TabPlaylistView;
 import com.parabola.newtone.ui.base.BaseDialogFragment;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
@@ -83,6 +84,7 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
                 .create();
         dialog.setOnShowListener(d -> playlistAdapter.setContextSelected(position));
         dialog.setOnDismissListener(d -> playlistAdapter.clearContextSelected());
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
         dialog.show();
     }
 

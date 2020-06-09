@@ -24,6 +24,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ArtistPresenter;
 import com.parabola.newtone.mvp.view.ArtistView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 
 import java.util.List;
@@ -103,6 +104,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
                 .create();
         dialog.setOnShowListener(d -> albumsAdapter.setContextSelected(position));
         dialog.setOnDismissListener(d -> albumsAdapter.clearContextSelected());
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
         dialog.show();
     }
 

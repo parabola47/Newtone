@@ -21,6 +21,7 @@ import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabAlbumPresenter;
 import com.parabola.newtone.mvp.view.TabAlbumView;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.ui.fragment.Sortable;
@@ -79,6 +80,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
                 .create();
         dialog.setOnShowListener(d -> albumsAdapter.setContextSelected(position));
         dialog.setOnDismissListener(d -> albumsAdapter.clearContextSelected());
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
         dialog.show();
     }
 

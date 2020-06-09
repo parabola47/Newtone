@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
@@ -22,6 +23,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.parabola.newtone.util.SeekBarChangeAdapter;
 
@@ -152,7 +154,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     @OnClick(R.id.setDefault)
     public void onClickSetDefault() {
-        new MaterialAlertDialogBuilder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.track_item_reset_settings_dialog_message)
                 .setPositiveButton(R.string.dialog_reset, (d, which) -> {
@@ -165,6 +167,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .show();
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
     }
 
 

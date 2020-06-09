@@ -27,6 +27,7 @@ import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
 import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
@@ -158,6 +159,7 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
                 .create();
         dialog.setOnShowListener(d -> tracklistAdapter.setContextSelected(position));
         dialog.setOnDismissListener(d -> tracklistAdapter.clearContextSelected());
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
         dialog.show();
     }
 
