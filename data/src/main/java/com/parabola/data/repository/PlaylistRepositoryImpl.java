@@ -33,6 +33,7 @@ import static android.provider.MediaStore.Audio.PlaylistsColumns.DATE_ADDED;
 import static android.provider.MediaStore.Audio.PlaylistsColumns.NAME;
 
 public final class PlaylistRepositoryImpl implements PlaylistRepository {
+    private static final String LOG_TAG = PlaylistRepositoryImpl.class.getSimpleName();
 
     private final ContentResolver contentResolver;
     private final PermissionHandler accessRepo;
@@ -105,16 +106,15 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
 
     private List<Playlist.TrackItem> getPlaylistTrackItems(int playlistId) {
-        Uri uri = Members.getContentUri("external", playlistId);
-        String[] cols = new String[]{
-                Members.AUDIO_ID,
-        };
+        Uri playlistUri = Members.getContentUri("external", playlistId);
+        String[] selectedColumns = new String[]{Members.AUDIO_ID, Members.DATE_ADDED};
 
-        try (Cursor cursor = contentResolver.query(uri, cols, null, null, null)) {
+        try (Cursor cursor = contentResolver.query(playlistUri, selectedColumns, null, null, Members.PLAY_ORDER + " DESC")) {
             return Observable.fromIterable(RxCursorIterable.from(cursor))
                     .map(c -> {
                         PlaylistData.TrackItemData trackItem = new PlaylistData.TrackItemData();
-                        trackItem.trackId = c.getInt(c.getColumnIndexOrThrow(Members.AUDIO_ID));
+                        trackItem.trackId = c.getInt(0);
+                        trackItem.additionDate = c.getLong(1);
 
                         return (Playlist.TrackItem) trackItem;
                     })
@@ -134,7 +134,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                 contentResolver.query(
                         EXTERNAL_CONTENT_URI,
                         PLAYLIST_QUERY_SELECTIONS,
-                        null, null, null))
+                        null, null, DATE_ADDED + " DESC"))
                 .doAfterSuccess(Cursor::close)
                 .map(this::extractPlaylistsFromCursor);
     }
@@ -250,25 +250,23 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
     @Override
     public Completable addTracksToPlaylist(int playlistId, int... trackIds) {
-        Uri uri = Members.getContentUri("external", playlistId);
+        Uri playlistUri = Members.getContentUri("external", playlistId);
 
         return Single
                 //если трек уже присутвовал в плейлисте, то он игнорируется
-                .fromCallable(() -> discardTracksThatPlaylistHas(uri, trackIds))
+                .fromCallable(() -> discardTracksThatPlaylistHas(playlistUri, trackIds))
                 .map(insertTrackIds -> {
-                    try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
-                        int base = cursor != null ? cursor.getCount() : 0;
+                    int nextTrackPlayOrder = getPlaylistNextTrackPlayOrder(playlistUri);
 
-                        ContentValues[] valuesArray = new ContentValues[insertTrackIds.size()];
-                        for (int i = 0; i < insertTrackIds.size(); i++) {
-                            ContentValues values = new ContentValues(2);
-                            values.put(Members.PLAY_ORDER, base + insertTrackIds.get(i));
-                            values.put(Members.AUDIO_ID, insertTrackIds.get(i));
-                            valuesArray[i] = values;
-                        }
-
-                        return contentResolver.bulkInsert(uri, valuesArray);
+                    ContentValues[] valuesArray = new ContentValues[insertTrackIds.size()];
+                    for (int i = 0; i < insertTrackIds.size(); i++, nextTrackPlayOrder++) {
+                        ContentValues values = new ContentValues(2);
+                        values.put(Members.PLAY_ORDER, nextTrackPlayOrder);
+                        values.put(Members.AUDIO_ID, insertTrackIds.get(i));
+                        valuesArray[i] = values;
                     }
+
+                    return contentResolver.bulkInsert(playlistUri, valuesArray);
                 })
                 .flatMapCompletable(insertedTracksCount -> {
                     if (insertedTracksCount == 0)
@@ -277,14 +275,25 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                 });
     }
 
-    private List<Integer> discardTracksThatPlaylistHas(Uri uri, int... trackIds) {
+
+    private int getPlaylistNextTrackPlayOrder(Uri playlistUri) {
+        try (Cursor cursor = contentResolver.query(playlistUri, new String[]{Members.PLAY_ORDER},
+                null, null, Members.PLAY_ORDER + " DESC LIMIT 1")) {
+            if (cursor != null && cursor.moveToFirst())
+                return cursor.getInt(0) + 1;
+            else return 0;
+        }
+    }
+
+
+    private List<Integer> discardTracksThatPlaylistHas(Uri playlistUri, int... trackIds) {
         List<Integer> newTrackIds = new ArrayList<>(trackIds.length);
         for (int tracksId : trackIds) {
             newTrackIds.add(tracksId);
         }
 
         try (Cursor cursor = contentResolver.query(
-                uri,
+                playlistUri,
                 new String[]{Members.AUDIO_ID},
                 Members.AUDIO_ID + " IN (" + idsToString(trackIds) + ")",
                 null, null)) {
@@ -314,10 +323,10 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
     @Override
     public Completable removeTrack(int playlistId, int trackId) {
         return Completable.fromAction(() -> {
-            Uri uri = Members.getContentUri("external", playlistId);
+            Uri playlistUri = Members.getContentUri("external", playlistId);
 
             int deletedRowCounts = contentResolver.delete(
-                    uri,
+                    playlistUri,
                     Members.AUDIO_ID + "=?",
                     new String[]{String.valueOf(trackId)});
 
