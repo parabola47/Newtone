@@ -11,6 +11,8 @@ import io.reactivex.Single;
 
 public interface TrackRepository {
 
+    //выбрасывает ошибку в Rx IllegalArgumentException,
+    //если трек с таким иденитификатором не найден
     Single<Track> getById(int trackId);
     Single<List<Track>> getByIds(List<Integer> trackIds);
     Single<List<Track>> getByIds(List<Integer> trackIds, Sorting sorting);

@@ -66,10 +66,8 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
 
     private Disposable observeCurrentTrack() {
         return playerInteractor.onChangeCurrentTrackId()
-                .subscribe(trackId -> {
-                    currentTrackId = trackId;
-                    getViewState().setCurrentTrack(currentTrackId);
-                });
+                .doOnNext(currentTrackId -> this.currentTrackId = currentTrackId)
+                .subscribe(getViewState()::setCurrentTrack);
     }
 
     private Disposable observeTrackDeleting() {

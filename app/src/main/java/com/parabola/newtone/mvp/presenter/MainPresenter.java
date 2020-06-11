@@ -69,7 +69,7 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                     getViewState().setDurationProgress((int) playerInteractor.playbackPosition());
                     getViewState().setTrackTitle(track.getTitle());
                     getViewState().setArtistName(track.getArtistName());
-                });
+                }, error -> {});
     }
 
 

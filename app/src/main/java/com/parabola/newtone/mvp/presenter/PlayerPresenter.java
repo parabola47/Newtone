@@ -111,7 +111,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                     getViewState().setIsFavourite(track.isFavourite());
 
                     getViewState().setAlbumImagePosition(playerInteractor.currentTrackPosition(), enableSlideScrolling);
-                });
+                }, error -> {});
     }
 
     private Disposable observePlayerState() {
