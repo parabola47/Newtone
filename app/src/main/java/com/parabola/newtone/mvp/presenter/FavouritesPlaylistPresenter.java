@@ -17,6 +17,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -41,6 +43,18 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
 
     @Override
     protected void onFirstViewAttach() {
+        trackRepo.getFavourites()
+                // ожидаем пока прогрузится анимация входа
+                .doOnSubscribe(d -> { while (!enterSlideAnimationEnded) ; })
+                .subscribeOn(schedulers.io())
+                .observeOn(schedulers.ui())
+                .subscribe(new ConsumerSingleObserver<>(
+                        tracks -> {
+                            getViewState().refreshTracks(tracks);
+                            getViewState().setCurrentTrack(playerInteractor.currentTrackId());
+                        },
+                        Functions.ERROR_CONSUMER
+                ));
         disposables.addAll(
                 observeFavouritesChanged(),
                 observeTrackItemViewUpdates(),
@@ -57,8 +71,6 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
     private Disposable observeFavouritesChanged() {
         return trackRepo.observeFavouritesChanged()
                 .flatMapSingle(irrelevant -> trackInteractor.getFavourites())
-                // ожидаем пока прогрузится анимация входа
-                .doOnNext(irrelevant -> { while (!enterSlideAnimationEnded) ; })
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {

@@ -36,7 +36,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.internal.observers.CallbackCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
 import static android.provider.BaseColumns._ID;
@@ -389,6 +388,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
                 .flatMap(this::getByIds);
     }
 
+
     @Override
     public Single<List<Track>> getFavourites() {
         return Observable.fromIterable(favouriteTrackHelper.getFavourites())
@@ -398,11 +398,16 @@ public final class TrackRepositoryImpl implements TrackRepository {
                 .flatMap(this::getByIds);
     }
 
-    private final BehaviorSubject<Irrelevant> favoritesUpdates = BehaviorSubject.createDefault(Irrelevant.INSTANCE);
+    private final PublishSubject<Irrelevant> favoritesUpdates = PublishSubject.create();
 
     @Override
     public Observable<Irrelevant> observeFavouritesChanged() {
         return favoritesUpdates;
+    }
+
+    @Override
+    public boolean isFavourite(int trackId) {
+        return favouriteTrackHelper.isFavourite(trackId);
     }
 
     @Override

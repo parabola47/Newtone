@@ -89,8 +89,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         return trackRepo.observeFavouritesChanged()
                 //Пропускаем, если id текущего трека равен пустому треку
                 .filter(irrelevant -> currentTrackId != NO_TRACK.getId())
-                .flatMapSingle(irrelevant -> trackRepo.getById(currentTrackId))
-                .map(Track::isFavourite)
+                .map(irrelevant -> trackRepo.isFavourite(currentTrackId))
                 .subscribe(getViewState()::setIsFavourite);
     }
 

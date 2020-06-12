@@ -42,7 +42,9 @@ import com.parabola.domain.utils.EmptyItems;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -77,10 +79,6 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private final TrackRepository trackRepo;
     private final Intent notificationClickIntent;
-
-
-    private final Player.EventListener exoPlayerEventListener = new NewtonePlayerEventListener();
-    private final PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter = new NewtoneMediaDescriptorAdapter();
 
 
     //    RX Update listeners
@@ -131,11 +129,14 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         exoPlayer.addListener(exoPlayerEventListener);
 
         //  Исключаем трек из плейлиста если он был удалён с устройства
-        trackRepo.observeTrackDeleting()
+        this.trackRepo.observeTrackDeleting()
                 .subscribe(new ConsumerObserver<>(this::removeAllById));
 
+        this.trackRepo.observeFavouritesChanged()
+                .subscribe(new ConsumerObserver<>(irrelevant -> notificationManager.invalidate()));
+
         //  Восстанавливаем состояние плеера перед выходом из приложения
-        trackRepo.getByIds(settingSaver.getSavedPlaylist())
+        this.trackRepo.getByIds(settingSaver.getSavedPlaylist())
                 .subscribe(new ConsumerSingleObserver<>(
                         tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()),
                         null));
@@ -169,11 +170,11 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private static final String NOTIFICATION_CHANNEL_ID = "com.parabola.player_feature.PlayerInteractorImpl.NOTIFICATION_CHANNEL_ID";
     private static final int NOTIFICATION_ID = 47;
 
+
     private PlayerNotificationManager setupNotificationManager(Context context, MediaSessionCompat mediaSession) {
-        PlayerNotificationManager notificationManager = PlayerNotificationManager
-                .createWithNotificationChannel(
-                        context, NOTIFICATION_CHANNEL_ID, R.string.app_name, R.string.app_name, NOTIFICATION_ID,
-                        mediaDescriptionAdapter, playerNotificationListener);
+        PlayerNotificationManager notificationManager = new PlayerNotificationManager(
+                context, NOTIFICATION_CHANNEL_ID, NOTIFICATION_ID,
+                mediaDescriptionAdapter, playerNotificationListener, customActionReceiver);
 
         notificationManager.setMediaSessionToken(mediaSession.getSessionToken());
         notificationManager.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
@@ -184,44 +185,6 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         notificationManager.setRewindIncrementMs(0);
 
         return notificationManager;
-    }
-
-    private PlayerNotificationManager.NotificationListener playerNotificationListener = new PlayerNotificationManager.NotificationListener() {
-        @Override
-        @SuppressWarnings("deprecation")
-        public void onNotificationStarted(int notificationId, Notification notification) {
-        }
-
-        @Override
-        @SuppressWarnings("deprecation")
-        public void onNotificationCancelled(int notificationId) {
-        }
-
-        @Override
-        public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-            if (newtonePlayerListener != null) {
-                newtonePlayerListener.onNotificationCancelled(notificationId, dismissedByUser);
-            }
-            clearNotificationManagerAndUnbindService();
-        }
-
-        @Override
-        public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-            if (newtonePlayerListener != null) {
-                newtonePlayerListener.onNotificationPosted(notificationId, notification, ongoing);
-            }
-        }
-    };
-
-    private NewtonePlayerListener newtonePlayerListener;
-
-    void setNewtonePlayerListener(NewtonePlayerListener listener) {
-        newtonePlayerListener = listener;
-    }
-
-    interface NewtonePlayerListener {
-        void onNotificationPosted(int notificationId, Notification notification, boolean ongoing);
-        void onNotificationCancelled(int notificationId, boolean dismissedByUser);
     }
 
 
@@ -521,8 +484,49 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         }
     }
 
+
+    private NewtonePlayerListener newtonePlayerListener;
+
+    void setNewtonePlayerListener(NewtonePlayerListener listener) {
+        newtonePlayerListener = listener;
+    }
+
+    interface NewtonePlayerListener {
+        void onNotificationPosted(int notificationId, Notification notification, boolean ongoing);
+        void onNotificationCancelled(int notificationId, boolean dismissedByUser);
+    }
+
+
+    private final PlayerNotificationManager.NotificationListener playerNotificationListener = new PlayerNotificationManager.NotificationListener() {
+        @Override
+        @SuppressWarnings("deprecation")
+        public void onNotificationStarted(int notificationId, Notification notification) {
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public void onNotificationCancelled(int notificationId) {
+        }
+
+        @Override
+        public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
+            if (newtonePlayerListener != null) {
+                newtonePlayerListener.onNotificationCancelled(notificationId, dismissedByUser);
+            }
+            clearNotificationManagerAndUnbindService();
+        }
+
+        @Override
+        public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
+            if (newtonePlayerListener != null) {
+                newtonePlayerListener.onNotificationPosted(notificationId, notification, ongoing);
+            }
+        }
+    };
+
+
     private boolean isServiceBound = false;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             notificationManager.setPlayer(exoPlayer);
@@ -534,7 +538,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     };
 
 
-    private class NewtonePlayerEventListener implements Player.EventListener {
+    private final Player.EventListener exoPlayerEventListener = new Player.EventListener() {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -599,7 +603,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                 settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
             }
         }
-    }
+    };
 
 
     private Bitmap defaultNotificationAlbumArt;
@@ -609,7 +613,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         notificationManager.invalidate();
     }
 
-    private class NewtoneMediaDescriptorAdapter implements PlayerNotificationManager.MediaDescriptionAdapter {
+    private final PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter = new PlayerNotificationManager.MediaDescriptionAdapter() {
         private Track currentTrack = EmptyItems.NO_TRACK;
 
         private Track getCurrentTrack(Player player) {
@@ -659,6 +663,61 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             }
             return image;
         }
-    }
+    };
+
+
+    private final PlayerNotificationManager.CustomActionReceiver customActionReceiver = new PlayerNotificationManager.CustomActionReceiver() {
+
+        private static final String CUSTOM_ACTION_ADD_TO_FAVORITES = "com.parabola.player.feature.PlayerInteractorImpl.ADD_TO_FAVORITES";
+        private static final String CUSTOM_ACTION_REMOVE_FROM_FAVORITES = "com.parabola.player.feature.PlayerInteractorImpl.REMOVE_FROM_FAVORITES";
+
+
+        private PendingIntent createBroadcastIntent(String action, int instanceId) {
+            Intent intent = new Intent(action).setPackage(context.getPackageName());
+            intent.putExtra(PlayerNotificationManager.EXTRA_INSTANCE_ID, instanceId);
+
+            return PendingIntent.getBroadcast(
+                    context, instanceId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
+
+        @NonNull
+        @Override
+        public Map<String, NotificationCompat.Action> createCustomActions(@NonNull Context context, int instanceId) {
+            Map<String, NotificationCompat.Action> customActions = new HashMap<>();
+
+            customActions.put(CUSTOM_ACTION_ADD_TO_FAVORITES, new NotificationCompat.Action(
+                    R.drawable.ic_notification_not_favourite, context.getString(R.string.notification_action_add_to_favourites),
+                    createBroadcastIntent(CUSTOM_ACTION_ADD_TO_FAVORITES, instanceId)));
+            customActions.put(CUSTOM_ACTION_REMOVE_FROM_FAVORITES, new NotificationCompat.Action(
+                    R.drawable.ic_notification_favourite, context.getString(R.string.notification_action_remove_from_favourites),
+                    createBroadcastIntent(CUSTOM_ACTION_REMOVE_FROM_FAVORITES, instanceId)));
+
+            return customActions;
+        }
+
+        @NonNull
+        @Override
+        public List<String> getCustomActions(@NonNull Player player) {
+            List<String> customActions = new ArrayList<>();
+            if (trackRepo.isFavourite(currentTrackId()))
+                customActions.add(CUSTOM_ACTION_REMOVE_FROM_FAVORITES);
+            else customActions.add(CUSTOM_ACTION_ADD_TO_FAVORITES);
+
+            return customActions;
+        }
+
+        @Override
+        public void onCustomAction(@NonNull Player player, @NonNull String action, @NonNull Intent intent) {
+            switch (action) {
+                case CUSTOM_ACTION_ADD_TO_FAVORITES:
+                    trackRepo.addToFavourites(currentTrackId());
+                    break;
+                case CUSTOM_ACTION_REMOVE_FROM_FAVORITES:
+                    trackRepo.removeFromFavourites(currentTrackId());
+                    break;
+            }
+        }
+    };
 
 }

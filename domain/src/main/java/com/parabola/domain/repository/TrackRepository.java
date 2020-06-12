@@ -42,8 +42,10 @@ public interface TrackRepository {
 
     Single<List<Track>> getFavourites();
 
-    //вызывается сразу и после обновления списка избранных треков
+    //вызывается каждый раз после обновления списка избранных треков
     Observable<Irrelevant> observeFavouritesChanged();
+
+    boolean isFavourite(int trackId);
     //добавляет в список избранных, если раннее не был в нём, исключает если трек был в списке избранных
     // true, если после выполнения трек стал избранным, иначе false
     boolean toggleFavourite(int trackId);

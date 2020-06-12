@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Player Feature</string>
+
+    <string name="notification_action_add_to_favourites">Добавить в избранное</string>
+    <string name="notification_action_remove_from_favourites">Удалить из избранного</string>
+</resources>
