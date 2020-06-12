@@ -512,6 +512,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         return playerSetting;
     }
 
+
     private void clearNotificationManagerAndUnbindService() {
         notificationManager.setPlayer(null);
         if (isServiceBound) {
@@ -532,13 +533,19 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         }
     };
 
+
     private class NewtonePlayerEventListener implements Player.EventListener {
 
         @Override
-        public void onIsPlayingChanged(boolean isPlaying) {
-            isPlayingObserver.onNext(isPlaying);
-            settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
-            runServiceIfNeeded(isPlaying);
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if (playWhenReady != isPlayingObserver.getValue()) {
+                isPlayingObserver.onNext(playWhenReady);
+                settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
+                runServiceIfNeeded(playWhenReady);
+            }
+            if (playbackState == Player.STATE_ENDED) {
+                onQueueEnded();
+            }
         }
 
         private void runServiceIfNeeded(boolean isPlaying) {
@@ -548,6 +555,12 @@ public class PlayerInteractorImpl implements PlayerInteractor {
                 isServiceBound = true;
             }
         }
+
+        private void onQueueEnded() {
+            pause();
+            seekTo(0);
+        }
+
 
         @Override
         public void onPositionDiscontinuity(int reason) {
@@ -587,6 +600,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
             }
         }
     }
+
 
     private Bitmap defaultNotificationAlbumArt;
 
