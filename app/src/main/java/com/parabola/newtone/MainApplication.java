@@ -1,12 +1,12 @@
 package com.parabola.newtone;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.multidex.MultiDexApplication;
 
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.observer.ConsumerObserver;
@@ -24,7 +24,7 @@ import static android.content.res.Configuration.UI_MODE_NIGHT_NO;
 import static android.content.res.Configuration.UI_MODE_NIGHT_YES;
 import static com.parabola.newtone.util.AndroidTool.getBitmapFromVectorDrawable;
 
-public final class MainApplication extends Application {
+public final class MainApplication extends MultiDexApplication {
     private static final String LOG_TAG = "Newtone Application";
 
     private static AppComponent appComponent;
