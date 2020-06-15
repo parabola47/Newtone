@@ -179,11 +179,13 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     public void onSwipeItem(int trackId) {
         playlistRepo.removeTrack(playlistId, trackId)
+                .subscribeOn(schedulers.io())
                 .subscribe();
     }
 
     public void onMoveItem(int positionFrom, int positionTo) {
         playlistRepo.moveTrack(playlistId, positionFrom, positionTo)
+                .subscribeOn(schedulers.io())
                 .subscribe();
     }
 

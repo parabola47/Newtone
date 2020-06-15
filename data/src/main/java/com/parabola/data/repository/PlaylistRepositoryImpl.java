@@ -336,7 +336,11 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
         if (oldPosition == newPosition)
             return Completable.complete();
 
-        return Completable.fromAction(() -> Members.moveItem(contentResolver, playlistId, oldPosition, newPosition));
+        return Completable.fromAction(() -> {
+            boolean isMoved = Members.moveItem(contentResolver, playlistId, oldPosition, newPosition);
+            if (isMoved)
+                playlistsUpdates.onNext(Irrelevant.INSTANCE);
+        });
     }
 
 }
