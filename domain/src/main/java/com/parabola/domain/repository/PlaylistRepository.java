@@ -28,4 +28,5 @@ public interface PlaylistRepository {
 
     Completable addTracksToPlaylist(int playlistId, int... tracksIds);
     Completable removeTrack(int playlistId, int trackId);
+    Completable moveTrack(int playlistId, int oldPosition, int newPosition);
 }

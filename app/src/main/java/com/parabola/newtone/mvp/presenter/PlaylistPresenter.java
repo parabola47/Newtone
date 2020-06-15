@@ -47,6 +47,8 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     @Override
     protected void onFirstViewAttach() {
+        getViewState().setPlaylistChangerActivation(isPlaylistChangerActivated);
+
         disposables.addAll(
                 refreshPlaylistInfo(),
                 observePlaylistUpdates(),
@@ -121,6 +123,19 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
         router.goBack();
     }
 
+
+    private boolean isPlaylistChangerActivated = false;
+
+    public void onClickDragSwitcher() {
+        isPlaylistChangerActivated = !isPlaylistChangerActivated;
+
+        if (isPlaylistChangerActivated) {
+            getViewState().showPlaylistChangingInfoToast();
+        }
+        getViewState().setPlaylistChangerActivation(isPlaylistChangerActivated);
+    }
+
+
     private volatile boolean enterSlideAnimationEnded = false;
 
     public void onEnterSlideAnimationEnded() {
@@ -166,4 +181,10 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
         playlistRepo.removeTrack(playlistId, trackId)
                 .subscribe();
     }
+
+    public void onMoveItem(int positionFrom, int positionTo) {
+        playlistRepo.moveTrack(playlistId, positionFrom, positionTo)
+                .subscribe();
+    }
+
 }

@@ -1,14 +1,23 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,10 +57,12 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     private final TrackAdapter tracksAdapter = new TrackAdapter();
 
+    @BindView(R.id.action_bar) LinearLayout actionBar;
 
     @BindView(R.id.tracks_list) RecyclerView tracksList;
     @BindView(R.id.additional_info) TextView songsCountTxt;
     @BindView(R.id.main) TextView playlistTitleTxt;
+    private ImageButton dragSwitcherButton;
     private DividerItemDecoration itemDecoration;
 
 
@@ -75,19 +86,30 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
         ButterKnife.bind(this, root);
 
+        initDragSwitcherButton();
+
         tracksList.setAdapter(tracksAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
-        tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
-        tracksAdapter.setOnSwipeItemListener(position -> {
-            int removedTrackId = tracksAdapter.get(position).getId();
-            tracksAdapter.remove(position);
-            presenter.onSwipeItem(removedTrackId);
-        });
 
         return root;
     }
+
+    private void initDragSwitcherButton() {
+        dragSwitcherButton = new AppCompatImageButton(requireContext());
+        dragSwitcherButton.setImageResource(R.drawable.ic_drag);
+        int imageSize = (int) getResources().getDimension(R.dimen.playlist_fragment_drag_switcher_size);
+        dragSwitcherButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
+        actionBar.addView(dragSwitcherButton);
+        dragSwitcherButton.setOnClickListener(v -> presenter.onClickDragSwitcher());
+
+        ColorStateList backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.drag_button_background_color_selector);
+        ViewCompat.setBackgroundTintList(dragSwitcherButton, backgroundTintList);
+        ColorStateList imageTintList = ContextCompat.getColorStateList(requireContext(), R.color.colorNewtoneIconTint);
+        ImageViewCompat.setImageTintList(dragSwitcherButton, imageTintList);
+    }
+
 
     @OnClick(R.id.action_bar)
     public void onClickActionBar() {
@@ -170,6 +192,34 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         int playlistId = requireArguments().getInt(SELECTED_PLAYLIST_ID);
 
         return new PlaylistPresenter(appComponent, playlistId);
+    }
+
+
+    @Override
+    public void showPlaylistChangingInfoToast() {
+        Toast toast = Toast.makeText(requireContext(), R.string.playlistChangingInfoToast, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        ((TextView) toast.getView().findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
+        toast.show();
+    }
+
+    @Override
+    public void setPlaylistChangerActivation(boolean activate) {
+        dragSwitcherButton.setSelected(activate);
+
+        if (activate) {
+            tracksAdapter.setOnItemLongClickListener(null);
+            tracksAdapter.setOnSwipeItemListener(position -> {
+                int removedTrackId = tracksAdapter.get(position).getId();
+                tracksAdapter.remove(position);
+                presenter.onSwipeItem(removedTrackId);
+            });
+            tracksAdapter.setOnMoveItemListener(presenter::onMoveItem);
+        } else {
+            tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
+            tracksAdapter.setOnSwipeItemListener(null);
+            tracksAdapter.setOnMoveItemListener(null);
+        }
     }
 
     @Override

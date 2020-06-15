@@ -5,7 +5,6 @@ import java.util.List;
 public interface Playlist {
     int getId();
     String getTitle();
-    long getDateAddingTimestamp();
     List<TrackItem> getPlaylistTracks();
     int size();
 
@@ -16,7 +15,6 @@ public interface Playlist {
 
     interface TrackItem {
         int getTrackId();
-        long getAdditionDate();
     }
 
 }

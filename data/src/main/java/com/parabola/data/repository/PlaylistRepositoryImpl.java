@@ -55,8 +55,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
     private final String[] PLAYLIST_QUERY_SELECTIONS = new String[]{
             _ID,
-            NAME,
-            DATE_ADDED
+            NAME
     };
 
 
@@ -79,10 +78,9 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
     }
 
     private List<Playlist> extractPlaylistsFromCursor(Cursor cursor) {
-        if (cursor.getCount() == 0) {
+        if (!cursor.moveToFirst()) {
             return Collections.emptyList();
         }
-        cursor.moveToFirst();
         List<Playlist> result = new ArrayList<>(cursor.getCount());
 
         do {
@@ -98,7 +96,6 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
         playlist.id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
         playlist.title = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
-        playlist.dateAddingTimestamp = cursor.getInt(cursor.getColumnIndexOrThrow(DATE_ADDED));
         playlist.playlistTracks = getPlaylistTrackItems(playlist.id);
 
         return playlist;
@@ -107,19 +104,18 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
     private List<Playlist.TrackItem> getPlaylistTrackItems(int playlistId) {
         Uri playlistUri = Members.getContentUri("external", playlistId);
-        String[] selectedColumns = new String[]{Members.AUDIO_ID, Members.DATE_ADDED};
+        String[] selectedColumns = new String[]{Members.AUDIO_ID};
 
-        try (Cursor cursor = contentResolver.query(playlistUri, selectedColumns, null, null, Members.PLAY_ORDER + " DESC")) {
+        try (Cursor cursor = contentResolver.query(playlistUri, selectedColumns, null, null, Members.PLAY_ORDER)) {
             return Observable.fromIterable(RxCursorIterable.from(cursor))
                     .map(c -> {
                         PlaylistData.TrackItemData trackItem = new PlaylistData.TrackItemData();
                         trackItem.trackId = c.getInt(0);
-                        trackItem.additionDate = c.getLong(1);
 
                         return (Playlist.TrackItem) trackItem;
                     })
                     .toList()
-                    .onErrorReturnItem(new ArrayList<>())
+                    .onErrorReturnItem(Collections.emptyList())
                     .blockingGet();
         }
     }
@@ -334,4 +330,13 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                 playlistsUpdates.onNext(Irrelevant.INSTANCE);
         });
     }
+
+    @Override
+    public Completable moveTrack(int playlistId, int oldPosition, int newPosition) {
+        if (oldPosition == newPosition)
+            return Completable.complete();
+
+        return Completable.fromAction(() -> Members.moveItem(contentResolver, playlistId, oldPosition, newPosition));
+    }
+
 }

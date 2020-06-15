@@ -13,11 +13,13 @@
     <color name="colorNewtonePrimaryText">@android:color/black</color>
     <color name="colorNewtoneSecondaryText">#323232</color>
     <color name="colorNewtoneIconTint">#404040</color>
+    <color name="colorNewtoneRipple">#1f000000</color>
 
 
     <!--A C T I O N    B A R-->
     <color name="colorActionBarBackground">#FFFFFF</color>
     <color name="colorActionBarIconTint">@color/colorNewtoneIconTint</color>
+    <color name="colorActionBarToggleButtonBackgroundActivated">#CCCCCC</color>
 
 
     <!--P L A Y E R    B A R-->

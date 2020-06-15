@@ -7,9 +7,16 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface PlaylistView extends MvpView {
+
+    @OneExecution
+    void showPlaylistChangingInfoToast();
+
+    void setPlaylistChangerActivation(boolean activate);
+
     void setTracksCount(int playlistSize);
     void setPlaylistTitle(String playlistTitle);
     void refreshTracks(List<Track> tracks);

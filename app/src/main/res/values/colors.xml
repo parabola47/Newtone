@@ -13,11 +13,13 @@
     <color name="colorNewtonePrimaryText">@android:color/white</color>
     <color name="colorNewtoneSecondaryText">#BEBEBE</color>
     <color name="colorNewtoneIconTint">#DFDFDF</color>
+    <color name="colorNewtoneRipple">#33ffffff</color>
 
 
     <!--A C T I O N    B A R-->
     <color name="colorActionBarBackground">@color/colorNewtoneBar</color>
     <color name="colorActionBarIconTint">@color/colorNewtoneIconTint</color>
+    <color name="colorActionBarToggleButtonBackgroundActivated">#666666</color>
 
 
     <!--P L A Y E R    B A R-->
