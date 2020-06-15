@@ -53,10 +53,9 @@ public final class FolderRepositoryImpl implements FolderRepository {
     }
 
     private List<Folder> extractFolders(Cursor cursor) {
-        if (cursor.getCount() == 0) {
+        if (!cursor.moveToFirst()) {
             return Collections.emptyList();
         }
-        cursor.moveToFirst();
 
         List<String> filePaths = new ArrayList<>(cursor.getCount());
         do {
@@ -84,20 +83,19 @@ public final class FolderRepositoryImpl implements FolderRepository {
 
     @Override
     public Single<List<Track>> getTracksByFolder(String folderPath) {
-        return Single.fromCallable(() -> getIds(folderPath))
+        return Single.fromCallable(() -> getTrackIds(folderPath))
                 .flatMap(ids -> trackRepo.getByIds(ids, sortingRepo.folderTracksSorting()));
     }
 
-    private List<Integer> getIds(String folderPath) {
+    private List<Integer> getTrackIds(String folderPath) {
         try (Cursor cursor = contentResolver.query(
                 EXTERNAL_CONTENT_URI,
                 new String[]{_ID, DATA},
                 IS_MUSIC + "=1",
                 null, null)) {
-            if (cursor == null || cursor.getCount() == 0)
+            if (cursor == null || !cursor.moveToFirst())
                 return Collections.emptyList();
 
-            cursor.moveToFirst();
             List<Integer> ids = new ArrayList<>();
 
             for (int i = 0; i < cursor.getCount(); i++) {

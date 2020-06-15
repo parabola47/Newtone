@@ -3,7 +3,6 @@ package com.parabola.data.repository;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import com.parabola.data.model.ArtistData;
 import com.parabola.domain.model.Artist;
@@ -25,7 +24,7 @@ import static android.provider.MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
 
 public final class ArtistRepositoryImpl implements ArtistRepository {
-    private static final String TAG = ArtistRepositoryImpl.class.getSimpleName();
+    private static final String LOG_TAG = ArtistRepositoryImpl.class.getSimpleName();
 
     private final ContentResolver contentResolver;
     private PermissionHandler accessRepo;
@@ -112,12 +111,9 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
     }
 
     private List<Artist> extractArtists(Cursor cursor) {
-        long start = System.currentTimeMillis();
-
-        if (cursor.getCount() == 0) {
+        if (!cursor.moveToFirst()) {
             return Collections.emptyList();
         }
-        cursor.moveToFirst();
 
         List<Artist> result = new ArrayList<>(cursor.getCount());
         do {
@@ -130,10 +126,6 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
 
             result.add(artist);
         } while (cursor.moveToNext());
-
-        long end = System.currentTimeMillis();
-
-        Log.d(TAG, "Extract " + result.size() + " artists for " + (end - start) + " ms");
 
         return result;
     }

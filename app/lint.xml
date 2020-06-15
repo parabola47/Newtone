@@ -8,7 +8,7 @@
         <ignore regexp="elevation" />
     </issue>
 
-    <issue id="ClickableViewAccessibility" >
+    <issue id="ClickableViewAccessibility">
         <ignore regexp="performClick" />
     </issue>
 

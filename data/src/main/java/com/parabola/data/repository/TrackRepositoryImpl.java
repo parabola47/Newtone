@@ -8,7 +8,8 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.provider.MediaStore.Audio.Genres;
+import android.provider.MediaStore.Audio.GenresColumns;
 
 import com.parabola.data.model.TrackData;
 import com.parabola.domain.interactor.type.Irrelevant;
@@ -51,10 +52,9 @@ import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
 import static android.provider.MediaStore.MediaColumns.DURATION;
 import static android.provider.MediaStore.MediaColumns.SIZE;
 import static android.provider.MediaStore.MediaColumns.TITLE;
-import static java.util.Objects.requireNonNull;
 
 public final class TrackRepositoryImpl implements TrackRepository {
-    private static final String TAG = TrackRepositoryImpl.class.getSimpleName();
+    private static final String LOG_TAG = TrackRepositoryImpl.class.getSimpleName();
 
     private final ContentResolver contentResolver;
     private final AlbumRepository albumRepo;
@@ -222,35 +222,28 @@ public final class TrackRepositoryImpl implements TrackRepository {
     };
     private final Function<TrackData, Integer> getGenreIdFunction = new Function<TrackData, Integer>() {
         public Integer apply(TrackData trackData) {
-            String[] genresProjection = {_ID};
+            try (Cursor cursor = contentResolver.query(
+                    Genres.getContentUriForAudioId("external", trackData.id),
+                    new String[]{_ID}, null, null, null)) {
+                if (cursor == null || !cursor.moveToFirst())
+                    return 0;
 
-            Cursor cursor = contentResolver.query(
-                    MediaStore.Audio.Genres.getContentUriForAudioId("external", trackData.id),
-                    genresProjection, null, null, null);
-            if (requireNonNull(cursor).getCount() == 0)
-                return 0;
-
-            cursor.moveToFirst();
-            int genreId = cursor.getInt(0);
-            cursor.close();
-
-            return genreId;
+                return cursor.getInt(0);
+            }
         }
     };
     private final Function<TrackData, String> getGenreNameFunction = new Function<TrackData, String>() {
         public String apply(TrackData trackData) {
-            Cursor cursor = contentResolver.query(
-                    MediaStore.Audio.Genres.getContentUri("external"),
-                    new String[]{MediaStore.Audio.GenresColumns.NAME},
+            try (Cursor cursor = contentResolver.query(
+                    Genres.getContentUri("external"),
+                    new String[]{GenresColumns.NAME},
                     _ID + "=?",
-                    new String[]{String.valueOf(trackData.getGenreId())}, null);
-            if (requireNonNull(cursor).getCount() == 0)
-                return "";
-            cursor.moveToFirst();
-            String genreName = cursor.getString(0);
-            cursor.close();
+                    new String[]{String.valueOf(trackData.getGenreId())}, null)) {
+                if (cursor == null || !cursor.moveToFirst())
+                    return "";
 
-            return genreName;
+                return cursor.getString(cursor.getColumnIndexOrThrow(GenresColumns.NAME));
+            }
         }
     };
     private final Function<TrackData, Integer> getBitrateFunction = trackData -> {
@@ -277,11 +270,9 @@ public final class TrackRepositoryImpl implements TrackRepository {
     };
 
     private List<Track> extractTracks(Cursor cursor) {
-        long start = System.currentTimeMillis();
-        if (cursor.getCount() == 0) {
+        if (!cursor.moveToFirst()) {
             return Collections.emptyList();
         }
-        cursor.moveToFirst();
 
         List<Track> result = new ArrayList<>(cursor.getCount());
         do {
@@ -309,10 +300,6 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
             result.add(track);
         } while (cursor.moveToNext());
-
-        long end = System.currentTimeMillis();
-
-        Log.d(TAG, "Extract " + result.size() + " tracks for " + (end - start) + " ms");
 
         return result;
     }

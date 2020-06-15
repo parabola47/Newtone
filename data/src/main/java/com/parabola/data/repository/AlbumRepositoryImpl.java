@@ -7,9 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.util.Size;
 
+import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
 import com.parabola.data.model.AlbumData;
@@ -36,7 +36,7 @@ import static android.provider.MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS;
 import static android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
 public final class AlbumRepositoryImpl implements AlbumRepository {
-    private static final String TAG = AlbumRepositoryImpl.class.getSimpleName();
+    private static final String LOG_TAG = AlbumRepositoryImpl.class.getSimpleName();
 
     private final ContentResolver contentResolver;
     private final PermissionHandler accessRepo;
@@ -143,7 +143,7 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     private final int cacheMaxSize = (int) (Runtime.getRuntime().maxMemory() / 8);
     private final LruCache<Integer, Bitmap> albumArtCache = new LruCache<Integer, Bitmap>(cacheMaxSize) {
         @Override
-        protected int sizeOf(Integer albumId, Bitmap bitmap) {
+        protected int sizeOf(@NonNull Integer albumId, @NonNull Bitmap bitmap) {
             return bitmap.getByteCount();
         }
     };
@@ -202,11 +202,9 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
     }
 
     private List<Album> extractAlbums(Cursor cursor) {
-        long start = System.currentTimeMillis();
-        if (cursor.getCount() == 0) {
+        if (!cursor.moveToFirst()) {
             return Collections.emptyList();
         }
-        cursor.moveToFirst();
 
         List<Album> result = new ArrayList<>(cursor.getCount());
         do {
@@ -222,10 +220,6 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
 
             result.add(album);
         } while (cursor.moveToNext());
-
-        long end = System.currentTimeMillis();
-
-        Log.d(TAG, "Extract " + result.size() + " albums for " + (end - start) + " ms");
 
         return result;
     }
