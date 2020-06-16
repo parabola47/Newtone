@@ -107,7 +107,7 @@
         android:longClickable="true"
         android:padding="4dp"
         android:tint="@android:color/darker_gray"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/track_title"
         app:layout_constraintRight_toRightOf="parent"
