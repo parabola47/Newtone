@@ -31,6 +31,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.google.android.exoplayer2.util.NotificationUtil;
 import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
@@ -172,6 +173,9 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
 
     private PlayerNotificationManager setupNotificationManager(Context context, MediaSessionCompat mediaSession) {
+        NotificationUtil.createNotificationChannel(context,
+                NOTIFICATION_CHANNEL_ID, R.string.notification_channel_id, 0,
+                NotificationUtil.IMPORTANCE_LOW);
         PlayerNotificationManager notificationManager = new PlayerNotificationManager(
                 context, NOTIFICATION_CHANNEL_ID, NOTIFICATION_ID,
                 mediaDescriptionAdapter, playerNotificationListener, customActionReceiver);
