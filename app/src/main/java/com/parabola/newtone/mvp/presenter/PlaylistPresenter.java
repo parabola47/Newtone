@@ -128,10 +128,6 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
     public void onClickDragSwitcher() {
         isPlaylistChangerActivated = !isPlaylistChangerActivated;
-
-        if (isPlaylistChangerActivated) {
-            getViewState().showPlaylistChangingInfoToast();
-        }
         getViewState().setPlaylistChangerActivation(isPlaylistChangerActivated);
     }
 
@@ -177,7 +173,7 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
         router.openTrackAdditionInfo(trackId);
     }
 
-    public void onSwipeItem(int trackId) {
+    public void onRemoveItem(int trackId) {
         playlistRepo.removeTrack(playlistId, trackId)
                 .subscribeOn(schedulers.io())
                 .subscribe();

@@ -2,7 +2,6 @@ package com.parabola.newtone.ui.fragment.playlist;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -92,6 +90,11 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
+        tracksAdapter.setOnRemoveClickListener(position -> {
+            int removedTrackId = tracksAdapter.get(position).getId();
+            tracksAdapter.remove(position);
+            presenter.onRemoveItem(removedTrackId);
+        });
 
         return root;
     }
@@ -102,7 +105,10 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         int imageSize = (int) getResources().getDimension(R.dimen.playlist_fragment_drag_switcher_size);
         dragSwitcherButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
         actionBar.addView(dragSwitcherButton);
-        dragSwitcherButton.setOnClickListener(v -> presenter.onClickDragSwitcher());
+        dragSwitcherButton.setOnClickListener(v -> {
+            if (tracksList.getScrollState() == RecyclerView.SCROLL_STATE_IDLE)
+                presenter.onClickDragSwitcher();
+        });
 
         ColorStateList backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.drag_button_background_color_selector);
         ViewCompat.setBackgroundTintList(dragSwitcherButton, backgroundTintList);
@@ -196,23 +202,17 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
 
     @Override
-    public void showPlaylistChangingInfoToast() {
-        Toast toast = Toast.makeText(requireContext(), R.string.playlistChangingInfoToast, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        ((TextView) toast.getView().findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
-        toast.show();
-    }
-
-    @Override
     public void setPlaylistChangerActivation(boolean activate) {
         dragSwitcherButton.setSelected(activate);
+        tracksAdapter.setMoveItemIconVisibility(activate);
+        tracksAdapter.setRemoveItemIconVisibility(activate);
 
         if (activate) {
             tracksAdapter.setOnItemLongClickListener(null);
             tracksAdapter.setOnSwipeItemListener(position -> {
                 int removedTrackId = tracksAdapter.get(position).getId();
                 tracksAdapter.remove(position);
-                presenter.onSwipeItem(removedTrackId);
+                presenter.onRemoveItem(removedTrackId);
             });
             tracksAdapter.setOnMoveItemListener(presenter::onMoveItem);
         } else {

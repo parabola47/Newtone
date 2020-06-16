@@ -49,6 +49,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @BindView(R.id.additionalTrackInfo) TextView additionalTrackInfo;
     @BindView(R.id.song_duration) TextView duration;
     @BindView(R.id.trackHolder) View trackHolder;
+    @BindView(R.id.track_content) ViewGroup trackContent;
 
     @BindView(R.id.coverCornersValue) TextView coverCornersValue;
     @BindView(R.id.coverCornersSeekBar) SeekBar coverCornersSeekBar;
@@ -230,7 +231,7 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
         int paddingDp = progress + BORDER_PADDING_MIN;
         int paddingPx = (int) convertDpToPixel(paddingDp, requireContext());
         borderPaddingValue.setText(String.valueOf(paddingDp));
-        trackHolder.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+        trackContent.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
     }
 
 

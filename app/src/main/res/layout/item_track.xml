@@ -1,68 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/trackHolder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:background="@color/colorListItemDefaultBackground"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    android:padding="16dp">
+    android:orientation="horizontal">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/cover"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/track_title"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/album_default" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/burger_img"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="-24dp"
+        android:layout_marginLeft="-24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/queue_item_burger_content_desc"
+        android:focusable="true"
+        android:longClickable="true"
+        android:padding="8dp"
+        android:tint="@android:color/darker_gray"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_hamburger" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/track_title"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/track_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@id/additionalTrackInfo"
-        app:layout_constraintLeft_toRightOf="@id/cover"
-        app:layout_constraintRight_toLeftOf="@id/song_duration"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/default_track_title" />
+        android:layout_weight="1"
+        android:animateLayoutChanges="true"
+        android:padding="16dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/additionalTrackInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/track_title"
-        app:layout_constraintRight_toRightOf="@id/track_title"
-        app:layout_constraintTop_toBottomOf="@id/track_title"
-        tools:text="@string/default_artist" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/cover"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/track_title"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/album_default" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/song_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:textSize="12sp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/track_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/additionalTrackInfo"
+            app:layout_constraintLeft_toRightOf="@id/cover"
+            app:layout_constraintRight_toLeftOf="@id/song_duration"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/default_track_title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/additionalTrackInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/track_title"
+            app:layout_constraintRight_toRightOf="@id/track_title"
+            app:layout_constraintTop_toBottomOf="@id/track_title"
+            tools:text="@string/default_artist" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/song_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/track_title"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/default_duration" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/remove_img"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/queue_item_remove_content_desc"
+        android:focusable="true"
+        android:longClickable="true"
+        android:padding="4dp"
+        android:tint="@android:color/darker_gray"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/track_title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/default_duration" />
+        app:srcCompat="@drawable/ic_close" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -19,9 +19,6 @@
     <string name="playlist_queue">Queue</string>
     <string name="playlist_folders">Folders</string>
 
-    <!--PLAYLIST FRAGMENT-->
-    <string name="playlistChangingInfoToast">Hold and drag track for move\nSwipe left to remove</string>
-
     <!--IMAGE DESCRIPTIONS-->
     <string name="album_cover_desc">Album Cover</string>
 

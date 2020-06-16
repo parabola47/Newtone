@@ -19,9 +19,6 @@
     <string name="playlist_queue">Очередь</string>
     <string name="playlist_folders">Папки</string>
 
-    <!--PLAYLIST FRAGMENT-->
-    <string name="playlistChangingInfoToast">Удерживайте, затем потяните трек для перемещения\nСмахните пальцем влево для удаления</string>
-
     <!--IMAGE DESCRIPTIONS-->
     <string name="album_cover_desc">Обложка альбома</string>
 
