@@ -4,6 +4,11 @@ import com.parabola.domain.model.Track;
 
 public final class EmptyItems {
 
+    private EmptyItems() {
+        throw new IllegalAccessError();
+    }
+
+
     public static final Track NO_TRACK = new Track() {
         public int getId() {
             return -1;
@@ -11,10 +16,6 @@ public final class EmptyItems {
 
         public String getTitle() {
             return "";
-        }
-
-        public long getDateAddingTimestamp() {
-            return 0;
         }
 
         public int getAlbumId() {
@@ -75,10 +76,6 @@ public final class EmptyItems {
 
         public boolean isFavourite() {
             return false;
-        }
-
-        public Long getFavouriteTimestamp() {
-            return null;
         }
     };
 

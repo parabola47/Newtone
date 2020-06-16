@@ -6,8 +6,6 @@ public interface Track {
     int getId();
     String getTitle();
 
-    long getDateAddingTimestamp();
-
     int getAlbumId();
     String getAlbumTitle();
     <ArtImage> ArtImage getArtImage();
@@ -34,7 +32,6 @@ public interface Track {
     int getSampleRate();
 
     boolean isFavourite();
-    Long getFavouriteTimestamp();
 
 
     default boolean equals(Track o) {

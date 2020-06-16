@@ -46,11 +46,13 @@ public interface TrackRepository {
     Observable<Irrelevant> observeFavouritesChanged();
 
     boolean isFavourite(int trackId);
-    //добавляет в список избранных, если раннее не был в нём, исключает если трек был в списке избранных
-    // true, если после выполнения трек стал избранным, иначе false
+    // Добавляет трек в список избранных, если он на текущий момент не находится в нём.
+    // Если трек уже находится в списке избранных, то исключает его.
+    // Вернёт true, если после выполнения трек стал избранным, иначе false
     boolean toggleFavourite(int trackId);
     void addToFavourites(int trackId);
     void removeFromFavourites(int trackId);
+    void moveFavouriteTrack(int positionFrom, int positionTo);
 
 
     enum Sorting {

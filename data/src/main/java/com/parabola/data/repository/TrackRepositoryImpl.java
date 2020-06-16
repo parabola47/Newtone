@@ -25,12 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.ToLongFunction;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -79,7 +76,6 @@ public final class TrackRepositoryImpl implements TrackRepository {
             _ID,
             DATA,
             TITLE,
-            DATE_ADDED,
             ALBUM_ID,
             ALBUM,
             ARTIST_ID,
@@ -210,11 +206,6 @@ public final class TrackRepositoryImpl implements TrackRepository {
             return favouriteTrackHelper.isFavourite(trackData.getId());
         }
     };
-    private final Function<TrackData, Long> favouriteTimestampFunction = new Function<TrackData, Long>() {
-        public Long apply(TrackData trackData) {
-            return favouriteTrackHelper.getFavouriteTimeStamp(trackData.getId());
-        }
-    };
     private final Function<TrackData, Bitmap> getArtFunction = new Function<TrackData, Bitmap>() {
         public Bitmap apply(TrackData trackData) {
             return (Bitmap) albumRepo.getArtImage(trackData.albumId);
@@ -280,7 +271,6 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
             track.id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
             track.title = cursor.getString(cursor.getColumnIndexOrThrow(TITLE));
-            track.dateAddingTimestamp = cursor.getLong(cursor.getColumnIndexOrThrow(DATE_ADDED));
             track.albumId = cursor.getInt(cursor.getColumnIndexOrThrow(ALBUM_ID));
             track.albumTitle = cursor.getString(cursor.getColumnIndexOrThrow(ALBUM));
             track.artistId = cursor.getInt(cursor.getColumnIndexOrThrow(ARTIST_ID));
@@ -291,7 +281,6 @@ public final class TrackRepositoryImpl implements TrackRepository {
             track.positionInCd = cursor.getInt(cursor.getColumnIndexOrThrow(TRACK));
             track.fileSize = cursor.getInt(cursor.getColumnIndexOrThrow(SIZE));
             track.isFavouriteCondition = this.isFavouriteCondition;
-            track.favouriteTimeStampFunction = this.favouriteTimestampFunction;
             track.getArtFunction = this.getArtFunction;
             track.getGenreIdFunction = this.getGenreIdFunction;
             track.getGenreNameFunction = this.getGenreNameFunction;
@@ -378,11 +367,11 @@ public final class TrackRepositoryImpl implements TrackRepository {
 
     @Override
     public Single<List<Track>> getFavourites() {
-        return Observable.fromIterable(favouriteTrackHelper.getFavourites())
-                .sorted(Comparator.comparingLong((ToLongFunction<Map.Entry<Integer, Long>>) Map.Entry::getValue).reversed())
-                .map(Map.Entry::getKey)
-                .toList()
-                .flatMap(this::getByIds);
+        return Single
+                .fromCallable(favouriteTrackHelper::getFavourites)
+                .flatMap(this::getByIds)
+                //после извлечения избранных треков, необходимо проверить, существуют ли ещё эти треки
+                .doAfterSuccess(favouriteTrackHelper::invalidateFavourites);
     }
 
     private final PublishSubject<Irrelevant> favoritesUpdates = PublishSubject.create();
@@ -418,4 +407,14 @@ public final class TrackRepositoryImpl implements TrackRepository {
         favouriteTrackHelper.makeNotFavourite(trackId);
         favoritesUpdates.onNext(Irrelevant.INSTANCE);
     }
+
+    @Override
+    public void moveFavouriteTrack(int positionFrom, int positionTo) {
+        if (positionFrom == positionTo)
+            return;
+
+        favouriteTrackHelper.moveFavouriteTrack(positionFrom, positionTo);
+        favoritesUpdates.onNext(Irrelevant.INSTANCE);
+    }
+
 }

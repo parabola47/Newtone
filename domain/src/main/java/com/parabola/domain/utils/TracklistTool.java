@@ -17,7 +17,7 @@ public final class TracklistTool {
         }
 
         for (int i = 0; i < firstList.size(); i++) {
-            if (firstList.get(i).getId() != secondList.get(i).getId())
+            if (!firstList.get(i).equals(secondList.get(i)))
                 return false;
         }
 

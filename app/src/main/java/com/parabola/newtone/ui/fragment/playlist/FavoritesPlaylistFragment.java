@@ -1,14 +1,21 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,9 +56,12 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
 
     @InjectPresenter FavouritesPlaylistPresenter presenter;
 
+    @BindView(R.id.action_bar) LinearLayout actionBar;
     @BindView(R.id.tracks_list) RecyclerView tracklistView;
     @BindView(R.id.main) TextView playlistTitle;
     @BindView(R.id.additional_info) TextView tracksCountTxt;
+    private ImageButton dragSwitcherButton;
+
 
     @NonNull
     @Override
@@ -61,21 +71,39 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
         ButterKnife.bind(this, root);
 
+        initDragSwitcherButton();
+
         tracklistView.setAdapter(tracklistAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracklistAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(
                 tracklistAdapter.getAll(), position));
-        tracklistAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
-        tracklistAdapter.setOnSwipeItemListener(position -> {
+        tracklistAdapter.setOnRemoveClickListener(position -> {
             int removedTrackId = tracklistAdapter.get(position).getId();
             tracklistAdapter.remove(position);
-            presenter.onSwipeItem(removedTrackId);
+            presenter.onRemoveItem(removedTrackId);
         });
 
         playlistTitle.setText(R.string.playlist_favourites);
 
         return root;
+    }
+
+    private void initDragSwitcherButton() {
+        dragSwitcherButton = new AppCompatImageButton(requireContext());
+        dragSwitcherButton.setImageResource(R.drawable.ic_drag);
+        int imageSize = (int) getResources().getDimension(R.dimen.playlist_fragment_drag_switcher_size);
+        dragSwitcherButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
+        actionBar.addView(dragSwitcherButton);
+        dragSwitcherButton.setOnClickListener(v -> {
+            if (tracklistView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE)
+                presenter.onClickDragSwitcher();
+        });
+
+        ColorStateList backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.drag_button_background_color_selector);
+        ViewCompat.setBackgroundTintList(dragSwitcherButton, backgroundTintList);
+        ColorStateList imageTintList = ContextCompat.getColorStateList(requireContext(), R.color.colorNewtoneIconTint);
+        ImageViewCompat.setImageTintList(dragSwitcherButton, imageTintList);
     }
 
     @OnClick(R.id.action_bar)
@@ -91,6 +119,28 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
     @Override
     protected void onEndSlidingAnimation() {
         presenter.onEnterSlideAnimationEnded();
+    }
+
+
+    @Override
+    public void setPlaylistChangerActivation(boolean activate) {
+        dragSwitcherButton.setSelected(activate);
+        tracklistAdapter.setMoveItemIconVisibility(activate);
+        tracklistAdapter.setRemoveItemIconVisibility(activate);
+
+        if (activate) {
+            tracklistAdapter.setOnItemLongClickListener(null);
+            tracklistAdapter.setOnSwipeItemListener(position -> {
+                int removedTrackId = tracklistAdapter.get(position).getId();
+                tracklistAdapter.remove(position);
+                presenter.onRemoveItem(removedTrackId);
+            });
+            tracklistAdapter.setOnMoveItemListener(presenter::onMoveItem);
+        } else {
+            tracklistAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
+            tracklistAdapter.setOnSwipeItemListener(null);
+            tracklistAdapter.setOnMoveItemListener(null);
+        }
     }
 
     @Override
@@ -172,8 +222,10 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
-                        presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
+                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> {
+                    tracklistAdapter.remove(itemPosition);
+                    presenter.onClickMenuDeleteTrack(selectedTrack.getId());
+                });
 
                 DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
                 dialogFragment.show(requireActivity().getSupportFragmentManager(), null);

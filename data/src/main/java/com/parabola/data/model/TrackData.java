@@ -13,8 +13,6 @@ public final class TrackData implements Track {
     public int id;
     public String title;
 
-    public long dateAddingTimestamp;
-
     public int albumId;
     public String albumTitle;
 
@@ -31,7 +29,6 @@ public final class TrackData implements Track {
     public int year;
 
     public Predicate<TrackData> isFavouriteCondition;
-    public Function<TrackData, Long> favouriteTimeStampFunction;
     public Function<TrackData, Bitmap> getArtFunction;
 
     public Function<TrackData, Integer> getGenreIdFunction;
@@ -49,11 +46,6 @@ public final class TrackData implements Track {
     @Override
     public String getTitle() {
         return title;
-    }
-
-    @Override
-    public long getDateAddingTimestamp() {
-        return dateAddingTimestamp;
     }
 
     @Override
@@ -131,10 +123,6 @@ public final class TrackData implements Track {
         return isFavouriteCondition.test(this);
     }
 
-    @Override
-    public Long getFavouriteTimestamp() {
-        return favouriteTimeStampFunction.apply(this);
-    }
 
     @Override
     public boolean equals(@Nullable Object obj) {

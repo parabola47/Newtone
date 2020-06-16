@@ -11,6 +11,8 @@ import moxy.viewstate.strategy.alias.AddToEndSingle;
 @AddToEndSingle
 public interface FavouritesPlaylistView extends MvpView {
 
+    void setPlaylistChangerActivation(boolean activate);
+
     void refreshTracks(List<Track> tracks);
     void setItemViewSettings(TrackItemView viewSettings);
     void setItemDividerShowing(boolean showed);

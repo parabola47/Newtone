@@ -43,7 +43,9 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
 
     @Override
     protected void onFirstViewAttach() {
-        trackRepo.getFavourites()
+        getViewState().setPlaylistChangerActivation(isPlaylistChangerActivated);
+
+        trackInteractor.getFavourites()
                 // ожидаем пока прогрузится анимация входа
                 .doOnSubscribe(d -> { while (!enterSlideAnimationEnded) ; })
                 .subscribeOn(schedulers.io())
@@ -114,6 +116,15 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
         router.goBack();
     }
 
+
+    private boolean isPlaylistChangerActivated = false;
+
+    public void onClickDragSwitcher() {
+        isPlaylistChangerActivated = !isPlaylistChangerActivated;
+        getViewState().setPlaylistChangerActivation(isPlaylistChangerActivated);
+    }
+
+
     private volatile boolean enterSlideAnimationEnded = false;
 
     public void onEnterSlideAnimationEnded() {
@@ -150,7 +161,11 @@ public final class FavouritesPlaylistPresenter extends MvpPresenter<FavouritesPl
         router.openTrackAdditionInfo(trackId);
     }
 
-    public void onSwipeItem(int trackId) {
+    public void onRemoveItem(int trackId) {
         trackRepo.removeFromFavourites(trackId);
+    }
+
+    public void onMoveItem(int positionFrom, int positionTo) {
+        trackRepo.moveFavouriteTrack(positionFrom, positionTo);
     }
 }
