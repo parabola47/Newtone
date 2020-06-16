@@ -15,7 +15,7 @@ import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.QueueAdapter;
+import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.QueuePresenter;
 import com.parabola.newtone.mvp.view.QueueView;
@@ -42,7 +42,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
     @BindView(R.id.tracks_list) RecyclerView queueList;
     private DividerItemDecoration itemDecoration;
 
-    private final QueueAdapter queueAdapter = new QueueAdapter();
+    private final TrackAdapter queueAdapter = new TrackAdapter();
 
     public QueueFragment() {
         // Required empty public constructor
@@ -63,6 +63,8 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         queueList.setAdapter(queueAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
+        queueAdapter.setRemoveItemIconVisibility(true);
+        queueAdapter.setMoveItemIconVisibility(true);
         queueAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
         queueAdapter.setOnRemoveClickListener(presenter::onRemoveItem);
         queueAdapter.setOnMoveItemListener(presenter::onMoveItem);
