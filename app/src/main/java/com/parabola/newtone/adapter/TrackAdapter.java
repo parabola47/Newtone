@@ -61,9 +61,12 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         if (layoutManager == null)
             return;
 
-        int prefetchItemCount = layoutManager.getInitialPrefetchItemCount();
+        int updateFrom = layoutManager.findFirstVisibleItemPosition() - layoutManager.getInitialPrefetchItemCount() - 1;
+        if (updateFrom < 0) updateFrom = 0;
+        int updateTo = layoutManager.findLastVisibleItemPosition() + layoutManager.getInitialPrefetchItemCount() + 1;
+        if (updateTo > getItemCount() - 1) updateTo = getItemCount() - 1;
 
-        for (int i = layoutManager.findFirstVisibleItemPosition() - prefetchItemCount; i <= layoutManager.findLastVisibleItemPosition() + prefetchItemCount; i++) {
+        for (int i = updateFrom; i <= updateTo; i++) {
             TrackViewHolder holder = (TrackViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
             if (holder != null)
                 holder.moveItemImg.setVisibility(isMoveItemIconVisible ? View.VISIBLE : View.GONE);
@@ -78,9 +81,12 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         if (layoutManager == null)
             return;
 
-        int prefetchItemCount = layoutManager.getInitialPrefetchItemCount();
+        int updateFrom = layoutManager.findFirstVisibleItemPosition() - layoutManager.getInitialPrefetchItemCount() - 1;
+        if (updateFrom < 0) updateFrom = 0;
+        int updateTo = layoutManager.findLastVisibleItemPosition() + layoutManager.getInitialPrefetchItemCount() + 1;
+        if (updateTo > getItemCount() - 1) updateTo = getItemCount() - 1;
 
-        for (int i = layoutManager.findFirstVisibleItemPosition() - prefetchItemCount; i <= layoutManager.findLastVisibleItemPosition() + prefetchItemCount; i++) {
+        for (int i = updateFrom; i <= updateTo; i++) {
             TrackViewHolder holder = (TrackViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
             if (holder != null)
                 holder.removeItemImg.setVisibility(isRemoveItemIconVisible ? View.VISIBLE : View.GONE);
