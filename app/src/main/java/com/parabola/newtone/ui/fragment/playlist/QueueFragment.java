@@ -63,10 +63,8 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         queueList.setAdapter(queueAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
-        queueAdapter.setRemoveItemIconVisibility(true);
         queueAdapter.setMoveItemIconVisibility(true);
         queueAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
-        queueAdapter.setOnRemoveClickListener(presenter::onRemoveItem);
         queueAdapter.setOnMoveItemListener(presenter::onMoveItem);
         queueAdapter.setOnSwipeItemListener(presenter::onRemoveItem);
 

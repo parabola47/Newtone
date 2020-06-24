@@ -45,7 +45,6 @@ public interface BaseAdapter<T> {
     //LISTENERS
     void setOnItemClickListener(OnItemClickListener listener);
     void setOnItemLongClickListener(OnItemLongClickListener listener);
-    void setOnRemoveClickListener(OnRemoveClickListener listener);
 
     void setOnMoveItemListener(OnMoveItemListener listener);
     void setOnSwipeItemListener(OnSwipeItemListener listener);
@@ -57,10 +56,6 @@ public interface BaseAdapter<T> {
 
     interface OnItemLongClickListener {
         void onItemLongClick(int position);
-    }
-
-    interface OnRemoveClickListener {
-        void onClickRemoveItem(int position);
     }
 
     interface OnSwipeItemListener {

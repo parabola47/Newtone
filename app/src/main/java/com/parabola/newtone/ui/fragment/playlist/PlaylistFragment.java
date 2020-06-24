@@ -90,11 +90,6 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
-        tracksAdapter.setOnRemoveClickListener(position -> {
-            int removedTrackId = tracksAdapter.get(position).getId();
-            tracksAdapter.remove(position);
-            presenter.onRemoveItem(removedTrackId);
-        });
 
         return root;
     }
@@ -205,7 +200,6 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
     public void setPlaylistChangerActivation(boolean activate) {
         dragSwitcherButton.setSelected(activate);
         tracksAdapter.setMoveItemIconVisibility(activate);
-        tracksAdapter.setRemoveItemIconVisibility(activate);
 
         if (activate) {
             tracksAdapter.setOnItemLongClickListener(null);

@@ -53,7 +53,6 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
 
 
     private boolean isMoveItemIconVisible = false;
-    private boolean isRemoveItemIconVisible = false;
 
     public void setMoveItemIconVisibility(boolean visible) {
         isMoveItemIconVisible = visible;
@@ -74,25 +73,6 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         }
     }
 
-    public void setRemoveItemIconVisibility(boolean visible) {
-        isRemoveItemIconVisible = visible;
-
-        LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
-        if (layoutManager == null)
-            return;
-
-        int updateFrom = layoutManager.findFirstVisibleItemPosition() - layoutManager.getInitialPrefetchItemCount() - 1;
-        if (updateFrom < 0) updateFrom = 0;
-        int updateTo = layoutManager.findLastVisibleItemPosition() + layoutManager.getInitialPrefetchItemCount() + 1;
-        if (updateTo > getItemCount() - 1) updateTo = getItemCount() - 1;
-
-        for (int i = updateFrom; i <= updateTo; i++) {
-            TrackViewHolder holder = (TrackViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
-            if (holder != null)
-                holder.removeItemImg.setVisibility(isRemoveItemIconVisible ? View.VISIBLE : View.GONE);
-            else notifyItemChanged(i);
-        }
-    }
 
     @Override
     public void onBindViewHolder(@NonNull TrackViewHolder holder, int position) {
@@ -104,7 +84,6 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         if (trackItemView != null)
             buildItemLayout(holder);
         holder.moveItemImg.setVisibility(isMoveItemIconVisible ? View.VISIBLE : View.GONE);
-        holder.removeItemImg.setVisibility(isRemoveItemIconVisible ? View.VISIBLE : View.GONE);
 
         String trackTitle = Optional.ofNullable(trackItem.getTitle())
                 .orElse(trackItem.getFileNameWithoutExtension());
@@ -128,28 +107,20 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
             holder.duration.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
             holder.moveItemImg.setColorFilter(getColor(context, android.R.color.white));
-            holder.removeItemImg.setColorFilter(getColor(context, android.R.color.white));
         } else if (isSelected(holder.getAdapterPosition())) {
             holder.trackTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.duration.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemSelectedBackground));
             holder.moveItemImg.setColorFilter(getColor(context, android.R.color.white));
-            holder.removeItemImg.setColorFilter(getColor(context, android.R.color.white));
         } else {
             holder.trackTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
             holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
             holder.duration.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
             holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
             holder.moveItemImg.setColorFilter(getColor(context, android.R.color.darker_gray));
-            holder.removeItemImg.setColorFilter(getColor(context, android.R.color.darker_gray));
         }
 
-        holder.removeItemImg.setOnClickListener(v -> {
-            if (onRemoveClickListener != null) {
-                onRemoveClickListener.onClickRemoveItem(holder.getAdapterPosition());
-            }
-        });
         holder.moveItemImg.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN
                     && onMoveItemListener != null) {
@@ -220,7 +191,6 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
         @BindView(R.id.cover) ShapeableImageView cover;
         @BindView(R.id.track_content) ViewGroup trackContent;
         @BindView(R.id.burger_img) ImageView moveItemImg;
-        @BindView(R.id.remove_img) ImageView removeItemImg;
 
         private TrackViewHolder(View itemView) {
             super(itemView);

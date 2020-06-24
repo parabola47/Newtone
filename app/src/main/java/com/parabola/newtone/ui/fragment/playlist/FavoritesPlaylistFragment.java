@@ -78,11 +78,6 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
 
         tracklistAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(
                 tracklistAdapter.getAll(), position));
-        tracklistAdapter.setOnRemoveClickListener(position -> {
-            int removedTrackId = tracklistAdapter.get(position).getId();
-            tracklistAdapter.remove(position);
-            presenter.onRemoveItem(removedTrackId);
-        });
 
         playlistTitle.setText(R.string.playlist_favourites);
 
@@ -126,7 +121,6 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
     public void setPlaylistChangerActivation(boolean activate) {
         dragSwitcherButton.setSelected(activate);
         tracklistAdapter.setMoveItemIconVisibility(activate);
-        tracklistAdapter.setRemoveItemIconVisibility(activate);
 
         if (activate) {
             tracklistAdapter.setOnItemLongClickListener(null);
