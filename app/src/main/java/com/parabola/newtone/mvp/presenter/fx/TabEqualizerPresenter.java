@@ -6,6 +6,8 @@ import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -13,6 +15,7 @@ import moxy.MvpPresenter;
 public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> {
 
     @Inject AudioEffectsInteractor fxInteractor;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public TabEqualizerPresenter(AppComponent appComponent) {
         appComponent.inject(this);
@@ -20,19 +23,41 @@ public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> 
 
     @Override
     public void onFirstViewAttach() {
-        getViewState().setEqChecked(fxInteractor.isEqEnabled());
         getViewState().setMaxEqLevel(fxInteractor.getMaxEqBandLevel());
         getViewState().setMinEqLevel(fxInteractor.getMinEqBandLevel());
         getViewState().refreshBands(fxInteractor.getBands());
+        disposables.addAll(
+                observeEqEnabling());
+    }
+
+    @Override
+    public void onDestroy() {
+        disposables.dispose();
+    }
+
+    private Disposable observeEqEnabling() {
+        return fxInteractor.observeEqEnabling()
+                .subscribe(getViewState()::setEqChecked);
     }
 
 
     public void onClickEqSwitcher(boolean enabled) {
         fxInteractor.setEqEnable(enabled);
-        getViewState().setEqChecked(fxInteractor.isEqEnabled());
     }
 
     public void onChangeBandLevel(int bandId, short newLevel) {
         fxInteractor.setBandLevel(bandId, newLevel);
     }
+
+    public void onClickShowPresets() {
+        getViewState().showPresetsSelectorDialog(fxInteractor.getPresets());
+    }
+
+    public void onSelectPreset(int presetIndex) {
+        fxInteractor.usePreset((short) presetIndex);
+        fxInteractor.setEqEnable(true);
+
+        getViewState().refreshBands(fxInteractor.getBands());
+    }
+
 }

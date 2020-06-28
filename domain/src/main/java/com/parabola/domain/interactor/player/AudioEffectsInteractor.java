@@ -40,11 +40,15 @@ public interface AudioEffectsInteractor {
 
 
     void setEqEnable(boolean enable);
+    Observable<Boolean> observeEqEnabling();
+
     short getMinEqBandLevel(); // в дециБеллах
     short getMaxEqBandLevel(); // в дециБеллах
-    boolean isEqEnabled();
     void setBandLevel(int bandId, short bandLevel); // в дециБеллах
     List<EqBand> getBands();
+
+    void usePreset(short presetIndex);
+    List<String> getPresets();
 
     class EqBand {
         public int id;

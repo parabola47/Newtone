@@ -24,6 +24,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     private final BehaviorSubject<Float> savedPlaybackSpeed;
     private final BehaviorSubject<Boolean> playbackPitchEnabledUpdates;
     private final BehaviorSubject<Float> savedPlaybackPitch;
+    private final BehaviorSubject<Boolean> eqEnablingUpdates = BehaviorSubject.createDefault(Boolean.FALSE);
 
     private final BehaviorSubject<Short> savedVirtualizerLevelUpdates;
     private final BehaviorSubject<Short> savedBassBoostLevelUpdates;
@@ -98,6 +99,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
                 }
                 if (equalizer != null) {
                     equalizer.setEnabled(settings.getSavedIsEqEnabled());
+                    eqEnablingUpdates.onNext(equalizer.getEnabled());
                     for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
                         equalizer.setBandLevel(i, (short) (settings.getSavedBandLevel(i) * 100));
                     }
@@ -263,11 +265,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
             equalizer.setEnabled(enable);
 
         settings.setEqEnabled(enable);
-    }
-
-    @Override
-    public boolean isEqEnabled() {
-        return equalizer != null && equalizer.getEnabled();
+        eqEnablingUpdates.onNext(enable);
     }
 
     @Override
@@ -278,6 +276,11 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     @Override
     public short getMinEqBandLevel() {
         return equalizer != null ? (short) (equalizer.getBandLevelRange()[0] / 100) : 0;
+    }
+
+    @Override
+    public Observable<Boolean> observeEqEnabling() {
+        return eqEnablingUpdates;
     }
 
     @Override
@@ -305,4 +308,31 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
         return bands;
     }
+
+
+    @Override
+    public void usePreset(short presetIndex) {
+        equalizer.usePreset(presetIndex);
+    }
+
+    private List<String> presetsCache;
+
+    @Override
+    public List<String> getPresets() {
+        if (presetsCache != null)
+            return Collections.unmodifiableList(presetsCache);
+
+        if (equalizer == null) {
+            presetsCache = Collections.emptyList();
+            return Collections.unmodifiableList(presetsCache);
+        }
+
+        presetsCache = new ArrayList<>();
+        for (short i = 0; i < equalizer.getNumberOfPresets(); i++) {
+            presetsCache.add(equalizer.getPresetName(i));
+        }
+
+        return Collections.unmodifiableList(presetsCache);
+    }
+
 }

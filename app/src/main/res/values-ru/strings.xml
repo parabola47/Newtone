@@ -142,6 +142,7 @@
     <!--AUDIO EFFECTS DIALOG-->
     <!--TAB EQUALIZER SETTING-->
     <string name="equalizer">Эквалайзер</string>
+    <string name="preset_selector_dialog_title">Пресеты</string>
     <!--TAB AUDIO SETTING-->
     <string name="fx_tempo">Темп x%.2f</string>
     <string name="fx_pitch">Питч x%.2f</string>

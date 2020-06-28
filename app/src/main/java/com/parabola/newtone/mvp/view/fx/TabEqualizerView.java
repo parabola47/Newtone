@@ -6,6 +6,7 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface TabEqualizerView extends MvpView {
@@ -13,4 +14,8 @@ public interface TabEqualizerView extends MvpView {
     void setMaxEqLevel(int level);
     void setMinEqLevel(int level);
     void refreshBands(List<EqBand> bands);
+
+    @OneExecution
+    void showPresetsSelectorDialog(List<String> presets);
+
 }
