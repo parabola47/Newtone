@@ -300,8 +300,11 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public int currentTrackId() {
-        if (concatenatedSource.getSize() == 0) return -1;
-        return (int) concatenatedSource.getMediaSource(exoPlayer.getCurrentWindowIndex()).getTag();
+        try {
+            return (int) concatenatedSource.getMediaSource(exoPlayer.getCurrentWindowIndex()).getTag();
+        } catch (Exception e) {
+            return EmptyItems.NO_TRACK.getId();
+        }
     }
 
     private final PublishSubject<MovedTrackItem> onMoveTrackObserver = PublishSubject.create();
@@ -337,6 +340,9 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public Completable remove(int trackPosition) {
+        if (trackPosition == currentTrackPosition())
+            next();
+
         return Completable.fromAction(() -> {
             Integer trackId = (Integer) concatenatedSource.removeMediaSource(trackPosition).getTag();
 
