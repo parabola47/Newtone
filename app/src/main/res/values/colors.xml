@@ -62,8 +62,8 @@
     <color name="colorProgress">@color/colorAccent</color>
     <color name="colorSeekBackground">#CCCCCC</color>
     <!--D E F A U L T    A L B U M    C O V E R-->
-    <color name="colorDefaultAlbumBackground">#202020</color>
-    <color name="colorDefaultAlbumForeground">#404040</color>
+    <color name="colorDefaultAlbumBackground">#303030</color>
+    <color name="colorDefaultAlbumForeground">#606060</color>
 
 
     <!--S E T T I N G S-->

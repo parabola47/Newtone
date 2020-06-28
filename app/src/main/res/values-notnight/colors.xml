@@ -62,7 +62,7 @@
     <color name="colorProgress">@color/colorAccent</color>
     <color name="colorSeekBackground">#606060</color>
     <!--D E F A U L T    A L B U M    C O V E R-->
-    <color name="colorDefaultAlbumBackground">#D0D0D0</color>
+    <color name="colorDefaultAlbumBackground">#C0C0C0</color>
     <color name="colorDefaultAlbumForeground">#404040</color>
 
 
