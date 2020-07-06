@@ -13,6 +13,7 @@ import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 
 import com.parabola.domain.interactor.player.PlayerInteractor;
+import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.utils.EmptyItems;
@@ -51,7 +52,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
 
 
         boolean isNowPlaying = playerInteractor.isPlayWhenReady();
-        boolean loopEnabled = playerInteractor.isRepeatModeEnabled();
+        RepeatMode repeatMode = playerInteractor.getRepeatMode();
         boolean shuffleEnabled = playerInteractor.isShuffleEnabled();
 
 
@@ -69,7 +70,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
 
         for (int widgetId : allWidgetIds) {
             setupWidget(context, appComponent, appWidgetManager, widgetId, title, artist, album,
-                    albumArt, isNowPlaying, loopEnabled, shuffleEnabled);
+                    albumArt, isNowPlaying, repeatMode, shuffleEnabled);
         }
     }
 
@@ -79,7 +80,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
     private void setupWidget(Context context, AppComponent appComponent, AppWidgetManager appWidgetManager, int widgetId,
                              String trackTitle, String artistName, String albumTitle,
                              @Nullable Bitmap albumCover,
-                             boolean isNowPlaying, boolean isRepeatEnabled, boolean isShuffleEnabled) {
+                             boolean isNowPlaying, RepeatMode repeatMode, boolean isShuffleEnabled) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.home_screen_widget);
 
@@ -104,12 +105,24 @@ public final class HomeScreenWidget extends AppWidgetProvider {
         remoteViews.setOnClickPendingIntent(R.id.play, playerButtonIntent);
 
 
-        int color = context.getResources().getColor(isRepeatEnabled ? R.color.colorAccent : android.R.color.white);
-        remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, color);
+        switch (repeatMode) {
+            case OFF:
+                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(android.R.color.white));
+                remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop);
+                break;
+            case ONE:
+                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
+                remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop_one);
+                break;
+            case ALL:
+                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
+                remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop);
+                break;
+        }
         remoteViews.setOnClickPendingIntent(R.id.repeat, getPendingIntent(context, 0, appComponent.provideToggleRepeatModeIntent(), 0));
 
 
-        color = context.getResources().getColor(isShuffleEnabled ? R.color.colorAccent : android.R.color.white);
+        int color = context.getResources().getColor(isShuffleEnabled ? R.color.colorAccent : android.R.color.white);
         remoteViews.setInt(R.id.shuffle, SET_COLOR_FILTER_METHOD_NAME, color);
         remoteViews.setOnClickPendingIntent(R.id.shuffle, getPendingIntent(context, 0, appComponent.provideToggleShuffleModeIntent(), 0));
 

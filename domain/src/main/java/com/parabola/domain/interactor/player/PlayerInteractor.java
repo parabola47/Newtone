@@ -53,10 +53,14 @@ public interface PlayerInteractor {
     Flowable<Long> onChangePlaybackPosition();
 
 
+    enum RepeatMode {OFF, ONE, ALL}
+
+    RepeatMode DEFAULT_REPEAT_MODE = RepeatMode.OFF;
+
     void toggleRepeatMode();
-    void setRepeat(boolean enable);
-    Observable<Boolean> onRepeatModeChange();
-    boolean isRepeatModeEnabled();
+    void setRepeatMode(RepeatMode repeatMode);
+    Observable<RepeatMode> onRepeatModeChange();
+    RepeatMode getRepeatMode();
 
 
     void toggleShuffleMode();

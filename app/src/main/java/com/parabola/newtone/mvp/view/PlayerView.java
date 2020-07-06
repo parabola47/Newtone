@@ -1,5 +1,6 @@
 package com.parabola.newtone.mvp.view;
 
+import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
 import com.parabola.domain.model.Track;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface PlayerView extends MvpView {
 
     void setPlaybackButtonAsPause();
     void setPlaybackButtonAsPlay();
-    void setLoopEnabling(boolean enable);
+    void setRepeatMode(RepeatMode repeatMode);
     void setShuffleEnabling(boolean enable);
 
     void setCurrentTimeMs(int currentTimeMs);

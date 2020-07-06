@@ -68,7 +68,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
     private Disposable observeRepeatModeEnabling() {
         return playerInteractor.onRepeatModeChange()
-                .subscribe(getViewState()::setLoopEnabling);
+                .subscribe(getViewState()::setRepeatMode);
     }
 
     private boolean enableSlideScrolling;

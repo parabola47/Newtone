@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
+import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
@@ -289,9 +290,22 @@ public final class PlayerFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setLoopEnabling(boolean enable) {
-        int colorResId = enable ? R.color.colorPlayerActionIconActive : R.color.colorPlayerActionIconDefault;
-        loopButton.setColorFilter(ContextCompat.getColor(requireContext(), colorResId));
+    public void setRepeatMode(RepeatMode repeatMode) {
+        switch (repeatMode) {
+            case OFF:
+                loopButton.setImageResource(R.drawable.ic_loop);
+                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
+                break;
+            case ONE:
+                loopButton.setImageResource(R.drawable.ic_loop_one);
+                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
+                break;
+            case ALL:
+                loopButton.setImageResource(R.drawable.ic_loop);
+                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
+                break;
+        }
+
     }
 
     @Override

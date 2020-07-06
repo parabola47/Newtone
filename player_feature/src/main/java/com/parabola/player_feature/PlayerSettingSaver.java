@@ -3,6 +3,8 @@ package com.parabola.player_feature;
 import android.content.SharedPreferences;
 
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
+import com.parabola.domain.interactor.player.PlayerInteractor;
+import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +21,7 @@ class PlayerSettingSaver {
 
 
     private static final String SHUFFLE_MODE_KEY = "com.parabola.player_feature.SHUFFLE_MODE_KEY";
-    private static final String REPEAT_MODE_KEY = "com.parabola.player_feature.REPEAT_MODE_KEY";
+    private static final String REPEAT_MODE_KEY = "com.parabola.player_feature.REPEAT_MODE";
 
 
     private static final String SAVED_PLAYLIST_KEY = "com.parabola.player_feature.SAVED_PLAYLIST_KEY";
@@ -74,14 +76,16 @@ class PlayerSettingSaver {
         return prefs.getBoolean(SHUFFLE_MODE_KEY, false);
     }
 
-    void setRepeatMode(boolean enable) {
+    void setRepeatMode(RepeatMode repeatMode) {
         prefs.edit()
-                .putBoolean(REPEAT_MODE_KEY, enable)
+                .putString(REPEAT_MODE_KEY, repeatMode.name())
                 .apply();
     }
 
-    boolean isRepeatModeEnabled() {
-        return prefs.getBoolean(REPEAT_MODE_KEY, false);
+    RepeatMode getSavedRepeatMode() {
+        String savedRepeatMode = prefs
+                .getString(REPEAT_MODE_KEY, PlayerInteractor.DEFAULT_REPEAT_MODE.name());
+        return RepeatMode.valueOf(savedRepeatMode);
     }
 
 

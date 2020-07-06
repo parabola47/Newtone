@@ -86,7 +86,7 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private final BehaviorSubject<Integer> currentTrackIdObserver = BehaviorSubject.createDefault(EmptyItems.NO_TRACK.getId());
     private final BehaviorSubject<List<Integer>> currentTracklistUpdate = BehaviorSubject.createDefault(Collections.emptyList());
     private final BehaviorSubject<Boolean> isPlayingObserver = BehaviorSubject.createDefault(Boolean.FALSE);
-    private final BehaviorSubject<Boolean> repeatModeObserver;
+    private final BehaviorSubject<RepeatMode> repeatModeObserver;
     private final BehaviorSubject<Boolean> shuffleModeObserver;
 
     private static final long PLAYBACK_UPDATE_TIME_MS = 200;
@@ -119,8 +119,14 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         playerSetting = new PlayerSettingImpl(settingSaver, notificationManager);
 
         //  Восстанавливаем режим повторения
-        exoPlayer.setRepeatMode(settingSaver.isRepeatModeEnabled() ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_OFF);
-        repeatModeObserver = BehaviorSubject.createDefault(settingSaver.isRepeatModeEnabled());
+        RepeatMode repeatMode = settingSaver.getSavedRepeatMode();
+        switch (repeatMode) {
+            case OFF: exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF); break;
+            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
+            case ALL: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL); break;
+            default: throw new IllegalArgumentException(repeatMode.name());
+        }
+        repeatModeObserver = BehaviorSubject.createDefault(repeatMode);
 
 
         //  Восстанавливаем режим перемешивания
@@ -405,23 +411,35 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public void toggleRepeatMode() {
-        setRepeat(!(exoPlayer.getRepeatMode() == Player.REPEAT_MODE_ONE));
+        RepeatMode repeatMode = getRepeatMode();
+        switch (repeatMode) {
+            case OFF: setRepeatMode(RepeatMode.ONE); break;
+            case ONE: setRepeatMode(RepeatMode.ALL); break;
+            case ALL: setRepeatMode(RepeatMode.OFF); break;
+            default: throw new IllegalStateException(repeatMode.name());
+        }
     }
 
     @Override
-    public void setRepeat(boolean enable) {
-        settingSaver.setRepeatMode(enable);
-        exoPlayer.setRepeatMode(enable ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_OFF);
+    public void setRepeatMode(RepeatMode repeatMode) {
+        settingSaver.setRepeatMode(repeatMode);
+
+        switch (repeatMode) {
+            case OFF: exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF); break;
+            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
+            case ALL: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL); break;
+            default: throw new IllegalArgumentException(repeatMode.name());
+        }
     }
 
     @Override
-    public Observable<Boolean> onRepeatModeChange() {
+    public Observable<RepeatMode> onRepeatModeChange() {
         return repeatModeObserver;
     }
 
     @Override
-    public boolean isRepeatModeEnabled() {
-        return exoPlayer.getRepeatMode() == Player.REPEAT_MODE_ONE;
+    public RepeatMode getRepeatMode() {
+        return repeatModeObserver.getValue();
     }
 
     @Override
@@ -593,7 +611,12 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
         @Override
         public void onRepeatModeChanged(int repeatMode) {
-            repeatModeObserver.onNext(repeatMode == Player.REPEAT_MODE_ONE);
+            switch (repeatMode) {
+                case Player.REPEAT_MODE_OFF: repeatModeObserver.onNext(RepeatMode.OFF); break;
+                case Player.REPEAT_MODE_ONE: repeatModeObserver.onNext(RepeatMode.ONE); break;
+                case Player.REPEAT_MODE_ALL: repeatModeObserver.onNext(RepeatMode.ALL); break;
+                default: throw new IllegalArgumentException("Repeate mode: " + repeatMode);
+            }
         }
 
         @Override
