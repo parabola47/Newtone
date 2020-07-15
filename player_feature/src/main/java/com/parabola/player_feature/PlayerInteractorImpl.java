@@ -122,8 +122,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         RepeatMode repeatMode = settingSaver.getSavedRepeatMode();
         switch (repeatMode) {
             case OFF: exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF); break;
-            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
             case ALL: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL); break;
+            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
             default: throw new IllegalArgumentException(repeatMode.name());
         }
         repeatModeObserver = BehaviorSubject.createDefault(repeatMode);
@@ -413,9 +413,9 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     public void toggleRepeatMode() {
         RepeatMode repeatMode = getRepeatMode();
         switch (repeatMode) {
-            case OFF: setRepeatMode(RepeatMode.ONE); break;
-            case ONE: setRepeatMode(RepeatMode.ALL); break;
-            case ALL: setRepeatMode(RepeatMode.OFF); break;
+            case OFF: setRepeatMode(RepeatMode.ALL); break;
+            case ALL: setRepeatMode(RepeatMode.ONE); break;
+            case ONE: setRepeatMode(RepeatMode.OFF); break;
             default: throw new IllegalStateException(repeatMode.name());
         }
     }
@@ -426,8 +426,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
 
         switch (repeatMode) {
             case OFF: exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF); break;
-            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
             case ALL: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL); break;
+            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
             default: throw new IllegalArgumentException(repeatMode.name());
         }
     }
@@ -613,8 +613,8 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         public void onRepeatModeChanged(int repeatMode) {
             switch (repeatMode) {
                 case Player.REPEAT_MODE_OFF: repeatModeObserver.onNext(RepeatMode.OFF); break;
-                case Player.REPEAT_MODE_ONE: repeatModeObserver.onNext(RepeatMode.ONE); break;
                 case Player.REPEAT_MODE_ALL: repeatModeObserver.onNext(RepeatMode.ALL); break;
+                case Player.REPEAT_MODE_ONE: repeatModeObserver.onNext(RepeatMode.ONE); break;
                 default: throw new IllegalArgumentException("Repeate mode: " + repeatMode);
             }
         }

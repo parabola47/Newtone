@@ -299,12 +299,12 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 loopButton.setImageResource(R.drawable.ic_loop);
                 loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
                 break;
-            case ONE:
-                loopButton.setImageResource(R.drawable.ic_loop_one);
-                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
-                break;
             case ALL:
                 loopButton.setImageResource(R.drawable.ic_loop);
+                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
+                break;
+            case ONE:
+                loopButton.setImageResource(R.drawable.ic_loop_one);
                 loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
                 break;
         }

@@ -53,7 +53,7 @@ public interface PlayerInteractor {
     Flowable<Long> onChangePlaybackPosition();
 
 
-    enum RepeatMode {OFF, ONE, ALL}
+    enum RepeatMode {OFF, ALL, ONE}
 
     RepeatMode DEFAULT_REPEAT_MODE = RepeatMode.OFF;
 

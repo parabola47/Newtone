@@ -110,13 +110,13 @@ public final class HomeScreenWidget extends AppWidgetProvider {
                 remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(android.R.color.white));
                 remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop);
                 break;
-            case ONE:
-                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
-                remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop_one);
-                break;
             case ALL:
                 remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
                 remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop);
+                break;
+            case ONE:
+                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
+                remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop_one);
                 break;
         }
         remoteViews.setOnClickPendingIntent(R.id.repeat, getPendingIntent(context, 0, appComponent.provideToggleRepeatModeIntent(), 0));
