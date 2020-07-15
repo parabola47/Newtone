@@ -144,6 +144,9 @@ public final class PlayerFragment extends MvpAppCompatFragment
             case R.id.add_to_playlist:
                 presenter.onClickMenuAddTrackToPlaylist();
                 break;
+            case R.id.timer:
+                presenter.onClickMenuTimer();
+                break;
             case R.id.lyrics:
                 presenter.onClickMenuLyrics();
                 break;
@@ -323,13 +326,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
     }
 
     @Override
-    public void setTimerColored() {
-        timerButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
-    }
-
-    @Override
-    public void setTimerNotColored() {
-        timerButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
+    public void setTimerButtonVisibility(boolean visible) {
+        timerButton.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @Override

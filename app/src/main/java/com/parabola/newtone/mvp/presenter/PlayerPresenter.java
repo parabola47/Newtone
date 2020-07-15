@@ -131,10 +131,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     private Disposable observeTimerState() {
         return timerInteractor.observeIsTimerRunning()
                 .observeOn(schedulers.ui())
-                .subscribe(isTimerRunning -> {
-                    if (isTimerRunning) getViewState().setTimerColored();
-                    else getViewState().setTimerNotColored();
-                });
+                .subscribe(getViewState()::setTimerButtonVisibility);
     }
 
 
@@ -168,8 +165,6 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     public void onClickTimerButton() {
         if (timerInteractor.launched())
             router.openSleepTimerInfoDialog();
-        else
-            router.openStartSleepTimerDialog();
     }
 
 
@@ -233,6 +228,13 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         if (currentTrackId != NO_TRACK.getId()) {
             router.openAddToPlaylistDialog(currentTrackId);
         }
+    }
+
+    public void onClickMenuTimer() {
+        if (timerInteractor.launched())
+            router.openSleepTimerInfoDialog();
+        else
+            router.openStartSleepTimerDialog();
     }
 
     public void onClickLoop() {

@@ -65,6 +65,7 @@
 
     <!--PLAYER MENU-->
     <string name="player_menu_add_to_playlist">Add to playlist</string>
+    <string name="player_menu_timer">Timer</string>
     <string name="player_menu_lyrics">Lyrics</string>
     <string name="player_menu_share">Share</string>
     <string name="player_menu_additional_info">Additional info</string>

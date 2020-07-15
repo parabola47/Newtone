@@ -6,11 +6,10 @@ import com.parabola.domain.model.Track;
 import java.util.List;
 
 import moxy.MvpView;
-import moxy.viewstate.strategy.AddToEndSingleStrategy;
-import moxy.viewstate.strategy.OneExecutionStateStrategy;
-import moxy.viewstate.strategy.StateStrategyType;
+import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
-@StateStrategyType(AddToEndSingleStrategy.class)
+@AddToEndSingle
 public interface PlayerView extends MvpView {
     void setArtist(String artistName);
     void setAlbum(String albumTitle);
@@ -26,18 +25,17 @@ public interface PlayerView extends MvpView {
 
     void setCurrentTimeMs(int currentTimeMs);
 
-    void setTimerColored();
-    void setTimerNotColored();
+    void setTimerButtonVisibility(boolean visible);
 
     void setViewPagerSlide(boolean lock);
 
     void refreshTracks(List<Track> tracks);
     void setAlbumImagePosition(int currentTrackPosition, boolean smoothScroll);
-    @StateStrategyType(OneExecutionStateStrategy.class)
+    @OneExecution
     void moveTrack(int oldPosition, int newPosition);
-    @StateStrategyType(OneExecutionStateStrategy.class)
+    @OneExecution
     void removeTrack(int position);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
+    @OneExecution
     void showToast(String toastMessage);
 }

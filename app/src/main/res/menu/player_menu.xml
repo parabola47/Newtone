@@ -7,6 +7,11 @@
         android:title="@string/player_menu_add_to_playlist" />
 
     <item
+        android:id="@+id/timer"
+        android:icon="@drawable/ic_timer"
+        android:title="@string/player_menu_timer" />
+
+    <item
         android:id="@+id/lyrics"
         android:icon="@drawable/ic_lyrics"
         android:title="@string/player_menu_lyrics" />

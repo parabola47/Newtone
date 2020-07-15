@@ -65,6 +65,7 @@
 
     <!--PLAYER MENU-->
     <string name="player_menu_add_to_playlist">Добавить в плейлист</string>
+    <string name="player_menu_timer">Таймер</string>
     <string name="player_menu_lyrics">Слова</string>
     <string name="player_menu_share">Поделиться</string>
     <string name="player_menu_additional_info">Информация о треке</string>
