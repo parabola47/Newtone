@@ -267,7 +267,11 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
                         valuesArray[i] = values;
                     }
 
-                    return contentResolver.bulkInsert(playlistUri, valuesArray);
+                    try {
+                        return contentResolver.bulkInsert(playlistUri, valuesArray);
+                    } catch (SecurityException e) {
+                        return 0;
+                    }
                 })
                 .flatMapCompletable(insertedTracksCount -> {
                     if (insertedTracksCount == 0)
