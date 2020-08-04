@@ -13,8 +13,6 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabAlbumView;
 import com.parabola.newtone.ui.router.MainRouter;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -47,6 +45,7 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
     @Override
     protected void onFirstViewAttach() {
         disposables.addAll(
+                observerAllAlbums(),
                 observeAllAlbumsSorting(),
                 observeAlbumItemViewUpdates(),
                 observeTrackDeleting());
@@ -57,19 +56,19 @@ public final class TabAlbumPresenter extends MvpPresenter<TabAlbumView> {
         disposables.dispose();
     }
 
-    private Disposable observeAllAlbumsSorting() {
-        AtomicBoolean needToShowSection = new AtomicBoolean(false);
 
-        return sortingRepo.observeAllAlbumsSorting()
-                //включаем/отключаем показ секции в списке, если отсортирован по названию
-                .doOnNext(sorting -> needToShowSection.set(sorting == AlbumRepository.Sorting.BY_TITLE))
-                .flatMapSingle(sorting -> albumInteractor.getAll())
+    private Disposable observerAllAlbums() {
+        return albumInteractor.observeAllAlbumsUpdates()
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
-                .subscribe(albums -> {
-                    getViewState().setSectionShowing(needToShowSection.get());
-                    getViewState().refreshAlbums(albums);
-                });
+                .subscribe(getViewState()::refreshAlbums);
+    }
+
+    private Disposable observeAllAlbumsSorting() {
+        return sortingRepo.observeAllAlbumsSorting()
+                //включаем/отключаем показ секции в списке, если отсортирован по названию
+                .map(sorting -> sorting == AlbumRepository.Sorting.BY_TITLE)
+                .subscribe(getViewState()::setSectionShowing);
     }
 
     private Disposable observeTrackDeleting() {

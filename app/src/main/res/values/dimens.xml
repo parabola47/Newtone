@@ -5,6 +5,7 @@
     <dimen name="album_fragment_cover_corner_size">4dp</dimen>
     <dimen name="track_add_info_dialog_cover_corner_size">4dp</dimen>
     <dimen name="playlist_fragment_drag_switcher_size">48dp</dimen>
+    <dimen name="add_new_excluded_folder_button_size">48dp</dimen>
 
     <dimen name="alert_dialog_view_horizontal_padding">24dp</dimen>
     <dimen name="alert_dialog_top_title_padding">8dp</dimen>

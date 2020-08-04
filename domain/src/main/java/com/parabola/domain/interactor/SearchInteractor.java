@@ -28,6 +28,7 @@ public final class SearchInteractor {
     private final TrackRepository trackRepo;
     private final PlaylistRepository playlistRepo;
 
+
     public SearchInteractor(ArtistRepository artistRepo,
                             AlbumRepository albumRepo,
                             TrackRepository trackRepo,
@@ -37,6 +38,7 @@ public final class SearchInteractor {
         this.trackRepo = trackRepo;
         this.playlistRepo = playlistRepo;
     }
+
 
     public Single<SearchResult> search(String query) {
         return Single.zip(searchArtists(query), searchAlbums(query), searchTracks(query), searchPlaylists(query), SearchResult::new)
@@ -61,7 +63,7 @@ public final class SearchInteractor {
     }
 
 
-    public static class SearchResult {
+    public static final class SearchResult {
         private static final SearchResult EMPTY_SEARCH_RESULT
                 = new SearchResult(emptyList(), emptyList(), emptyList(), emptyList());
 

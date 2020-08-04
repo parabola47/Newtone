@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?android:attr/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="?android:listPreferredItemHeight"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_folder"
+        app:tint="@color/colorAccent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/folderName"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_weight="1"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="WhatsApp" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/folder_add"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:srcCompat="@drawable/ic_add"
+        app:tint="@color/colorNewtoneIconTint" />
+
+</LinearLayout>

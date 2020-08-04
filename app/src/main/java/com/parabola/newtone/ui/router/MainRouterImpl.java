@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.BuildConfig;
@@ -25,6 +26,7 @@ import com.parabola.newtone.ui.fragment.AlbumFragment;
 import com.parabola.newtone.ui.fragment.ArtistFragment;
 import com.parabola.newtone.ui.fragment.ArtistTracksFragment;
 import com.parabola.newtone.ui.fragment.FolderFragment;
+import com.parabola.newtone.ui.fragment.PlayerFragment;
 import com.parabola.newtone.ui.fragment.SearchFragment;
 import com.parabola.newtone.ui.fragment.playlist.FavoritesPlaylistFragment;
 import com.parabola.newtone.ui.fragment.playlist.FoldersListFragment;
@@ -33,6 +35,7 @@ import com.parabola.newtone.ui.fragment.playlist.QueueFragment;
 import com.parabola.newtone.ui.fragment.playlist.RecentlyAddedPlaylistFragment;
 import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment;
 import com.parabola.newtone.ui.fragment.settings.ArtistItemDisplaySettingFragment;
+import com.parabola.newtone.ui.fragment.settings.ExcludedFoldersFragment;
 import com.parabola.newtone.ui.fragment.settings.SettingFragment;
 import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment;
 import com.parabola.newtone.ui.fragment.settings.dialog.IsaacNewtoneDialog;
@@ -254,6 +257,32 @@ public final class MainRouterImpl implements MainRouter {
 
         openSettings();
     }
+
+    @Override
+    public void openExcludedFolders() {
+        FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+        //закрываются все окна, за исключением настроек, плеера и начального экрана
+        //чтобы после исключения папок не было ненужных ошибок
+        for (Fragment fragment : activity.getSupportFragmentManager().getFragments()) {
+            if (!(fragment instanceof SettingFragment)
+                    && !(fragment instanceof StartFragment)
+                    && !(fragment instanceof PlayerFragment)) {
+                fragmentTransaction.remove(fragment);
+            }
+        }
+        fragmentTransaction.commit();
+
+
+        ExcludedFoldersFragment fragment = ExcludedFoldersFragment.newInstance();
+
+        activity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
+                .add(R.id.nav_host_fragment, fragment)
+                .addToBackStack(null)
+                .setPrimaryNavigationFragment(fragment)
+                .commit();
+    }
+
 
     @Override
     public void openTrackItemDisplaySettings() {

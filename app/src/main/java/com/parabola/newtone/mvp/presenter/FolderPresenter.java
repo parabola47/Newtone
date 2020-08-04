@@ -1,9 +1,9 @@
 package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.executor.SchedulerProvider;
+import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.FolderRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
@@ -31,9 +31,9 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
 
     @Inject PlayerInteractor playerInteractor;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject FolderRepository folderRepo;
     @Inject SortingRepository sortingRepo;
     @Inject TrackRepository trackRepo;
+    @Inject TrackInteractor trackInteractor;
 
     @Inject SchedulerProvider schedulers;
 
@@ -75,7 +75,7 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
         return sortingRepo.observeFolderTracksSorting()
                 //включаем/отключаем показ секции в списке, если отсортирован по названию
                 .doOnNext(sorting -> needToShowSection.set(sorting == TrackRepository.Sorting.BY_TITLE))
-                .flatMapSingle(sorting -> folderRepo.getTracksByFolder(folderPath))
+                .flatMapSingle(sorting -> trackInteractor.getByFolder(folderPath))
                 // ожидаем пока прогрузится анимация входа
                 .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
                 .subscribeOn(schedulers.io())
@@ -103,7 +103,7 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
                     if (removedTrackId == currentTrackId)
                         currentTrackId = EmptyItems.NO_TRACK.getId();
                 })
-                .flatMapSingle(removedTrackId -> folderRepo.getTracksByFolder(folderPath))
+                .flatMapSingle(removedTrackId -> trackInteractor.getByFolder(folderPath))
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {

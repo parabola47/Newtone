@@ -69,11 +69,10 @@ public abstract class BaseSwipeToBackFragment extends MvpAppCompatFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (slidrInterface == null) {
-            slidrInterface = Slidr.replace(requireView().findViewById(R.id.content_container),
-                    new SlidrConfig.Builder()
-                            .position(SlidrPosition.LEFT)
-                            .build());
+        if (slidrInterface == null
+                || (getRetainInstance() && requireView().findViewById(R.id.content_container) != null)) {
+            SlidrConfig config = new SlidrConfig.Builder().position(SlidrPosition.LEFT).build();
+            slidrInterface = Slidr.replace(requireView().findViewById(R.id.content_container), config);
         }
     }
 

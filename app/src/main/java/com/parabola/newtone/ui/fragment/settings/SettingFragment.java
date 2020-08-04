@@ -160,6 +160,12 @@ public final class SettingFragment extends BaseSwipeToBackFragment
     }
 
 
+    @OnClick(R.id.excluded_folders_bar)
+    public void onClickExcludedFolders() {
+        presenter.onClickExcludedFolders();
+    }
+
+
     @OnClick(R.id.track_item_view_bar)
     public void onClickTrackItemViewSettings() {
         presenter.onClickTrackItemViewSettings();

@@ -5,15 +5,18 @@ import android.content.SharedPreferences;
 
 import com.parabola.data.repository.AlbumRepositoryImpl;
 import com.parabola.data.repository.ArtistRepositoryImpl;
+import com.parabola.data.repository.DataExtractor;
+import com.parabola.data.repository.ExcludedFolderRepositoryImpl;
 import com.parabola.data.repository.FolderRepositoryImpl;
 import com.parabola.data.repository.PlaylistRepositoryImpl;
 import com.parabola.data.repository.TrackRepositoryImpl;
+import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.repository.AlbumRepository;
 import com.parabola.domain.repository.ArtistRepository;
+import com.parabola.domain.repository.ExcludedFolderRepository;
 import com.parabola.domain.repository.FolderRepository;
 import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 
 import javax.inject.Singleton;
@@ -26,33 +29,52 @@ public final class DataModule {
 
     @Singleton
     @Provides
-    TrackRepository provideTrackRepository(ContentResolver contentResolver, SharedPreferences preferences,
-                                           AlbumRepository albumRepo, PlaylistRepository playlistRepo,
-                                           PermissionHandler accessRepo) {
-        return new TrackRepositoryImpl(contentResolver, preferences, albumRepo, playlistRepo, accessRepo);
+    DataExtractor provideDataExtractor(ExcludedFolderRepository excludedFolderRepo,
+                                       SchedulerProvider schedulers,
+                                       PermissionHandler permissionHandler,
+                                       ContentResolver contentResolver,
+                                       SharedPreferences preferences) {
+        return new DataExtractor(excludedFolderRepo, schedulers, permissionHandler, contentResolver, preferences);
     }
 
     @Singleton
     @Provides
-    AlbumRepository provideAlbumRepository(ContentResolver contentResolver, PermissionHandler accessRepo) {
-        return new AlbumRepositoryImpl(contentResolver, accessRepo);
+    TrackRepository provideTrackRepository(PlaylistRepository playlistRepo,
+                                           DataExtractor dataExtractor) {
+        return new TrackRepositoryImpl(playlistRepo, dataExtractor);
     }
 
     @Singleton
     @Provides
-    ArtistRepository provideArtistRepository(ContentResolver contentResolver, PermissionHandler accessRepo) {
-        return new ArtistRepositoryImpl(contentResolver, accessRepo);
+    AlbumRepository provideAlbumRepository(DataExtractor dataExtractor) {
+        return new AlbumRepositoryImpl(dataExtractor);
     }
 
     @Singleton
     @Provides
-    PlaylistRepository providePlaylistRepository(ContentResolver contentResolver, PermissionHandler accessRepo) {
-        return new PlaylistRepositoryImpl(contentResolver, accessRepo);
+    ArtistRepository provideArtistRepository(DataExtractor dataExtractor) {
+        return new ArtistRepositoryImpl(dataExtractor);
     }
 
     @Singleton
     @Provides
-    FolderRepository provideFolderRepository(ContentResolver contentResolver, TrackRepository trackRepo, SortingRepository sortingRepository) {
-        return new FolderRepositoryImpl(contentResolver, trackRepo, sortingRepository);
+    PlaylistRepository providePlaylistRepository(DataExtractor dataExtractor,
+                                                 ContentResolver contentResolver,
+                                                 PermissionHandler accessRepo) {
+        return new PlaylistRepositoryImpl(dataExtractor, contentResolver, accessRepo);
     }
+
+    @Singleton
+    @Provides
+    FolderRepository provideFolderRepository(DataExtractor dataExtractor) {
+        return new FolderRepositoryImpl(dataExtractor);
+    }
+
+
+    @Singleton
+    @Provides
+    ExcludedFolderRepository provideExcludedFolderRepository(SharedPreferences prefs) {
+        return new ExcludedFolderRepositoryImpl(prefs);
+    }
+
 }

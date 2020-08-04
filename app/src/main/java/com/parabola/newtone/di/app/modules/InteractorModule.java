@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.parabola.countdown_timer_feature.SleepTimerImpl;
+import com.parabola.data.repository.DataExtractor;
 import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.interactor.ArtistInteractor;
+import com.parabola.domain.interactor.RepositoryInteractor;
 import com.parabola.domain.interactor.SearchInteractor;
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.TrackInteractor;
@@ -33,8 +35,9 @@ public final class InteractorModule {
     @Provides
     PlayerInteractor providePlayerInteractor(Context context, SharedPreferences preferences,
                                              TrackRepository trackRepo,
+                                             RepositoryInteractor repositoryInteractor,
                                              @Named(IntentModule.OPEN_ACTIVITY_INTENT) Intent openActivityIntent) {
-        return new PlayerInteractorImpl(context, preferences, trackRepo, openActivityIntent);
+        return new PlayerInteractorImpl(context, preferences, trackRepo, repositoryInteractor, openActivityIntent);
     }
 
     @Singleton
@@ -58,24 +61,35 @@ public final class InteractorModule {
 
     @Singleton
     @Provides
-    TrackInteractor provideTrackInteractor(TrackRepository trackRepo, SortingRepository trackSortingRepo) {
-        return new TrackInteractor(trackRepo, trackSortingRepo);
+    RepositoryInteractor provideRepositoryInteractor(DataExtractor dataExtractor) {
+        return dataExtractor;
+    }
+
+
+    @Singleton
+    @Provides
+    TrackInteractor provideTrackInteractor(TrackRepository trackRepo,
+                                           RepositoryInteractor repositoryInteractor,
+                                           SortingRepository trackSortingRepo) {
+        return new TrackInteractor(trackRepo, repositoryInteractor, trackSortingRepo);
     }
 
     @Singleton
     @Provides
     AlbumInteractor provideAlbumInteractor(AlbumRepository albumRepo, TrackRepository trackRepo,
                                            PlayerInteractor playerInteractor,
+                                           RepositoryInteractor repositoryInteractor,
                                            SortingRepository sortingRepo) {
-        return new AlbumInteractor(albumRepo, trackRepo, playerInteractor, sortingRepo);
+        return new AlbumInteractor(albumRepo, trackRepo, playerInteractor, repositoryInteractor, sortingRepo);
     }
 
     @Singleton
     @Provides
     ArtistInteractor provideArtistInteractor(ArtistRepository artistRepo, TrackRepository trackRepo,
                                              PlayerInteractor playerInteractor,
+                                             RepositoryInteractor repositoryInteractor,
                                              SortingRepository sortingRepo) {
-        return new ArtistInteractor(artistRepo, trackRepo, playerInteractor, sortingRepo);
+        return new ArtistInteractor(artistRepo, trackRepo, playerInteractor, repositoryInteractor, sortingRepo);
     }
 
     @Singleton

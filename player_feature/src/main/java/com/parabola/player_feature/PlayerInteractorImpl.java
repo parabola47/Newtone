@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.NotificationUtil;
+import com.parabola.domain.interactor.RepositoryInteractor;
 import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
@@ -54,6 +55,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
@@ -61,7 +63,7 @@ import io.reactivex.subjects.PublishSubject;
 import static java.util.Objects.requireNonNull;
 
 
-public class PlayerInteractorImpl implements PlayerInteractor {
+public final class PlayerInteractorImpl implements PlayerInteractor {
     private static final String LOG_TAG = PlayerInteractorImpl.class.getSimpleName();
 
     private final AudioEffectsInteractorImpl audioEffects;
@@ -92,7 +94,9 @@ public class PlayerInteractorImpl implements PlayerInteractor {
     private static final long PLAYBACK_UPDATE_TIME_MS = 200;
 
     public PlayerInteractorImpl(Context context, SharedPreferences preferences,
-                                TrackRepository trackRepo, Intent notificationClickIntent) {
+                                TrackRepository trackRepo,
+                                RepositoryInteractor repositoryInteractor,
+                                Intent notificationClickIntent) {
         exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
                 .build();
@@ -142,16 +146,32 @@ public class PlayerInteractorImpl implements PlayerInteractor {
         this.trackRepo.observeFavouritesChanged()
                 .subscribe(new ConsumerObserver<>(irrelevant -> notificationManager.invalidate()));
 
-        //  Восстанавливаем состояние плеера перед выходом из приложения
-        this.trackRepo.getByIds(settingSaver.getSavedPlaylist())
+        //  Восстанавливаем состояние плеера, которое было перед выходом из приложения
+        repositoryInteractor.observeLoadingState()
+                .filter(loadingState -> loadingState == RepositoryInteractor.LoadingState.LOADED)
+                .firstOrError()
+                .flatMap(loadingState -> trackRepo.getByIds(settingSaver.getSavedPlaylist()))
                 .subscribe(new ConsumerSingleObserver<>(
                         tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()),
-                        null));
+                        Functions.ERROR_CONSUMER));
+
+        // после обновления списка исключённых папок из плеера удаляются те треки, у которых папки есть в списке исключения
+        // игнорируем первую загрузку, так как первая загрзука не будет списком исключённых папок
+        repositoryInteractor.observeLoadingState()
+                .filter(loadingState -> loadingState == RepositoryInteractor.LoadingState.LOADED)
+                .skip(1)
+                .subscribe(ConsumerObserver.fromConsumer(loadingState -> {
+                    for (Integer trackId : getTrackIds()) {
+                        if (!trackRepo.isExists(trackId)) {
+                            removeAllById(trackId);
+                        }
+                    }
+                }));
 
         //закрываем уведомление, если очередь воспроизведения пуста
         currentTracklistUpdate
                 .observeOn(AndroidSchedulers.from(exoPlayer.getApplicationLooper()))
-                .subscribe(new ConsumerObserver<>(trackIds -> {
+                .subscribe(ConsumerObserver.fromConsumer(trackIds -> {
                     if (trackIds.isEmpty())
                         clearNotificationManagerAndUnbindService();
                 }));

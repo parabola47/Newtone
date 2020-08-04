@@ -169,6 +169,25 @@
 
 
         <RelativeLayout
+            android:id="@+id/excluded_folders_bar"
+            style="@style/SettingItemContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/setting_excluded_folders_title"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
             android:id="@+id/track_item_view_bar"
             style="@style/SettingItemContainer"
             android:layout_width="match_parent"

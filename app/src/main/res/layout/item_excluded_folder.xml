@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="8dp">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/folderIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_folder"
+        app:tint="@color/colorNewtoneIconTint" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/folderName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/colorNewtonePrimaryText"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/folderPath"
+        app:layout_constraintLeft_toRightOf="@id/folderIcon"
+        app:layout_constraintRight_toLeftOf="@+id/removeButton"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="WhatsApp Voice Notes" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/folderPath"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/folderIcon"
+        app:layout_constraintRight_toLeftOf="@+id/removeButton"
+        app:layout_constraintTop_toBottomOf="@id/folderName"
+        tools:text="/storage/emulated/0/WhatsApp/Media/WhatsApp Voice Notes" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/removeButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:longClickable="true"
+        android:padding="4dp"
+        android:tint="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

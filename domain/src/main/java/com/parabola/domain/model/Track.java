@@ -15,6 +15,7 @@ public interface Track {
 
     long getDurationMs();
 
+    long getDateAdded();
     int getPositionInCd();
 
     int getGenreId();

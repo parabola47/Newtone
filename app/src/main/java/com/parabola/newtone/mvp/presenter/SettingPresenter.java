@@ -82,6 +82,10 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
         viewSettingsInteractor.setIsItemDividerShowed(!viewSettingsInteractor.isItemDividerShowed());
     }
 
+    public void onClickExcludedFolders() {
+        router.openExcludedFolders();
+    }
+
     public void onClickTrackItemViewSettings() {
         router.openTrackItemDisplaySettings();
     }

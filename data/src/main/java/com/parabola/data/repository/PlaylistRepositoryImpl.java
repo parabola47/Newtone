@@ -8,9 +8,9 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Playlists.Members;
 
 import com.parabola.data.model.PlaylistData;
-import com.parabola.data.utils.RxCursorIterable;
 import com.parabola.domain.exception.AlreadyExistsException;
 import com.parabola.domain.exception.ItemNotFoundException;
+import com.parabola.domain.interactor.RepositoryInteractor;
 import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Playlist;
@@ -35,28 +35,31 @@ import static android.provider.MediaStore.Audio.PlaylistsColumns.NAME;
 public final class PlaylistRepositoryImpl implements PlaylistRepository {
     private static final String LOG_TAG = PlaylistRepositoryImpl.class.getSimpleName();
 
+    private final DataExtractor dataExtractor;
     private final ContentResolver contentResolver;
     private final PermissionHandler accessRepo;
     private final BehaviorSubject<Irrelevant> playlistsUpdates = BehaviorSubject.create();
 
 
-    public PlaylistRepositoryImpl(ContentResolver contentResolver, PermissionHandler accessRepo) {
+    public PlaylistRepositoryImpl(DataExtractor dataExtractor,
+                                  ContentResolver contentResolver, PermissionHandler accessRepo) {
+        this.dataExtractor = dataExtractor;
         this.contentResolver = contentResolver;
         this.accessRepo = accessRepo;
 
-        this.accessRepo.observePermissionUpdates(Type.FILE_STORAGE)
-                .subscribe(new ConsumerObserver<>(hasStorageAccess -> {
-                    if (hasStorageAccess) {
+        Observable.combineLatest(
+                this.accessRepo.observePermissionUpdates(Type.FILE_STORAGE), this.dataExtractor.observeLoadingState(),
+                //обновление необходимо если есть доступ к файловому хранилищу и если репозиторий прогружен
+                (hasStorageAccess, loadingState) -> hasStorageAccess && loadingState == RepositoryInteractor.LoadingState.LOADED)
+                .subscribe(new ConsumerObserver<>(needToUpdate -> {
+                    if (needToUpdate) {
                         playlistsUpdates.onNext(Irrelevant.INSTANCE);
                     }
                 }));
     }
 
 
-    private final String[] PLAYLIST_QUERY_SELECTIONS = new String[]{
-            _ID,
-            NAME
-    };
+    private final String[] PLAYLIST_QUERY_SELECTIONS = new String[]{_ID, NAME};
 
 
     @Override
@@ -107,16 +110,22 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
         String[] selectedColumns = new String[]{Members.AUDIO_ID};
 
         try (Cursor cursor = contentResolver.query(playlistUri, selectedColumns, null, null, Members.PLAY_ORDER)) {
-            return Observable.fromIterable(RxCursorIterable.from(cursor))
-                    .map(c -> {
-                        PlaylistData.TrackItemData trackItem = new PlaylistData.TrackItemData();
-                        trackItem.trackId = c.getInt(0);
+            if (cursor == null || !cursor.moveToFirst())
+                return Collections.emptyList();
 
-                        return (Playlist.TrackItem) trackItem;
-                    })
-                    .toList()
-                    .onErrorReturnItem(Collections.emptyList())
-                    .blockingGet();
+            List<Playlist.TrackItem> trackItems = new ArrayList<>();
+            do {
+                PlaylistData.TrackItemData trackItem = new PlaylistData.TrackItemData();
+                trackItem.trackId = cursor.getInt(0);
+
+                boolean considerThisTrack = dataExtractor.tracks.stream()
+                        .anyMatch(track -> track.getId() == trackItem.trackId);
+
+                if (considerThisTrack)
+                    trackItems.add(trackItem);
+            } while (cursor.moveToNext());
+
+            return Collections.unmodifiableList(trackItems);
         }
     }
 
@@ -207,8 +216,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
             Uri uri = MediaStore.Audio.Playlists.getContentUri("external");
 
             int deletedRowCounts = contentResolver.delete(
-                    uri,
-                    _ID + "=?",
+                    uri, _ID + "=?",
                     new String[]{String.valueOf(playlistId)});
 
             if (deletedRowCounts > 0)
@@ -233,11 +241,8 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
 
     private boolean containPlaylist(String playlistTitle) {
-        String SELECTION_BY_NAME = NAME + "=?";
-
         try (Cursor cursor = contentResolver.query(EXTERNAL_CONTENT_URI, null,
-                SELECTION_BY_NAME, new String[]{playlistTitle},
-                null)) {
+                NAME + "=?", new String[]{playlistTitle}, null)) {
 
             return cursor != null && cursor.getCount() > 0;
         }

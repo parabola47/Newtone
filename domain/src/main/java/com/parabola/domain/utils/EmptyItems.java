@@ -42,6 +42,11 @@ public final class EmptyItems {
             return 0;
         }
 
+        @Override
+        public long getDateAdded() {
+            return 0;
+        }
+
         public int getPositionInCd() {
             return 0;
         }

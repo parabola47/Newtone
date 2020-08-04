@@ -21,6 +21,7 @@ public final class TrackData implements Track {
 
     public long durationMs;
 
+    public long dateAdded;
     public int positionInCd;
 
     public String filePath;
@@ -76,6 +77,11 @@ public final class TrackData implements Track {
     @Override
     public long getDurationMs() {
         return durationMs;
+    }
+
+    @Override
+    public long getDateAdded() {
+        return dateAdded;
     }
 
     @Override

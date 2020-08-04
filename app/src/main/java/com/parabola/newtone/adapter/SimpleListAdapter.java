@@ -217,6 +217,14 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     }
 
 
+    protected OnRemoveClickListener onRemoveClickListener;
+
+    @Override
+    public void setOnRemoveClickListener(OnRemoveClickListener listener) {
+        onRemoveClickListener = listener;
+    }
+
+
     protected OnMoveItemListener onMoveItemListener;
 
     @Override

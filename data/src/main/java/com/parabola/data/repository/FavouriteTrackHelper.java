@@ -58,15 +58,24 @@ final class FavouriteTrackHelper {
 
 
     void invalidateFavourites(List<Track> extractedTracks) {
-        if (favourites.size() == extractedTracks.size())
+        boolean isListChanged = false;
+        if (favourites.size() == extractedTracks.size()) {
+            for (int i = 0; i < favourites.size(); i++) {
+                if (favourites.get(i) != extractedTracks.get(i).getId()) {
+                    isListChanged = true;
+                    break;
+                }
+            }
+        } else isListChanged = true;
+
+        if (!isListChanged)
             return;
 
-        for (int i = 0; i < favourites.size(); i++) {
-            if (!favourites.get(i).equals(extractedTracks.get(i).getId())) {
-                favourites.remove(favourites.get(i));
-            }
-            saveArrayPref();
+        favourites.clear();
+        for (Track track : extractedTracks) {
+            favourites.add(track.getId());
         }
+        saveArrayPref();
     }
 
     private void saveArrayPref() {

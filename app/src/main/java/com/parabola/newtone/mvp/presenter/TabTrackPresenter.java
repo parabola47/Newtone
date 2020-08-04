@@ -13,7 +13,6 @@ import com.parabola.newtone.mvp.view.TabTrackView;
 import com.parabola.newtone.ui.router.MainRouter;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -49,6 +48,7 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
     protected void onFirstViewAttach() {
         disposables.addAll(
                 observeCurrentTrack(),
+                observeAllTracks(),
                 observeAllTracksSorting(),
                 observeTrackItemViewUpdates(),
                 observeIsItemDividerShowed(),
@@ -66,20 +66,22 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
                 .subscribe(getViewState()::setCurrentTrack);
     }
 
-    private Disposable observeAllTracksSorting() {
-        AtomicBoolean needToShowSection = new AtomicBoolean(false);
 
-        return sortingRepo.observeAllTracksSorting()
-                //включаем/отключаем показ секции в списке, если отсортирован по названию
-                .doOnNext(sorting -> needToShowSection.set(sorting == TrackRepository.Sorting.BY_TITLE))
-                .flatMapSingle(sorting -> trackInteractor.getAll())
+    private Disposable observeAllTracks() {
+        return trackInteractor.observeAllTracksUpdates()
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe(tracks -> {
-                    getViewState().setSectionShowing(needToShowSection.get());
                     getViewState().refreshTracks(tracks);
                     getViewState().setCurrentTrack(currentTrackId);
                 });
+    }
+
+    private Disposable observeAllTracksSorting() {
+        return sortingRepo.observeAllTracksSorting()
+                //включаем/отключаем показ секции в списке, если отсортирован по названию
+                .map(sorting -> sorting == TrackRepository.Sorting.BY_TITLE)
+                .subscribe(getViewState()::setSectionShowing);
     }
 
     private Disposable observeTrackItemViewUpdates() {

@@ -17,6 +17,8 @@ public interface TrackRepository {
     Single<List<Track>> getByIds(List<Integer> trackIds);
     Single<List<Track>> getByIds(List<Integer> trackIds, Sorting sorting);
 
+    boolean isExists(int trackId);
+
     Single<List<Track>> getAll(Sorting sorting);
     default Single<List<Track>> getAll() {
         return getAll(null);
@@ -39,6 +41,10 @@ public interface TrackRepository {
 
     Single<List<Track>> getByPlaylist(int playlistId);
 
+    Single<List<Track>> getByFolder(String folderPath, Sorting sorting);
+    default Single<List<Track>> getByFolder(String folderPath) {
+        return getByFolder(folderPath, null);
+    }
 
     Single<List<Track>> getFavourites();
 
