@@ -24,6 +24,19 @@
             tools:itemCount="4"
             tools:listitem="@layout/item_system_playlist" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/myPlaylistsTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorListItemDefaultBackground"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/tab_playlists_my_playlists"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlists"
             android:layout_width="match_parent"

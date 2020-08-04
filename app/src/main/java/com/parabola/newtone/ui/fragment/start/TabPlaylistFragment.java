@@ -43,6 +43,7 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
 
     @BindView(R.id.playlists) RecyclerView playlists;
     @BindView(R.id.sys_playlists) RecyclerView sysPlaylists;
+    @BindView(R.id.myPlaylistsTxt) TextView myPlaylistsTxt;
     private DividerItemDecoration itemDecoration;
 
     private final BaseAdapter<Playlist> playlistAdapter = new PlaylistAdapter();
@@ -120,6 +121,7 @@ public final class TabPlaylistFragment extends MvpAppCompatFragment
     @Override
     public void refreshPlaylists(List<Playlist> playlists) {
         playlistAdapter.replaceAll(playlists);
+        myPlaylistsTxt.setVisibility(playlists.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override

@@ -8,6 +8,8 @@
     <string name="tab_tracks">Tracks</string>
     <string name="tab_playlists">Playlists</string>
 
+    <string name="tab_playlists_my_playlists">My playlists</string>
+
     <!--PERMISSION REQUEST SCREEN-->
     <string name="request_permission_button">Request</string>
     <string name="request_permission_desc">App needs storage permission to access media</string>
