@@ -279,7 +279,7 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
     private int getPlaylistNextTrackPlayOrder(Uri playlistUri) {
         try (Cursor cursor = contentResolver.query(playlistUri, new String[]{Members.PLAY_ORDER},
-                null, null, Members.PLAY_ORDER + " DESC LIMIT 1")) {
+                null, null, Members.PLAY_ORDER + " DESC")) {
             if (cursor != null && cursor.moveToFirst())
                 return cursor.getInt(0) + 1;
             else return 0;
