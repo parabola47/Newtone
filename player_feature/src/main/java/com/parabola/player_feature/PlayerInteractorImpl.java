@@ -151,6 +151,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
                 .filter(loadingState -> loadingState == RepositoryInteractor.LoadingState.LOADED)
                 .firstOrError()
                 .flatMap(loadingState -> trackRepo.getByIds(settingSaver.getSavedPlaylist()))
+                .onErrorReturnItem(Collections.emptyList()) //в случае ошибки восстановления не происходит
                 .subscribe(new ConsumerSingleObserver<>(
                         tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()),
                         Functions.ERROR_CONSUMER));
