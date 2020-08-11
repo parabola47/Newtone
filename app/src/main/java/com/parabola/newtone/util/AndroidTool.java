@@ -4,19 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.WindowManager;
 
+import androidx.annotation.AttrRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 import com.parabola.newtone.R;
 
 import static java.util.Objects.requireNonNull;
@@ -25,6 +29,31 @@ public final class AndroidTool {
 
     private AndroidTool() {
         throw new AssertionError();
+    }
+
+
+    public static int getColorByTheme(Context context, PrimaryColor primaryColor) {
+        switch (primaryColor) {
+            case NEWTONE: return context.getResources().getColor(R.color.colorNewtonePrimary);
+            case ARIUM: return context.getResources().getColor(R.color.colorAriumPrimary);
+            case BLUES: return context.getResources().getColor(R.color.colorBluesPrimary);
+            case FLOYD: return context.getResources().getColor(R.color.colorFloydPrimary);
+            case PURPLE: return context.getResources().getColor(R.color.colorPurplePrimary);
+            case PASSION: return context.getResources().getColor(R.color.colorPassionPrimary);
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+
+    public static int getStyledColor(Context context, @AttrRes int attr) {
+        TypedValue typedValue = new TypedValue();
+
+        TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[]{attr});
+        int color = a.getColor(0, 0);
+
+        a.recycle();
+
+        return color;
     }
 
 

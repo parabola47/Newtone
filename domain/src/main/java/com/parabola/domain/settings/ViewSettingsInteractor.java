@@ -14,6 +14,13 @@ public interface ViewSettingsInteractor {
     Observable<ColorTheme> observeColorTheme();
 
 
+    PrimaryColor DEFAULT_PRIMARY_COLOR = PrimaryColor.NEWTONE;
+
+    PrimaryColor getPrimaryColor();
+    void setPrimaryColor(PrimaryColor primaryColor);
+    Observable<PrimaryColor> observePrimaryColor();
+
+
     //L I S T    I T E M S
     boolean DEFAULT_IS_ITEM_DIVIDER_SHOWED = false;
 
@@ -58,6 +65,10 @@ public interface ViewSettingsInteractor {
 
     enum ColorTheme {
         DARK, LIGHT
+    }
+
+    enum PrimaryColor {
+        NEWTONE, ARIUM, BLUES, FLOYD, PURPLE, PASSION
     }
 
     class TrackItemView {

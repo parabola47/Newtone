@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 
 import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 
 public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter.ArtistViewHolder>
@@ -60,7 +61,7 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
         if (isContextSelected(holder.getAdapterPosition())) {
             holder.artistTxt.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.artistInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         } else {
             holder.artistTxt.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
             holder.artistInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));

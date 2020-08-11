@@ -19,6 +19,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
     private final SharedPreferences prefs;
 
     private final BehaviorSubject<ColorTheme> colorThemeObserver;
+    private final BehaviorSubject<PrimaryColor> primaryColorObserver;
 
     private final BehaviorSubject<Boolean> isItemDividerShowedObserver;
 
@@ -32,6 +33,8 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
         ColorTheme colorTheme = getColorTheme();
         AppCompatDelegate.setDefaultNightMode(colorTheme == ColorTheme.DARK ? MODE_NIGHT_YES : MODE_NIGHT_NO);
         colorThemeObserver = BehaviorSubject.createDefault(colorTheme);
+
+        primaryColorObserver = BehaviorSubject.createDefault(getPrimaryColor());
 
         isItemDividerShowedObserver = BehaviorSubject.createDefault(isItemDividerShowed());
 
@@ -63,6 +66,7 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
 
     //C O L O R    T H E M E
     private static final String COLOR_THEME_KEY = "com.parabola.data.settings.COLOR_THEME";
+    private static final String PRIMARY_COLOR_KEY = "com.parabola.data.settings.PRIMARY_COLOR";
 
     @Override
     public ColorTheme getColorTheme() {
@@ -85,6 +89,29 @@ public final class ViewSettingsInteractorImpl implements ViewSettingsInteractor 
     @Override
     public Observable<ColorTheme> observeColorTheme() {
         return colorThemeObserver;
+    }
+
+
+    @Override
+    public PrimaryColor getPrimaryColor() {
+        String savedPrimaryColor = prefs
+                .getString(PRIMARY_COLOR_KEY, DEFAULT_PRIMARY_COLOR.name());
+
+        return PrimaryColor.valueOf(savedPrimaryColor);
+    }
+
+    @Override
+    public void setPrimaryColor(PrimaryColor primaryColor) {
+        prefs.edit()
+                .putString(PRIMARY_COLOR_KEY, primaryColor.name())
+                .apply();
+
+        primaryColorObserver.onNext(primaryColor);
+    }
+
+    @Override
+    public Observable<PrimaryColor> observePrimaryColor() {
+        return primaryColorObserver;
     }
 
     //L I S T    I T E M S

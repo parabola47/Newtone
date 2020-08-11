@@ -15,6 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static androidx.core.content.ContextCompat.getColor;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class PlaylistAdapter extends SimpleListAdapter<Playlist, PlaylistAdapter.PlaylistViewHolder> {
 
@@ -42,7 +43,7 @@ public final class PlaylistAdapter extends SimpleListAdapter<Playlist, PlaylistA
         if (isContextSelected(holder.getAdapterPosition())) {
             holder.titleTxt.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         } else {
             holder.titleTxt.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
             holder.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));

@@ -31,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.TrackViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -105,13 +106,13 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
             holder.trackTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.duration.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
             holder.moveItemImg.setColorFilter(getColor(context, android.R.color.white));
         } else if (isSelected(holder.getAdapterPosition())) {
             holder.trackTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.additionalTrackInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.duration.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemSelectedBackground));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimary));
             holder.moveItemImg.setColorFilter(getColor(context, android.R.color.white));
         } else {
             holder.trackTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));

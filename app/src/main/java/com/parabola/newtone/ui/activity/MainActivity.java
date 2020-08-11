@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,8 @@ import androidx.fragment.app.Fragment;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.parabola.data.PermissionChangeReceiver;
+import com.parabola.domain.settings.ViewSettingsInteractor;
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
@@ -60,6 +63,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @BindView(R.id.player_toggle) ImageView playerToggle;
 
     @Inject MainRouter router;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
 
     @InjectPresenter MainPresenter presenter;
 
@@ -67,10 +71,23 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((MainApplication) getApplication()).getAppComponent().inject(this);
+
+        int themeId;
+        switch (viewSettingsInteractor.getPrimaryColor()) {
+            case NEWTONE: themeId = R.style.Newtone; break;
+            case ARIUM: themeId = R.style.Arium; break;
+            case BLUES: themeId = R.style.Blues; break;
+            case FLOYD: themeId = R.style.Floyd; break;
+            case PURPLE: themeId = R.style.Purple; break;
+            case PASSION: themeId = R.style.Passion; break;
+            default: throw new IllegalStateException();
+        }
+        setTheme(themeId);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        ((MainApplication) getApplication()).getAppComponent().inject(this);
 
         router.setActivity(this);
 
@@ -165,6 +182,28 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     public void setBottomSliderPanelState(SlidingUpPanelLayout.PanelState panelState) {
         bottomSlider.setPanelState(panelState);
+    }
+
+
+    @Override
+    public void refreshPrimaryColor(PrimaryColor primaryColor) {
+        String currentThemeName = getCurrentThemeName();
+
+        if ((primaryColor == PrimaryColor.NEWTONE && !currentThemeName.equals(getString(R.string.theme_newtone))) ||
+                (primaryColor == PrimaryColor.ARIUM && !currentThemeName.equals(getString(R.string.theme_arium))) ||
+                (primaryColor == PrimaryColor.BLUES && !currentThemeName.equals(getString(R.string.theme_blues))) ||
+                (primaryColor == PrimaryColor.FLOYD && !currentThemeName.equals(getString(R.string.theme_floyd))) ||
+                (primaryColor == PrimaryColor.PURPLE && !currentThemeName.equals(getString(R.string.theme_purple))) ||
+                (primaryColor == PrimaryColor.PASSION && !currentThemeName.equals(getString(R.string.theme_passion)))) {
+            recreate();
+        }
+    }
+
+
+    public String getCurrentThemeName() {
+        TypedValue outValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+        return outValue.string.toString();
     }
 
     @Override

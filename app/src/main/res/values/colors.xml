@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#009688</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#009688</color>
-    <color name="colorAccentDark">#00574B</color>
     <color name="colorStatusBar">@color/colorNewtoneBackground</color>
 
     <!--M A I N    C O L O R S-->
@@ -25,22 +21,16 @@
     <!--P L A Y E R    B A R-->
     <color name="colorPlayerBarBackground">@color/colorNewtoneBar</color>
     <color name="colorPlayerBarProgressBackground">#4F4F4F</color>
-    <color name="colorPlayerBarProgressMain">@color/colorAccent</color>
 
 
     <!--T  A  B-->
     <color name="colorTabBackground">@color/colorNewtoneBar</color>
     <color name="colorTabIconTintDefault">#AAAAAA</color>
-    <color name="colorTabIconTintSelected">@color/colorAccent</color>
-    <color name="colorTabRippleColor">@color/colorAccent</color>
 
 
     <!--L  I  S  T  S-->
-    <color name="colorArtistAllTrackBackground">@color/colorAccentDark</color>
     <color name="colorArtistAllTrackText">#DDDDDD</color>
     <color name="colorListItemDefaultBackground">#0D0D0D</color>
-    <color name="colorListContextMenuBackground">@color/colorAccentDark</color>
-    <color name="colorListItemSelectedBackground">@color/colorAccent</color>
     <color name="colorListItemSelectedText">@android:color/white</color>
     <!--A L B U M-->
     <color name="colorAlbumGridTextContainerBackground">#0D0D0D</color>
@@ -51,15 +41,12 @@
     <color name="colorScrollbarBackground">#666666</color>
     <color name="colorPopupBackground">#DFDFDF</color>
     <color name="colorPopupText">@android:color/black</color>
-    <color name="colorThumb">@color/colorAccent</color>
 
 
     <!--P L A Y E R    S C R E E N-->
     <color name="colorPlayerActionIconDefault">#BFBFBF</color>
-    <color name="colorPlayerActionIconActive">@color/colorAccent</color>
     <!--P L A Y E R    S E E K B A R-->
     <color name="colorThumbPlayer">#B0B0B0</color>
-    <color name="colorProgress">@color/colorAccent</color>
     <color name="colorSeekBackground">#CCCCCC</color>
     <!--D E F A U L T    A L B U M    C O V E R-->
     <color name="colorDefaultAlbumBackground">#303030</color>
@@ -67,6 +54,7 @@
 
 
     <!--S E T T I N G S-->
+    <color name="colorSettingBlockBackground">@color/colorListItemDefaultBackground</color>
     <color name="colorItemDisplaySettingsBackground">#404040</color>
     <color name="colorToggleButtonDefaultBackground">#222222</color>
 

@@ -16,7 +16,7 @@
         android:layout_height="32dp"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_folder"
-        app:tint="@color/colorAccent" />
+        app:tint="?attr/colorPrimary" />
 
 
     <androidx.appcompat.widget.AppCompatTextView

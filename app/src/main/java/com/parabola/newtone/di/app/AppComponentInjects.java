@@ -4,6 +4,7 @@ import com.parabola.newtone.mvp.presenter.AlbumPresenter;
 import com.parabola.newtone.mvp.presenter.ArtistPresenter;
 import com.parabola.newtone.mvp.presenter.ArtistTracksPresenter;
 import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter;
+import com.parabola.newtone.mvp.presenter.ColorThemeSelectorPresenter;
 import com.parabola.newtone.mvp.presenter.CreatePlaylistPresenter;
 import com.parabola.newtone.mvp.presenter.FavouritesPlaylistPresenter;
 import com.parabola.newtone.mvp.presenter.FolderPresenter;
@@ -57,6 +58,7 @@ public interface AppComponentInjects {
 
     //  SETTINGS
     void inject(SettingPresenter presenter);
+    void inject(ColorThemeSelectorPresenter presenter);
     void inject(ExcludedFoldersFragment fragment);
     void inject(TrackItemDisplaySettingFragment fragment);
     void inject(AlbumItemDisplaySettingFragment fragment);

@@ -1,6 +1,7 @@
 package com.parabola.newtone.ui.fragment.start;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 import static java.util.Objects.requireNonNull;
 
 public final class StartFragment extends MvpAppCompatFragment
@@ -49,6 +51,14 @@ public final class StartFragment extends MvpAppCompatFragment
 
     public StartFragment() {
         // Required empty public constructor
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        selectedTabIconTint = getStyledColor(context, R.attr.colorPrimary);
     }
 
 
@@ -97,7 +107,7 @@ public final class StartFragment extends MvpAppCompatFragment
         tabTrackFragment.scrollToCurrentTrack();
     }
 
-    @BindColor(R.color.colorTabIconTintSelected) int selectedTabIconTint;
+    private int selectedTabIconTint;
     @BindColor(R.color.colorTabIconTintDefault) int defaultTabIconTint;
 
     private void setupTabLayout() {

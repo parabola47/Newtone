@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/colorListItemDefaultBackground"
+                android:background="@color/colorSettingBlockBackground"
                 android:padding="4dp">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -83,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/colorListItemDefaultBackground"
+                android:background="@color/colorSettingBlockBackground"
                 android:padding="4dp">
 
 
@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/colorListItemDefaultBackground"
+                android:background="@color/colorSettingBlockBackground"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:selectableItemBackground"
@@ -168,7 +168,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/colorListItemDefaultBackground"
+                android:background="@color/colorSettingBlockBackground"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:selectableItemBackground"
@@ -202,7 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/colorListItemDefaultBackground"
+                android:background="@color/colorSettingBlockBackground"
                 android:padding="4dp">
 
 
@@ -253,7 +253,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/colorListItemDefaultBackground"
+                android:background="@color/colorSettingBlockBackground"
                 android:padding="4dp">
 
                 <androidx.appcompat.widget.AppCompatTextView

@@ -8,19 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.DialogFragment;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
 import com.parabola.newtone.BuildConfig;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.SettingPresenter;
 import com.parabola.newtone.mvp.view.SettingView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 
 import java.util.Locale;
@@ -47,7 +42,6 @@ public final class SettingFragment extends BaseSwipeToBackFragment
 
     @InjectPresenter SettingPresenter presenter;
 
-    @BindView(R.id.color_theme_desc) TextView colorThemeDesc;
     @BindView(R.id.notification_artwork_show_switch) SwitchCompat notificationArtworkShowSwitch;
     @BindView(R.id.notification_color_switch) SwitchCompat notificationColorSwitch;
     @BindView(R.id.show_item_divider_switch) SwitchCompat showListItemDividerSwitch;
@@ -83,38 +77,9 @@ public final class SettingFragment extends BaseSwipeToBackFragment
         presenter.onClickBack();
     }
 
-
-    private ColorTheme currentColorTheme;
-
-    @Override
-    public void setCurrentColorTheme(ColorTheme colorTheme) {
-        this.currentColorTheme = colorTheme;
-        int stringResId;
-        switch (colorTheme) {
-            case DARK: stringResId = R.string.setting_color_theme_desc_dark; break;
-            case LIGHT: stringResId = R.string.setting_color_theme_desc_light; break;
-            default: throw new IllegalArgumentException();
-        }
-        colorThemeDesc.setText(stringResId);
-    }
-
     @OnClick(R.id.color_theme_bar)
     public void onClickColorThemeSetting() {
-        String[] values = new String[]{
-                getString(R.string.setting_color_theme_desc_dark),
-                getString(R.string.setting_color_theme_desc_light)};
-
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.setting_color_theme_title)
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .setSingleChoiceItems(values, currentColorTheme.ordinal(), (d, which) -> {
-                    presenter.onSelectColorTheme(ColorTheme.values()[which]);
-                    d.dismiss();
-                })
-                .create();
-
-        DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-        dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
+        presenter.onClickColorThemeSettings();
     }
 
 

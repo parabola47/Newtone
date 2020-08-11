@@ -1,5 +1,7 @@
 package com.parabola.newtone.mvp.view;
 
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
+
 import moxy.MvpView;
 import moxy.viewstate.strategy.AddToEndSingleStrategy;
 import moxy.viewstate.strategy.OneExecutionStateStrategy;
@@ -7,6 +9,8 @@ import moxy.viewstate.strategy.StateStrategyType;
 
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface MainView extends MvpView {
+
+    void refreshPrimaryColor(PrimaryColor primaryColor);
 
     void setTrackTitle(String trackTitle);
     void setArtistName(String artist);

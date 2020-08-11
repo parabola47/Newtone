@@ -16,10 +16,13 @@ import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
+
+import static com.parabola.newtone.util.AndroidTool.getColorByTheme;
 
 public final class HomeScreenWidget extends AppWidgetProvider {
 
@@ -49,6 +52,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
         AppComponent appComponent = ((MainApplication) context.getApplicationContext()).getAppComponent();
         PlayerInteractor playerInteractor = appComponent.providePlayerInteractor();
         TrackRepository trackRepo = appComponent.provideTrackRepo();
+        PrimaryColor appPrimaryColor = appComponent.provideViewSettingsInteractor().getPrimaryColor();
 
 
         boolean isNowPlaying = playerInteractor.isPlayWhenReady();
@@ -70,7 +74,7 @@ public final class HomeScreenWidget extends AppWidgetProvider {
 
         for (int widgetId : allWidgetIds) {
             setupWidget(context, appComponent, appWidgetManager, widgetId, title, artist, album,
-                    albumArt, isNowPlaying, repeatMode, shuffleEnabled);
+                    albumArt, isNowPlaying, repeatMode, shuffleEnabled, appPrimaryColor);
         }
     }
 
@@ -80,7 +84,8 @@ public final class HomeScreenWidget extends AppWidgetProvider {
     private void setupWidget(Context context, AppComponent appComponent, AppWidgetManager appWidgetManager, int widgetId,
                              String trackTitle, String artistName, String albumTitle,
                              @Nullable Bitmap albumCover,
-                             boolean isNowPlaying, RepeatMode repeatMode, boolean isShuffleEnabled) {
+                             boolean isNowPlaying, RepeatMode repeatMode, boolean isShuffleEnabled,
+                             PrimaryColor appPrimaryColor) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.home_screen_widget);
 
@@ -111,18 +116,18 @@ public final class HomeScreenWidget extends AppWidgetProvider {
                 remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop);
                 break;
             case ALL:
-                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
+                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, getColorByTheme(context, appPrimaryColor));
                 remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop);
                 break;
             case ONE:
-                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, context.getResources().getColor(R.color.colorAccent));
+                remoteViews.setInt(R.id.repeat, SET_COLOR_FILTER_METHOD_NAME, getColorByTheme(context, appPrimaryColor));
                 remoteViews.setImageViewResource(R.id.repeat, R.drawable.ic_loop_one);
                 break;
         }
         remoteViews.setOnClickPendingIntent(R.id.repeat, getPendingIntent(context, 0, appComponent.provideToggleRepeatModeIntent(), 0));
 
 
-        int color = context.getResources().getColor(isShuffleEnabled ? R.color.colorAccent : android.R.color.white);
+        int color = isShuffleEnabled ? getColorByTheme(context, appPrimaryColor) : context.getResources().getColor(android.R.color.white);
         remoteViews.setInt(R.id.shuffle, SET_COLOR_FILTER_METHOD_NAME, color);
         remoteViews.setOnClickPendingIntent(R.id.shuffle, getPendingIntent(context, 0, appComponent.provideToggleShuffleModeIntent(), 0));
 

@@ -4,6 +4,7 @@ import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.TrackRepository;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.MainView;
@@ -25,6 +26,7 @@ public final class MainPresenter extends MvpPresenter<MainView> {
     @Inject TrackRepository trackRepo;
 
     @Inject MainRouter router;
+    @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SchedulerProvider schedulers;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -40,8 +42,10 @@ public final class MainPresenter extends MvpPresenter<MainView> {
         }
 
         disposables.addAll(
-                observeCurrentTrack(), observePlaybackPosition(),
-                observeState());
+                observeCurrentTrack(),
+                observePlaybackPosition(),
+                observeState(),
+                observerPrimaryColor());
     }
 
     @Override
@@ -85,6 +89,11 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                     if (isPlaying) getViewState().setPlaybackButtonAsPause();
                     else getViewState().setPlaybackButtonAsPlay();
                 });
+    }
+
+    private Disposable observerPrimaryColor() {
+        return viewSettingsInteractor.observePrimaryColor()
+                .subscribe(getViewState()::refreshPrimaryColor);
     }
 
     public void onClickPlayButton() {

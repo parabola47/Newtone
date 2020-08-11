@@ -34,7 +34,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="@string/tab_playlists_my_playlists"
-            android:textColor="@color/colorAccent"
+            android:textColor="?attr/colorPrimary"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView

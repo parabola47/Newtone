@@ -186,7 +186,7 @@
 
     <!--SETTING-->
     <string name="setting_title">Настройки</string>
-    <string name="setting_color_theme_title">Цветовая схема</string>
+    <string name="setting_color_theme_title">Цветовая тема</string>
     <string name="setting_color_theme_desc_dark">Тёмная</string>
     <string name="setting_color_theme_desc_light">Светлая</string>
     <string name="setting_notification_color_title">Цвет уведомления</string>
@@ -199,6 +199,10 @@
     <string name="setting_privacy_policy_title">Политика конфиденциальности</string>
     <string name="reset_to_default_button">Восстановить по умолчанию</string>
     <string name="reset_settings_dialog_title">Сбросить настройки</string>
+
+    <!--COLOR THEME SELECTOR SETTING-->
+    <string name="setting_ui_mode_block">Тема интерфейса</string>
+    <string name="setting_primary_color_block">Основной цвет</string>
 
     <!--TRACK ITEM DISPLAY SETTING-->
     <string name="track_item_display_setting_screen_title">Отображение треков</string>

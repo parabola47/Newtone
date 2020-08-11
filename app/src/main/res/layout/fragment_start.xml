@@ -19,11 +19,11 @@
             android:elevation="24dp"
             app:tabGravity="fill"
             app:tabIconTint="@color/colorTabIconTintDefault"
-            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorColor="?attr/colorPrimary"
             app:tabIndicatorFullWidth="false"
             app:tabIndicatorHeight="4dp"
-            app:tabRippleColor="@color/colorTabRippleColor"
-            app:tabSelectedTextColor="@color/colorTabIconTintSelected"
+            app:tabRippleColor="?attr/colorPrimary"
+            app:tabSelectedTextColor="?attr/colorPrimary"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Small"
             app:tabTextColor="@color/colorTabIconTintDefault">
 

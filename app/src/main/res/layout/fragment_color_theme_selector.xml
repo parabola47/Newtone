@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".ui.fragment.settings.ColorThemeSelectorFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorSettingBlockBackground"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="4dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_ui_mode_block"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/themeToggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:visibility="visible"
+            app:selectionRequired="true"
+            app:singleSelection="true"
+            tools:checkedButton="@id/darkButton">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/darkButton"
+                style="@style/MaterialToggleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_color_theme_desc_dark"
+                android:textAllCaps="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/lightButton"
+                style="@style/MaterialToggleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_color_theme_desc_light"
+                android:textAllCaps="false" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorSettingBlockBackground"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="4dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:text="@string/setting_primary_color_block"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <RadioGroup
+                android:id="@+id/primaryColorRadioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                tools:checkedButton="@id/primaryColorNewtone">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/primaryColorNewtone"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/color_picker_selector"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:transformPivotX="-8dp"
+                    android:transformPivotY="30dp"
+                    app:buttonTint="@color/colorNewtonePrimary" />
+
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/primaryColorArium"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/color_picker_selector"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:transformPivotX="-8dp"
+                    android:transformPivotY="30dp"
+                    app:buttonTint="@color/colorAriumPrimary" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/primaryColorBlues"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/color_picker_selector"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:transformPivotX="-8dp"
+                    android:transformPivotY="30dp"
+                    app:buttonTint="@color/colorBluesPrimary" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/primaryColorFloyd"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/color_picker_selector"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:transformPivotX="-8dp"
+                    android:transformPivotY="30dp"
+                    app:buttonTint="@color/colorFloydPrimary" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/primaryColorPurple"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/color_picker_selector"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:transformPivotX="-8dp"
+                    android:transformPivotY="30dp"
+                    app:buttonTint="@color/colorPurplePrimary" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/primaryColorPassion"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/color_picker_selector"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:transformPivotX="-8dp"
+                    android:transformPivotY="30dp"
+                    app:buttonTint="@color/colorPassionPrimary" />
+
+            </RadioGroup>
+
+        </HorizontalScrollView>
+
+    </LinearLayout>
+
+</LinearLayout>

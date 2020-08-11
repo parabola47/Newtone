@@ -200,6 +200,11 @@
     <string name="reset_to_default_button">Reset to default</string>
     <string name="reset_settings_dialog_title">Reset settings</string>
 
+    <!--COLOR THEME SELECTOR SETTING-->
+    <string name="setting_ui_mode_block">UI mode</string>
+    <string name="setting_primary_color_block">Primary color</string>
+
+
     <!--TRACK ITEM DISPLAY SETTING-->
     <string name="track_item_display_setting_screen_title">Track view settings</string>
     <string name="track_item_text_size_setting">Text size</string>

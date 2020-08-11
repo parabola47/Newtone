@@ -1,9 +1,7 @@
 package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.interactor.player.PlayerSetting;
-import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SettingView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -21,7 +19,7 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
 
     @Inject PlayerSetting playerSetting;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject ResourceRepository resourceRepo;
+
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -31,8 +29,7 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
         disposables.addAll(
                 observeIsNotificationBackgroundColorized(),
                 observeNotificationArtworkShow(),
-                observeIsItemDividerShowed(),
-                observeColorTheme());
+                observeIsItemDividerShowed());
     }
 
     @Override
@@ -40,10 +37,6 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
         disposables.dispose();
     }
 
-    private Disposable observeColorTheme() {
-        return viewSettingsInteractor.observeColorTheme()
-                .subscribe(getViewState()::setCurrentColorTheme);
-    }
 
     private Disposable observeIsNotificationBackgroundColorized() {
         return playerSetting.observeIsNotificationBackgroundColorized()
@@ -66,8 +59,8 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
     }
 
 
-    public void onSelectColorTheme(ColorTheme colorTheme) {
-        viewSettingsInteractor.setColorTheme(colorTheme);
+    public void onClickColorThemeSettings() {
+        router.openColorThemeSelectorSettings();
     }
 
     public void onClickNotificationColorSetting() {

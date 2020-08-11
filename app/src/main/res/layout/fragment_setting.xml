@@ -30,17 +30,6 @@
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/color_theme_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/color_theme_title"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                tools:text="@string/setting_color_theme_desc_dark" />
-
         </RelativeLayout>
 
 

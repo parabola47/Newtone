@@ -29,6 +29,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static androidx.core.content.ContextCompat.getColor;
 import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.ViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -142,7 +143,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
                         error -> holder.cover.setImageResource(R.drawable.album_default)));
 
         if (isContextSelected(holder.getAdapterPosition()))
-            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         else
             holder.itemView.setBackground(null);
     }
@@ -174,7 +175,7 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
             holder.albumTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.albumArtist.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListContextMenuBackground));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         } else {
             holder.albumTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
             holder.albumArtist.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));

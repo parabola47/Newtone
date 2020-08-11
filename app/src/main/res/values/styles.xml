@@ -1,15 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
+    <style name="BaseTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/colorNewtoneBackground</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
+
+
+    <declare-styleable name="CustomTheme">
+        <attr name="themeName" format="string" />
+    </declare-styleable>
+
+
+    <string name="theme_newtone" translatable="false">Newtone</string>
+    <string name="theme_arium" translatable="false">Arium</string>
+    <string name="theme_blues" translatable="false">Blues</string>
+    <string name="theme_floyd" translatable="false">Floyd</string>
+    <string name="theme_purple" translatable="false">Purple</string>
+    <string name="theme_passion" translatable="false">Passion</string>
+
+
+    <!-- Base application theme. -->
+    <style name="Newtone" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorNewtonePrimary</item>
+        <item name="colorPrimaryDark">@color/colorNewtonePrimaryDark</item>
+        <item name="colorAccent">@color/colorNewtonePrimary</item>
+
+        <item name="themeName">@string/theme_newtone</item>
+    </style>
+
+    <style name="Arium" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorAriumPrimary</item>
+        <item name="colorPrimaryDark">@color/colorAriumPrimaryDark</item>
+        <item name="colorAccent">@color/colorAriumPrimary</item>
+
+        <item name="themeName">@string/theme_arium</item>
+    </style>
+
+    <style name="Blues" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorBluesPrimary</item>
+        <item name="colorPrimaryDark">@color/colorBluesPrimaryDark</item>
+        <item name="colorAccent">@color/colorBluesPrimary</item>
+
+        <item name="themeName">@string/theme_blues</item>
+    </style>
+
+    <style name="Floyd" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorFloydPrimary</item>
+        <item name="colorPrimaryDark">@color/colorFloydPrimaryDark</item>
+        <item name="colorAccent">@color/colorFloydPrimary</item>
+
+        <item name="themeName">@string/theme_floyd</item>
+    </style>
+
+    <style name="Purple" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorPurplePrimary</item>
+        <item name="colorPrimaryDark">@color/colorPurplePrimaryDark</item>
+        <item name="colorAccent">@color/colorPurplePrimary</item>
+
+        <item name="themeName">@string/theme_purple</item>
+    </style>
+
+    <style name="Passion" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorPassionPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPassionPrimaryDark</item>
+        <item name="colorAccent">@color/colorPassionPrimary</item>
+
+        <item name="themeName">@string/theme_passion</item>
+    </style>
+
+
+    <color name="colorNewtonePrimary">#009688</color>
+    <color name="colorNewtonePrimaryDark">#00574B</color>
+
+    <color name="colorAriumPrimary">#FF9E36</color>
+    <color name="colorAriumPrimaryDark">#D9862E</color>
+
+    <color name="colorBluesPrimary">#8ABBFF</color>
+    <color name="colorBluesPrimaryDark">#759FD9</color>
+
+    <color name="colorFloydPrimary">#CC5E91</color>
+    <color name="colorFloydPrimaryDark">#8C4164</color>
+
+
+    <color name="colorPurplePrimary">#8266CC</color>
+    <color name="colorPurplePrimaryDark">#59468C</color>
+
+    <color name="colorPassionPrimary">#CD4E57</color>
+    <color name="colorPassionPrimaryDark">#8C353B</color>
+
 
     <style name="SettingItemContainer">
         <item name="android:background">@color/colorListItemDefaultBackground</item>
@@ -40,7 +119,7 @@
     </style>
 
     <style name="FxSettingCroller">
-        <item name="indicator_color">@color/colorAccent</item>
+        <item name="indicator_color">?attr/colorPrimary</item>
         <item name="indicator_disable_color">@android:color/darker_gray</item>
         <item name="label_size">10sp</item>
         <item name="label_color">?android:attr/textColorSecondary</item>
@@ -59,7 +138,7 @@
 
     <style name="FxDiscreteSettingCroller" parent="FxSettingCroller">
         <item name="is_continuous">false</item>
-        <item name="progress_primary_color">@color/colorAccent</item>
+        <item name="progress_primary_color">?attr/colorPrimary</item>
         <item name="progress_primary_disable_color">@android:color/darker_gray</item>
     </style>
 

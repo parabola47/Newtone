@@ -50,6 +50,7 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class PlayerFragment extends MvpAppCompatFragment
         implements PlayerView {
@@ -301,11 +302,11 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 break;
             case ALL:
                 loopButton.setImageResource(R.drawable.ic_loop);
-                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
+                loopButton.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
                 break;
             case ONE:
                 loopButton.setImageResource(R.drawable.ic_loop_one);
-                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconActive));
+                loopButton.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
                 break;
         }
 
@@ -313,8 +314,10 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void setShuffleEnabling(boolean enable) {
-        int colorResId = enable ? R.color.colorPlayerActionIconActive : R.color.colorPlayerActionIconDefault;
-        shuffleButton.setColorFilter(ContextCompat.getColor(requireContext(), colorResId));
+        int color = enable ? getStyledColor(requireContext(), R.attr.colorPrimary)
+                : ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault);
+
+        shuffleButton.setColorFilter(color);
     }
 
     @Override
