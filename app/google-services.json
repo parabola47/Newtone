@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "853841908272",
+    "firebase_url": "https://newtone-9e95e.firebaseio.com",
+    "project_id": "newtone-9e95e",
+    "storage_bucket": "newtone-9e95e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853841908272:android:627f2c9771de5ba83b13f5",
+        "android_client_info": {
+          "package_name": "com.parabola.newtone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "853841908272-rit03s9g8gu6sg0g48v32c980epo8mcr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiU4g0kizsk354JdcPXQtU58W9udCW9Qo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853841908272-rit03s9g8gu6sg0g48v32c980epo8mcr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
