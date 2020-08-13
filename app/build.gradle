@@ -87,6 +87,4 @@ dependencies {
 
     //    Vertical ProgressBar
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
-    //    Round corner ProgressBar
-    implementation 'com.akexorcist:RoundCornerProgressBar:2.0.3'
 }

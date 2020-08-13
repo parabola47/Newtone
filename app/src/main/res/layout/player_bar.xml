@@ -6,16 +6,18 @@
     android:layout_height="68dp"
     android:background="@color/colorPlayerBarBackground">
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.google.android.material.progressindicator.ProgressIndicator
         android:id="@+id/trackPositionProgressBar"
+        style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Determinate"
         android:layout_width="0dp"
         android:layout_height="4dp"
+        app:indicatorCornerRadius="2dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:rcBackgroundColor="@color/colorPlayerBarProgressBackground"
-        app:rcProgressColor="?attr/colorPrimary"
-        app:rcRadius="2dp" />
+        app:trackColor="@color/colorPlayerBarProgressBackground"
+        tools:max="100"
+        tools:progress="10" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/player_toggle"

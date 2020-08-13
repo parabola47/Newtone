@@ -21,7 +21,7 @@ import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.parabola.data.PermissionChangeReceiver;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
@@ -55,7 +55,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @BindView(R.id.bottom_slider) SlidingUpPanelLayout bottomSlider;
     @BindView(R.id.player_bar) ViewGroup playerBar;
     @BindView(R.id.track_settings) ImageButton playerSetting;
-    @BindView(R.id.trackPositionProgressBar) RoundCornerProgressBar trackPositionProgressBar;
+    @BindView(R.id.trackPositionProgressBar) ProgressIndicator trackPositionProgressBar;
 
     @BindView(R.id.track_title) TextView trackTitleTxt;
     @BindView(R.id.song_artist) TextView artistTxt;
