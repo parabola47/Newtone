@@ -17,8 +17,8 @@
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackSpeedCroller"
             style="@style/FxSettingContinuousCroller"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:label="Tempo x1.00"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -42,8 +42,8 @@
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackPitchCroller"
             style="@style/FxSettingContinuousCroller"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:label="Pitch x1.00"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintLeft_toRightOf="@+id/playbackSpeedCroller"
@@ -67,8 +67,8 @@
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/virtualizerCroller"
             style="@style/FxDiscreteSettingCroller"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:label="@string/fx_virtualizer"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintLeft_toRightOf="@+id/bassBoostCroller"
@@ -92,8 +92,8 @@
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/bassBoostCroller"
             style="@style/FxDiscreteSettingCroller"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:label="@string/fx_bassBoost"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintLeft_toLeftOf="parent"
