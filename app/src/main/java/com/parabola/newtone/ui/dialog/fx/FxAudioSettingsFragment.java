@@ -56,6 +56,11 @@ public final class FxAudioSettingsFragment extends MvpAppCompatFragment
         virtualizerCroller.setOnProgressChangedListener(progress ->
                 presenter.onVirtualizerProgressChange(progress * VIRTUALIZER_PROGRESS_STEP));
 
+        playbackSpeedCroller.setOnDoubleTapListener(() -> playbackSpeedCroller.setProgress(50));
+        playbackPitchCroller.setOnDoubleTapListener(() -> playbackPitchCroller.setProgress(50));
+        bassBoostCroller.setOnDoubleTapListener(() -> bassBoostCroller.setProgress(0));
+        virtualizerCroller.setOnDoubleTapListener(() -> virtualizerCroller.setProgress(0));
+
         playbackSpeedSwitch.setOnCheckedChangeListener((view, isChecked) ->
                 presenter.onPlaybackSpeedSwitchClick(isChecked));
         playbackPitchSwitch.setOnCheckedChangeListener((view, isChecked) ->

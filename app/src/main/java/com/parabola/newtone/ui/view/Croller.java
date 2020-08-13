@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -72,6 +73,17 @@ public class Croller extends View {
     private onProgressChangedListener mProgressChangeListener;
     private OnCrollerChangeListener mCrollerChangeListener;
 
+    private OnDoubleTapListener mOnDoubleTapListener;
+    private GestureDetector gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            if (mOnDoubleTapListener != null)
+                mOnDoubleTapListener.onDoubleTap();
+            return super.onDoubleTap(e);
+        }
+    });
+
+
     public interface onProgressChangedListener {
         void onProgressChanged(int progress);
     }
@@ -82,6 +94,10 @@ public class Croller extends View {
 
     public void setOnCrollerChangeListener(OnCrollerChangeListener mCrollerChangeListener) {
         this.mCrollerChangeListener = mCrollerChangeListener;
+    }
+
+    public void setOnDoubleTapListener(OnDoubleTapListener listener) {
+        this.mOnDoubleTapListener = listener;
     }
 
     public Croller(Context context) {
@@ -429,6 +445,8 @@ public class Croller extends View {
 
         if (!isEnabled)
             return false;
+
+        gestureDetector.onTouchEvent(e);
 
 
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
@@ -812,6 +830,12 @@ public class Croller extends View {
         isAntiClockwise = antiClockwise;
         invalidate();
     }
+
+
+    public interface OnDoubleTapListener {
+        void onDoubleTap();
+    }
+
 
     public interface OnCrollerChangeListener {
         void onProgressChanged(Croller croller, int progress);
