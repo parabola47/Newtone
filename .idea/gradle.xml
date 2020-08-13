@@ -11,6 +11,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Slidr" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/countdown_timer_feature" />
             <option value="$PROJECT_DIR$/data" />

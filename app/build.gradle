@@ -43,6 +43,7 @@ dependencies {
     implementation project(path: ':data')
     implementation project(path: ':player_feature')
     implementation project(path: ':countdown_timer_feature')
+    implementation project(path: ':Slidr')      //  Swipe to back support
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -60,10 +61,6 @@ dependencies {
 
     //    SlidingPanelView
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
-
-    //    Swipe to back support
-    //noinspection GradleDependency
-    implementation 'com.r0adkll:slidableactivity:2.0.6'
 
     //    FastScrollRecyclerView
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
