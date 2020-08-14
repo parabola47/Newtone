@@ -8,6 +8,7 @@ import com.parabola.countdown_timer_feature.SleepTimerImpl;
 import com.parabola.data.repository.DataExtractor;
 import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.interactor.ArtistInteractor;
+import com.parabola.domain.interactor.FolderInteractor;
 import com.parabola.domain.interactor.RepositoryInteractor;
 import com.parabola.domain.interactor.SearchInteractor;
 import com.parabola.domain.interactor.SleepTimerInteractor;
@@ -90,6 +91,12 @@ public final class InteractorModule {
                                              RepositoryInteractor repositoryInteractor,
                                              SortingRepository sortingRepo) {
         return new ArtistInteractor(artistRepo, trackRepo, playerInteractor, repositoryInteractor, sortingRepo);
+    }
+
+    @Singleton
+    @Provides
+    FolderInteractor provideFolderInteractor(TrackRepository trackRepo, PlayerInteractor playerInteractor) {
+        return new FolderInteractor(trackRepo, playerInteractor);
     }
 
     @Singleton

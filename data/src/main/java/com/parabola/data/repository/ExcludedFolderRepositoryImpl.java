@@ -38,6 +38,20 @@ public final class ExcludedFolderRepositoryImpl implements ExcludedFolderReposit
     }
 
     @Override
+    public Completable addExcludedFolder(String folder) {
+        return Completable.fromAction(() -> {
+            Set<String> folders = requireNonNull(prefs.getStringSet(EXCLUDED_FOLDERS_SAVE_KEY, new HashSet<>()));
+            folders.add(folder);
+
+            prefs.edit()
+                    .putStringSet(EXCLUDED_FOLDERS_SAVE_KEY, new HashSet<>(folders))
+                    .apply();
+
+            onExcludeFoldersObserver.onNext(Irrelevant.INSTANCE);
+        });
+    }
+
+    @Override
     public Completable refreshExcludedFolders(List<String> folders) {
         return Completable.fromAction(() -> {
             if (!isEqualToOldFolders(folders)) {

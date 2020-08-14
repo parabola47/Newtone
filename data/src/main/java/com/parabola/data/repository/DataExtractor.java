@@ -111,6 +111,7 @@ public final class DataExtractor implements RepositoryInteractor {
         tracks.clear();
         albums.clear();
         artists.clear();
+        folders.clear();
 
         String trackSelection = IS_MUSIC + "=1";
 

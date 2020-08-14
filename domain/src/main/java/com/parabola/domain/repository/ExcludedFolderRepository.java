@@ -11,6 +11,7 @@ public interface ExcludedFolderRepository {
 
 
     Observable<Irrelevant> onExcludeFoldersUpdatesObserver();
+    Completable addExcludedFolder(String folder);
     Completable refreshExcludedFolders(List<String> folders);
     List<String> getExcludedFolders();
 

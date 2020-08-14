@@ -65,6 +65,13 @@
     <string name="playlist_menu_shuffle">Shuffle</string>
     <string name="playlist_menu_delete">Delete</string>
 
+    <!--FOLDER MENU-->
+    <string name="folder_menu_shuffle">Shuffle</string>
+    <string name="folder_menu_add_to_playlist">Add to playlist</string>
+    <string name="folder_menu_exclude_folder">Exclude folder</string>
+    <string name="folder_menu_exclude_folder_dialog_title">Exclude folder %s?</string>
+    <string name="folder_menu_exclude_folder_dialog_desc">The folder \'%s\' will be added to exclude list</string>
+
     <!--PLAYER MENU-->
     <string name="player_menu_add_to_playlist">Add to playlist</string>
     <string name="player_menu_timer">Timer</string>
@@ -106,6 +113,7 @@
     <string name="dialog_delete">Delete</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_reset">Reset</string>
+    <string name="dialog_exclude">Exclude</string>
 
     <!--CREATE PLAYLIST DIALOG SCREEN-->
     <string name="create_playlist_title">Create new playlist</string>

@@ -3,24 +3,29 @@ package com.parabola.newtone.ui.fragment.playlist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Folder;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.FolderAdapter;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FoldersListPresenter;
 import com.parabola.newtone.mvp.view.FoldersListView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
@@ -31,6 +36,7 @@ import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.domain.utils.TracklistTool.isFolderListsIdentical;
 import static java.util.Objects.requireNonNull;
 
 
@@ -68,10 +74,50 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
         foldersAdapter.setOnItemClickListener(position ->
                 presenter.onClickFolderItem(foldersAdapter.get(position).getAbsolutePath()));
+        foldersAdapter.setOnItemLongClickListener(this::showArtistContextMenu);
 
         foldersTitle.setText(R.string.playlist_folders);
 
         return root;
+    }
+
+
+    private void showArtistContextMenu(int position) {
+        Folder selectedFolder = foldersAdapter.get(position);
+        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.folder_menu);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(selectedFolder.getFolderName())
+                .setAdapter(menuAdapter, (d, which) ->
+                        handleSelectedMenu(menuAdapter.getItem(which), selectedFolder))
+                .create();
+        dialog.setOnShowListener(d -> foldersAdapter.setContextSelected(position));
+        dialog.setOnDismissListener(d -> foldersAdapter.clearContextSelected());
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
+        dialog.show();
+    }
+
+    private void handleSelectedMenu(MenuItem item, Folder selectedFolder) {
+        switch (item.getItemId()) {
+            case R.id.shuffle:
+                presenter.onClickMenuShuffle(selectedFolder.getAbsolutePath());
+                break;
+            case R.id.add_to_playlist:
+                presenter.onClickMenuAddToPlaylist(selectedFolder.getAbsolutePath());
+                break;
+            case R.id.exclude_folder:
+                AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.folder_menu_exclude_folder_dialog_title)
+                        .setMessage(getString(R.string.folder_menu_exclude_folder_dialog_desc, selectedFolder.getFolderName()))
+                        .setPositiveButton(R.string.dialog_exclude, (dialogInterface, i) -> {
+                            foldersAdapter.removeWithCondition(selectedFolder::equals);
+                            presenter.onClickMenuExcludeFolder(selectedFolder.getAbsolutePath());
+                        })
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .show();
+                getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
+                break;
+        }
     }
 
     @OnClick(R.id.action_bar)
@@ -85,7 +131,9 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
         String foldersCountStr = getResources()
                 .getQuantityString(R.plurals.folders_count, folders.size(), folders.size());
         foldersCount.setText(foldersCountStr);
-        foldersAdapter.replaceAll(folders);
+        if (!isFolderListsIdentical(foldersAdapter.getAll(), folders)) {
+            foldersAdapter.replaceAll(folders);
+        }
     }
 
     @Override

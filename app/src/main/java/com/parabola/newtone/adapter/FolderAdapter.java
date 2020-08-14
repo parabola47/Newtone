@@ -1,5 +1,6 @@
 package com.parabola.newtone.adapter;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,6 +13,9 @@ import com.parabola.newtone.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static androidx.core.content.ContextCompat.getColor;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter.FolderViewHolder> {
 
@@ -28,6 +32,7 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
     public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         Folder item = get(holder.getAdapterPosition());
+        Context context = holder.itemView.getContext();
 
         holder.folderNameTxt.setText(item.getFolderName());
         holder.pathToFolder.setText(item.getPathToParent());
@@ -35,6 +40,18 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
         String tracksCountText = holder.itemView.getResources()
                 .getQuantityString(R.plurals.tracks_count, item.getTracksCount(), item.getTracksCount());
         holder.tracksCount.setText(tracksCountText);
+
+        if (isContextSelected(holder.getAdapterPosition())) {
+            holder.folderNameTxt.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.pathToFolder.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
+        } else {
+            holder.folderNameTxt.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.pathToFolder.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
+        }
     }
 
     @Override

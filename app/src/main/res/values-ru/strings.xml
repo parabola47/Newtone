@@ -65,6 +65,13 @@
     <string name="playlist_menu_shuffle">Перемешать</string>
     <string name="playlist_menu_delete">Удалить</string>
 
+    <!--FOLDER MENU-->
+    <string name="folder_menu_shuffle">Перемешать</string>
+    <string name="folder_menu_add_to_playlist">Добавить в плейлист</string>
+    <string name="folder_menu_exclude_folder">Исключить папку</string>
+    <string name="folder_menu_exclude_folder_dialog_title">Исключить папку?</string>
+    <string name="folder_menu_exclude_folder_dialog_desc">Папка \'%s\' будет добавлена в список исключений</string>
+
     <!--PLAYER MENU-->
     <string name="player_menu_add_to_playlist">Добавить в плейлист</string>
     <string name="player_menu_timer">Таймер</string>
@@ -106,6 +113,7 @@
     <string name="dialog_delete">Удалить</string>
     <string name="dialog_cancel">Закрыть</string>
     <string name="dialog_reset">Сбросить</string>
+    <string name="dialog_exclude">Исключить</string>
 
     <!--CREATE PLAYLIST DIALOG SCREEN-->
     <string name="create_playlist_title">Создать плейлист</string>
@@ -203,6 +211,7 @@
     <!--COLOR THEME SELECTOR SETTING-->
     <string name="setting_ui_mode_block">Тема интерфейса</string>
     <string name="setting_primary_color_block">Основной цвет</string>
+
 
     <!--TRACK ITEM DISPLAY SETTING-->
     <string name="track_item_display_setting_screen_title">Отображение треков</string>
