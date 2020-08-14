@@ -17,12 +17,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.FolderPickAdapter;
+import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +40,9 @@ public class FolderPickerDialog extends DialogFragment
 
     private FolderPickAdapter folderPickAdapter = new FolderPickAdapter();
 
+    @Nullable
+    private Function<FolderPickerItem, String> additionalInfoMapper;
+
 
     private static final String START_DIRECTORY_ARG_KEY = "START_DIRECTORY";
     private File startDirectory;
@@ -45,11 +50,13 @@ public class FolderPickerDialog extends DialogFragment
     private File currentDirectory;
 
 
-    public static FolderPickerDialog newInstance(String startDirectory) {
+    public static FolderPickerDialog newInstance(String startDirectory,
+                                                 @Nullable Function<FolderPickerItem, String> additionalInfoMapper) {
         Bundle args = new Bundle();
         args.putString(START_DIRECTORY_ARG_KEY, startDirectory);
 
         FolderPickerDialog fragment = new FolderPickerDialog();
+        fragment.additionalInfoMapper = additionalInfoMapper;
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +74,7 @@ public class FolderPickerDialog extends DialogFragment
         View customView = View.inflate(requireContext(), R.layout.dialog_folder_picker, null);
         ButterKnife.bind(this, customView);
 
+        folderPickAdapter.setFolderAdditionalInfoMapper(additionalInfoMapper);
         foldersListView.setAdapter(folderPickAdapter);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         foldersListView.addItemDecoration(itemDecoration);
@@ -102,7 +110,7 @@ public class FolderPickerDialog extends DialogFragment
 
     @Override
     public void onItemClick(int position) {
-        FolderPickAdapter.FolderPickerItem item = folderPickAdapter.get(position);
+        FolderPickerItem item = folderPickAdapter.get(position);
         currentDirectory = new File(item.getLocation());
 
         directoryPath.setText(currentDirectory.getAbsolutePath());
@@ -111,11 +119,11 @@ public class FolderPickerDialog extends DialogFragment
     }
 
 
-    private List<FolderPickAdapter.FolderPickerItem> prepareFolderListEntries(File interDirectory) {
-        List<FolderPickAdapter.FolderPickerItem> internalList = new ArrayList<>();
+    private List<FolderPickerItem> prepareFolderListEntries(File interDirectory) {
+        List<FolderPickerItem> internalList = new ArrayList<>();
 
         if (!interDirectory.getName().equals(startDirectory.getName())) {
-            FolderPickAdapter.FolderPickerItem parent = new FolderPickAdapter.FolderPickerItem();
+            FolderPickerItem parent = new FolderPickerItem();
             parent.setFilename("..");
             parent.setLocation(requireNonNull(interDirectory.getParentFile()).getAbsolutePath());
             internalList.add(parent);
@@ -124,7 +132,7 @@ public class FolderPickerDialog extends DialogFragment
         FileFilter filter = file -> file.canRead() && file.isDirectory() && !file.isHidden();
 
         for (File folder : requireNonNull(interDirectory.listFiles(filter))) {
-            FolderPickAdapter.FolderPickerItem item = new FolderPickAdapter.FolderPickerItem();
+            FolderPickerItem item = new FolderPickerItem();
             item.setFilename(folder.getName());
             item.setLocation(folder.getAbsolutePath());
             internalList.add(item);

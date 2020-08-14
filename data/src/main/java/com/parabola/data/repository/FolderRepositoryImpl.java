@@ -22,4 +22,11 @@ public final class FolderRepositoryImpl implements FolderRepository {
         return Single.fromCallable(() -> dataExtractor.folders);
     }
 
+    @Override
+    public long tracksCountInFolderRecursively(String folderPath) {
+        return dataExtractor.tracks.stream()
+                .filter(track -> track.getFilePath().startsWith(folderPath))
+                .count();
+    }
+
 }

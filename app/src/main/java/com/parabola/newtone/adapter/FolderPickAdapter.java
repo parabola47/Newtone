@@ -6,15 +6,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.newtone.R;
+
+import java.util.function.Function;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter.FolderPickerItem, FolderPickAdapter.FolderViewHolder> {
+
+    @Nullable
+    private Function<FolderPickerItem, String> additionalInfoMapper;
+
+    public void setFolderAdditionalInfoMapper(@Nullable Function<FolderPickerItem, String> additionalInfoMapper) {
+        this.additionalInfoMapper = additionalInfoMapper;
+    }
 
 
     @NonNull
@@ -32,9 +42,16 @@ public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter
 
         holder.folderName.setText(item.getFilename());
         if (position == 0 && item.getFilename().startsWith("..")) {
-            holder.folderAdd.setVisibility(View.INVISIBLE);
+            holder.folderAdd.setVisibility(View.GONE);
+            holder.folderAddInfo.setVisibility(View.GONE);
         } else {
             holder.folderAdd.setVisibility(View.VISIBLE);
+            if (additionalInfoMapper == null) {
+                holder.folderAddInfo.setVisibility(View.GONE);
+            } else {
+                holder.folderAddInfo.setVisibility(View.VISIBLE);
+                holder.folderAddInfo.setText(additionalInfoMapper.apply(item));
+            }
         }
 
         holder.folderAdd.setOnClickListener(v -> onFolderPickListener.onFolderPick(item.getLocation()));
@@ -49,6 +66,7 @@ public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter
 
     static class FolderViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.folderName) TextView folderName;
+        @BindView(R.id.folderAddInfo) TextView folderAddInfo;
         @BindView(R.id.folder_add) ImageView folderAdd;
 
         private FolderViewHolder(View itemView) {

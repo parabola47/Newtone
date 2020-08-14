@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="?android:attr/background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:minHeight="?android:listPreferredItemHeight"
+    android:minHeight="?android:listPreferredItemHeightSmall"
     android:orientation="horizontal"
     android:padding="8dp">
 
@@ -18,18 +18,30 @@
         app:srcCompat="@drawable/ic_folder"
         app:tint="?attr/colorPrimary" />
 
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/folderName"
-        style="?android:attr/textAppearanceLarge"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_weight="1"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="WhatsApp" />
+        android:orientation="vertical">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/folderName"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="WhatsApp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/folderAddInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="11 tracks" />
+
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/folder_add"

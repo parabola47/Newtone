@@ -18,14 +18,18 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.repository.ExcludedFolderRepository;
+import com.parabola.domain.repository.FolderRepository;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.ExcludedFolderAdapter;
+import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import com.parabola.newtone.ui.dialog.FolderPickerDialog;
 import com.parabola.newtone.ui.router.MainRouter;
+
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
@@ -49,6 +53,7 @@ public final class ExcludedFoldersFragment extends BaseSwipeToBackFragment {
 
     @Inject MainRouter router;
     @Inject ExcludedFolderRepository excludedFolderRepo;
+    @Inject FolderRepository folderRepo;
 
     public static ExcludedFoldersFragment newInstance() {
         return new ExcludedFoldersFragment();
@@ -91,7 +96,13 @@ public final class ExcludedFoldersFragment extends BaseSwipeToBackFragment {
         addFolderButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
         actionBar.addView(addFolderButton);
         addFolderButton.setOnClickListener(v -> {
-            FolderPickerDialog dialog = FolderPickerDialog.newInstance(Environment.getExternalStorageDirectory().getAbsolutePath());
+            Function<FolderPickerItem, String> tracksCountInFolderMapper = folderItem -> {
+                long tracksCountInFolder = folderRepo.tracksCountInFolderRecursively(folderItem.getLocation());
+                return getResources().getQuantityString(R.plurals.tracks_count, (int) tracksCountInFolder, tracksCountInFolder);
+            };
+
+            FolderPickerDialog dialog = FolderPickerDialog.newInstance(
+                    Environment.getExternalStorageDirectory().getAbsolutePath(), tracksCountInFolderMapper);
             dialog.setItemSelectionListener(folderPath -> {
                 boolean isNew = adapter.getAll().stream()
                         .noneMatch(folderPath::equals);
