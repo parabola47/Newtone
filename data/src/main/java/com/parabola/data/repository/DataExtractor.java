@@ -204,11 +204,11 @@ public final class DataExtractor implements RepositoryInteractor {
     }
 
     private void initArtists() {
-        for (Album album : albums) {
-            if (artists.stream().noneMatch(artist -> artist.getId() == album.getArtistId())) {
+        for (Track track : tracks) {
+            if (artists.stream().noneMatch(artist -> artist.getId() == track.getArtistId())) {
                 ArtistData artistData = new ArtistData();
-                artistData.id = album.getArtistId();
-                artistData.name = album.getArtistName();
+                artistData.id = track.getArtistId();
+                artistData.name = track.getArtistName();
                 artistData.albumsCount = (int) albums.stream().filter(a -> a.getArtistId() == artistData.id).count();
                 artistData.tracksCount = (int) tracks.stream().filter(t -> t.getArtistId() == artistData.id).count();
 
