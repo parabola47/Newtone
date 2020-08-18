@@ -42,7 +42,8 @@
                 android:gravity="center"
                 android:visibility="visible"
                 app:selectionRequired="true"
-                app:singleSelection="true">
+                app:singleSelection="true"
+                tools:checkedButton="@id/gridButton">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/gridButton"

@@ -16,7 +16,7 @@
 
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackSpeedCroller"
-            style="@style/FxSettingContinuousCroller"
+            style="@style/FxContinuousSettingCroller"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:label="Tempo x1.00"
@@ -41,7 +41,7 @@
 
         <com.parabola.newtone.ui.view.Croller
             android:id="@+id/playbackPitchCroller"
-            style="@style/FxSettingContinuousCroller"
+            style="@style/FxContinuousSettingCroller"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:label="Pitch x1.00"

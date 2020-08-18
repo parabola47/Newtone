@@ -32,6 +32,7 @@
     <color name="colorArtistAllTrackText">#DDDDDD</color>
     <color name="colorListItemDefaultBackground">#0D0D0D</color>
     <color name="colorListItemSelectedText">@android:color/white</color>
+    <color name="colorListItemDivider">#0Affffff</color>
     <!--A L B U M-->
     <color name="colorAlbumGridTextContainerBackground">#0D0D0D</color>
     <!--S E A R C H-->

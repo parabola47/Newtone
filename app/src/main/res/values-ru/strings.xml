@@ -202,13 +202,16 @@
     <string name="setting_color_theme_title">Цветовая тема</string>
     <string name="setting_color_theme_desc_dark">Тёмная</string>
     <string name="setting_color_theme_desc_light">Светлая</string>
+    <string name="setting_notification_block_title">Уведомление</string>
     <string name="setting_notification_color_title">Цвет уведомления</string>
     <string name="setting_notification_color_desc">Менять цвет в зависимости от обложки альбома</string>
     <string name="setting_notification_artwork_show_title">Обложка альбома</string>
     <string name="setting_notification_artwork_show_desc">Показывать обложку альбома в уведомлении</string>
+    <string name="setting_list_block_title">Списки</string>
     <string name="setting_show_item_divider_title">Разделители в списках</string>
     <string name="setting_excluded_folders_title">Исключённые папки</string>
     <string name="setting_show_item_divider_desc">Показывать разделители между элементами в списках треков, альбомов, артистов и т.д.</string>
+    <string name="setting_info_block_title">Информация</string>
     <string name="setting_privacy_policy_title">Политика конфиденциальности</string>
     <string name="reset_to_default_button">Восстановить по умолчанию</string>
     <string name="reset_settings_dialog_title">Сбросить настройки</string>
