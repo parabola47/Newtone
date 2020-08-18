@@ -12,6 +12,7 @@ import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.observer.ConsumerObserver;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.interactor.type.Irrelevant;
+import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
 import com.parabola.newtone.di.ComponentFactory;
 import com.parabola.newtone.di.app.AppComponent;
@@ -45,11 +46,15 @@ public final class MainApplication extends MultiDexApplication {
 
         //инициализация обновлений для виджетов
         PlayerInteractor playerInteractor = appComponent.providePlayerInteractor();
+        ViewSettingsInteractor viewSettingsInteractor = appComponent.provideViewSettingsInteractor();
+
         Observable.combineLatest(
                 playerInteractor.onChangeCurrentTrackId(),
                 playerInteractor.onChangePlayingState(),
                 playerInteractor.onRepeatModeChange(),
-                playerInteractor.onShuffleModeChange(), (i, b1, b2, b3) -> Irrelevant.INSTANCE)
+                playerInteractor.onShuffleModeChange(),
+                viewSettingsInteractor.observePrimaryColor(),
+                (i, b1, b2, b3, c) -> Irrelevant.INSTANCE)
                 .subscribe(ConsumerObserver.fromConsumer(
                         irrelevant -> HomeScreenWidget.updateHomeScreenWidget(MainApplication.this)));
         //если приходит оповещение от таймера об окончании, то останавливаем плеер
@@ -58,7 +63,7 @@ public final class MainApplication extends MultiDexApplication {
                 .subscribe(ConsumerObserver.fromConsumer(irrelevant -> playerInteractor.pause()));
 
         //меням альбом по умолчанию в уведомлении при изменении цветовой схемы приложения
-        appComponent.provideViewSettingsInteractor()
+        viewSettingsInteractor
                 .observeColorTheme()
                 .subscribe(ConsumerObserver.fromConsumer(
                         this::updateNotificationDefaultAlbumCover));
@@ -77,7 +82,7 @@ public final class MainApplication extends MultiDexApplication {
                 DEFAULT_NOTIFICATION_ALBUM_COVER_SIZE_PX, DEFAULT_NOTIFICATION_ALBUM_COVER_SIZE_PX);
 
 
-        ((PlayerInteractorImpl) getAppComponent().providePlayerInteractor()).setDefaultNotificationAlbumArt(bitmap);
+        ((PlayerInteractorImpl) appComponent.providePlayerInteractor()).setDefaultNotificationAlbumArt(bitmap);
     }
 
     public AppComponent getAppComponent() {
