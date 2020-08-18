@@ -71,8 +71,9 @@ public final class InteractorModule {
     @Provides
     TrackInteractor provideTrackInteractor(TrackRepository trackRepo,
                                            RepositoryInteractor repositoryInteractor,
+                                           PlayerInteractor playerInteractor,
                                            SortingRepository trackSortingRepo) {
-        return new TrackInteractor(trackRepo, repositoryInteractor, trackSortingRepo);
+        return new TrackInteractor(trackRepo, repositoryInteractor, playerInteractor, trackSortingRepo);
     }
 
     @Singleton

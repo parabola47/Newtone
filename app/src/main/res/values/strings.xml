@@ -60,6 +60,11 @@
     <string name="track_menu_delete_dialog_title">Delete track?</string>
     <string name="track_menu_delete_dialog_message">This track will be deleted from the storage</string>
 
+    <!--ALL TAB TRACK MENU-->
+    <string name="tab_track_menu_title">All tracks</string>
+    <string name="tab_track_menu_shuffle_all">Shuffle all</string>
+    <string name="tab_track_menu_excluded_folders">Excluded folders</string>
+
     <!--PLAYLIST MENU-->
     <string name="playlist_menu_rename">Rename</string>
     <string name="playlist_menu_shuffle">Shuffle</string>

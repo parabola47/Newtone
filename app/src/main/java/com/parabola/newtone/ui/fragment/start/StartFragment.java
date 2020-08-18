@@ -4,6 +4,7 @@ package com.parabola.newtone.ui.fragment.start;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,17 +12,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.StartFragmentPagerAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.StartPresenter;
 import com.parabola.newtone.mvp.view.StartView;
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.util.OnTabSelectedAdapter;
 
@@ -154,10 +159,41 @@ public final class StartFragment extends MvpAppCompatFragment
                 .inflate(R.layout.tab_item_view, tabLayout, false);
         TabLayout.Tab tab = requireNonNull(tabLayout.getTabAt(tabIndex));
 
+        //при долгом удержании на табе треков открывать контекстное меню
+        if (tabIndex == 2) {
+            tab.view.setOnLongClickListener(view -> {
+                showTabTrackContextMenu();
+                return true;
+            });
+        }
+
         ((TextView) layout.findViewById(R.id.title)).setText(tabTitleResId);
         ((ImageView) layout.findViewById(R.id.icon)).setImageResource(tabIconResId);
 
         tab.setCustomView(layout);
+    }
+
+    private void showTabTrackContextMenu() {
+        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.tab_track_menu);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.tab_track_menu_title)
+                .setAdapter(menuAdapter, (d, which) ->
+                        handleSelectedMenu(menuAdapter.getItem(which)))
+                .create();
+        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
+        dialog.show();
+    }
+
+    private void handleSelectedMenu(MenuItem selectedMenuItem) {
+        switch (selectedMenuItem.getItemId()) {
+            case R.id.shuffle_all:
+                presenter.onClickMenuShuffleAll();
+                break;
+            case R.id.excluded_folders:
+                presenter.onClickMenuExcludedFolders();
+                break;
+        }
     }
 
     public Fragment getCurrentSelectedFragment() {

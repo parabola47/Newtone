@@ -60,6 +60,11 @@
     <string name="track_menu_delete_dialog_title">Удалить трек?</string>
     <string name="track_menu_delete_dialog_message">Этот трек будет удалён из файлового хранилища</string>
 
+    <!--ALL TAB TRACK MENU-->
+    <string name="tab_track_menu_title">Все треки</string>
+    <string name="tab_track_menu_shuffle_all">Перемешать все</string>
+    <string name="tab_track_menu_excluded_folders">Исключённые папки</string>
+
     <!--PLAYLIST MENU-->
     <string name="playlist_menu_rename">Переименовать</string>
     <string name="playlist_menu_shuffle">Перемешать</string>

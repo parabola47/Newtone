@@ -1,5 +1,6 @@
 package com.parabola.newtone.mvp.presenter;
 
+import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.repository.PermissionHandler;
 import com.parabola.domain.repository.PermissionHandler.Type;
 import com.parabola.newtone.di.app.AppComponent;
@@ -17,6 +18,8 @@ public final class StartPresenter extends MvpPresenter<StartView> {
 
     @Inject MainRouter router;
     @Inject PermissionHandler accessRepo;
+    @Inject TrackInteractor trackInteractor;
+
     private Disposable storagePermissionObserver;
 
     public StartPresenter(AppComponent appComponent) {
@@ -37,4 +40,13 @@ public final class StartPresenter extends MvpPresenter<StartView> {
     public void onClickRequestPermission() {
         router.openRequestStoragePermissionScreen();
     }
+
+    public void onClickMenuShuffleAll() {
+        trackInteractor.shuffleAll();
+    }
+
+    public void onClickMenuExcludedFolders() {
+        router.openExcludedFolders();
+    }
+
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/shuffle_all"
+        android:icon="@drawable/ic_shuffled"
+        android:title="@string/tab_track_menu_shuffle_all" />
+
+    <item
+        android:id="@+id/excluded_folders"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/tab_track_menu_excluded_folders" />
+
+</menu>
