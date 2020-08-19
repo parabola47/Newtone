@@ -53,9 +53,11 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     @BindView(R.id.coverCornersValue) TextView coverCornersValue;
     @BindView(R.id.coverCornersSeekBar) SeekBar coverCornersSeekBar;
+    @BindView(R.id.coverCornersBar) ViewGroup coverCornersBar;
 
     @BindView(R.id.coverSizeValue) TextView coverSizeValue;
     @BindView(R.id.coverSizeSeekBar) SeekBar coverSizeSeekBar;
+    @BindView(R.id.coverSizeBar) ViewGroup coverSizeBar;
 
     @BindView(R.id.textSizeValue) TextView textSizeValue;
     @BindView(R.id.textSizeSeekBar) SeekBar textSizeSeekBar;
@@ -223,7 +225,9 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
     }
 
     private void onChangeCoverShow(boolean show) {
+        coverSizeBar.setEnabled(show);
         coverSizeSeekBar.setEnabled(show);
+        coverCornersBar.setEnabled(show);
         coverCornersSeekBar.setEnabled(show);
     }
 

@@ -57,9 +57,11 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @BindView(R.id.textSizeValue) TextView textSizeValue;
     @BindView(R.id.textSizeSeekBar) SeekBar textSizeSeekBar;
 
+    @BindView(R.id.borderPaddingBar) ViewGroup borderPaddingBar;
     @BindView(R.id.borderPaddingValue) TextView borderPaddingValue;
     @BindView(R.id.borderPaddingSeekBar) SeekBar borderPaddingSeekBar;
 
+    @BindView(R.id.coverSizeBar) ViewGroup coverSizeBar;
     @BindView(R.id.coverSizeValue) TextView coverSizeValue;
     @BindView(R.id.coverSizeSeekBar) SeekBar coverSizeSeekBar;
 
@@ -199,12 +201,16 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         if (checkedButtonId == R.id.gridButton) {
             albumGridHolder.setVisibility(View.VISIBLE);
             albumListHolder.setVisibility(View.INVISIBLE);
+            borderPaddingBar.setEnabled(false);
             borderPaddingSeekBar.setEnabled(false);
+            coverSizeBar.setEnabled(false);
             coverSizeSeekBar.setEnabled(false);
         } else if (checkedButtonId == R.id.listButton) {
             albumGridHolder.setVisibility(View.INVISIBLE);
             albumListHolder.setVisibility(View.VISIBLE);
+            borderPaddingBar.setEnabled(true);
             borderPaddingSeekBar.setEnabled(true);
+            coverSizeBar.setEnabled(true);
             coverSizeSeekBar.setEnabled(true);
         } else {
             throw new IllegalArgumentException("checkedButtonId equals to " + checkedButtonId);

@@ -111,6 +111,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/borderPaddingBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -127,6 +128,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/album_item_border_padding_setting"
@@ -140,6 +142,7 @@
                     android:layout_alignBottom="@+id/borderPaddingSeekBar"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center"
                     android:textColor="?android:attr/textColorPrimary"
                     tools:text="16" />
@@ -153,6 +156,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_toStartOf="@+id/borderPaddingValue"
                     android:layout_toLeftOf="@+id/borderPaddingValue"
+                    android:duplicateParentState="true"
                     android:max="16"
                     android:paddingVertical="4dp"
                     tools:progress="8" />
@@ -160,6 +164,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/coverSizeBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -176,6 +181,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/album_item_cover_size_setting"
@@ -189,6 +195,7 @@
                     android:layout_alignBottom="@+id/coverSizeSeekBar"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center"
                     android:textColor="?android:attr/textColorPrimary"
                     tools:text="64" />
@@ -202,6 +209,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_toStartOf="@+id/coverSizeValue"
                     android:layout_toLeftOf="@+id/coverSizeValue"
+                    android:duplicateParentState="true"
                     android:max="32"
                     android:paddingVertical="4dp"
                     tools:progress="32" />

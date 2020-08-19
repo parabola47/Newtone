@@ -92,9 +92,6 @@ public final class SettingFragment extends BaseSwipeToBackFragment
 
     private void setNotificationColorBarEnabling(boolean checked) {
         notificationColorBar.setEnabled(checked);
-        for (int i = 0; i < notificationColorBar.getChildCount(); i++) {
-            notificationColorBar.getChildAt(i).setEnabled(checked);
-        }
     }
 
     @Override

@@ -84,11 +84,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:duplicateParentState="true"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     android:text="@string/setting_notification_color_title"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="16sp" />
@@ -96,6 +98,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     android:text="@string/setting_notification_color_desc"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -105,7 +108,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"
-                android:clickable="false" />
+                android:clickable="false"
+                android:duplicateParentState="true" />
         </LinearLayout>
 
 

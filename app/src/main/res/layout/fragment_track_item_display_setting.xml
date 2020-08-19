@@ -199,6 +199,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/coverSizeBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -215,8 +216,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center_vertical"
-
                     android:paddingHorizontal="16dp"
                     android:text="@string/track_item_cover_size_setting"
                     android:textColor="?android:attr/textColorPrimary" />
@@ -229,9 +230,9 @@
                     android:layout_alignBottom="@+id/coverSizeSeekBar"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center"
                     android:textColor="?android:attr/textColorPrimary"
-
                     tools:text="40" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
@@ -243,6 +244,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_toStartOf="@+id/coverSizeValue"
                     android:layout_toLeftOf="@+id/coverSizeValue"
+                    android:duplicateParentState="true"
                     android:max="32"
                     android:paddingVertical="4dp"
                     tools:progress="8" />
@@ -250,6 +252,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/coverCornersBar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="4dp"
@@ -265,6 +268,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/track_item_cover_corners_setting"
@@ -278,6 +282,7 @@
                     android:layout_alignBottom="@+id/coverCornersSeekBar"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:duplicateParentState="true"
                     android:gravity="center"
                     android:textColor="?android:attr/textColorPrimary"
                     tools:text="4" />
@@ -291,6 +296,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_toStartOf="@+id/coverCornersValue"
                     android:layout_toLeftOf="@+id/coverCornersValue"
+                    android:duplicateParentState="true"
                     android:max="16"
                     android:paddingVertical="4dp"
                     android:textColor="?android:attr/textColorPrimary"
