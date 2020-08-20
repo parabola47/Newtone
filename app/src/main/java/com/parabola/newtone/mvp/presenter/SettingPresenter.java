@@ -99,4 +99,8 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
         router.openNewtoneDialog();
     }
 
+    public void onClickContactDevelopers() {
+        router.openContactDevelopersViaEmail();
+    }
+
 }

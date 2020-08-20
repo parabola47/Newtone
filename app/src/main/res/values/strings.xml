@@ -212,7 +212,9 @@
     <string name="setting_excluded_folders_title">Excluded folders</string>
     <string name="setting_show_item_divider_desc">Show dividers between items in lists of tracks, albums, artists etc…</string>
     <string name="setting_info_block_title">Info</string>
-    <string name="setting_privacy_policy_title">Privacy Policy</string>
+    <string name="setting_privacy_policy_title">Privacy policy</string>
+    <string name="setting_contact_developers_title">Contact developer</string>
+    <string name="setting_contact_developers_intent_title">Send email</string>
     <string name="reset_to_default_button">Reset to default</string>
     <string name="reset_settings_dialog_title">Reset settings</string>
 

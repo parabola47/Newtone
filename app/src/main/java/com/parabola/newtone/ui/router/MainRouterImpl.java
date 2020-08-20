@@ -506,6 +506,17 @@ public final class MainRouterImpl implements MainRouter {
     }
 
     @Override
+    public void openContactDevelopersViaEmail() {
+        Intent sendMailIntent = new Intent(Intent.ACTION_SENDTO);
+        sendMailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        sendMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"zizik.zizik@gmail.com"});
+        sendMailIntent.putExtra(Intent.EXTRA_SUBJECT, "Newtone. Android");
+
+        String intentTitle = activity.getString(R.string.setting_contact_developers_intent_title);
+        activity.startActivity(Intent.createChooser(sendMailIntent, intentTitle));
+    }
+
+    @Override
     public void openPrivacyPolicyWebPage() {
         String url = "https://github.com/parabola47/privacy_policy/blob/master/newtone_pp.md";
         Intent i = new Intent(Intent.ACTION_VIEW)

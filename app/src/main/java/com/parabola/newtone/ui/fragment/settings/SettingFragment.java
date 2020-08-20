@@ -149,6 +149,11 @@ public final class SettingFragment extends BaseSwipeToBackFragment
         presenter.onClickPrivacyPolicy();
     }
 
+    @OnClick(R.id.contact_developers_bar)
+    public void onClickContactDevelopers() {
+        presenter.onClickContactDevelopers();
+    }
+
 
     private int appInfoBarClickCount = 0;
 

@@ -253,6 +253,22 @@
 
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/contact_developers_bar"
+            style="@style/SettingItemContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/setting_contact_developers_title"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp" />
+
+        </FrameLayout>
+
         <LinearLayout
             android:id="@+id/app_info_bar"
             style="@style/SettingItemContainer"

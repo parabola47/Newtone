@@ -72,6 +72,7 @@ public interface MainRouter {
 
     //    COMMUNICATION WITH OTHER APPS
     void openLyricsSearch(Track track);
+    void openContactDevelopersViaEmail();
     void openPrivacyPolicyWebPage();
     void openShareTrack(String filePath);
 }

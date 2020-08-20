@@ -213,6 +213,8 @@
     <string name="setting_show_item_divider_desc">Показывать разделители между элементами в списках треков, альбомов, артистов и т.д.</string>
     <string name="setting_info_block_title">Информация</string>
     <string name="setting_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="setting_contact_developers_title">Связаться с разработчиком</string>
+    <string name="setting_contact_developers_intent_title">Отправить email</string>
     <string name="reset_to_default_button">Восстановить по умолчанию</string>
     <string name="reset_settings_dialog_title">Сбросить настройки</string>
 
