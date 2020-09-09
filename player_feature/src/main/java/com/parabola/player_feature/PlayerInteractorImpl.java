@@ -636,7 +636,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
                 case Player.REPEAT_MODE_OFF: repeatModeObserver.onNext(RepeatMode.OFF); break;
                 case Player.REPEAT_MODE_ALL: repeatModeObserver.onNext(RepeatMode.ALL); break;
                 case Player.REPEAT_MODE_ONE: repeatModeObserver.onNext(RepeatMode.ONE); break;
-                default: throw new IllegalArgumentException("Repeate mode: " + repeatMode);
+                default: throw new IllegalArgumentException("Repeat mode: " + repeatMode);
             }
         }
 
