@@ -39,6 +39,7 @@ public interface AudioEffectsInteractor {
     void setVirtualizerLevel(short strength); //от 0 до 1000
 
 
+    boolean isEqAvailable();
     void setEqEnable(boolean enable);
     Observable<Boolean> observeEqEnabling();
 

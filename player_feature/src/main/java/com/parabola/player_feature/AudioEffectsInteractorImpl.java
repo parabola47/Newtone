@@ -79,7 +79,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
                     bassBoost = new BassBoost(0, audioSessionId);
                 } catch (RuntimeException ignored) {
                 }
-                if (bassBoost != null) {
+                if (isBassBoostAvailable()) {
                     bassBoost.setEnabled(settings.getSavedBassBoostEnabled());
                     bassBoost.setStrength(settings.getSavedBassBoostStrength());
                 }
@@ -88,7 +88,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
                     virtualizer = new Virtualizer(0, audioSessionId);
                 } catch (RuntimeException ignored) {
                 }
-                if (virtualizer != null) {
+                if (isVirtualizerAvailable()) {
                     virtualizer.setEnabled(settings.getSavedVirtualizerEnabled());
                     virtualizer.setStrength(settings.getSavedVirtualizerStrength());
                 }
@@ -97,7 +97,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
                     equalizer = new Equalizer(0, audioSessionId);
                 } catch (RuntimeException ignored) {
                 }
-                if (equalizer != null) {
+                if (isEqAvailable()) {
                     equalizer.setEnabled(settings.getSavedIsEqEnabled());
                     eqEnablingUpdates.onNext(equalizer.getEnabled());
                     for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
@@ -259,6 +259,11 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
     }
 
     //    EQ
+    @Override
+    public boolean isEqAvailable() {
+        return equalizer != null && equalizer.getNumberOfBands() > 0;
+    }
+
     @Override
     public void setEqEnable(boolean enable) {
         if (equalizer != null)
