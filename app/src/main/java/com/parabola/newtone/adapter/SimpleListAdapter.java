@@ -53,7 +53,11 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
 
     @Override
     public void invalidateItem(int position) {
-        notifyItemChanged(position);
+        try {
+            notifyItemChanged(position);
+        } catch (IllegalStateException e) {
+            recyclerView.post(() -> notifyItemChanged(position));
+        }
     }
 
     @Override
@@ -102,7 +106,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     public void remove(int position) {
         items.remove(position);
         notifyItemRemoved(position);
-        notifyItemChanged(position);
+        invalidateItem(position);
     }
 
     @Override
@@ -121,7 +125,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
     public void clearContextSelected() {
         getContextSelectedPosition().ifPresent(position -> {
             contextSelectedPosition = -1;
-            notifyItemChanged(position);
+            invalidateItem(position);
         });
     }
 
@@ -136,7 +140,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
             throw new IndexOutOfBoundsException("Position:  " + position + ". Must be between 0 and " + (size() - 1));
 
         contextSelectedPosition = position;
-        notifyItemChanged(contextSelectedPosition);
+        invalidateItem(contextSelectedPosition);
     }
 
     @Override
@@ -154,7 +158,7 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
 
         items.clearSelected();
 
-        selectedItemIndex.ifPresent(this::notifyItemChanged);
+        selectedItemIndex.ifPresent(this::invalidateItem);
     }
 
     @Override
@@ -175,10 +179,10 @@ public abstract class SimpleListAdapter<T, VH extends RecyclerView.ViewHolder> e
             return;
 
         items.setSelectedItemIndex(position);
-        notifyItemChanged(position);
+        invalidateItem(position);
 
         if (oldSelectedPosition.isPresent()) {
-            notifyItemChanged(oldSelectedPosition.getAsInt());
+            invalidateItem(oldSelectedPosition.getAsInt());
         }
 
     }

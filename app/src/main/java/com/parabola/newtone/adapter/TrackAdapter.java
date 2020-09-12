@@ -70,7 +70,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
             TrackViewHolder holder = (TrackViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
             if (holder != null)
                 holder.moveItemImg.setVisibility(isMoveItemIconVisible ? View.VISIBLE : View.GONE);
-            else notifyItemChanged(i);
+            else invalidateItem(i);
         }
     }
 
