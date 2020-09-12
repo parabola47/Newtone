@@ -1,7 +1,5 @@
 package com.parabola.data.repository;
 
-import android.graphics.Bitmap;
-
 import com.parabola.domain.model.Album;
 import com.parabola.domain.repository.AlbumRepository;
 
@@ -17,12 +15,10 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
 
 
     private final DataExtractor dataExtractor;
-    private final AlbumArtExtractor albumArtExtractor;
 
 
     public AlbumRepositoryImpl(DataExtractor dataExtractor) {
         this.dataExtractor = dataExtractor;
-        this.albumArtExtractor = dataExtractor.albumArtExtractor;
     }
 
 
@@ -57,12 +53,6 @@ public final class AlbumRepositoryImpl implements AlbumRepository {
         return Observable.fromIterable(dataExtractor.albums)
                 .filter(album -> album.getArtistId() == artistId)
                 .toSortedList(getAlbumComparatorBySorting(sorting));
-    }
-
-
-    @Override
-    public Bitmap getArtImage(int albumId) {
-        return albumArtExtractor.getByAlbum(albumId);
     }
 
 }

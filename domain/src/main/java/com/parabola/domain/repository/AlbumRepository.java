@@ -22,8 +22,6 @@ public interface AlbumRepository {
         return getByArtist(artistId, null);
     }
 
-    <ArtImage> ArtImage getArtImage(int albumId);
-
     enum Sorting {
         BY_TITLE, BY_TITLE_DESC,
         BY_ARTIST, BY_ARTIST_DESC,

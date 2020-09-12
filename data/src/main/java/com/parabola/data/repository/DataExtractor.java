@@ -97,7 +97,7 @@ public final class DataExtractor implements RepositoryInteractor {
                 .subscribe();
 
         favouriteTrackHelper = new FavouriteTrackHelper(preferences);
-        albumArtExtractor = new AlbumArtExtractor(contentResolver);
+        albumArtExtractor = new AlbumArtExtractor(contentResolver, tracks);
     }
 
 
