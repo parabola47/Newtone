@@ -217,7 +217,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
     @Override
     public void setBassBoostLevel(short strength) {
-        if (bassBoost != null)
+        if (isBassBoostAvailable())
             bassBoost.setStrength(strength);
 
         settings.setBassBoostStrength(strength);
@@ -251,7 +251,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
     @Override
     public void setVirtualizerLevel(short strength) {
-        if (virtualizer != null)
+        if (isVirtualizerAvailable())
             virtualizer.setStrength(strength);
 
         settings.setVirtualizerStrength(strength);
@@ -290,7 +290,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
     @Override
     public void setBandLevel(int bandId, short bandLevel) {
-        if (equalizer != null)
+        if (isEqAvailable())
             equalizer.setBandLevel((short) bandId, (short) (bandLevel * 100));
 
         settings.setBandLevel((short) bandId, bandLevel);
