@@ -8,19 +8,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
 import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import java.util.ArrayList;
@@ -96,21 +92,6 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
         bandsAdapter.bands.clear();
         bandsAdapter.bands.addAll(bands);
         bandsAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void showPresetsSelectorDialog(List<String> presets) {
-        String[] items = new String[presets.size()];
-        items = presets.toArray(items);
-
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.preset_selector_dialog_title)
-                .setItems(items, (d, presetIndex) -> presenter.onSelectPreset(presetIndex))
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
-
-        DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-        dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
     }
 
 

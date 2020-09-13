@@ -3,6 +3,7 @@ package com.parabola.newtone.mvp.presenter.fx;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
+import com.parabola.newtone.ui.router.MainRouter;
 
 import javax.inject.Inject;
 
@@ -15,6 +16,8 @@ import moxy.MvpPresenter;
 public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> {
 
     @Inject AudioEffectsInteractor fxInteractor;
+    @Inject MainRouter router;
+
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     public TabEqualizerPresenter(AppComponent appComponent) {
@@ -37,7 +40,10 @@ public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> 
 
     private Disposable observeEqEnabling() {
         return fxInteractor.observeEqEnabling()
-                .subscribe(getViewState()::setEqChecked);
+                .subscribe(enabled -> {
+                    getViewState().setEqChecked(enabled);
+                    getViewState().refreshBands(fxInteractor.getBands());
+                });
     }
 
 
@@ -50,14 +56,7 @@ public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> 
     }
 
     public void onClickShowPresets() {
-        getViewState().showPresetsSelectorDialog(fxInteractor.getPresets());
-    }
-
-    public void onSelectPreset(int presetIndex) {
-        fxInteractor.usePreset((short) presetIndex);
-        fxInteractor.setEqEnable(true);
-
-        getViewState().refreshBands(fxInteractor.getBands());
+        router.openEqPresetsSelectorDialog();
     }
 
 }

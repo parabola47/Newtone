@@ -205,6 +205,11 @@ public final class PlayerFragment extends MvpAppCompatFragment
         presenter.onClickAudioEffects();
     }
 
+    @OnLongClick(R.id.audio_effects)
+    public void onLongClickAudioEffect() {
+        presenter.onLongClickAudioEffects();
+    }
+
     @OnClick(R.id.favourite)
     public void onClickFavourite() {
         presenter.onClickFavourite();

@@ -22,6 +22,7 @@ import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.dialog.TimeToSleepInfoDialog;
 import com.parabola.newtone.ui.dialog.TrackAdditionalInfoDialog;
 import com.parabola.newtone.ui.dialog.fx.AudioEffectsDialog;
+import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog;
 import com.parabola.newtone.ui.fragment.AlbumFragment;
 import com.parabola.newtone.ui.fragment.ArtistFragment;
 import com.parabola.newtone.ui.fragment.ArtistTracksFragment;
@@ -488,6 +489,12 @@ public final class MainRouterImpl implements MainRouter {
     @Override
     public void openAudioEffectsDialog() {
         AudioEffectsDialog dialog = new AudioEffectsDialog();
+        dialog.show(activity.getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void openEqPresetsSelectorDialog() {
+        EqPresetsSelectorDialog dialog = new EqPresetsSelectorDialog();
         dialog.show(activity.getSupportFragmentManager(), null);
     }
 

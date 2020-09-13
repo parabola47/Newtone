@@ -68,6 +68,7 @@ public interface MainRouter {
     void openSortingDialog(String sortingListType);
     void openTrackAdditionInfo(int trackId);
     void openAudioEffectsDialog();
+    void openEqPresetsSelectorDialog();
     void openNewtoneDialog();
 
     //    COMMUNICATION WITH OTHER APPS

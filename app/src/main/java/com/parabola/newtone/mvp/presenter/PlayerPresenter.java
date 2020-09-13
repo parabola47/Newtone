@@ -202,6 +202,10 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         router.openAudioEffectsDialog();
     }
 
+    public void onLongClickAudioEffects() {
+        router.openEqPresetsSelectorDialog();
+    }
+
     public void onClickFavourite() {
         trackRepo.toggleFavourite(currentTrackId);
     }
