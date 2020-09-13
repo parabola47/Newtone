@@ -82,7 +82,6 @@
                             android:layout_alignParentLeft="true"
                             android:layout_toStartOf="@id/otherInfo"
                             android:layout_toLeftOf="@+id/otherInfo"
-                            android:textColor="?android:attr/textColorPrimary"
                             android:textSize="14sp"
                             tools:text="Additional info" />
 
@@ -92,7 +91,6 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:textColor="?android:attr/textColorPrimary"
                             android:textSize="14sp"
                             tools:text="Other info" />
 

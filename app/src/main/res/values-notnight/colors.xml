@@ -29,7 +29,6 @@
 
 
     <!--L  I  S  T  S-->
-    <color name="colorArtistAllTrackText">#DDDDDD</color>
     <color name="colorListItemDefaultBackground">#F0F0F0</color>
     <color name="colorListItemSelectedText">@android:color/white</color>
     <color name="colorListItemDivider">#DADCE0</color>

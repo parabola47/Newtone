@@ -30,14 +30,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/all_artist_tracks"
-                android:textColor="@color/colorArtistAllTrackText"
+                android:textColor="@android:color/primary_text_dark_nodisable"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tracks_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorArtistAllTrackText"
+                android:textColor="@android:color/primary_text_dark_nodisable"
                 android:textSize="14sp"
                 tools:text="11 tracks" />
         </LinearLayout>
