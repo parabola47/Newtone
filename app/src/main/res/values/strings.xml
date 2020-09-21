@@ -25,6 +25,10 @@
     <string name="album_cover_desc">Album Cover</string>
 
 
+    <!--ALBUM SCREEN-->
+    <string name="album_screen_album_load_error_toast">Failed to load album</string>
+
+
     <!--NULL OBJECTS-->
     <string name="unknown_artist">Unknown Artist</string>
     <string name="unknown_album">Unknown Album</string>

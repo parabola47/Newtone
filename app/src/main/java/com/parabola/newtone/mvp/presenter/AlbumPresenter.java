@@ -5,10 +5,12 @@ import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.AlbumRepository;
+import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
+import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.AlbumView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -24,7 +26,7 @@ import moxy.MvpPresenter;
 
 @InjectViewState
 public final class AlbumPresenter extends MvpPresenter<AlbumView> {
-    private static final String TAG = AlbumPresenter.class.getSimpleName();
+    private static final String LOG_TAG = AlbumPresenter.class.getSimpleName();
 
     private final int albumId;
 
@@ -42,6 +44,7 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
     @Inject PlayerInteractor playerInteractor;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SortingRepository sortingRepo;
+    @Inject ResourceRepository resourceRepo;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -114,10 +117,17 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
 
     private Disposable loadAlbum() {
         return albumRepo.getById(albumId)
+                .doOnError(throwable -> { while (!enterSlideAnimationEnded) ; })
+                .subscribeOn(schedulers.io())
+                .observeOn(schedulers.ui())
                 .subscribe(album -> {
                     getViewState().setAlbumTitle(album.getTitle());
                     getViewState().setAlbumArtist(album.getArtistName());
                     getViewState().setAlbumArt(album.getArtImage());
+                }, error -> {
+                    String toastText = resourceRepo.getString(R.string.album_screen_album_load_error_toast);
+                    getViewState().showToast(toastText);
+                    router.goBack();
                 });
     }
 

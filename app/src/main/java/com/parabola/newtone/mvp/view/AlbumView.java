@@ -7,6 +7,7 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface AlbumView extends MvpView {
@@ -19,4 +20,8 @@ public interface AlbumView extends MvpView {
     void setItemDividerShowing(boolean showed);
 
     void setCurrentTrack(int trackId);
+
+    @OneExecution
+    void showToast(String toastMessage);
+
 }

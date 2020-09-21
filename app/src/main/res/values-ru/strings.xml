@@ -25,6 +25,10 @@
     <string name="album_cover_desc">Обложка альбома</string>
 
 
+    <!--ALBUM SCREEN-->
+    <string name="album_screen_album_load_error_toast">Не удалось загрузить альбом</string>
+
+
     <!--NULL OBJECTS-->
     <string name="unknown_artist">Неизвестный исполнитель</string>
     <string name="unknown_album">Неизвестный альбом</string>
