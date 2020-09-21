@@ -261,10 +261,9 @@ public final class DataExtractor implements RepositoryInteractor {
     private final Function<TrackData, String> getGenreNameFunction = new Function<TrackData, String>() {
         public String apply(TrackData trackData) {
             try (Cursor cursor = contentResolver.query(
-                    MediaStore.Audio.Genres.getContentUri("external"),
+                    MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
                     new String[]{MediaStore.Audio.GenresColumns.NAME},
-                    _ID + "=?",
-                    new String[]{String.valueOf(trackData.getGenreId())}, null)) {
+                    _ID + " = " + trackData.getGenreId(), null, null)) {
                 if (cursor == null || !cursor.moveToFirst())
                     return "";
 
