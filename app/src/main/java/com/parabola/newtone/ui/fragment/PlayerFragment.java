@@ -352,7 +352,10 @@ public final class PlayerFragment extends MvpAppCompatFragment
     public void refreshTracks(List<Track> tracks) {
         albumCoverAdapter.tracks.clear();
         albumCoverAdapter.tracks.addAll(tracks);
-        albumCoverAdapter.notifyDataSetChanged();
+        try {
+            albumCoverAdapter.notifyDataSetChanged();
+        } catch (NullPointerException ignored) {
+        }
     }
 
 
