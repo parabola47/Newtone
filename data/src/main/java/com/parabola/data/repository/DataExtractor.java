@@ -45,7 +45,6 @@ import static android.provider.MediaStore.MediaColumns.DURATION;
 import static android.provider.MediaStore.MediaColumns.SIZE;
 import static android.provider.MediaStore.MediaColumns.TITLE;
 import static com.parabola.data.utils.FileUtil.deleteFile;
-import static java.util.Objects.requireNonNull;
 
 public final class DataExtractor implements RepositoryInteractor {
     private static final String LOG_TAG = DataExtractor.class.getSimpleName();
@@ -119,9 +118,12 @@ public final class DataExtractor implements RepositoryInteractor {
             trackSelection += " AND " + DATA + " NOT LIKE '" + excludedFolder + "%'";
         }
 
-        try (Cursor cursor = requireNonNull(contentResolver.query(
+        try (Cursor cursor = contentResolver.query(
                 EXTERNAL_CONTENT_URI, TRACK_QUERY_SELECTIONS,
-                trackSelection, null, null))) {
+                trackSelection, null, null)) {
+            if (cursor == null)
+                return;
+
             initTracks(cursor);
         }
 
