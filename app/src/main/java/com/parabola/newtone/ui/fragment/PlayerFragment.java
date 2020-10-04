@@ -376,6 +376,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void removeTrack(int position) {
+        if (position < 0 || position >= albumCoverAdapter.tracks.size())
+            return;
         albumCoverAdapter.tracks.remove(position);
         albumCoverAdapter.notifyDataSetChanged();
     }
