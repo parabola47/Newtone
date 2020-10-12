@@ -31,10 +31,6 @@ public interface PlayerView extends MvpView {
 
     void refreshTracks(List<Track> tracks);
     void setAlbumImagePosition(int currentTrackPosition, boolean smoothScroll);
-    @OneExecution
-    void moveTrack(int oldPosition, int newPosition);
-    @OneExecution
-    void removeTrack(int position);
 
     @OneExecution
     void showToast(String toastMessage);

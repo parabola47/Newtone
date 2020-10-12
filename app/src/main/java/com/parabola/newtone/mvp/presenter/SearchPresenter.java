@@ -27,7 +27,7 @@ public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
     @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SchedulerProvider schedulers;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable querySearchDisposable;
 
     private String lastQuery = "";

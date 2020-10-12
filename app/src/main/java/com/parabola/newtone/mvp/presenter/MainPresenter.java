@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -68,12 +69,13 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                 //Пропускаем, если id текущего трека неверен
                 .filter(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
                 .flatMapSingle(trackRepo::getById)
+                .observeOn(schedulers.ui())
                 .subscribe(track -> {
                     getViewState().setDurationMax((int) track.getDurationMs());
                     getViewState().setDurationProgress((int) playerInteractor.playbackPosition());
                     getViewState().setTrackTitle(track.getTitle());
                     getViewState().setArtistName(track.getArtistName());
-                }, error -> {});
+                }, Functions.ERROR_CONSUMER);
     }
 
 

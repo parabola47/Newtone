@@ -42,9 +42,7 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
                 observeTracklistUpdates(),
                 observeTrackItemViewUpdates(),
                 observeIsItemDividerShowed(),
-                observeCurrentTrackUpdates(),
-                observeTrackRemoving(),
-                observeTrackMoving()
+                observeCurrentTrackUpdates()
         );
         getViewState().goToItem(playerInteractor.currentTrackPosition());
     }
@@ -66,8 +64,8 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
                     getViewState().setTrackCount(tracks.size());
                     getViewState().setCurrentTrackPosition(playerInteractor.currentTrackPosition());
                     if (isFirstTracklistUpdate) {
-                        getViewState().goToItem(playerInteractor.currentTrackPosition());
                         isFirstTracklistUpdate = false;
+                        getViewState().goToItem(playerInteractor.currentTrackPosition());
                     }
                 });
     }
@@ -87,23 +85,6 @@ public final class QueuePresenter extends MvpPresenter<QueueView> {
         return playerInteractor.onChangeCurrentTrackId()
                 .map(integer -> playerInteractor.currentTrackPosition())
                 .subscribe(getViewState()::setCurrentTrackPosition);
-    }
-
-    private Disposable observeTrackRemoving() {
-        return playerInteractor.onRemoveTrack()
-                .map(removedTrackItem -> removedTrackItem.position)
-                .observeOn(schedulers.ui())
-                .subscribe(removedTrackPosition -> {
-                    getViewState().removeTrackByPosition(removedTrackPosition);
-                    getViewState().setTrackCount(playerInteractor.tracksCount());
-                    getViewState().setCurrentTrackPosition(playerInteractor.currentTrackPosition());
-                });
-    }
-
-    private Disposable observeTrackMoving() {
-        return playerInteractor.onMoveTrack()
-                .observeOn(schedulers.ui())
-                .subscribe(oldNewPositionEntry -> getViewState().setCurrentTrackPosition(playerInteractor.currentTrackPosition()));
     }
 
 

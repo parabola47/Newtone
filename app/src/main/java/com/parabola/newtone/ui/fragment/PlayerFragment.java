@@ -34,7 +34,6 @@ import com.parabola.newtone.ui.view.LockableViewPager;
 import com.parabola.newtone.util.TimeFormatterTool;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,6 +48,7 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
 import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
@@ -350,6 +350,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void refreshTracks(List<Track> tracks) {
+        if (isTracklistsIdentical(tracks, albumCoverAdapter.tracks)) return;
+
         albumCoverAdapter.tracks.clear();
         albumCoverAdapter.tracks.addAll(tracks);
         try {
@@ -362,24 +364,6 @@ public final class PlayerFragment extends MvpAppCompatFragment
     @Override
     public void setAlbumImagePosition(int currentTrackPosition, boolean smooth) {
         albumCoverPager.setCurrentItem(currentTrackPosition, smooth);
-    }
-
-    @Override
-    public void moveTrack(int oldPosition, int newPosition) {
-        if (oldPosition < newPosition)
-            Collections.rotate(albumCoverAdapter.tracks.subList(oldPosition, newPosition + 1), newPosition - oldPosition);
-        else
-            Collections.rotate(albumCoverAdapter.tracks.subList(newPosition, oldPosition + 1), newPosition - oldPosition);
-
-        albumCoverAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void removeTrack(int position) {
-        if (position < 0 || position >= albumCoverAdapter.tracks.size())
-            return;
-        albumCoverAdapter.tracks.remove(position);
-        albumCoverAdapter.notifyDataSetChanged();
     }
 
     private static class AlbumCoverPagerAdapter extends PagerAdapter {

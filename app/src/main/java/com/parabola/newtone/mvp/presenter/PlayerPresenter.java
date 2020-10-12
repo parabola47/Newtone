@@ -56,9 +56,8 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                 observeTimerState(),
                 observeFavouritesChanged(),
                 observeRepeatModeEnabling(),
-                observeShuffleModeEnabling(),
-                observeTrackMoving(),
-                observeTrackRemoving());
+                observeShuffleModeEnabling()
+        );
     }
 
     @Override
@@ -99,6 +98,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                 //Пропускаем, если id текущего трека неверен
                 .filter(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
                 .flatMapSingle(trackRepo::getById)
+                .observeOn(schedulers.ui())
                 .subscribe(track -> {
                     getViewState().setArtist(track.getArtistName());
                     getViewState().setAlbum(track.getAlbumTitle());
@@ -110,7 +110,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                     getViewState().setIsFavourite(track.isFavourite());
 
                     getViewState().setAlbumImagePosition(playerInteractor.currentTrackPosition(), enableSlideScrolling);
-                }, error -> {});
+                }, Functions.ERROR_CONSUMER);
     }
 
     private Disposable observePlayerState() {
@@ -144,22 +144,6 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                     getViewState().refreshTracks(tracks);
                     getViewState().setAlbumImagePosition(playerInteractor.currentTrackPosition(), false);
                 });
-    }
-
-    private Disposable observeTrackMoving() {
-        return playerInteractor.onMoveTrack()
-                .observeOn(schedulers.ui())
-                .subscribe(movedTrackItem -> {
-                    getViewState().moveTrack(movedTrackItem.oldPosition, movedTrackItem.newPosition);
-                    getViewState().setAlbumImagePosition(playerInteractor.currentTrackPosition(), enableSlideScrolling);
-                });
-    }
-
-    private Disposable observeTrackRemoving() {
-        return playerInteractor.onRemoveTrack()
-                .map(removedTrackItem -> removedTrackItem.position)
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::removeTrack);
     }
 
     public void onClickTimerButton() {

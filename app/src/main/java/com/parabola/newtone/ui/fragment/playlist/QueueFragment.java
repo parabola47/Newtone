@@ -22,6 +22,7 @@ import com.parabola.newtone.mvp.view.QueueView;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +67,10 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         queueAdapter.setMoveItemIconVisibility(true);
         queueAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(queueAdapter.getAll(), position));
         queueAdapter.setOnMoveItemListener(presenter::onMoveItem);
-        queueAdapter.setOnSwipeItemListener(presenter::onRemoveItem);
+        queueAdapter.setOnSwipeItemListener(position -> {
+            queueAdapter.remove(position);
+            presenter.onRemoveItem(position);
+        });
 
         return root;
     }
@@ -123,16 +127,16 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setCurrentTrackPosition(int currentTrackPosition) {
+        OptionalInt oldSelectedPosition = queueAdapter.getSelectedPosition();
+        if (oldSelectedPosition.isPresent()
+                && oldSelectedPosition.getAsInt() == currentTrackPosition) {
+            return;
+        }
         try {
             queueAdapter.setSelected(currentTrackPosition);
         } catch (IndexOutOfBoundsException ignored) {
             queueAdapter.clearSelected();
         }
-    }
-
-    @Override
-    public void removeTrackByPosition(int position) {
-        queueAdapter.remove(position);
     }
 
     @Override

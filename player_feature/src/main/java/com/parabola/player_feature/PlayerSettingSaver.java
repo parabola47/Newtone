@@ -2,14 +2,14 @@ package com.parabola.player_feature;
 
 import android.content.SharedPreferences;
 
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 class PlayerSettingSaver {
     private static final String LOG_TAG = PlayerSettingSaver.class.getSimpleName();
@@ -91,19 +91,13 @@ class PlayerSettingSaver {
 
     private static final String SAVED_PLAYLIST_DELIMITER = ";";
 
-    void setSavedPlaylist(ConcatenatingMediaSource mediaSource, int currentWindowIndex) {
-        StringBuilder str = new StringBuilder();
-
-        for (int i = 0; i < mediaSource.getSize(); i++) {
-            str.append((int) mediaSource.getMediaSource(i).getTag());
-
-            if (i != mediaSource.getSize() - 1) {
-                str.append(SAVED_PLAYLIST_DELIMITER);
-            }
-        }
+    void setSavedPlaylist(List<Integer> trackIds, int currentWindowIndex) {
+        String savedPlaylist = trackIds.stream()
+                .map(id -> Integer.toString(id))
+                .collect(Collectors.joining(SAVED_PLAYLIST_DELIMITER));
 
         prefs.edit()
-                .putString(SAVED_PLAYLIST_KEY, str.toString())
+                .putString(SAVED_PLAYLIST_KEY, savedPlaylist)
                 .putInt(SAVED_PLAYLIST_POSITION_KEY, currentWindowIndex)
                 .apply();
     }
@@ -116,18 +110,15 @@ class PlayerSettingSaver {
 
     List<Integer> getSavedPlaylist() {
         String savedString = prefs.getString(SAVED_PLAYLIST_KEY, "");
-        if (savedString.isEmpty()) {
+        if (savedString == null || savedString.isEmpty()) {
             return Collections.emptyList();
         }
 
         String[] idsStr = savedString.split(SAVED_PLAYLIST_DELIMITER);
-        List<Integer> ids = new ArrayList<>();
 
-        for (String s : idsStr) {
-            ids.add(Integer.parseInt(s));
-        }
-
-        return ids;
+        return Arrays.stream(idsStr)
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
     }
 
     int getSavedWindowIndex() {

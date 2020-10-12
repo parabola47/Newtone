@@ -73,7 +73,8 @@ public interface PlayerInteractor {
 
 
     //оповещает об обновлении текущего плейлиста и возвращает список идентификаторов
-    //треков в порядке исполнения
+    //треков в порядке исполнения. Также вызывается при удалении трека из списка и при перемещении
+    //внутри треклиста
     Observable<List<Integer>> onTracklistChanged();
     Observable<Integer> onChangeCurrentTrackId();   //id трека
     Observable<Boolean> onChangePlayingState();     //true, если плеер играет

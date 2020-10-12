@@ -20,8 +20,5 @@ public interface QueueView extends MvpView {
     void setCurrentTrackPosition(int currentTrackPosition);
 
     @OneExecution
-    void removeTrackByPosition(int position);
-
-    @OneExecution
     void goToItem(int itemPosition);
 }

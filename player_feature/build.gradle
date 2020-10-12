@@ -41,11 +41,11 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
 
     //  Exo-Player
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.7'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.12.0'
     //Для автоматической привязки медиа сессии
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.7'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.12.0'
     //Для вывода уведомлений
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.7'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.0'
 
     //  RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'

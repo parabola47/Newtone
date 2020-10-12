@@ -123,7 +123,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
         float speed = enable ? settings.getSavedPlaybackSpeed() : DEFAULT_PLAYBACK_SPEED;
 
         PlaybackParameters playbackParameters = new PlaybackParameters(
-                speed, exoPlayer.getPlaybackParameters().pitch, exoPlayer.getPlaybackParameters().skipSilence);
+                speed, exoPlayer.getPlaybackParameters().pitch);
         this.exoPlayer.setPlaybackParameters(playbackParameters);
     }
 
@@ -143,7 +143,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
         if (settings.getSavedPlaybackSpeedEnabled()) {
             PlaybackParameters playbackParameters = new PlaybackParameters(
-                    speed, exoPlayer.getPlaybackParameters().pitch, exoPlayer.getPlaybackParameters().skipSilence);
+                    speed, exoPlayer.getPlaybackParameters().pitch);
 
             exoPlayer.setPlaybackParameters(playbackParameters);
         }
@@ -164,7 +164,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
         float pitch = enabled ? settings.getSavedPlaybackPitch() : DEFAULT_PLAYBACK_PITCH;
 
         PlaybackParameters playbackParameters = new PlaybackParameters(
-                exoPlayer.getPlaybackParameters().speed, pitch, exoPlayer.getPlaybackParameters().skipSilence);
+                exoPlayer.getPlaybackParameters().speed, pitch);
         this.exoPlayer.setPlaybackParameters(playbackParameters);
     }
 
@@ -184,7 +184,7 @@ public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
 
         if (settings.getSavedPlaybackPitchEnabled()) {
             PlaybackParameters playbackParameters = new PlaybackParameters(
-                    exoPlayer.getPlaybackParameters().speed, pitch, exoPlayer.getPlaybackParameters().skipSilence);
+                    exoPlayer.getPlaybackParameters().speed, pitch);
 
             exoPlayer.setPlaybackParameters(playbackParameters);
         }

@@ -9,9 +9,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.v4.media.session.MediaSessionCompat;
 
 import androidx.annotation.NonNull;
@@ -19,18 +17,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultControlDispatcher;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.NotificationUtil;
 import com.parabola.domain.interactor.RepositoryInteractor;
 import com.parabola.domain.interactor.observer.ConsumerObserver;
@@ -48,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import io.reactivex.Completable;
@@ -60,8 +54,6 @@ import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
-import static java.util.Objects.requireNonNull;
-
 
 public final class PlayerInteractorImpl implements PlayerInteractor {
     private static final String LOG_TAG = PlayerInteractorImpl.class.getSimpleName();
@@ -72,14 +64,12 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
 
 
     //    ExoPlayer
-    private final ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource();
-    private final DataSource.Factory dataSourceFactory = new FileDataSource.Factory();
     private final SimpleExoPlayer exoPlayer;
+    private final DefaultControlDispatcher DEFAULT_CONTROL_DISPATCHER = new DefaultControlDispatcher(0, 0);
     private final PlayerNotificationManager notificationManager;
 
 
     private final Context context;
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private final TrackRepository trackRepo;
     private final Intent notificationClickIntent;
 
@@ -100,6 +90,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
                 .setTrackSelector(new DefaultTrackSelector(context))
                 .build();
+        exoPlayer.prepare();
         this.context = context;
         this.trackRepo = trackRepo;
         this.notificationClickIntent = notificationClickIntent;
@@ -137,14 +128,14 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         exoPlayer.setShuffleModeEnabled(settingSaver.isShuffleModeEnabled());
         shuffleModeObserver = BehaviorSubject.createDefault(settingSaver.isShuffleModeEnabled());
 
-        exoPlayer.addListener(exoPlayerEventListener);
+        exoPlayer.addListener(new PlayerListener());
 
         //  Исключаем трек из плейлиста если он был удалён с устройства
         this.trackRepo.observeTrackDeleting()
                 .subscribe(new ConsumerObserver<>(this::removeAllById));
 
         this.trackRepo.observeFavouritesChanged()
-                .subscribe(new ConsumerObserver<>(irrelevant -> notificationManager.invalidate()));
+                .subscribe(new ConsumerObserver<>(i -> notificationManager.invalidate()));
 
         //  Восстанавливаем состояние плеера, которое было перед выходом из приложения
         repositoryInteractor.observeLoadingState()
@@ -212,8 +203,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         notificationManager.setUseNavigationActionsInCompactView(true);
         notificationManager.setPriority(NotificationCompat.PRIORITY_MAX);
         notificationManager.setUseChronometer(false);
-        notificationManager.setFastForwardIncrementMs(0);
-        notificationManager.setRewindIncrementMs(0);
+        notificationManager.setControlDispatcher(DEFAULT_CONTROL_DISPATCHER);
 
         return notificationManager;
     }
@@ -225,30 +215,18 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
             return;
 
         boolean isPlaylistChanged = !isNewPlaylistIdentical(tracklist);
-        boolean isCurrentTrackChanged;
 
         if (isPlaylistChanged) {
-            exoPlayer.setPlayWhenReady(false);
-            isCurrentTrackChanged = true;
-
-            concatenatedSource.clear();
-            concatenatedSource.addMediaSources(getMediaSourcesFromTrackTrackList(tracklist));
+            exoPlayer.pause();
+            exoPlayer.setMediaItems(getMediaItemsFromTrackTrackList(tracklist), trackPosition, playbackPositionMs);
         } else {
-            isCurrentTrackChanged = currentTrackPosition() != trackPosition;
-        }
-        if (isCurrentTrackChanged) {
-            exoPlayer.prepare(concatenatedSource);
-            if (isPlaylistChanged) {
-                currentTracklistUpdate.onNext(getTrackIds());
-            }
-            exoPlayer.seekToDefaultPosition(trackPosition);
-            if (playbackPositionMs != 0) {
-                exoPlayer.seekTo(playbackPositionMs);
+            boolean isCurrentTrackChanged = currentTrackPosition() != trackPosition;
+            if (isCurrentTrackChanged) {
+                exoPlayer.pause();
+                exoPlayer.seekTo(trackPosition, playbackPositionMs);
             }
         }
         exoPlayer.setPlayWhenReady(startImmediately);
-
-        settingSaver.setSavedPlaylist(concatenatedSource, trackPosition);
     }
 
     private boolean isNewPlaylistIdentical(List<Track> second) {
@@ -258,24 +236,24 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         }
 
         for (int i = 0; i < tracksCount(); i++) {
-            if ((int) concatenatedSource.getMediaSource(i).getTag() != second.get(i).getId())
+            if ((int) exoPlayer.getMediaItemAt(i).playbackProperties.tag != second.get(i).getId())
                 return false;
         }
 
         return true;
     }
 
-    private List<MediaSource> getMediaSourcesFromTrackTrackList(List<Track> tracklist) {
+    private List<MediaItem> getMediaItemsFromTrackTrackList(List<Track> tracklist) {
         return tracklist.stream()
                 .map(this::mediaSourceFromTrack)
                 .collect(Collectors.toList());
     }
 
-    private MediaSource mediaSourceFromTrack(Track track) {
-        Uri uri = Uri.fromFile(new File(track.getFilePath()));
-
-        return new ProgressiveMediaSource.Factory(dataSourceFactory).setTag(track.getId())
-                .createMediaSource(uri);
+    private MediaItem mediaSourceFromTrack(Track track) {
+        return new MediaItem.Builder()
+                .setUri(Uri.fromFile(new File(track.getFilePath())))
+                .setTag(track.getId())
+                .build();
     }
 
 
@@ -283,17 +261,12 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
     public void startInShuffleMode(List<Track> tracklist) {
         if (tracklist.isEmpty())
             return;
-        exoPlayer.setPlayWhenReady(false);
+        exoPlayer.pause();
 
-        concatenatedSource.clear();
+        exoPlayer.setMediaItems(getMediaItemsFromTrackTrackList(tracklist));
         setShuffleMode(true);
-        concatenatedSource.addMediaSources(getMediaSourcesFromTrackTrackList(tracklist));
 
-        exoPlayer.prepare(concatenatedSource);
-        currentTracklistUpdate.onNext(getTrackIds());
-
-        exoPlayer.setPlayWhenReady(true);
-        settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
+        exoPlayer.play();
     }
 
     @Override
@@ -315,23 +288,21 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public int tracksCount() {
-        return concatenatedSource.getSize();
+        return exoPlayer.getMediaItemCount();
     }
 
     @Override
     public int currentTrackPosition() {
-        return concatenatedSource.getSize() != 0
+        return exoPlayer.getMediaItemCount() != 0
                 ? exoPlayer.getCurrentWindowIndex()
                 : -1;
     }
 
     @Override
     public int currentTrackId() {
-        try {
-            return (int) concatenatedSource.getMediaSource(exoPlayer.getCurrentWindowIndex()).getTag();
-        } catch (Exception e) {
+        if (exoPlayer.getCurrentMediaItem() == null || exoPlayer.getCurrentMediaItem().playbackProperties == null)
             return EmptyItems.NO_TRACK.getId();
-        }
+        return (int) exoPlayer.getCurrentMediaItem().playbackProperties.tag;
     }
 
     private final PublishSubject<MovedTrackItem> onMoveTrackObserver = PublishSubject.create();
@@ -344,16 +315,9 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
     @Override
     public Completable moveTrack(int oldPosition, int newPosition) {
         return Completable.fromAction(() -> {
-            AtomicBoolean isFinished = new AtomicBoolean(false);
-            concatenatedSource.moveMediaSource(oldPosition, newPosition, mainThreadHandler,
-                    () -> isFinished.set(true));
-
-            while (!isFinished.get()) ;
+            exoPlayer.moveMediaItem(oldPosition, newPosition);
 
             onMoveTrackObserver.onNext(PlayerInteractor.createMoveTrackItem(oldPosition, newPosition));
-            currentTracklistUpdate.onNext(getTrackIds());
-
-            settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
         });
     }
 
@@ -367,44 +331,40 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
 
     @Override
     public Completable remove(int trackPosition) {
-        if (trackPosition == currentTrackPosition())
+        //сейчас exoPlayer перекидывает на первый трек в случае, если установлен режим повтора одного трека
+        if (getRepeatMode() == RepeatMode.ONE
+                && trackPosition == currentTrackPosition())
             next();
 
         return Completable.fromAction(() -> {
-            Integer trackId = (Integer) concatenatedSource.removeMediaSource(trackPosition).getTag();
+            MediaItem removedItem = exoPlayer.getMediaItemAt(trackPosition);
+            int trackId = (Integer) removedItem.playbackProperties.tag;
+            exoPlayer.removeMediaItem(trackPosition);
 
-            onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(requireNonNull(trackId), trackPosition));
-            currentTracklistUpdate.onNext(getTrackIds());
-
-            settingSaver.setSavedPlaylist(concatenatedSource, exoPlayer.getCurrentWindowIndex());
+            onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(trackId, trackPosition));
         });
     }
 
 
     private void removeAllById(int deletedTrackId) {
-        boolean hasRemoved = false;
-        for (int i = 0; i < concatenatedSource.getSize(); i++) {
-            if ((int) concatenatedSource.getMediaSource(i).getTag() == deletedTrackId) {
-                hasRemoved = true;
-                concatenatedSource.removeMediaSource(i);
+        for (int i = 0; i < exoPlayer.getMediaItemCount(); i++) {
+            if ((int) exoPlayer.getMediaItemAt(i).playbackProperties.tag == deletedTrackId) {
+                exoPlayer.removeMediaItem(i);
 
                 onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(deletedTrackId, i));
             }
-        }
-        if (hasRemoved) {
-            currentTracklistUpdate.onNext(getTrackIds());
         }
     }
 
 
     @Override
     public void resume() {
-        exoPlayer.setPlayWhenReady(true);
+        exoPlayer.play();
     }
 
     @Override
     public void pause() {
-        exoPlayer.setPlayWhenReady(false);
+        exoPlayer.pause();
     }
 
 
@@ -496,9 +456,9 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
 
 
     private List<Integer> getTrackIds() {
-        List<Integer> ids = new ArrayList<>(concatenatedSource.getSize());
-        for (int i = 0; i < concatenatedSource.getSize(); i++) {
-            Integer trackId = (Integer) concatenatedSource.getMediaSource(i).getTag();
+        List<Integer> ids = new ArrayList<>(exoPlayer.getMediaItemCount());
+        for (int i = 0; i < exoPlayer.getMediaItemCount(); i++) {
+            Integer trackId = (Integer) exoPlayer.getMediaItemAt(i).playbackProperties.tag;
             ids.add(trackId);
         }
         return ids;
@@ -587,16 +547,28 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
     };
 
 
-    private final Player.EventListener exoPlayerEventListener = new Player.EventListener() {
+    private class PlayerListener implements Player.EventListener {
+        @Override
+        public void onTimelineChanged(Timeline timeline, int reason) {
+            if (reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
+                List<Integer> trackIds = getTrackIds();
+                currentTracklistUpdate.onNext(trackIds);
+                settingSaver.setSavedPlaylist(trackIds, exoPlayer.getCurrentWindowIndex());
+            }
+        }
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
             if (playWhenReady != isPlayingObserver.getValue()) {
                 isPlayingObserver.onNext(playWhenReady);
                 settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
                 runServiceIfNeeded(playWhenReady);
             }
-            if (playbackState == Player.STATE_ENDED) {
+        }
+
+        @Override
+        public void onPlaybackStateChanged(int state) {
+            if (state == Player.STATE_ENDED) {
                 onQueueEnded();
             }
         }
@@ -614,20 +586,9 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
             seekTo(0);
         }
 
-
         @Override
-        public void onPositionDiscontinuity(int reason) {
-            if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION
-                    || reason == Player.DISCONTINUITY_REASON_SEEK) {
-                refreshCurrentTrack();
-            }
-        }
-
-        @Override
-        public void onTimelineChanged(Timeline timeline, int reason) {
-            if (reason == Player.TIMELINE_CHANGE_REASON_DYNAMIC) {
-                refreshCurrentTrack();
-            }
+        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+            refreshCurrentTrack();
         }
 
         @Override
@@ -646,18 +607,16 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         }
 
         private void refreshCurrentTrack() {
-            if (concatenatedSource.getSize() == 0) {
+            if (exoPlayer.getMediaItemCount() == 0) {
                 currentTrackIdObserver.onNext(EmptyItems.NO_TRACK.getId());
             } else {
-                int currentTrackIndex = exoPlayer.getCurrentWindowIndex();
-                Integer trackId = (Integer) concatenatedSource.getMediaSource(currentTrackIndex).getTag();
-                currentTrackIdObserver.onNext(requireNonNull(trackId));
+                currentTrackIdObserver.onNext(currentTrackId());
 
-                settingSaver.setCurrentWindowIndex(currentTrackIndex);
+                settingSaver.setCurrentWindowIndex(exoPlayer.getCurrentWindowIndex());
                 settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
             }
         }
-    };
+    }
 
 
     private Bitmap defaultNotificationAlbumArt;
@@ -671,12 +630,12 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         private Track currentTrack = EmptyItems.NO_TRACK;
 
         private Track getCurrentTrack(Player player) {
-            if (concatenatedSource.getSize() == 0) {
+            if (player.getMediaItemCount() == 0) {
                 currentTrack = EmptyItems.NO_TRACK;
                 return currentTrack;
             }
-            MediaSource currentMediaSource = concatenatedSource.getMediaSource(player.getCurrentWindowIndex());
-            int currentTrackId = (int) currentMediaSource.getTag();
+
+            int currentTrackId = currentTrackId();
 
             if (currentTrackId != currentTrack.getId()) {
                 currentTrack = trackRepo.getById(currentTrackId).blockingGet();
