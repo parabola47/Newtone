@@ -52,7 +52,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
 
 
 public final class PlayerInteractorImpl implements PlayerInteractor {
@@ -236,7 +235,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         }
 
         for (int i = 0; i < tracksCount(); i++) {
-            if ((int) exoPlayer.getMediaItemAt(i).playbackProperties.tag != second.get(i).getId())
+            if (!getTrackIdByPosition(i).equals(second.get(i).getId()))
                 return false;
         }
 
@@ -305,28 +304,10 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         return (int) exoPlayer.getCurrentMediaItem().playbackProperties.tag;
     }
 
-    private final PublishSubject<MovedTrackItem> onMoveTrackObserver = PublishSubject.create();
-
-    @Override
-    public Observable<MovedTrackItem> onMoveTrack() {
-        return onMoveTrackObserver;
-    }
 
     @Override
     public Completable moveTrack(int oldPosition, int newPosition) {
-        return Completable.fromAction(() -> {
-            exoPlayer.moveMediaItem(oldPosition, newPosition);
-
-            onMoveTrackObserver.onNext(PlayerInteractor.createMoveTrackItem(oldPosition, newPosition));
-        });
-    }
-
-
-    private final PublishSubject<RemovedTrackItem> onRemoveTrackObserver = PublishSubject.create();
-
-    @Override
-    public Observable<RemovedTrackItem> onRemoveTrack() {
-        return onRemoveTrackObserver;
+        return Completable.fromAction(() -> exoPlayer.moveMediaItem(oldPosition, newPosition));
     }
 
     @Override
@@ -336,22 +317,14 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
                 && trackPosition == currentTrackPosition())
             next();
 
-        return Completable.fromAction(() -> {
-            MediaItem removedItem = exoPlayer.getMediaItemAt(trackPosition);
-            int trackId = (Integer) removedItem.playbackProperties.tag;
-            exoPlayer.removeMediaItem(trackPosition);
-
-            onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(trackId, trackPosition));
-        });
+        return Completable.fromAction(() -> exoPlayer.removeMediaItem(trackPosition));
     }
 
 
     private void removeAllById(int deletedTrackId) {
         for (int i = 0; i < exoPlayer.getMediaItemCount(); i++) {
-            if ((int) exoPlayer.getMediaItemAt(i).playbackProperties.tag == deletedTrackId) {
+            if (getTrackIdByPosition(i).equals(deletedTrackId)) {
                 exoPlayer.removeMediaItem(i);
-
-                onRemoveTrackObserver.onNext(PlayerInteractor.createRemoveTrackItem(deletedTrackId, i));
             }
         }
     }
@@ -454,12 +427,19 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         return currentTrackIdObserver;
     }
 
+    private Integer getTrackIdByPosition(int trackPosition) {
+        MediaItem mediaItem = exoPlayer.getMediaItemAt(trackPosition);
+        if (mediaItem == null
+                || mediaItem.playbackProperties == null
+                || mediaItem.playbackProperties.tag == null)
+            throw new NullPointerException();
+        return (Integer) mediaItem.playbackProperties.tag;
+    }
 
     private List<Integer> getTrackIds() {
         List<Integer> ids = new ArrayList<>(exoPlayer.getMediaItemCount());
         for (int i = 0; i < exoPlayer.getMediaItemCount(); i++) {
-            Integer trackId = (Integer) exoPlayer.getMediaItemAt(i).playbackProperties.tag;
-            ids.add(trackId);
+            ids.add(getTrackIdByPosition(i));
         }
         return ids;
     }

@@ -40,11 +40,8 @@ public interface PlayerInteractor {
     int tracksCount();
     int currentTrackPosition();
     int currentTrackId();
-    //ключ - старая позиция трека, значение - новая позиция трека в плейлисте
-    Observable<MovedTrackItem> onMoveTrack();
+
     Completable moveTrack(int oldPosition, int newPosition);
-    //ключ - id удалённого трека, значение - позиция трека в плейлисте
-    Observable<RemovedTrackItem> onRemoveTrack();
     Completable remove(int trackPosition);
 
 
@@ -82,34 +79,5 @@ public interface PlayerInteractor {
 
     AudioEffectsInteractor getAudioEffectInteractor();
     PlayerSetting getPlayerSetting();
-
-
-    static MovedTrackItem createMoveTrackItem(int oldPosition, int newPosition) {
-        return new MovedTrackItem(oldPosition, newPosition);
-    }
-
-    static RemovedTrackItem createRemoveTrackItem(int id, int position) {
-        return new RemovedTrackItem(id, position);
-    }
-
-    class RemovedTrackItem {
-        public final int id;
-        public final int position;
-
-        private RemovedTrackItem(int id, int position) {
-            this.id = id;
-            this.position = position;
-        }
-    }
-
-    class MovedTrackItem {
-        public final int oldPosition;
-        public final int newPosition;
-
-        private MovedTrackItem(int oldPosition, int newPosition) {
-            this.oldPosition = oldPosition;
-            this.newPosition = newPosition;
-        }
-    }
 
 }
