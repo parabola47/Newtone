@@ -618,7 +618,9 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
             int currentTrackId = currentTrackId();
 
             if (currentTrackId != currentTrack.getId()) {
-                currentTrack = trackRepo.getById(currentTrackId).blockingGet();
+                currentTrack = trackRepo.getById(currentTrackId)
+                        .onErrorReturnItem(EmptyItems.NO_TRACK)
+                        .blockingGet();
             }
 
             return currentTrack;
