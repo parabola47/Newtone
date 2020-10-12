@@ -106,10 +106,11 @@
     <!--используется как якорь для всплывающего PopupMenu-->
     <View
         android:id="@+id/menu_tmp"
-        android:layout_width="0px"
-        android:layout_height="0px"
+        android:layout_width="1px"
+        android:layout_height="1px"
         android:clickable="false"
         android:focusable="false"
+        android:visibility="invisible"
         app:layout_constraintRight_toRightOf="@+id/track_settings"
         app:layout_constraintTop_toTopOf="@+id/track_settings" />
 
