@@ -44,6 +44,7 @@ public final class MainPresenter extends MvpPresenter<MainView> {
 
         disposables.addAll(
                 observeCurrentTrack(),
+                bottomSliderShowingOnChangeCurrentTrack(),
                 observePlaybackPosition(),
                 observeState(),
                 observerPrimaryColor());
@@ -60,12 +61,6 @@ public final class MainPresenter extends MvpPresenter<MainView> {
 
     private Disposable observeCurrentTrack() {
         return playerInteractor.onChangeCurrentTrackId()
-                //Прячем/показываем нижнюю панель, если текущего трека нет
-                .doOnNext(currentTrackId -> {
-                    if (currentTrackId == EmptyItems.NO_TRACK.getId())
-                        getViewState().hideBottomSlider();
-                    else getViewState().showBottomSlider();
-                })
                 //Пропускаем, если id текущего трека неверен
                 .filter(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
                 .flatMapSingle(trackRepo::getById)
@@ -76,6 +71,17 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                     getViewState().setTrackTitle(track.getTitle());
                     getViewState().setArtistName(track.getArtistName());
                 }, Functions.ERROR_CONSUMER);
+    }
+
+    //Прячем нижнюю панель, если текущего трека нет, показываем если есть
+    private Disposable bottomSliderShowingOnChangeCurrentTrack() {
+        return playerInteractor.onChangeCurrentTrackId()
+                .map(currentTrackId -> currentTrackId != EmptyItems.NO_TRACK.getId())
+                .observeOn(schedulers.ui())
+                .subscribe(hasTrack -> {
+                    if (hasTrack) getViewState().showBottomSlider();
+                    else getViewState().hideBottomSlider();
+                });
     }
 
 
