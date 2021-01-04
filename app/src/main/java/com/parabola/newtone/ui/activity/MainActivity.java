@@ -108,7 +108,12 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     public void onBackPressed() {
         if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
             bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        else super.onBackPressed();
+        else {
+            try {
+                super.onBackPressed();
+            } catch (IllegalStateException ignored) {
+            }
+        }
     }
 
     @OnClick(R.id.player_toggle)
