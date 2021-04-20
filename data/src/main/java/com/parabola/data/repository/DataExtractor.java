@@ -71,6 +71,8 @@ public final class DataExtractor implements RepositoryInteractor {
 
     private final String[] UNSUPPORTED_FILE_FORMATS = {".mid", ".midi"};
 
+    private final int MINIMAL_FILE_SIZE_BYTES = 1024;
+
 
     public DataExtractor(ExcludedFolderRepository excludedFolderRepo,
                          SchedulerProvider schedulers,
@@ -123,6 +125,7 @@ public final class DataExtractor implements RepositoryInteractor {
         for (String unsupportedFormat : UNSUPPORTED_FILE_FORMATS) {
             trackSelection += " AND " + DATA + " NOT LIKE '%" + unsupportedFormat + "'";
         }
+        trackSelection += " AND " + SIZE + " > " + MINIMAL_FILE_SIZE_BYTES;
 
         try (Cursor cursor = contentResolver.query(
                 EXTERNAL_CONTENT_URI, TRACK_QUERY_SELECTIONS,
