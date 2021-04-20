@@ -69,6 +69,9 @@ public final class DataExtractor implements RepositoryInteractor {
             DATE_ADDED, TRACK, YEAR, SIZE};
 
 
+    private final String[] UNSUPPORTED_FILE_FORMATS = {".mid", ".midi"};
+
+
     public DataExtractor(ExcludedFolderRepository excludedFolderRepo,
                          SchedulerProvider schedulers,
                          PermissionHandler permissionHandler,
@@ -116,6 +119,9 @@ public final class DataExtractor implements RepositoryInteractor {
 
         for (String excludedFolder : excludedFolderRepo.getExcludedFolders()) {
             trackSelection += " AND " + DATA + " NOT LIKE '" + excludedFolder + "%'";
+        }
+        for (String unsupportedFormat : UNSUPPORTED_FILE_FORMATS) {
+            trackSelection += " AND " + DATA + " NOT LIKE '%" + unsupportedFormat + "'";
         }
 
         try (Cursor cursor = contentResolver.query(
