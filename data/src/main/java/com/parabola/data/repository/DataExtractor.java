@@ -117,19 +117,9 @@ public final class DataExtractor implements RepositoryInteractor {
         artists.clear();
         folders.clear();
 
-        String trackSelection = IS_MUSIC + "=1";
-
-        for (String excludedFolder : excludedFolderRepo.getExcludedFolders()) {
-            trackSelection += " AND " + DATA + " NOT LIKE '" + excludedFolder + "%'";
-        }
-        for (String unsupportedFormat : UNSUPPORTED_FILE_FORMATS) {
-            trackSelection += " AND " + DATA + " NOT LIKE '%" + unsupportedFormat + "'";
-        }
-        trackSelection += " AND " + SIZE + " > " + MINIMAL_FILE_SIZE_BYTES;
-
         try (Cursor cursor = contentResolver.query(
                 EXTERNAL_CONTENT_URI, TRACK_QUERY_SELECTIONS,
-                trackSelection, null, null)) {
+                createTracksSelection(), null, null)) {
             if (cursor == null)
                 return;
 
@@ -139,6 +129,24 @@ public final class DataExtractor implements RepositoryInteractor {
         initAlbums();
         initArtists();
         initFolders();
+    }
+
+
+    private String createTracksSelection() {
+        String trackSelection = IS_MUSIC + "=1";
+
+        //фильтр исключённых папок
+        for (String excludedFolder : excludedFolderRepo.getExcludedFolders()) {
+            trackSelection += " AND " + DATA + " NOT LIKE '" + excludedFolder + "%'";
+        }
+        //фильтр неподдерживаемых форматов файлов
+        for (String unsupportedFormat : UNSUPPORTED_FILE_FORMATS) {
+            trackSelection += " AND " + DATA + " NOT LIKE '%" + unsupportedFormat + "'";
+        }
+        //фильтр по размеру файла
+        trackSelection += " AND " + SIZE + " > " + MINIMAL_FILE_SIZE_BYTES;
+
+        return trackSelection;
     }
 
 
