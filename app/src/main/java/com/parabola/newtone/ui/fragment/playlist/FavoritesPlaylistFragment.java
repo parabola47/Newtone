@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -167,6 +168,19 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
     }
 
 
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+
+    @Override
+    public void removeTrack(int trackId, int position) {
+        if (tracklistAdapter.get(position).getId() == trackId)
+            tracklistAdapter.remove(position);
+    }
+
+
     @ProvidePresenter
     FavouritesPlaylistPresenter providePresenter() {
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
@@ -216,10 +230,8 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) -> {
-                    tracklistAdapter.remove(itemPosition);
-                    presenter.onClickMenuDeleteTrack(selectedTrack.getId());
-                });
+                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
+                        presenter.onClickMenuDeleteTrack(selectedTrack.getId(), itemPosition));
 
                 DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
                 dialogFragment.show(requireActivity().getSupportFragmentManager(), null);

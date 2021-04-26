@@ -21,6 +21,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -165,7 +167,13 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
     }
 
     public void onClickMenuDeleteTrack(int trackId) {
-        trackRepo.deleteTrack(trackId);
+        trackRepo.deleteTrack(trackId)
+                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
+                .map(resourceRepo::getString)
+                .observeOn(schedulers.ui())
+                .subscribe(new ConsumerSingleObserver<>(
+                        getViewState()::showToast,
+                        Functions.ERROR_CONSUMER));
     }
 
     public void onClickMenuAdditionalInfo(int trackId) {

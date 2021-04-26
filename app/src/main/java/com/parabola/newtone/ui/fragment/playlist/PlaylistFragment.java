@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -265,4 +266,8 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         tracksList.smoothScrollToPosition(0);
     }
 
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+    }
 }

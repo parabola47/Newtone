@@ -258,6 +258,11 @@
     <string name="artist_item_addition_info">%s, %s</string>
 
 
+    <!--TOASTS-->
+    <string name="file_deleted_successfully_toast">Файл удалён</string>
+    <string name="file_not_deleted_toast">Не удалось удалить файл</string>
+
+
     <!--CONTENT DESCRIPTION-->
     <string name="back_btn_content_desc">Назад</string>
     <string name="track_item_burger_content_desc">Переместить трек</string>

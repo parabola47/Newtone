@@ -7,6 +7,7 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface ArtistTracksView extends MvpView {
@@ -19,4 +20,7 @@ public interface ArtistTracksView extends MvpView {
     void setTracksCountTxt(String tracksCountStr);
 
     void setCurrentTrack(int trackId);
+
+    @OneExecution
+    void showToast(String message);
 }

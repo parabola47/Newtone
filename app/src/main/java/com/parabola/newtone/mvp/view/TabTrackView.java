@@ -7,6 +7,7 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface TabTrackView extends MvpView {
@@ -19,4 +20,7 @@ public interface TabTrackView extends MvpView {
     void setSectionShowing(boolean enable);
 
     void removeTrack(int trackId);
+
+    @OneExecution
+    void showToast(String message);
 }

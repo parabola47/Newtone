@@ -9,10 +9,8 @@ import com.parabola.domain.repository.TrackRepository;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.internal.observers.CallbackCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
@@ -81,7 +79,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
     }
 
 
-    private PublishSubject<Integer> trackDeletingObserver = PublishSubject.create();
+    private final PublishSubject<Integer> trackDeletingObserver = PublishSubject.create();
 
     @Override
     public Observable<Integer> observeTrackDeleting() {
@@ -89,11 +87,12 @@ public final class TrackRepositoryImpl implements TrackRepository {
     }
 
     @Override
-    public void deleteTrack(int trackId) {
-        Completable.fromAction(() -> dataExtractor.deleteTrack(trackId))
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CallbackCompletableObserver(
-                        () -> trackDeletingObserver.onNext(trackId)));
+    public Single<Boolean> deleteTrack(int trackId) {
+        return Single.fromCallable(() -> dataExtractor.deleteTrack(trackId))
+                .doOnSuccess(isDeleted -> {
+                    if (isDeleted) trackDeletingObserver.onNext(trackId);
+                })
+                .subscribeOn(Schedulers.io());
     }
 
 

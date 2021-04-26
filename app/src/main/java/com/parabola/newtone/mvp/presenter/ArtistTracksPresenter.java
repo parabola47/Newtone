@@ -22,6 +22,8 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -41,7 +43,7 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
     @Inject ArtistRepository artistRepository;
     @Inject PlayerInteractor playerInteractor;
     @Inject SortingRepository sortingRepo;
-    @Inject ResourceRepository resourceRepository;
+    @Inject ResourceRepository resourceRepo;
 
     @Inject SchedulerProvider schedulers;
 
@@ -140,7 +142,7 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
     }
 
     private void updateTracksCount(int tracksCount) {
-        String tracksCountStr = resourceRepository.getQuantityString(R.plurals.tracks_count, tracksCount);
+        String tracksCountStr = resourceRepo.getQuantityString(R.plurals.tracks_count, tracksCount);
         getViewState().setTracksCountTxt(tracksCountStr);
     }
 
@@ -170,7 +172,13 @@ public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> 
     }
 
     public void onClickMenuDeleteTrack(int trackId) {
-        trackRepo.deleteTrack(trackId);
+        trackRepo.deleteTrack(trackId)
+                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
+                .map(resourceRepo::getString)
+                .observeOn(schedulers.ui())
+                .subscribe(new ConsumerSingleObserver<>(
+                        getViewState()::showToast,
+                        Functions.ERROR_CONSUMER));
     }
 
     public void onClickMenuAdditionalInfo(int trackId) {

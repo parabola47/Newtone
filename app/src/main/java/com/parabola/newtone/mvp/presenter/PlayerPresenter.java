@@ -279,7 +279,13 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
     }
 
     public void onClickMenuDelete() {
-        trackRepo.deleteTrack(currentTrackId);
+        trackRepo.deleteTrack(currentTrackId)
+                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
+                .map(resourceRepo::getString)
+                .observeOn(schedulers.ui())
+                .subscribe(new ConsumerSingleObserver<>(
+                        getViewState()::showToast,
+                        Functions.ERROR_CONSUMER));
     }
 
     public void onClickMenuShareTrack() {

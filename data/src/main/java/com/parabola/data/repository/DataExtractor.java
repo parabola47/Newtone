@@ -150,26 +150,28 @@ public final class DataExtractor implements RepositoryInteractor {
     }
 
 
-    public void deleteTrack(int trackId) {
+    public boolean deleteTrack(int trackId) {
         for (int i = 0; i < tracks.size(); i++) {
             if (tracks.get(i).getId() == trackId) {
-                Track deletedTrack = tracks.remove(i);
-                deleteTrackInternal(deletedTrack);
-
-                break;
+                boolean result = deleteTrackInternal(tracks.get(i).getFilePath());
+                if (result) tracks.remove(i);
+                return result;
             }
         }
+        return false;
     }
 
-    private void deleteTrackInternal(Track track) {
-        if (deleteFile(track.getFilePath())) {
+    private boolean deleteTrackInternal(String trackPath) {
+        if (deleteFile(trackPath)) {
             String whereClause = MediaStore.Audio.Media.DATA + " = ?";
             contentResolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, whereClause,
-                    new String[]{track.getFilePath()});
+                    new String[]{trackPath});
             initArtists();
             initAlbums();
             initFolders();
+            return true;
         }
+        return false;
     }
 
 
