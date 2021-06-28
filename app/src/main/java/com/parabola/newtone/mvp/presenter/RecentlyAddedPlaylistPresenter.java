@@ -4,11 +4,9 @@ import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -19,8 +17,6 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -33,7 +29,6 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
     @Inject SchedulerProvider schedulers;
     @Inject PlayerInteractor playerInteractor;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject ResourceRepository resourceRepo;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -142,16 +137,11 @@ public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyA
 
 
     public void onClickMenuDeleteTrack(int trackId) {
-        trackRepo.deleteTrack(trackId)
-                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
-                .map(resourceRepo::getString)
-                .observeOn(schedulers.ui())
-                .subscribe(new ConsumerSingleObserver<>(
-                        getViewState()::showToast,
-                        Functions.ERROR_CONSUMER));
+        router.openDeleteTrackDialog(trackId);
     }
 
     public void onClickMenuAdditionalInfo(int trackId) {
         router.openTrackAdditionInfo(trackId);
     }
+
 }

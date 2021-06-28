@@ -12,10 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -29,7 +27,6 @@ import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.view.LockableViewPager;
 import com.parabola.newtone.util.TimeFormatterTool;
 
@@ -49,7 +46,6 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class PlayerFragment extends MvpAppCompatFragment
@@ -158,11 +154,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 presenter.onClickMenuAdditionalInfo();
                 break;
             case R.id.delete:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
-                        presenter.onClickMenuDelete());
-
-                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
+                presenter.onClickMenuDelete();
                 break;
             case R.id.settings:
                 presenter.onClickMenuSettings();

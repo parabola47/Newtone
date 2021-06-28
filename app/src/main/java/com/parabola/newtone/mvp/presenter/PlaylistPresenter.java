@@ -6,11 +6,9 @@ import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Playlist;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.PlaylistView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -21,8 +19,6 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -36,7 +32,6 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
     @Inject PlaylistRepository playlistRepo;
     @Inject TrackInteractor trackInteractor;
     @Inject TrackRepository trackRepo;
-    @Inject ResourceRepository resourceRepo;
 
     @Inject SchedulerProvider schedulers;
 
@@ -171,13 +166,7 @@ public final class PlaylistPresenter extends MvpPresenter<PlaylistView> {
 
 
     public void onClickMenuDeleteTrack(int trackId) {
-        trackRepo.deleteTrack(trackId)
-                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
-                .map(resourceRepo::getString)
-                .observeOn(schedulers.ui())
-                .subscribe(new ConsumerSingleObserver<>(
-                        getViewState()::showToast,
-                        Functions.ERROR_CONSUMER));
+        router.openDeleteTrackDialog(trackId);
     }
 
     public void onClickMenuAdditionalInfo(int trackId) {

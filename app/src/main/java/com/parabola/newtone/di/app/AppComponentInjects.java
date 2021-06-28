@@ -28,6 +28,7 @@ import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter;
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
 import com.parabola.newtone.ui.activity.MainActivity;
+import com.parabola.newtone.ui.dialog.DeleteTrackDialog;
 import com.parabola.newtone.ui.dialog.SortingDialog;
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog;
 import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment;
@@ -83,9 +84,11 @@ public interface AppComponentInjects {
     void inject(SortingDialog dialog);
     void inject(EqPresetsSelectorDialog dialog);
     void inject(TrackAdditionalInfoPresenter presenter);
+    void inject(DeleteTrackDialog dialog);
 
 
     //    FXs
     void inject(TabEqualizerPresenter presenter);
     void inject(FxAudioSettingsPresenter presenter);
+
 }

@@ -9,7 +9,6 @@ import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.FolderView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -21,8 +20,6 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -156,13 +153,7 @@ public final class FolderPresenter extends MvpPresenter<FolderView> {
 
 
     public void onClickMenuDeleteTrack(int trackId) {
-        trackRepo.deleteTrack(trackId)
-                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
-                .map(resourceRepo::getString)
-                .observeOn(schedulers.ui())
-                .subscribe(new ConsumerSingleObserver<>(
-                        getViewState()::showToast,
-                        Functions.ERROR_CONSUMER));
+        router.openDeleteTrackDialog(trackId);
     }
 
     public void onClickMenuAdditionalInfo(int trackId) {

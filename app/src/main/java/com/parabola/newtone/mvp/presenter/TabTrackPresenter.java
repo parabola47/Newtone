@@ -4,12 +4,10 @@ import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.TabTrackView;
 import com.parabola.newtone.ui.router.MainRouter;
@@ -20,8 +18,6 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 
@@ -38,7 +34,6 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
     @Inject PlayerInteractor playerInteractor;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject SortingRepository sortingRepo;
-    @Inject ResourceRepository resourceRepo;
 
     @Inject SchedulerProvider schedulers;
 
@@ -133,13 +128,9 @@ public final class TabTrackPresenter extends MvpPresenter<TabTrackView> {
         router.openTrackAdditionInfo(trackId);
     }
 
+
     public void onClickMenuDeleteTrack(int trackId) {
-        trackRepo.deleteTrack(trackId)
-                .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
-                .map(resourceRepo::getString)
-                .observeOn(schedulers.ui())
-                .subscribe(new ConsumerSingleObserver<>(
-                        getViewState()::showToast,
-                        Functions.ERROR_CONSUMER));
+        router.openDeleteTrackDialog(trackId);
     }
+
 }

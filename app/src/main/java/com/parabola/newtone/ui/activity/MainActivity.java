@@ -1,9 +1,15 @@
 package com.parabola.newtone.ui.activity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -17,11 +23,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.progressindicator.ProgressIndicator;
+import com.parabola.data.AudioDeletedReceiver;
 import com.parabola.data.PermissionChangeReceiver;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
@@ -38,6 +46,8 @@ import com.parabola.newtone.ui.fragment.start.TabPlaylistFragment;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -303,6 +313,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 1;
     private static final String[] STORAGE_PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
+    private static final int DELETE_TRACK_REQUEST_CODE = 2;
+
 
     public void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -334,11 +346,34 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         trackPositionProgressBar.setProgress(progress);
     }
 
+
+    private int deleteTrackId = -1;
+
+    //начиная с Android R необходимо показывать системное диалоговое окно с подтверждением удаления медиа-файлов
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    public void showRequestForDeletingTrack(int trackId) {
+        List<Uri> uris = new ArrayList<>();
+        uris.add(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, trackId));
+        deleteTrackId = trackId;
+        PendingIntent deleteTrackIntent = MediaStore.createDeleteRequest(getContentResolver(), uris);
+        try {
+            startIntentSenderForResult(deleteTrackIntent.getIntentSender(), MainActivity.DELETE_TRACK_REQUEST_CODE, null, 0, 0, 0);
+        } catch (IntentSender.SendIntentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == STORAGE_PERMISSIONS_REQUEST_CODE) {
             sendBroadcast(new Intent(PermissionChangeReceiver.ACTION_FILE_STORAGE_PERMISSION_UPDATE));
+        } else if (requestCode == DELETE_TRACK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Intent intent = new Intent(AudioDeletedReceiver.ACTION_AUDIO_REMOVED_FROM_STORAGE)
+                    .putExtra(AudioDeletedReceiver.TRACK_ID_ARG, deleteTrackId);
+            sendBroadcast(intent);
+            deleteTrackId = -1;
+            Toast.makeText(this, R.string.file_deleted_successfully_toast, Toast.LENGTH_LONG).show();
         }
     }
 

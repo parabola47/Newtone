@@ -70,6 +70,7 @@ public interface MainRouter {
     void openAudioEffectsDialog();
     void openEqPresetsSelectorDialog();
     void openNewtoneDialog();
+    void openDeleteTrackDialog(int trackId);
 
     //    COMMUNICATION WITH OTHER APPS
     void openLyricsSearch(Track track);

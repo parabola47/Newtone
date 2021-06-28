@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -17,7 +16,6 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ImageViewCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +30,6 @@ import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FavouritesPlaylistPresenter;
 import com.parabola.newtone.mvp.view.FavouritesPlaylistView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
@@ -46,7 +43,6 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 import static java.util.Objects.requireNonNull;
 
 public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
@@ -168,19 +164,6 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
     }
 
 
-    @Override
-    public void showToast(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
-    }
-
-
-    @Override
-    public void removeTrack(int trackId, int position) {
-        if (tracklistAdapter.get(position).getId() == trackId)
-            tracklistAdapter.remove(position);
-    }
-
-
     @ProvidePresenter
     FavouritesPlaylistPresenter providePresenter() {
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
@@ -230,11 +213,7 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
-                        presenter.onClickMenuDeleteTrack(selectedTrack.getId(), itemPosition));
-
-                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
+                presenter.onClickMenuDeleteTrack(selectedTrack.getId());
                 break;
         }
     }

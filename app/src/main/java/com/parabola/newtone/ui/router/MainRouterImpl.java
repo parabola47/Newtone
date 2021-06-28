@@ -3,6 +3,7 @@ package com.parabola.newtone.ui.router;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.parabola.newtone.R;
 import com.parabola.newtone.ui.activity.MainActivity;
 import com.parabola.newtone.ui.dialog.ChoosePlaylistDialog;
 import com.parabola.newtone.ui.dialog.CreatePlaylistDialog;
+import com.parabola.newtone.ui.dialog.DeleteTrackDialog;
 import com.parabola.newtone.ui.dialog.RenamePlaylistDialog;
 import com.parabola.newtone.ui.dialog.SleepTimerDialog;
 import com.parabola.newtone.ui.dialog.SortingDialog;
@@ -502,6 +504,16 @@ public final class MainRouterImpl implements MainRouter {
     public void openNewtoneDialog() {
         IsaacNewtoneDialog dialog = new IsaacNewtoneDialog();
         dialog.show(activity.getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void openDeleteTrackDialog(int trackId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.showRequestForDeletingTrack(trackId);
+        } else {
+            DeleteTrackDialog dialog = DeleteTrackDialog.newInstance(trackId);
+            dialog.show(activity.getSupportFragmentManager(), null);
+        }
     }
 
     @Override

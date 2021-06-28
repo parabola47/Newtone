@@ -7,7 +7,6 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
-import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface FavouritesPlaylistView extends MvpView {
@@ -19,12 +18,5 @@ public interface FavouritesPlaylistView extends MvpView {
     void setItemDividerShowing(boolean showed);
 
     void setCurrentTrack(int trackId);
-
-    @OneExecution
-    void showToast(String message);
-
-    //трек удаляется только если на данной позиции находится указанный trackId
-    @OneExecution
-    void removeTrack(int trackId, int position);
 
 }

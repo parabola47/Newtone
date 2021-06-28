@@ -2,7 +2,6 @@ package com.parabola.newtone.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -15,11 +14,9 @@ import android.util.TypedValue;
 import android.view.WindowManager;
 
 import androidx.annotation.AttrRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 import com.parabola.newtone.R;
 
@@ -54,17 +51,6 @@ public final class AndroidTool {
         a.recycle();
 
         return color;
-    }
-
-
-    public static AlertDialog createDeleteTrackDialog(Context context,
-                                                      DialogInterface.OnClickListener onClickDeleteListener) {
-        return new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.track_menu_delete_dialog_title)
-                .setMessage(R.string.track_menu_delete_dialog_message)
-                .setPositiveButton(R.string.dialog_delete, onClickDeleteListener)
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
     }
 
 

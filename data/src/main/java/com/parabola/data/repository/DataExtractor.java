@@ -44,7 +44,6 @@ import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
 import static android.provider.MediaStore.MediaColumns.DURATION;
 import static android.provider.MediaStore.MediaColumns.SIZE;
 import static android.provider.MediaStore.MediaColumns.TITLE;
-import static com.parabola.data.utils.FileUtil.deleteFile;
 
 public final class DataExtractor implements RepositoryInteractor {
     private static final String LOG_TAG = DataExtractor.class.getSimpleName();
@@ -150,10 +149,27 @@ public final class DataExtractor implements RepositoryInteractor {
     }
 
 
+    boolean removeFromRepository(int trackId) {
+        for (int i = 0; i < tracks.size(); i++) {
+            if (tracks.get(i).getId() == trackId) {
+                tracks.remove(i);
+                artists.clear();
+                albums.clear();
+                folders.clear();
+
+                initAlbums();
+                initArtists();
+                initFolders();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean deleteTrack(int trackId) {
         for (int i = 0; i < tracks.size(); i++) {
             if (tracks.get(i).getId() == trackId) {
-                boolean result = deleteTrackInternal(tracks.get(i).getFilePath());
+                boolean result = deleteTrackInternal(trackId);
                 if (result) tracks.remove(i);
                 return result;
             }
@@ -161,13 +177,13 @@ public final class DataExtractor implements RepositoryInteractor {
         return false;
     }
 
-    private boolean deleteTrackInternal(String trackPath) {
-        if (deleteFile(trackPath)) {
-            String whereClause = MediaStore.Audio.Media.DATA + " = ?";
-            contentResolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, whereClause,
-                    new String[]{trackPath});
-            initArtists();
+    private boolean deleteTrackInternal(int trackId) {
+        String whereClause = MediaStore.Audio.Media._ID + " = ?";
+        int deleted = contentResolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, whereClause,
+                new String[]{Integer.toString(trackId)});
+        if (deleted > 0) {
             initAlbums();
+            initArtists();
             initFolders();
             return true;
         }

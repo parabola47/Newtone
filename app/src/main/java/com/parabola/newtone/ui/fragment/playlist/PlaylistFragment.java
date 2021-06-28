@@ -17,7 +17,6 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ImageViewCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +31,6 @@ import com.parabola.newtone.adapter.TrackAdapter;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.PlaylistPresenter;
 import com.parabola.newtone.mvp.view.PlaylistView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
@@ -46,7 +44,6 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static com.parabola.newtone.util.AndroidTool.createDeleteTrackDialog;
 import static java.util.Objects.requireNonNull;
 
 public final class PlaylistFragment extends BaseSwipeToBackFragment
@@ -169,11 +166,7 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
                 presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
                 break;
             case R.id.delete_track:
-                AlertDialog dialog = createDeleteTrackDialog(requireContext(), (d, w) ->
-                        presenter.onClickMenuDeleteTrack(selectedTrack.getId()));
-
-                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
+                presenter.onClickMenuDeleteTrack(selectedTrack.getId());
                 break;
         }
     }
