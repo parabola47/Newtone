@@ -64,6 +64,7 @@
     </FrameLayout>
 
     <HorizontalScrollView
+        android:id="@+id/primaryColorScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorSettingBlockBackground"
@@ -148,6 +149,18 @@
                 android:transformPivotX="-8dp"
                 android:transformPivotY="30dp"
                 app:buttonTint="@color/colorPassionPrimary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/primaryColorSky"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:button="@drawable/color_picker_selector"
+                android:scaleX="2"
+                android:scaleY="2"
+                android:transformPivotX="-8dp"
+                android:transformPivotY="30dp"
+                app:buttonTint="@color/colorSkyPrimary" />
 
         </RadioGroup>
 

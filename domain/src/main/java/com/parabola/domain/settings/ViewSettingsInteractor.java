@@ -68,7 +68,7 @@ public interface ViewSettingsInteractor {
     }
 
     enum PrimaryColor {
-        NEWTONE, ARIUM, BLUES, FLOYD, PURPLE, PASSION
+        NEWTONE, ARIUM, BLUES, FLOYD, PURPLE, PASSION, SKY,
     }
 
     class TrackItemView {

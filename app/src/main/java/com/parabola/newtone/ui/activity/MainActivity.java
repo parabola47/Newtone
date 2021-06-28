@@ -91,6 +91,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
             case FLOYD: themeId = R.style.Floyd; break;
             case PURPLE: themeId = R.style.Purple; break;
             case PASSION: themeId = R.style.Passion; break;
+            case SKY: themeId = R.style.Sky; break;
             default: throw new IllegalStateException();
         }
         setTheme(themeId);
@@ -209,7 +210,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
                 (primaryColor == PrimaryColor.BLUES && !currentThemeName.equals(getString(R.string.theme_blues))) ||
                 (primaryColor == PrimaryColor.FLOYD && !currentThemeName.equals(getString(R.string.theme_floyd))) ||
                 (primaryColor == PrimaryColor.PURPLE && !currentThemeName.equals(getString(R.string.theme_purple))) ||
-                (primaryColor == PrimaryColor.PASSION && !currentThemeName.equals(getString(R.string.theme_passion)))) {
+                (primaryColor == PrimaryColor.PASSION && !currentThemeName.equals(getString(R.string.theme_passion))) ||
+                (primaryColor == PrimaryColor.SKY && !currentThemeName.equals(getString(R.string.theme_sky)))) {
             recreate();
         }
     }

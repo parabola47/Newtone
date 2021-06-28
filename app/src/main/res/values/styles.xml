@@ -18,6 +18,7 @@
     <string name="theme_floyd" translatable="false">Floyd</string>
     <string name="theme_purple" translatable="false">Purple</string>
     <string name="theme_passion" translatable="false">Passion</string>
+    <string name="theme_sky" translatable="false">Sky</string>
 
 
     <!-- Base application theme. -->
@@ -69,6 +70,13 @@
         <item name="themeName">@string/theme_passion</item>
     </style>
 
+    <style name="Sky" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorSkyPrimary</item>
+        <item name="colorPrimaryDark">@color/colorSkyPrimaryDark</item>
+        <item name="colorAccent">@color/colorSkyPrimary</item>
+
+        <item name="themeName">@string/theme_sky</item>
+    </style>
 
     <color name="colorNewtonePrimary">#009688</color>
     <color name="colorNewtonePrimaryDark">#00574B</color>
@@ -88,6 +96,9 @@
 
     <color name="colorPassionPrimary">#CD4E57</color>
     <color name="colorPassionPrimaryDark">#8C353B</color>
+
+    <color name="colorSkyPrimary">#1CC0CC</color>
+    <color name="colorSkyPrimaryDark">#159099</color>
 
 
 </resources>

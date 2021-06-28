@@ -37,6 +37,7 @@ public final class AndroidTool {
             case FLOYD: return context.getResources().getColor(R.color.colorFloydPrimary);
             case PURPLE: return context.getResources().getColor(R.color.colorPurplePrimary);
             case PASSION: return context.getResources().getColor(R.color.colorPassionPrimary);
+            case SKY: return context.getResources().getColor(R.color.colorSkyPrimary);
             default: throw new IllegalArgumentException();
         }
     }

@@ -65,6 +65,7 @@ public final class ColorThemeSelectorFragment extends BaseSwipeToBackFragment
                 case R.id.primaryColorFloyd: primaryColor = PrimaryColor.FLOYD; break;
                 case R.id.primaryColorPurple: primaryColor = PrimaryColor.PURPLE; break;
                 case R.id.primaryColorPassion: primaryColor = PrimaryColor.PASSION; break;
+                case R.id.primaryColorSky: primaryColor = PrimaryColor.SKY; break;
                 default: throw new IllegalStateException();
             }
             presenter.onPrimaryColorSelection(primaryColor);
@@ -97,6 +98,7 @@ public final class ColorThemeSelectorFragment extends BaseSwipeToBackFragment
             case FLOYD: primaryColorRadioGroup.check(R.id.primaryColorFloyd); break;
             case PURPLE: primaryColorRadioGroup.check(R.id.primaryColorPurple); break;
             case PASSION: primaryColorRadioGroup.check(R.id.primaryColorPassion); break;
+            case SKY: primaryColorRadioGroup.check(R.id.primaryColorSky); break;
             default: throw new IllegalArgumentException();
         }
     }
