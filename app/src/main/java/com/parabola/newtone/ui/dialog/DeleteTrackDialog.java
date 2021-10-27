@@ -1,6 +1,7 @@
 package com.parabola.newtone.ui.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -16,7 +17,6 @@ import com.parabola.newtone.di.app.AppComponent;
 
 import javax.inject.Inject;
 
-import io.reactivex.functions.Consumer;
 import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.MvpAppCompatDialogFragment;
@@ -29,6 +29,7 @@ public final class DeleteTrackDialog extends MvpAppCompatDialogFragment {
 
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
+    @Inject Context appContext;
 
 
     public DeleteTrackDialog() {
@@ -70,10 +71,10 @@ public final class DeleteTrackDialog extends MvpAppCompatDialogFragment {
     private void onClickDeleteTrack() {
         trackRepo.deleteTrack(deletedTrackId)
                 .map(isDeleted -> isDeleted ? R.string.file_deleted_successfully_toast : R.string.file_not_deleted_toast)
-                .map(this::getString)
+                .map(appContext::getString)
                 .observeOn(schedulers.ui())
                 .subscribe(new ConsumerSingleObserver<>(
-                        (Consumer<String>) s -> Toast.makeText(requireContext(), s, Toast.LENGTH_LONG).show(),
+                        s -> Toast.makeText(appContext, s, Toast.LENGTH_LONG).show(),
                         Functions.ERROR_CONSUMER));
     }
 
