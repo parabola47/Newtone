@@ -71,11 +71,6 @@ dependencies {
     //    FastScrollRecyclerView
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
 
-    //    BUTTERKNIFE
-    //noinspection AnnotationProcessorOnCompilePath
-    implementation 'com.jakewharton:butterknife:10.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
-
     //    DAGGER
     implementation 'com.google.dagger:dagger-android:2.29.1'
     implementation 'com.google.dagger:dagger-android-support:2.29.1'
