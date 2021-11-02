@@ -1,5 +1,8 @@
 package com.parabola.newtone.ui.fragment;
 
+import static androidx.core.content.ContextCompat.getColor;
+import static java.util.Objects.requireNonNull;
+
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -15,7 +18,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Album;
 import com.parabola.domain.model.Artist;
@@ -30,49 +32,30 @@ import com.parabola.newtone.adapter.AlbumAdapter;
 import com.parabola.newtone.adapter.ArtistAdapter;
 import com.parabola.newtone.adapter.PlaylistAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.FragmentSearchBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.SearchPresenter;
 import com.parabola.newtone.mvp.view.SearchFragmentView;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static androidx.core.content.ContextCompat.getColor;
-import static java.util.Objects.requireNonNull;
 
 public final class SearchFragment extends MvpAppCompatFragment
         implements SearchFragmentView {
 
     @InjectPresenter SearchPresenter presenter;
 
-    @BindView(R.id.searchView) SearchView searchView;
-    @BindView(R.id.loadDataProgressBarContainer) ViewGroup loadDataProgressBarContainer;
-    private DividerItemDecoration itemDecoration;
+    private FragmentSearchBinding binding;
 
-    @BindView(R.id.artistsView) RecyclerView artistsView;
-    @BindView(R.id.artistListHeader) TextView artistListHeader;
     private final ArtistAdapter artistAdapter = new ArtistAdapter();
-
-
-    @BindView(R.id.albumsView) RecyclerView albumsView;
-    @BindView(R.id.albumListHeader) TextView albumListHeader;
     private final AlbumAdapter albumAdapter = new AlbumAdapter();
-
-
-    @BindView(R.id.tracksView) RecyclerView tracksView;
-    @BindView(R.id.trackListHeader) TextView trackListHeader;
     private final TrackAdapter trackAdapter = new TrackAdapter();
-
-
-    @BindView(R.id.playlistView) RecyclerView playlistView;
-    @BindView(R.id.playlistHeader) TextView playlistHeader;
     private final PlaylistAdapter playlistAdapter = new PlaylistAdapter();
+
+    private DividerItemDecoration itemDecoration;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -84,46 +67,46 @@ public final class SearchFragment extends MvpAppCompatFragment
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_search, container, false);
-        ButterKnife.bind(this, layout);
+        binding = FragmentSearchBinding.inflate(inflater, container, false);
 
-        artistsView.setAdapter(artistAdapter);
-        albumsView.setAdapter(albumAdapter);
-        tracksView.setAdapter(trackAdapter);
-        playlistView.setAdapter(playlistAdapter);
+        binding.artistsView.setAdapter(artistAdapter);
+        binding.albumsView.setAdapter(albumAdapter);
+        binding.tracksView.setAdapter(trackAdapter);
+        binding.playlistView.setAdapter(playlistAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+
+        binding.backBtn.setOnClickListener(v -> presenter.onClickBackButton());
 
         AlbumItemView newAlbumItemView = new AlbumItemView(AlbumViewType.LIST, 16, 16, 64, 4);
         albumAdapter.setViewSettings(newAlbumItemView, 1);
 
-
         artistAdapter.setOnItemClickListener(position -> {
-            searchView.clearFocus();
+            binding.searchView.clearFocus();
             int artistId = artistAdapter.get(position).getId();
             presenter.onClickArtistItem(artistId);
         });
         albumAdapter.setOnItemClickListener(position -> {
-            searchView.clearFocus();
+            binding.searchView.clearFocus();
             int albumId = albumAdapter.get(position).getId();
             presenter.onClickAlbumItem(albumId);
         });
         trackAdapter.setOnItemClickListener(position -> {
-            searchView.clearFocus();
+            binding.searchView.clearFocus();
             presenter.onClickTrackItem(trackAdapter.getAll(), position);
         });
         playlistAdapter.setOnItemClickListener(position -> {
-            searchView.clearFocus();
+            binding.searchView.clearFocus();
             int playlistId = playlistAdapter.get(position).getId();
             presenter.onClickPlaylistItem(playlistId);
         });
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 presenter.onQueryTextSubmit(query);
-                searchView.clearFocus();
+                binding.searchView.clearFocus();
                 return false;
             }
 
@@ -135,15 +118,15 @@ public final class SearchFragment extends MvpAppCompatFragment
             }
         });
         int iconTint = getColor(requireContext(), R.color.colorActionBarIconTint);
-        ((ImageView) searchView.findViewById(R.id.search_close_btn)).setColorFilter(iconTint, PorterDuff.Mode.SRC_ATOP);
+        ((ImageView) binding.searchView.findViewById(R.id.search_close_btn)).setColorFilter(iconTint, PorterDuff.Mode.SRC_ATOP);
         int textColor = getColor(requireContext(), R.color.colorNewtoneSecondaryText);
-        ((TextView) searchView.findViewById(R.id.search_src_text)).setTextColor(textColor);
+        ((TextView) binding.searchView.findViewById(R.id.search_src_text)).setTextColor(textColor);
         int textHintColor = getColor(requireContext(), android.R.color.darker_gray);
-        ((TextView) searchView.findViewById(R.id.search_src_text)).setHintTextColor(textHintColor);
+        ((TextView) binding.searchView.findViewById(R.id.search_src_text)).setHintTextColor(textHintColor);
 
         requireActivity().getSupportFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
 
-        return layout;
+        return binding.getRoot();
     }
 
     private final FragmentManager.OnBackStackChangedListener onBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
@@ -152,15 +135,11 @@ public final class SearchFragment extends MvpAppCompatFragment
             FragmentActivity activity = getActivity();
 
             if (activity != null && activity.getSupportFragmentManager().getPrimaryNavigationFragment() != SearchFragment.this) {
-                searchView.clearFocus();
+                binding.searchView.clearFocus();
             }
         }
     };
 
-    @OnClick(R.id.back_btn)
-    public void onClickBackButton() {
-        presenter.onClickBackButton();
-    }
 
     @Override
     public void onDestroyView() {
@@ -181,25 +160,25 @@ public final class SearchFragment extends MvpAppCompatFragment
 
     @Override
     public void focusOnSearchView() {
-        searchView.requestFocusFromTouch();
+        binding.searchView.requestFocusFromTouch();
     }
 
     @Override
     public void refreshArtists(List<Artist> artists) {
         artistAdapter.replaceAll(artists);
-        artistListHeader.setVisibility(artists.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.artistListHeader.setVisibility(artists.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void refreshAlbums(List<Album> albums) {
         albumAdapter.replaceAll(albums);
-        albumListHeader.setVisibility(albums.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.albumListHeader.setVisibility(albums.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void refreshTracks(List<Track> tracks) {
         trackAdapter.replaceAll(tracks);
-        trackListHeader.setVisibility(tracks.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.trackListHeader.setVisibility(tracks.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -210,23 +189,23 @@ public final class SearchFragment extends MvpAppCompatFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        artistsView.removeItemDecoration(itemDecoration);
-        albumsView.removeItemDecoration(itemDecoration);
-        tracksView.removeItemDecoration(itemDecoration);
-        playlistView.removeItemDecoration(itemDecoration);
+        binding.artistsView.removeItemDecoration(itemDecoration);
+        binding.albumsView.removeItemDecoration(itemDecoration);
+        binding.tracksView.removeItemDecoration(itemDecoration);
+        binding.playlistView.removeItemDecoration(itemDecoration);
 
         if (showed) {
-            artistsView.addItemDecoration(itemDecoration);
-            albumsView.addItemDecoration(itemDecoration);
-            tracksView.addItemDecoration(itemDecoration);
-            playlistView.addItemDecoration(itemDecoration);
+            binding.artistsView.addItemDecoration(itemDecoration);
+            binding.albumsView.addItemDecoration(itemDecoration);
+            binding.tracksView.addItemDecoration(itemDecoration);
+            binding.playlistView.addItemDecoration(itemDecoration);
         }
     }
 
     @Override
     public void refreshPlaylists(List<Playlist> playlists) {
         playlistAdapter.replaceAll(playlists);
-        playlistHeader.setVisibility(playlists.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.playlistHeader.setVisibility(playlists.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -235,15 +214,15 @@ public final class SearchFragment extends MvpAppCompatFragment
         albumAdapter.clear();
         trackAdapter.clear();
         playlistAdapter.clear();
-        artistListHeader.setVisibility(View.GONE);
-        albumListHeader.setVisibility(View.GONE);
-        trackListHeader.setVisibility(View.GONE);
-        playlistHeader.setVisibility(View.GONE);
+        binding.artistListHeader.setVisibility(View.GONE);
+        binding.albumListHeader.setVisibility(View.GONE);
+        binding.trackListHeader.setVisibility(View.GONE);
+        binding.playlistHeader.setVisibility(View.GONE);
     }
 
 
     @Override
     public void setLoadDataProgressBarVisibility(boolean visible) {
-        loadDataProgressBarContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
+        binding.loadDataProgressBarContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 }

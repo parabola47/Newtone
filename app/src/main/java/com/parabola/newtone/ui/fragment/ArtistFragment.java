@@ -1,5 +1,8 @@
 package com.parabola.newtone.ui.fragment;
 
+import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
+import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Album;
@@ -20,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
+import com.parabola.newtone.databinding.FragmentArtistBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ArtistPresenter;
 import com.parabola.newtone.mvp.view.ArtistView;
@@ -29,14 +32,8 @@ import com.parabola.newtone.ui.dialog.SortingDialog;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
-import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
 
 public final class ArtistFragment extends BaseSwipeToBackFragment
         implements ArtistView, Sortable, Scrollable {
@@ -44,15 +41,15 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     @InjectPresenter ArtistPresenter presenter;
 
-    @BindView(R.id.tracks_count) TextView tracksCountTxt;
-    @BindView(R.id.albums_list) RecyclerView albumsList;
-    private DividerItemDecoration itemDecoration;
+    private FragmentArtistBinding binding;
 
-    @BindView(R.id.main) TextView artistNameTxt;
-    @BindView(R.id.additional_info) TextView albumsCountTxt;
+
+    private TextView artistNameTxt;
+    private TextView albumsCountTxt;
 
 
     private final AlbumAdapter albumsAdapter = new AlbumAdapter();
+    private DividerItemDecoration itemDecoration;
 
     private static final String ARTIST_ID_ARG_KEY = "artistId";
 
@@ -80,15 +77,19 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.fragment_artist, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = FragmentArtistBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
-        albumsList.setAdapter(albumsAdapter);
+        artistNameTxt = getRootBinding().main;
+        albumsCountTxt = getRootBinding().additionalInfo;
+
+        binding.albumsList.setAdapter(albumsAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         albumsAdapter.setOnItemClickListener(position -> presenter.onAlbumItemClick(albumsAdapter.get(position).getId()));
         albumsAdapter.setOnItemLongClickListener(this::showAlbumContextMenu);
+        binding.allTracksBar.setOnClickListener(v -> presenter.onClickAllTracks());
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
     }
@@ -119,16 +120,6 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
         }
     }
 
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
-    }
-
-
-    @OnClick(R.id.all_tracks_bar)
-    public void onClickAllTracksBar() {
-        presenter.onClickAllTracks();
-    }
 
     @Override
     protected void onClickBackButton() {
@@ -157,7 +148,7 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
     public void setTracksCount(int tracksCount) {
         String tracksCountFormatted = getResources()
                 .getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
-        tracksCountTxt.setText(tracksCountFormatted);
+        binding.tracksCount.setText(tracksCountFormatted);
     }
 
     @Override
@@ -183,10 +174,10 @@ public final class ArtistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        albumsList.removeItemDecoration(itemDecoration);
+        binding.albumsList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            albumsList.addItemDecoration(itemDecoration);
+            binding.albumsList.addItemDecoration(itemDecoration);
     }
 
     @Override

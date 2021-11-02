@@ -1,5 +1,7 @@
 package com.parabola.newtone.ui.fragment.start;
 
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -10,7 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Track;
@@ -19,6 +20,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
 import com.parabola.newtone.mvp.view.TabTrackView;
@@ -30,25 +32,21 @@ import com.parabola.newtone.ui.fragment.Sortable;
 import java.util.List;
 import java.util.OptionalInt;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static java.util.Objects.requireNonNull;
 
 public final class TabTrackFragment extends MvpAppCompatFragment
         implements TabTrackView, Sortable, Scrollable {
 
     private static final String LOG_TAG = TabTrackFragment.class.getSimpleName();
 
-    @BindView(R.id.tracks_list) RecyclerView tracksList;
-    private DividerItemDecoration itemDecoration;
-
     @InjectPresenter TabTrackPresenter presenter;
 
+    private ListTrackBinding binding;
+
     private final TrackAdapter tracksAdapter = new TrackAdapter();
+    private DividerItemDecoration itemDecoration;
 
     public TabTrackFragment() {
         // Required empty public constructor
@@ -57,24 +55,22 @@ public final class TabTrackFragment extends MvpAppCompatFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.list_track, container, false);
-        ButterKnife.bind(this, layout);
+        binding = ListTrackBinding.inflate(inflater, container, false);
 
-
-        tracksList.setAdapter(tracksAdapter);
+        binding.tracksList.setAdapter(tracksAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
-        return layout;
+        return binding.getRoot();
     }
 
 
     public void scrollToCurrentTrack() {
         OptionalInt selectedTrackPosition = tracksAdapter.getSelectedPosition();
         if (selectedTrackPosition.isPresent()) {
-            tracksList.scrollToPosition(selectedTrackPosition.getAsInt());
+            binding.tracksList.scrollToPosition(selectedTrackPosition.getAsInt());
         }
     }
 
@@ -153,10 +149,10 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        tracksList.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            tracksList.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
 
@@ -182,15 +178,15 @@ public final class TabTrackFragment extends MvpAppCompatFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            tracksList.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3);
         }
 
-        tracksList.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0);
     }
 
     @Override

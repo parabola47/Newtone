@@ -1,23 +1,24 @@
 package com.parabola.newtone.ui.dialog;
 
+import static java.util.Objects.requireNonNull;
+
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.FolderPickAdapter;
 import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem;
+import com.parabola.newtone.databinding.DialogFolderPickerBinding;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -26,19 +27,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-import static java.util.Objects.requireNonNull;
-
 
 public class FolderPickerDialog extends DialogFragment
         implements BaseAdapter.OnItemClickListener {
 
-    @BindView(R.id.directoryPath) TextView directoryPath;
-    @BindView(R.id.foldersListView) RecyclerView foldersListView;
+    private DialogFolderPickerBinding binding;
 
-    private FolderPickAdapter folderPickAdapter = new FolderPickAdapter();
+    private final FolderPickAdapter folderPickAdapter = new FolderPickAdapter();
 
     @Nullable
     private Function<FolderPickerItem, String> additionalInfoMapper;
@@ -71,13 +66,12 @@ public class FolderPickerDialog extends DialogFragment
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         startDirectory = new File(requireNonNull(requireArguments().getString(START_DIRECTORY_ARG_KEY)));
-        View customView = View.inflate(requireContext(), R.layout.dialog_folder_picker, null);
-        ButterKnife.bind(this, customView);
+        binding = DialogFolderPickerBinding.inflate(LayoutInflater.from(requireContext()));
 
         folderPickAdapter.setFolderAdditionalInfoMapper(additionalInfoMapper);
-        foldersListView.setAdapter(folderPickAdapter);
+        binding.foldersListView.setAdapter(folderPickAdapter);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-        foldersListView.addItemDecoration(itemDecoration);
+        binding.foldersListView.addItemDecoration(itemDecoration);
 
         folderPickAdapter.setOnFolderPickListener(folderPath -> {
             if (itemSelectionListener != null) {
@@ -87,7 +81,7 @@ public class FolderPickerDialog extends DialogFragment
         });
 
         return new MaterialAlertDialogBuilder(requireContext())
-                .setView(customView)
+                .setView(binding.getRoot())
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();
     }
@@ -99,7 +93,7 @@ public class FolderPickerDialog extends DialogFragment
         if (currentDirectory == null) {
             currentDirectory = new File(startDirectory.getAbsolutePath());
         }
-        directoryPath.setText(currentDirectory.getAbsolutePath());
+        binding.directoryPath.setText(currentDirectory.getAbsolutePath());
 
         folderPickAdapter.replaceAll(prepareFolderListEntries(currentDirectory));
         folderPickAdapter.setOnItemClickListener(this);
@@ -113,7 +107,7 @@ public class FolderPickerDialog extends DialogFragment
         FolderPickerItem item = folderPickAdapter.get(position);
         currentDirectory = new File(item.getLocation());
 
-        directoryPath.setText(currentDirectory.getAbsolutePath());
+        binding.directoryPath.setText(currentDirectory.getAbsolutePath());
 
         folderPickAdapter.replaceAll(prepareFolderListEntries(currentDirectory));
     }

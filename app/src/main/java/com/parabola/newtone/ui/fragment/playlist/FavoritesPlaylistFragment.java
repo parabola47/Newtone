@@ -1,5 +1,8 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
+import static java.util.Objects.requireNonNull;
+
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,6 +30,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FavouritesPlaylistPresenter;
 import com.parabola.newtone.mvp.view.FavouritesPlaylistView;
@@ -36,47 +40,43 @@ import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static java.util.Objects.requireNonNull;
 
 public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         implements FavouritesPlaylistView, Scrollable {
 
+    @InjectPresenter FavouritesPlaylistPresenter presenter;
+
+    private ListTrackBinding binding;
+
     private final TrackAdapter tracklistAdapter = new TrackAdapter();
     private DividerItemDecoration itemDecoration;
 
-    @InjectPresenter FavouritesPlaylistPresenter presenter;
-
-    @BindView(R.id.action_bar) LinearLayout actionBar;
-    @BindView(R.id.tracks_list) RecyclerView tracklistView;
-    @BindView(R.id.main) TextView playlistTitle;
-    @BindView(R.id.additional_info) TextView tracksCountTxt;
+    private TextView tracksCountTxt;
     private ImageButton dragSwitcherButton;
 
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.list_track, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = ListTrackBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
+
+        tracksCountTxt = getRootBinding().additionalInfo;
+
+        getRootBinding().main.setText(R.string.playlist_favourites);
 
         initDragSwitcherButton();
 
-        tracklistView.setAdapter(tracklistAdapter);
+        binding.tracksList.setAdapter(tracklistAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracklistAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(
                 tracklistAdapter.getAll(), position));
-
-        playlistTitle.setText(R.string.playlist_favourites);
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
     }
@@ -86,9 +86,9 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         dragSwitcherButton.setImageResource(R.drawable.ic_drag);
         int imageSize = (int) getResources().getDimension(R.dimen.playlist_fragment_drag_switcher_size);
         dragSwitcherButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
-        actionBar.addView(dragSwitcherButton);
+        getRootBinding().actionBar.addView(dragSwitcherButton);
         dragSwitcherButton.setOnClickListener(v -> {
-            if (tracklistView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE)
+            if (binding.tracksList.getScrollState() == RecyclerView.SCROLL_STATE_IDLE)
                 presenter.onClickDragSwitcher();
         });
 
@@ -98,10 +98,6 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
         ImageViewCompat.setImageTintList(dragSwitcherButton, imageTintList);
     }
 
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
-    }
 
     @Override
     protected void onClickBackButton() {
@@ -151,10 +147,10 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        tracklistView.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            tracklistView.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
 
@@ -221,15 +217,15 @@ public final class FavoritesPlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracklistView.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            tracklistView.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3);
         }
 
-        tracklistView.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0);
     }
 
 }

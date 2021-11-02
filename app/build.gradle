@@ -35,6 +35,9 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+    buildFeatures {
+        viewBinding true
+    }
     lintOptions {
         lintConfig file("../app/lint.xml")
     }

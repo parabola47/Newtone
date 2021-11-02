@@ -1,14 +1,15 @@
 package com.parabola.newtone.ui.fragment;
 
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,19 +25,15 @@ import com.parabola.domain.model.Track;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
+import com.parabola.newtone.databinding.FragmentPlayerBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.PlayerPresenter;
 import com.parabola.newtone.mvp.view.PlayerView;
-import com.parabola.newtone.ui.view.LockableViewPager;
 import com.parabola.newtone.util.TimeFormatterTool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
@@ -45,29 +42,13 @@ import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
-
 public final class PlayerFragment extends MvpAppCompatFragment
         implements PlayerView {
     private static final String LOG_TAG = PlayerFragment.class.getSimpleName();
 
     @InjectPresenter PlayerPresenter presenter;
 
-    @BindView(R.id.artist) TextView artist;
-    @BindView(R.id.album) TextView album;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.song_duration) TextView duration;
-    @BindView(R.id.current_time) TextView currentTime;
-    @BindView(R.id.seek_player) SeekBar seekPlayer;
-    @BindView(R.id.favourite) ImageButton favourite;
-
-    @BindView(R.id.player_toggle) ImageButton playerToggle;
-    @BindView(R.id.loop) ImageButton loopButton;
-    @BindView(R.id.shuffle) ImageButton shuffleButton;
-    @BindView(R.id.timer) ImageButton timerButton;
-
-    @BindView(R.id.album_container) LockableViewPager albumCoverPager;
+    private FragmentPlayerBinding binding;
 
     private final AlbumCoverPagerAdapter albumCoverAdapter = new AlbumCoverPagerAdapter();
 
@@ -79,14 +60,13 @@ public final class PlayerFragment extends MvpAppCompatFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_player, container, false);
-        ButterKnife.bind(this, layout);
+        binding = FragmentPlayerBinding.inflate(inflater, container, false);
 
-        seekPlayer.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        binding.durationProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(progress);
-                currentTime.setText(currentTimeFormatted);
+                binding.currentTime.setText(currentTimeFormatted);
             }
 
             @Override
@@ -99,8 +79,8 @@ public final class PlayerFragment extends MvpAppCompatFragment
                 presenter.onStopSeekbarPressed(seekBar.getProgress());
             }
         });
-        albumCoverPager.setAdapter(albumCoverAdapter);
-        albumCoverPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        binding.albumCoverContainer.setAdapter(albumCoverAdapter);
+        binding.albumCoverContainer.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             private int lastPosition;
 
             @Override
@@ -116,10 +96,57 @@ public final class PlayerFragment extends MvpAppCompatFragment
             }
         });
 
-        return layout;
+        return binding.getRoot();
     }
 
-    @OnClick(R.id.track_settings)
+    @Override
+    public void onStart() {
+        super.onStart();
+        binding.queue.setOnClickListener(v -> presenter.onClickQueue());
+        binding.audioEffects.setOnClickListener(v -> presenter.onClickAudioEffects());
+        binding.audioEffects.setOnLongClickListener(v -> {
+            presenter.onLongClickAudioEffects();
+            return true;
+        });
+        binding.dropDown.setOnClickListener(v -> presenter.onClickDropDown());
+        binding.favourite.setOnClickListener(v -> presenter.onClickFavourite());
+        binding.favourite.setOnLongClickListener(v -> {
+            presenter.onLongClickFavorite();
+            return true;
+        });
+        binding.timer.setOnClickListener(v -> presenter.onClickTimerButton());
+        binding.timer.setOnLongClickListener(v -> {
+            presenter.onLongClickTimerButton();
+            return true;
+        });
+        binding.trackSettings.setOnClickListener(v -> onClickTrackSettings());
+
+
+        binding.artist.setOnClickListener(v -> presenter.onClickArtist());
+        binding.artist.setOnLongClickListener(v -> {
+            presenter.onClickArtist();
+            return true;
+        });
+        binding.album.setOnClickListener(v -> presenter.onClickAlbum());
+        binding.album.setOnLongClickListener(v -> {
+            presenter.onClickAlbum();
+            return true;
+        });
+        binding.title.setOnClickListener(v -> presenter.onClickTrackTitle());
+        binding.title.setOnLongClickListener(v -> {
+            presenter.onClickTrackTitle();
+            return true;
+        });
+
+
+        binding.playerToggle.setOnClickListener(v -> presenter.onClickPlayButton());
+        binding.prevTrack.setOnClickListener(v -> presenter.onClickPrevTrack());
+        binding.nextTrack.setOnClickListener(v -> presenter.onClickNextTrack());
+        binding.loop.setOnClickListener(v -> presenter.onClickLoop());
+        binding.shuffle.setOnClickListener(v -> presenter.onClickShuffle());
+    }
+
+
     public void onClickTrackSettings() {
         ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
 
@@ -162,84 +189,6 @@ public final class PlayerFragment extends MvpAppCompatFragment
         }
     }
 
-    @OnClick(R.id.timer)
-    public void onClickTimerButton() {
-        presenter.onClickTimerButton();
-    }
-
-    @OnLongClick(R.id.timer)
-    public void onLongClickTimerButton() {
-        presenter.onLongClickTimerButton();
-    }
-
-    @OnClick(R.id.player_toggle)
-    public void onClickPlayButton() {
-        presenter.onClickPlayButton();
-    }
-
-    @OnClick(R.id.next_track)
-    public void onClickNextTrack() {
-        presenter.onClickNextTrack();
-    }
-
-    @OnClick(R.id.prev_track)
-    public void onClickPrevTrack() {
-        presenter.onClickPrevTrack();
-    }
-
-    @OnClick(R.id.queue)
-    public void onClickQueue() {
-        presenter.onClickQueue();
-    }
-
-    @OnClick(R.id.audio_effects)
-    public void onClickAudioEffects() {
-        presenter.onClickAudioEffects();
-    }
-
-    @OnLongClick(R.id.audio_effects)
-    public void onLongClickAudioEffect() {
-        presenter.onLongClickAudioEffects();
-    }
-
-    @OnClick(R.id.favourite)
-    public void onClickFavourite() {
-        presenter.onClickFavourite();
-    }
-
-    @OnLongClick(R.id.favourite)
-    public void onLongClickFavourite() {
-        presenter.onLongClickFavorite();
-    }
-
-    @OnClick(R.id.loop)
-    public void onClickLoop() {
-        presenter.onClickLoop();
-    }
-
-    @OnClick(R.id.shuffle)
-    public void onClickShuffle() {
-        presenter.onClickShuffle();
-    }
-
-    @OnClick(R.id.artist)
-    @OnLongClick(R.id.artist)
-    public void onClickArtist() {
-        presenter.onClickArtist();
-    }
-
-    @OnClick(R.id.album)
-    @OnLongClick(R.id.album)
-    public void onClickAlbum() {
-        presenter.onClickAlbum();
-    }
-
-    @OnClick(R.id.title)
-    @OnLongClick(R.id.title)
-    public void onClickTrack() {
-        presenter.onClickTrackTitle();
-    }
-
 
     @ProvidePresenter
     PlayerPresenter providePresenter() {
@@ -250,60 +199,60 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void setArtist(String artistName) {
-        artist.setText(artistName);
+        binding.artist.setText(artistName);
     }
 
     @Override
     public void setAlbum(String albumTitle) {
-        album.setText(albumTitle);
+        binding.album.setText(albumTitle);
     }
 
     @Override
     public void setTitle(String trackTitle) {
-        title.setText(trackTitle);
+        binding.title.setText(trackTitle);
     }
 
     @Override
     public void setDurationText(String durationFormatted) {
-        duration.setText(durationFormatted);
+        binding.durationTxt.setText(durationFormatted);
     }
 
     @Override
     public void setDurationMs(int durationMs) {
-        seekPlayer.setMax(durationMs);
+        binding.durationProgress.setMax(durationMs);
     }
 
     @Override
     public void setIsFavourite(boolean isFavourite) {
-        if (isFavourite) favourite.setImageResource(R.drawable.ic_favourite_select);
-        else favourite.setImageResource(R.drawable.ic_favourite);
+        if (isFavourite) binding.favourite.setImageResource(R.drawable.ic_favourite_select);
+        else binding.favourite.setImageResource(R.drawable.ic_favourite);
     }
 
     @Override
     public void setPlaybackButtonAsPause() {
-        playerToggle.setImageResource(R.drawable.ic_pause);
+        binding.playerToggle.setImageResource(R.drawable.ic_pause);
     }
 
 
     @Override
     public void setPlaybackButtonAsPlay() {
-        playerToggle.setImageResource(R.drawable.ic_play);
+        binding.playerToggle.setImageResource(R.drawable.ic_play);
     }
 
     @Override
     public void setRepeatMode(RepeatMode repeatMode) {
         switch (repeatMode) {
             case OFF:
-                loopButton.setImageResource(R.drawable.ic_loop);
-                loopButton.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
+                binding.loop.setImageResource(R.drawable.ic_loop);
+                binding.loop.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
                 break;
             case ALL:
-                loopButton.setImageResource(R.drawable.ic_loop);
-                loopButton.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
+                binding.loop.setImageResource(R.drawable.ic_loop);
+                binding.loop.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
                 break;
             case ONE:
-                loopButton.setImageResource(R.drawable.ic_loop_one);
-                loopButton.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
+                binding.loop.setImageResource(R.drawable.ic_loop_one);
+                binding.loop.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
                 break;
         }
 
@@ -314,20 +263,20 @@ public final class PlayerFragment extends MvpAppCompatFragment
         int color = enable ? getStyledColor(requireContext(), R.attr.colorPrimary)
                 : ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault);
 
-        shuffleButton.setColorFilter(color);
+        binding.shuffle.setColorFilter(color);
     }
 
     @Override
     public void setCurrentTimeMs(int currentTimeMs) {
-        seekPlayer.setProgress(currentTimeMs);
+        binding.durationProgress.setProgress(currentTimeMs);
 
         String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(currentTimeMs);
-        currentTime.setText(currentTimeFormatted);
+        binding.currentTime.setText(currentTimeFormatted);
     }
 
     @Override
     public void setTimerButtonVisibility(boolean visible) {
-        timerButton.setVisibility(visible ? View.VISIBLE : View.GONE);
+        binding.timer.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -337,7 +286,7 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void setViewPagerSlide(boolean lock) {
-        albumCoverPager.setSwipeLocked(lock);
+        binding.albumCoverContainer.setSwipeLocked(lock);
     }
 
     @Override
@@ -355,7 +304,26 @@ public final class PlayerFragment extends MvpAppCompatFragment
 
     @Override
     public void setAlbumImagePosition(int currentTrackPosition, boolean smooth) {
-        albumCoverPager.setCurrentItem(currentTrackPosition, smooth);
+        binding.albumCoverContainer.setCurrentItem(currentTrackPosition, smooth);
+    }
+
+    @Override
+    public void setTrackSettingsRotation(float rotation) {
+        binding.trackSettings.setRotation(rotation);
+    }
+
+    @Override
+    public void setRootViewOpacity(float alpha) {
+        View root = getView();
+        if (root != null)
+            root.setAlpha(alpha);
+    }
+
+    @Override
+    public void setRootViewVisibility(boolean visible) {
+        View root = getView();
+        if (root != null)
+            root.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private static class AlbumCoverPagerAdapter extends PagerAdapter {

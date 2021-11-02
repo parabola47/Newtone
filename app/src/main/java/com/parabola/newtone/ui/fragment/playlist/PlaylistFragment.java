@@ -1,5 +1,8 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
+import static java.util.Objects.requireNonNull;
+
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +30,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.PlaylistPresenter;
 import com.parabola.newtone.mvp.view.PlaylistView;
@@ -37,28 +40,19 @@ import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static java.util.Objects.requireNonNull;
 
 public final class PlaylistFragment extends BaseSwipeToBackFragment
         implements PlaylistView, Scrollable {
 
     @InjectPresenter PlaylistPresenter presenter;
 
-    private final TrackAdapter tracksAdapter = new TrackAdapter();
+    private ListTrackBinding binding;
 
-    @BindView(R.id.action_bar) LinearLayout actionBar;
-
-    @BindView(R.id.tracks_list) RecyclerView tracksList;
-    @BindView(R.id.additional_info) TextView songsCountTxt;
-    @BindView(R.id.main) TextView playlistTitleTxt;
     private ImageButton dragSwitcherButton;
+
+    private final TrackAdapter tracksAdapter = new TrackAdapter();
     private DividerItemDecoration itemDecoration;
 
 
@@ -76,18 +70,19 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.list_track, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = ListTrackBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
         initDragSwitcherButton();
 
-        tracksList.setAdapter(tracksAdapter);
+        binding.tracksList.setAdapter(tracksAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
     }
@@ -97,9 +92,9 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         dragSwitcherButton.setImageResource(R.drawable.ic_drag);
         int imageSize = (int) getResources().getDimension(R.dimen.playlist_fragment_drag_switcher_size);
         dragSwitcherButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
-        actionBar.addView(dragSwitcherButton);
+        getRootBinding().actionBar.addView(dragSwitcherButton);
         dragSwitcherButton.setOnClickListener(v -> {
-            if (tracksList.getScrollState() == RecyclerView.SCROLL_STATE_IDLE)
+            if (binding.tracksList.getScrollState() == RecyclerView.SCROLL_STATE_IDLE)
                 presenter.onClickDragSwitcher();
         });
 
@@ -107,12 +102,6 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
         ViewCompat.setBackgroundTintList(dragSwitcherButton, backgroundTintList);
         ColorStateList imageTintList = ContextCompat.getColorStateList(requireContext(), R.color.colorNewtoneIconTint);
         ImageViewCompat.setImageTintList(dragSwitcherButton, imageTintList);
-    }
-
-
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
     }
 
 
@@ -212,12 +201,12 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setTracksCount(int playlistSize) {
-        songsCountTxt.setText(getResources().getQuantityString(R.plurals.tracks_count, playlistSize, playlistSize));
+        getRootBinding().additionalInfo.setText(getResources().getQuantityString(R.plurals.tracks_count, playlistSize, playlistSize));
     }
 
     @Override
     public void setPlaylistTitle(String playlistTitle) {
-        playlistTitleTxt.setText(playlistTitle);
+        getRootBinding().main.setText(playlistTitle);
     }
 
     @Override
@@ -234,10 +223,10 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        tracksList.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            tracksList.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
     @Override
@@ -248,15 +237,15 @@ public final class PlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            tracksList.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3);
         }
 
-        tracksList.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0);
     }
 
     @Override

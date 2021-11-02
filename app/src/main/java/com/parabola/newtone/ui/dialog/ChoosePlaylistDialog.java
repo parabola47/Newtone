@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -19,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Playlist;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.DialogPlaylistChooseBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter;
 import com.parabola.newtone.mvp.view.ChoosePlaylistView;
@@ -26,9 +26,6 @@ import com.parabola.newtone.mvp.view.ChoosePlaylistView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Observable;
 import moxy.MvpAppCompatDialogFragment;
 import moxy.presenter.InjectPresenter;
@@ -37,11 +34,9 @@ import moxy.presenter.ProvidePresenter;
 public final class ChoosePlaylistDialog extends MvpAppCompatDialogFragment
         implements ChoosePlaylistView {
 
-
-    private PlaylistListViewAdapter playlistAdapter;
     @InjectPresenter ChoosePlaylistPresenter presenter;
 
-    @BindView(R.id.playlist) ListView playlists;
+    private PlaylistListViewAdapter playlistAdapter;
 
     private static final String TRACK_IDS_BUNDLE_KEY = "track ids";
     private int[] trackIds;
@@ -63,28 +58,24 @@ public final class ChoosePlaylistDialog extends MvpAppCompatDialogFragment
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View customView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_playlist_choose, null);
-        ButterKnife.bind(this, customView);
+        DialogPlaylistChooseBinding binding = DialogPlaylistChooseBinding
+                .inflate(LayoutInflater.from(requireContext()));
 
         if (playlistAdapter == null)
             playlistAdapter = new PlaylistListViewAdapter(requireContext(), R.layout.item_playlist_lv, new ArrayList<>());
-        if (playlists.getAdapter() == null)
-            playlists.setAdapter(playlistAdapter);
-        if (playlists.getOnItemClickListener() == null)
-            playlists.setOnItemClickListener((parent, view, position, id) ->
+        if (binding.playlists.getAdapter() == null)
+            binding.playlists.setAdapter(playlistAdapter);
+        if (binding.playlists.getOnItemClickListener() == null)
+            binding.playlists.setOnItemClickListener((parent, view, position, id) ->
                     presenter.onClickPlaylistItem(playlistAdapter.getItemNN(position).getId()));
+
+        binding.createNewPlaylistButton.setOnClickListener(v -> presenter.onClickCreateNewPlaylist());
 
         return new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.choose_playlist_dialog_title)
-                .setView(customView)
+                .setView(binding.getRoot())
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();
-    }
-
-
-    @OnClick(R.id.createNewPlaylistButton)
-    public void onClickCreateNewPlaylist() {
-        presenter.onClickCreateNewPlaylist();
     }
 
 

@@ -1,15 +1,19 @@
 package com.parabola.newtone.ui.fragment.start;
 
+import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
+import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Album;
@@ -18,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.AlbumAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
+import com.parabola.newtone.databinding.FragmentTabAlbumBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabAlbumPresenter;
 import com.parabola.newtone.mvp.view.TabAlbumView;
@@ -28,26 +33,20 @@ import com.parabola.newtone.ui.fragment.Sortable;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
-import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
-import static java.util.Objects.requireNonNull;
 
 public final class TabAlbumFragment extends MvpAppCompatFragment
         implements TabAlbumView, Sortable, Scrollable {
     private static final String LOG_TAG = TabAlbumFragment.class.getSimpleName();
 
-    private final AlbumAdapter albumsAdapter = new AlbumAdapter();
-
-    @BindView(R.id.albums_list) RecyclerView albumsList;
-    private DividerItemDecoration itemDecoration;
-
     @InjectPresenter TabAlbumPresenter presenter;
+
+    private FragmentTabAlbumBinding binding;
+
+    private final AlbumAdapter albumsAdapter = new AlbumAdapter();
+    private DividerItemDecoration itemDecoration;
 
     public TabAlbumFragment() {
         // Required empty public constructor
@@ -55,18 +54,17 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_tab_album, container, false);
-        ButterKnife.bind(this, layout);
+        binding = FragmentTabAlbumBinding.inflate(inflater, container, false);
 
-        albumsList.setAdapter(albumsAdapter);
+        binding.albumsList.setAdapter(albumsAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         albumsAdapter.setOnItemClickListener(position -> presenter.onItemClick(albumsAdapter.get(position).getId()));
         albumsAdapter.setOnItemLongClickListener(this::showAlbumContextMenu);
 
-        return layout;
+        return binding.getRoot();
     }
 
     private void showAlbumContextMenu(int position) {
@@ -104,7 +102,7 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
     public void scrollTo(int albumId) {
         for (int i = 0; i < albumsAdapter.size(); i++) {
             if (albumsAdapter.get(i).getId() == albumId) {
-                albumsList.scrollToPosition(i);
+                binding.albumsList.scrollToPosition(i);
                 return;
             }
         }
@@ -130,10 +128,10 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        albumsList.removeItemDecoration(itemDecoration);
+        binding.albumsList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            albumsList.addItemDecoration(itemDecoration);
+            binding.albumsList.addItemDecoration(itemDecoration);
     }
 
     @Override
@@ -143,15 +141,15 @@ public final class TabAlbumFragment extends MvpAppCompatFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) albumsList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.albumsList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            albumsList.scrollToPosition(screenItemsCount * 3);
+            binding.albumsList.scrollToPosition(screenItemsCount * 3);
         }
 
-        albumsList.smoothScrollToPosition(0);
+        binding.albumsList.smoothScrollToPosition(0);
     }
 
 }

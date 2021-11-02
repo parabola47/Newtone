@@ -10,11 +10,15 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.MainView;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.parabola.player_feature.PlayerInteractorImpl;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.functions.Functions;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
@@ -46,7 +50,9 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                 observeCurrentTrack(),
                 bottomSliderShowingOnChangeCurrentTrack(),
                 observePlaybackPosition(),
-                observeState(),
+                observeBottomSlidePanelOffset(),
+                observeBottomSlidePanelState(),
+                observePlayingState(),
                 observerPrimaryColor());
     }
 
@@ -90,13 +96,35 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                 .subscribe(currentTimeMs -> getViewState().setDurationProgress(currentTimeMs.intValue()));
     }
 
-    private Disposable observeState() {
+    private Disposable observePlayingState() {
         return playerInteractor.onChangePlayingState()
                 .observeOn(schedulers.ui())
                 .subscribe(isPlaying -> {
                     if (isPlaying) getViewState().setPlaybackButtonAsPause();
                     else getViewState().setPlaybackButtonAsPlay();
                 });
+    }
+
+    private Disposable observeBottomSlidePanelOffset() {
+        return router.observeSlidePanelOffset()
+                .map(offset -> 1f - offset) //чем ниже панель опущена, тем виднее PlayerBar
+                .subscribe(getViewState()::setPlayerBarOpacity);
+    }
+
+    private Disposable observeBottomSlidePanelState() {
+        return router.observeSlidePanelState()
+                .flatMap((Function<PanelState, ObservableSource<Boolean>>) state -> {
+                    switch (state) {
+                        case EXPANDED:
+                            return Observable.just(Boolean.FALSE);
+                        case DRAGGING:
+                        case COLLAPSED:
+                            return Observable.just(Boolean.TRUE);
+                        default:
+                            return Observable.empty();
+                    }
+                })
+                .subscribe(getViewState()::setPlayerBarVisibility);
     }
 
     private Disposable observerPrimaryColor() {

@@ -32,6 +32,13 @@ public interface PlayerView extends MvpView {
     void refreshTracks(List<Track> tracks);
     void setAlbumImagePosition(int currentTrackPosition, boolean smoothScroll);
 
+    //в градусах
+    void setTrackSettingsRotation(float rotation);
+
+    void setRootViewOpacity(float alpha);
+    void setRootViewVisibility(boolean visible);
+
     @OneExecution
     void showToast(String toastMessage);
+
 }

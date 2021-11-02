@@ -1,5 +1,9 @@
 package com.parabola.newtone.adapter;
 
+import static androidx.core.content.ContextCompat.getColor;
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.MotionEvent;
@@ -28,10 +32,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-
-import static androidx.core.content.ContextCompat.getColor;
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.TrackViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -188,7 +188,7 @@ public final class TrackAdapter extends SimpleListAdapter<Track, TrackAdapter.Tr
 
         @BindView(R.id.track_title) TextView trackTitle;
         @BindView(R.id.additionalTrackInfo) TextView additionalTrackInfo;
-        @BindView(R.id.song_duration) TextView duration;
+        @BindView(R.id.duration_txt) TextView duration;
         @BindView(R.id.cover) ShapeableImageView cover;
         @BindView(R.id.track_content) ViewGroup trackContent;
         @BindView(R.id.burger_img) ImageView moveItemImg;

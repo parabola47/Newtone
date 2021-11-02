@@ -1,5 +1,7 @@
 package com.parabola.newtone.ui.fragment;
 
+import static java.util.Objects.requireNonNull;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -24,6 +25,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.AlbumPresenter;
 import com.parabola.newtone.mvp.view.AlbumView;
@@ -33,28 +35,22 @@ import com.parabola.newtone.ui.dialog.SortingDialog;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static java.util.Objects.requireNonNull;
 
 public final class AlbumFragment extends BaseSwipeToBackFragment
         implements AlbumView, Sortable, Scrollable {
 
     @InjectPresenter AlbumPresenter presenter;
 
-    @BindView(R.id.tracks_list) RecyclerView tracksList;
-    private DividerItemDecoration itemDecoration;
+    private ListTrackBinding binding;
 
-
-    @BindView(R.id.main) TextView albumTitleTxt;
-    @BindView(R.id.additional_info) TextView artistNameTxt;
-    @BindView(R.id.image) ShapeableImageView albumCover;
+    private TextView albumTitleTxt;
+    private TextView artistNameTxt;
+    private ShapeableImageView albumCover;
 
     private final TrackAdapter tracksAdapter = new TrackAdapter();
+    private DividerItemDecoration itemDecoration;
 
     private static final String ALBUM_ID_ARG_KEY = "albumId";
 
@@ -72,38 +68,35 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
         // Required empty public constructor
     }
 
-
     public int getAlbumId() {
         return requireArguments().getInt(ALBUM_ID_ARG_KEY);
     }
 
-
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.list_track, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = ListTrackBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
-        tracksList.setAdapter(tracksAdapter);
-        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+        albumTitleTxt = getRootBinding().main;
+        artistNameTxt = getRootBinding().additionalInfo;
+        albumCover = getRootBinding().image;
 
         albumCover.setVisibility(View.VISIBLE);
         albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
                 .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.album_fragment_cover_corner_size))
                 .build());
 
+        binding.tracksList.setAdapter(tracksAdapter);
+        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+
         tracksAdapter.setOnItemClickListener(position -> presenter.onClickTrackItem(tracksAdapter.getAll(), position));
         tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
-    }
-
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
     }
 
 
@@ -211,10 +204,10 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        tracksList.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            tracksList.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
 
@@ -235,14 +228,14 @@ public final class AlbumFragment extends BaseSwipeToBackFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            tracksList.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3);
         }
 
-        tracksList.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0);
     }
 }

@@ -1,21 +1,22 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
 
+import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.QueuePresenter;
 import com.parabola.newtone.mvp.view.QueueView;
@@ -24,26 +25,18 @@ import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import java.util.List;
 import java.util.OptionalInt;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
 
 public final class QueueFragment extends BaseSwipeToBackFragment
         implements QueueView {
 
     @InjectPresenter QueuePresenter presenter;
 
-    @BindView(R.id.main) TextView playlistTitle;
-    @BindView(R.id.additional_info) TextView songsCount;
-
-    @BindView(R.id.tracks_list) RecyclerView queueList;
-    private DividerItemDecoration itemDecoration;
+    private ListTrackBinding binding;
 
     private final TrackAdapter queueAdapter = new TrackAdapter();
+    private DividerItemDecoration itemDecoration;
 
     public QueueFragment() {
         // Required empty public constructor
@@ -52,16 +45,15 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.list_track, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
-        playlistTitle.setText(R.string.playlist_queue);
+        binding = ListTrackBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
-        queueList.setAdapter(queueAdapter);
+        getRootBinding().main.setText(R.string.playlist_queue);
+
+        binding.tracksList.setAdapter(queueAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         queueAdapter.setMoveItemIconVisibility(true);
@@ -71,13 +63,9 @@ public final class QueueFragment extends BaseSwipeToBackFragment
             queueAdapter.remove(position);
             presenter.onRemoveItem(position);
         });
+        getRootBinding().actionBar.setOnClickListener(v -> presenter.onClickActionBar());
 
         return root;
-    }
-
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        presenter.onClickActionBar();
     }
 
     @Override
@@ -110,10 +98,10 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        queueList.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            queueList.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
 
@@ -122,7 +110,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
         String tracksCountStr = getResources()
                 .getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
 
-        songsCount.setText(tracksCountStr);
+        getRootBinding().additionalInfo.setText(tracksCountStr);
     }
 
     @Override
@@ -141,7 +129,7 @@ public final class QueueFragment extends BaseSwipeToBackFragment
 
     @Override
     public void goToItem(int itemPosition) {
-        queueList.scrollToPosition(itemPosition);
-        queueList.stopScroll();
+        binding.tracksList.scrollToPosition(itemPosition);
+        binding.tracksList.stopScroll();
     }
 }

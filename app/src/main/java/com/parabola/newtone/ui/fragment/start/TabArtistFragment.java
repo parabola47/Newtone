@@ -1,15 +1,17 @@
 package com.parabola.newtone.ui.fragment.start;
 
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Artist;
@@ -18,6 +20,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ArtistAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
+import com.parabola.newtone.databinding.FragmentTabArtistBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.TabArtistPresenter;
 import com.parabola.newtone.mvp.view.TabArtistView;
@@ -28,24 +31,20 @@ import com.parabola.newtone.ui.fragment.Sortable;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static java.util.Objects.requireNonNull;
 
 public final class TabArtistFragment extends MvpAppCompatFragment
         implements TabArtistView, Sortable, Scrollable {
     private static final String LOG_TAG = TabArtistFragment.class.getSimpleName();
 
-    @BindView(R.id.artists_list) RecyclerView artistsList;
-    private DividerItemDecoration itemDecoration;
-
     @InjectPresenter TabArtistPresenter presenter;
 
+    private FragmentTabArtistBinding binding;
+
     private final ArtistAdapter artistsAdapter = new ArtistAdapter();
+    private DividerItemDecoration itemDecoration;
 
     public TabArtistFragment() {
         // Required empty public constructor
@@ -53,19 +52,17 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.fragment_tab_artist, container, false);
-        ButterKnife.bind(this, layout);
+        binding = FragmentTabArtistBinding.inflate(inflater, container, false);
 
-        artistsList.setAdapter(artistsAdapter);
+        binding.artistsList.setAdapter(artistsAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         artistsAdapter.setOnItemClickListener(position -> presenter.onItemClick(artistsAdapter.get(position).getId()));
         artistsAdapter.setOnItemLongClickListener(this::showArtistContextMenu);
 
-        return layout;
+        return binding.getRoot();
     }
 
     private void showArtistContextMenu(int position) {
@@ -104,7 +101,7 @@ public final class TabArtistFragment extends MvpAppCompatFragment
     public void scrollTo(int artistId) {
         for (int i = 0; i < artistsAdapter.size(); i++) {
             if (artistsAdapter.get(i).getId() == artistId) {
-                artistsList.scrollToPosition(i);
+                binding.artistsList.scrollToPosition(i);
                 return;
             }
         }
@@ -122,10 +119,10 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        artistsList.removeItemDecoration(itemDecoration);
+        binding.artistsList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            artistsList.addItemDecoration(itemDecoration);
+            binding.artistsList.addItemDecoration(itemDecoration);
     }
 
     @Override
@@ -140,15 +137,15 @@ public final class TabArtistFragment extends MvpAppCompatFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) artistsList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.artistsList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            artistsList.scrollToPosition(screenItemsCount * 3);
+            binding.artistsList.scrollToPosition(screenItemsCount * 3);
         }
 
-        artistsList.smoothScrollToPosition(0);
+        binding.artistsList.smoothScrollToPosition(0);
     }
 
 }

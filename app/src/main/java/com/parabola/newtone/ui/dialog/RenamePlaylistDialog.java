@@ -1,10 +1,11 @@
 package com.parabola.newtone.ui.dialog;
 
+import static java.util.Objects.requireNonNull;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,24 +16,21 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.EditTextContainerBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.RenamePlaylistPresenter;
 import com.parabola.newtone.mvp.view.RenamePlaylistView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.MvpAppCompatDialogFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
-import static java.util.Objects.requireNonNull;
-
 public final class RenamePlaylistDialog extends MvpAppCompatDialogFragment
         implements RenamePlaylistView {
 
-    @BindView(R.id.editTextView) EditText playlistTitleEdt;
-
     @InjectPresenter RenamePlaylistPresenter presenter;
+
+    private EditText playlistTitleEdt;
 
     private static final String PLAYLIST_BUNDLE_KEY = "playlist id";
 
@@ -52,13 +50,14 @@ public final class RenamePlaylistDialog extends MvpAppCompatDialogFragment
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View customView = LayoutInflater.from(requireContext()).inflate(R.layout.edit_text_container, null);
-        ButterKnife.bind(this, customView);
+        EditTextContainerBinding binding = EditTextContainerBinding
+                .inflate(LayoutInflater.from(requireContext()));
+        playlistTitleEdt = binding.editTextView;
         playlistTitleEdt.requestFocus();
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.rename_playlist_title)
-                .setView(customView)
+                .setView(binding.getRoot())
                 .setPositiveButton(R.string.dialog_rename, null)
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();

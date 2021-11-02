@@ -1,6 +1,9 @@
 package com.parabola.newtone.ui.fragment.start;
 
 
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+import static java.util.Objects.requireNonNull;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -23,6 +27,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.StartFragmentPagerAdapter;
+import com.parabola.newtone.databinding.FragmentStartBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.StartPresenter;
 import com.parabola.newtone.mvp.view.StartView;
@@ -30,29 +35,19 @@ import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
 import com.parabola.newtone.ui.fragment.Scrollable;
 import com.parabola.newtone.util.OnTabSelectedAdapter;
 
-import butterknife.BindColor;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
-import static java.util.Objects.requireNonNull;
 
 public final class StartFragment extends MvpAppCompatFragment
         implements StartView {
     private static final String LOG_TAG = StartFragment.class.getSimpleName();
 
-    @BindView(R.id.fragment_pager) ViewPager fragmentPager;
-    @BindView(R.id.tabs) TabLayout tabLayout;
-    @BindView(R.id.requestPermissionPanel) ViewGroup requestPermissionPanel;
-
     @InjectPresenter StartPresenter presenter;
 
-    private StartFragmentPagerAdapter fragmentPagerAdapter;
+    private FragmentStartBinding binding;
 
+    private StartFragmentPagerAdapter fragmentPagerAdapter;
 
     public StartFragment() {
         // Required empty public constructor
@@ -70,13 +65,13 @@ public final class StartFragment extends MvpAppCompatFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_start, container, false);
-        ButterKnife.bind(this, layout);
+        binding = FragmentStartBinding.inflate(inflater, container, false);
 
         fragmentPagerAdapter = new StartFragmentPagerAdapter(requireContext(), getChildFragmentManager());
-        fragmentPager.setAdapter(fragmentPagerAdapter);
+        binding.fragmentPager.setAdapter(fragmentPagerAdapter);
         setupTabLayout();
-        fragmentPager.setOffscreenPageLimit(tabLayout.getTabCount());
+        binding.fragmentPager.setOffscreenPageLimit(binding.tabLayout.getTabCount());
+        defaultTabIconTint = ContextCompat.getColor(requireContext(), R.color.colorTabIconTintDefault);
 
         //берём старые фрагменты, если экран не создаётся с нуля
         if (savedInstanceState != null) {
@@ -90,21 +85,23 @@ public final class StartFragment extends MvpAppCompatFragment
             fragmentPagerAdapter.initTabsFragments(tabFragments);
         }
 
-        return layout;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        binding.requestPermissionPanel.requestPermissionBtn
+                .setOnClickListener(v -> presenter.onClickRequestPermission());
     }
 
     @Override
     public void setPermissionPanelVisibility(boolean visible) {
-        requestPermissionPanel.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
-    @OnClick(R.id.requestPermissionBtn)
-    public void onClickRequestPermission() {
-        presenter.onClickRequestPermission();
+        binding.requestPermissionPanel.getRoot().setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     public void goToTab(int tabNumber, boolean smoothScroll) {
-        fragmentPager.setCurrentItem(tabNumber, smoothScroll);
+        binding.fragmentPager.setCurrentItem(tabNumber, smoothScroll);
     }
 
     public void scrollOnTabTrackToCurrentTrack() {
@@ -113,34 +110,34 @@ public final class StartFragment extends MvpAppCompatFragment
     }
 
     private int selectedTabIconTint;
-    @BindColor(R.color.colorTabIconTintDefault) int defaultTabIconTint;
+    private int defaultTabIconTint;
 
     private void setupTabLayout() {
-        tabLayout.setupWithViewPager(fragmentPager);
+        binding.tabLayout.setupWithViewPager(binding.fragmentPager);
 
-        buildTabItem(tabLayout, 0, R.string.tab_artists, R.drawable.ic_artist);
-        buildTabItem(tabLayout, 1, R.string.tab_albums, R.drawable.ic_album);
-        buildTabItem(tabLayout, 2, R.string.tab_tracks, R.drawable.ic_clef);
-        buildTabItem(tabLayout, 3, R.string.tab_playlists, R.drawable.ic_playlist);
+        buildTabItem(binding.tabLayout, 0, R.string.tab_artists, R.drawable.ic_artist);
+        buildTabItem(binding.tabLayout, 1, R.string.tab_albums, R.drawable.ic_album);
+        buildTabItem(binding.tabLayout, 2, R.string.tab_tracks, R.drawable.ic_clef);
+        buildTabItem(binding.tabLayout, 3, R.string.tab_playlists, R.drawable.ic_playlist);
 
-        tabLayout.addOnTabSelectedListener(new OnTabSelectedAdapter() {
+        binding.tabLayout.addOnTabSelectedListener(new OnTabSelectedAdapter() {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 ((Scrollable) fragmentPagerAdapter.getItem(tab.getPosition())).smoothScrollToTop();
             }
         });
 
-        fragmentPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        binding.fragmentPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
-                for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                for (int i = 0; i < binding.tabLayout.getTabCount(); i++) {
                     float tabOffset = 0f;
                     if (i == position)
                         tabOffset = 1 - offset;
-                    else if (i == position + 1 && position + 1 < tabLayout.getTabCount())
+                    else if (i == position + 1 && position + 1 < binding.tabLayout.getTabCount())
                         tabOffset = offset;
 
-                    refreshTabColor(requireNonNull(tabLayout.getTabAt(i)), tabOffset);
+                    refreshTabColor(requireNonNull(binding.tabLayout.getTabAt(i)), tabOffset);
                 }
             }
 
@@ -197,7 +194,7 @@ public final class StartFragment extends MvpAppCompatFragment
     }
 
     public Fragment getCurrentSelectedFragment() {
-        return fragmentPagerAdapter.getItem(fragmentPager.getCurrentItem());
+        return fragmentPagerAdapter.getItem(binding.fragmentPager.getCurrentItem());
     }
 
     @ProvidePresenter

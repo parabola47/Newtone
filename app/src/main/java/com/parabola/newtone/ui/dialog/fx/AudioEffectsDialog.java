@@ -1,5 +1,7 @@
 package com.parabola.newtone.ui.dialog.fx;
 
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,37 +12,30 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.tabs.TabLayout;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.DialogAudioEffectsBinding;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.MvpAppCompatDialogFragment;
-
-import static java.util.Objects.requireNonNull;
 
 public final class AudioEffectsDialog extends MvpAppCompatDialogFragment {
 
     private AudioEffectsPagerAdapter audioEffectsPagerAdapter;
 
-    @BindView(R.id.tabs) TabLayout tabLayout;
-    @BindView(R.id.audio_effects_pager) ViewPager audioEffectsPager;
 
     @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.dialog_audio_effects, container, false);
-        ButterKnife.bind(this, layout);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        DialogAudioEffectsBinding binding = DialogAudioEffectsBinding.inflate(inflater, container, false);
 
         audioEffectsPagerAdapter = new AudioEffectsPagerAdapter(getChildFragmentManager());
-        audioEffectsPager.setAdapter(audioEffectsPagerAdapter);
-        audioEffectsPager.setOffscreenPageLimit(audioEffectsPagerAdapter.getCount());
-        tabLayout.setupWithViewPager(audioEffectsPager);
+        binding.audioEffectsPager.setAdapter(audioEffectsPagerAdapter);
+        binding.audioEffectsPager.setOffscreenPageLimit(audioEffectsPagerAdapter.getCount());
+        binding.tabs.setupWithViewPager(binding.audioEffectsPager);
 
-        requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.fx_eq_icon);
-        requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.fx_ic_tune);
+        requireNonNull(binding.tabs.getTabAt(0)).setIcon(R.drawable.fx_eq_icon);
+        requireNonNull(binding.tabs.getTabAt(1)).setIcon(R.drawable.fx_ic_tune);
 
         //берём старые фрагменты, если экран не создаётся с нуля
         if (savedInstanceState != null) {
@@ -52,7 +47,7 @@ public final class AudioEffectsDialog extends MvpAppCompatDialogFragment {
             audioEffectsPagerAdapter.initTabsFragments(tabFragments);
         }
 
-        return layout;
+        return binding.getRoot();
     }
 
     public static class AudioEffectsPagerAdapter extends FragmentPagerAdapter {

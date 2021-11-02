@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.FragmentBaseBinding;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
@@ -24,16 +25,21 @@ public abstract class BaseSwipeToBackFragment extends MvpAppCompatFragment {
 
     private SlidrInterface slidrInterface;
 
+    private FragmentBaseBinding fragmentBaseBinding;
+
     @Override
     @NonNull
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_base, container, false);
+        fragmentBaseBinding = FragmentBaseBinding.inflate(inflater, container, false);
+        fragmentBaseBinding.backBtn.setOnClickListener(v -> onClickBackButton());
 
-        layout.findViewById(R.id.back_btn).setOnClickListener(v -> onClickBackButton());
+        return fragmentBaseBinding.getRoot();
+    }
 
-        return layout;
+    protected final FragmentBaseBinding getRootBinding() {
+        return fragmentBaseBinding;
     }
 
     @Nullable

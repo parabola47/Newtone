@@ -2,6 +2,7 @@ package com.parabola.newtone.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
@@ -18,12 +19,10 @@ import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.DialogSortingBinding;
 import com.parabola.newtone.di.app.AppComponent;
 
 import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public final class SortingDialog extends DialogFragment {
 
@@ -41,8 +40,8 @@ public final class SortingDialog extends DialogFragment {
     @Inject SortingRepository sortingRepo;
 
 
-    @BindView(R.id.sorting_radio) RadioGroup sortingRadioGroup;
-    @BindView(R.id.reverseCheckBox) CheckBox reverseCheckBox;
+    private RadioGroup sortingRadioGroup;
+    private CheckBox reverseCheckBox;
 
 
     private static final String SORTING_LIST_TYPE_PARAM = "SORTING_LIST_TYPE_PARAM";
@@ -70,13 +69,17 @@ public final class SortingDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View customView = View.inflate(requireContext(), R.layout.dialog_sorting, null);
-        ButterKnife.bind(this, customView);
+        DialogSortingBinding binding = DialogSortingBinding
+                .inflate(LayoutInflater.from(requireContext()));
+
+        sortingRadioGroup = binding.sortingRadio;
+        reverseCheckBox = binding.reverseCheckBox;
+
         showRadioButtons(sortingListType);
 
         return new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.sort_title)
-                .setView(customView)
+                .setView(binding.getRoot())
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .setPositiveButton(R.string.dialog_ok, (d, w) ->
                         onClickOk())

@@ -1,11 +1,12 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Track;
@@ -22,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
 import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
@@ -31,25 +32,17 @@ import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static java.util.Objects.requireNonNull;
 
 public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         implements RecentlyAddedPlaylistView, Scrollable {
 
-    private final TrackAdapter tracklistAdapter = new TrackAdapter();
-
     @InjectPresenter RecentlyAddedPlaylistPresenter presenter;
 
+    private ListTrackBinding binding;
 
-    @BindView(R.id.tracks_list) RecyclerView tracklistView;
-    @BindView(R.id.main) TextView playlistTitle;
-    @BindView(R.id.additional_info) TextView songsCount;
+    private final TrackAdapter tracklistAdapter = new TrackAdapter();
     private DividerItemDecoration itemDecoration;
 
 
@@ -59,29 +52,25 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
 
     @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.list_track, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = ListTrackBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
-
-        tracklistView.setAdapter(tracklistAdapter);
+        binding.tracksList.setAdapter(tracklistAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracklistAdapter.setOnItemClickListener(position ->
                 presenter.onClickTrackItem(tracklistAdapter.getAll(), position));
         tracklistAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
 
-        playlistTitle.setText(R.string.playlist_recently_added);
+        getRootBinding().main.setText(R.string.playlist_recently_added);
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
     }
 
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
-    }
 
     @Override
     protected void onClickBackButton() {
@@ -98,7 +87,7 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         tracklistAdapter.replaceAll(trackList);
         String tracksCount = getResources()
                 .getQuantityString(R.plurals.tracks_count, trackList.size(), trackList.size());
-        songsCount.setText(tracksCount);
+        getRootBinding().additionalInfo.setText(tracksCount);
     }
 
     @Override
@@ -108,10 +97,10 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        tracklistView.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            tracklistView.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
     @Override
@@ -119,7 +108,7 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
         tracklistAdapter.removeWithCondition(track -> track.getId() == trackId);
         String tracksCount = getResources()
                 .getQuantityString(R.plurals.tracks_count, tracklistAdapter.size(), tracklistAdapter.size());
-        songsCount.setText(tracksCount);
+        getRootBinding().additionalInfo.setText(tracksCount);
     }
 
     @Override
@@ -191,15 +180,15 @@ public final class RecentlyAddedPlaylistFragment extends BaseSwipeToBackFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracklistView.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            tracklistView.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3);
         }
 
-        tracklistView.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0);
     }
 
     @Override

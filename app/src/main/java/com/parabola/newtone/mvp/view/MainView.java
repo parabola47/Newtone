@@ -3,11 +3,11 @@ package com.parabola.newtone.mvp.view;
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 
 import moxy.MvpView;
-import moxy.viewstate.strategy.AddToEndSingleStrategy;
 import moxy.viewstate.strategy.OneExecutionStateStrategy;
 import moxy.viewstate.strategy.StateStrategyType;
+import moxy.viewstate.strategy.alias.AddToEndSingle;
 
-@StateStrategyType(AddToEndSingleStrategy.class)
+@AddToEndSingle
 public interface MainView extends MvpView {
 
     void refreshPrimaryColor(PrimaryColor primaryColor);
@@ -28,4 +28,8 @@ public interface MainView extends MvpView {
 
     void setDurationMax(int max);
     void setDurationProgress(int progress);
+
+    void setPlayerBarOpacity(float alpha);
+    void setPlayerBarVisibility(boolean visible);
+
 }

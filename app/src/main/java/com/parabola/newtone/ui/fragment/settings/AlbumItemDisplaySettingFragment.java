@@ -1,18 +1,19 @@
 package com.parabola.newtone.ui.fragment.settings;
 
-import android.graphics.drawable.Drawable;
+import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getScreenWidthPx;
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
@@ -21,6 +22,7 @@ import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.FragmentAlbumItemDisplaySettingBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
@@ -29,50 +31,13 @@ import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import javax.inject.Inject;
 
-import butterknife.BindDrawable;
-import butterknife.BindString;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-import static com.parabola.newtone.util.AndroidTool.getScreenWidthPx;
-import static java.util.Objects.requireNonNull;
-
 public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragment {
     private static final String LOG_CAT = AlbumItemDisplaySettingFragment.class.getSimpleName();
 
-    @BindView(R.id.main) TextView titleTxt;
-    @BindView(R.id.additional_info) TextView additionalInfoTxt;
-    @BindView(R.id.otherInfo) TextView otherInfoTxt;
 
-    @BindView(R.id.viewTypeToggle) MaterialButtonToggleGroup viewTypeToggle;
+    private FragmentAlbumItemDisplaySettingBinding binding;
+
     private static final String VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY = "VIEW_TYPE_BUNDLE_CHECK_POSITION";
-
-    @BindView(R.id.albumGridHolder) ViewGroup albumGridHolder;
-    @BindView(R.id.albumListHolder) ViewGroup albumListHolder;
-
-
-    @BindView(R.id.textSizeValue) TextView textSizeValue;
-    @BindView(R.id.textSizeSeekBar) SeekBar textSizeSeekBar;
-
-    @BindView(R.id.borderPaddingBar) ViewGroup borderPaddingBar;
-    @BindView(R.id.borderPaddingValue) TextView borderPaddingValue;
-    @BindView(R.id.borderPaddingSeekBar) SeekBar borderPaddingSeekBar;
-
-    @BindView(R.id.coverSizeBar) ViewGroup coverSizeBar;
-    @BindView(R.id.coverSizeValue) TextView coverSizeValue;
-    @BindView(R.id.coverSizeSeekBar) SeekBar coverSizeSeekBar;
-
-    @BindView(R.id.coverCornersValue) TextView coverCornersValue;
-    @BindView(R.id.coverCornersSeekBar) SeekBar coverCornersSeekBar;
-
-
-    @BindString(R.string.default_artist) String defaultArtist;
-    @BindString(R.string.default_album) String defaultAlbum;
-    @BindDrawable(R.drawable.album_default) Drawable defaultAlbumCover;
-
 
     @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject MainRouter router;
@@ -85,58 +50,59 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.fragment_album_item_display_setting, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = FragmentAlbumItemDisplaySettingBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         appComponent.inject(this);
 
-        titleTxt.setText(R.string.album_item_display_setting_screen_title);
-        additionalInfoTxt.setVisibility(View.GONE);
-        otherInfoTxt.setVisibility(View.GONE);
+        getRootBinding().main.setText(R.string.album_item_display_setting_screen_title);
+        getRootBinding().additionalInfo.setVisibility(View.GONE);
+        getRootBinding().otherInfo.setVisibility(View.GONE);
 
-        ((TextView) albumListHolder.findViewById(R.id.album_title)).setText(defaultAlbum);
-        ((TextView) albumListHolder.findViewById(R.id.author)).setText(defaultArtist);
-        ((TextView) albumListHolder.findViewById(R.id.tracks_count)).setText(R.string.default_album_tracks_count);
-        ((ImageView) albumListHolder.findViewById(R.id.albumCover)).setImageDrawable(defaultAlbumCover);
+        binding.albumListHolder.albumTitle.setText(R.string.default_album);
+        binding.albumListHolder.author.setText(R.string.default_artist);
+        binding.albumListHolder.tracksCount.setText(R.string.default_album_tracks_count);
+        binding.albumListHolder.albumCover.setImageResource(R.drawable.album_default);
 
-        ((TextView) albumGridHolder.findViewById(R.id.album_title)).setText(defaultAlbum);
-        ((TextView) albumGridHolder.findViewById(R.id.author)).setText(defaultArtist);
-        ((ImageView) albumGridHolder.findViewById(R.id.albumCover)).setImageDrawable(defaultAlbumCover);
-        ViewGroup.LayoutParams layoutParams = albumGridHolder.findViewById(R.id.albumCover).getLayoutParams();
+        binding.albumGridHolder.albumTitle.setText(R.string.default_album);
+        binding.albumGridHolder.author.setText(R.string.default_artist);
+        binding.albumGridHolder.albumCover.setImageResource(R.drawable.album_default);
+        ViewGroup.LayoutParams layoutParams = binding.albumGridHolder.albumCover.getLayoutParams();
         layoutParams.width = getGridAlbumWidth();
-        albumGridHolder.findViewById(R.id.albumCover).setLayoutParams(layoutParams);
+        binding.albumGridHolder.albumCover.setLayoutParams(layoutParams);
 
-        viewTypeToggle.addOnButtonCheckedListener((group, checkedButtonId, isChecked) -> {
+        binding.viewTypeToggle.addOnButtonCheckedListener((group, checkedButtonId, isChecked) -> {
             if (isChecked) refreshViewType(checkedButtonId);
         });
-        textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshTextSize(progress);
             }
         });
-        borderPaddingSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.borderPaddingSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshBorderPadding(progress);
             }
         });
-        coverSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.coverSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshCoverSize(progress);
             }
         });
-        coverCornersSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.coverCornersSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshCoverCorners(progress);
             }
         });
+        binding.setDefault.setOnClickListener(v -> onClickSetDefault());
 
         AlbumItemView albumItemView = viewSettingsInteractor.getAlbumItemViewSettings();
 
@@ -146,18 +112,17 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
         else checkedButtonId = albumItemView.viewType == AlbumViewType.GRID
                 ? R.id.gridButton : R.id.listButton;
 
-        viewTypeToggle.check(checkedButtonId);
-        textSizeSeekBar.setProgress(albumItemView.textSize - TEXT_SIZE_MIN);
-        borderPaddingSeekBar.setProgress(albumItemView.borderPadding - BORDER_PADDING_MIN);
-        coverSizeSeekBar.setProgress(albumItemView.coverSize - COVER_SIZE_MIN);
-        coverCornersSeekBar.setProgress(albumItemView.coverCornersRadius);
+        binding.viewTypeToggle.check(checkedButtonId);
+        binding.textSizeSeekBar.setProgress(albumItemView.textSize - TEXT_SIZE_MIN);
+        binding.borderPaddingSeekBar.setProgress(albumItemView.borderPadding - BORDER_PADDING_MIN);
+        binding.coverSizeSeekBar.setProgress(albumItemView.coverSize - COVER_SIZE_MIN);
+        binding.coverCornersSeekBar.setProgress(albumItemView.coverCornersRadius);
 
         refreshViewType(checkedButtonId);
-        refreshTextSize(textSizeSeekBar.getProgress());
-        refreshBorderPadding(borderPaddingSeekBar.getProgress());
-        refreshCoverSize(coverSizeSeekBar.getProgress());
-        refreshCoverCorners(coverCornersSeekBar.getProgress());
-
+        refreshTextSize(binding.textSizeSeekBar.getProgress());
+        refreshBorderPadding(binding.borderPaddingSeekBar.getProgress());
+        refreshCoverSize(binding.coverSizeSeekBar.getProgress());
+        refreshCoverCorners(binding.coverCornersSeekBar.getProgress());
 
         return root;
     }
@@ -165,20 +130,20 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY, viewTypeToggle.getCheckedButtonId());
+        outState.putInt(VIEW_TYPE_BUNDLE_CHECK_POSITION_KEY, binding.viewTypeToggle.getCheckedButtonId());
     }
 
-    @OnClick(R.id.setDefault)
+
     public void onClickSetDefault() {
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.album_item_reset_settings_dialog_message)
                 .setPositiveButton(R.string.dialog_reset, (d, w) -> {
-                    viewTypeToggle.check(R.id.gridButton);
-                    textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
-                    borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
-                    coverSizeSeekBar.setProgress(64 - COVER_SIZE_MIN);
-                    coverCornersSeekBar.setProgress(4);
+                    binding.viewTypeToggle.check(R.id.gridButton);
+                    binding.textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
+                    binding.borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
+                    binding.coverSizeSeekBar.setProgress(64 - COVER_SIZE_MIN);
+                    binding.coverCornersSeekBar.setProgress(4);
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .show();
@@ -199,19 +164,19 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     private void refreshViewType(int checkedButtonId) {
         if (checkedButtonId == R.id.gridButton) {
-            albumGridHolder.setVisibility(View.VISIBLE);
-            albumListHolder.setVisibility(View.INVISIBLE);
-            borderPaddingBar.setEnabled(false);
-            borderPaddingSeekBar.setEnabled(false);
-            coverSizeBar.setEnabled(false);
-            coverSizeSeekBar.setEnabled(false);
+            binding.albumGridHolder.getRoot().setVisibility(View.VISIBLE);
+            binding.albumListHolder.getRoot().setVisibility(View.INVISIBLE);
+            binding.borderPaddingBar.setEnabled(false);
+            binding.borderPaddingSeekBar.setEnabled(false);
+            binding.coverSizeBar.setEnabled(false);
+            binding.coverSizeSeekBar.setEnabled(false);
         } else if (checkedButtonId == R.id.listButton) {
-            albumGridHolder.setVisibility(View.INVISIBLE);
-            albumListHolder.setVisibility(View.VISIBLE);
-            borderPaddingBar.setEnabled(true);
-            borderPaddingSeekBar.setEnabled(true);
-            coverSizeBar.setEnabled(true);
-            coverSizeSeekBar.setEnabled(true);
+            binding.albumGridHolder.getRoot().setVisibility(View.INVISIBLE);
+            binding.albumListHolder.getRoot().setVisibility(View.VISIBLE);
+            binding.borderPaddingBar.setEnabled(true);
+            binding.borderPaddingSeekBar.setEnabled(true);
+            binding.coverSizeBar.setEnabled(true);
+            binding.coverSizeSeekBar.setEnabled(true);
         } else {
             throw new IllegalArgumentException("checkedButtonId equals to " + checkedButtonId);
         }
@@ -220,49 +185,49 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     private void refreshTextSize(int progress) {
         int textSizeSp = progress + TEXT_SIZE_MIN;
-        textSizeValue.setText(String.valueOf(textSizeSp));
+        binding.textSizeValue.setText(String.valueOf(textSizeSp));
 
-        ((TextView) albumListHolder.findViewById(R.id.album_title)).setTextSize(textSizeSp);
-        ((TextView) albumListHolder.findViewById(R.id.author)).setTextSize(textSizeSp - 2);
-        ((TextView) albumListHolder.findViewById(R.id.tracks_count)).setTextSize(textSizeSp - 4);
+        binding.albumListHolder.albumTitle.setTextSize(textSizeSp);
+        binding.albumListHolder.author.setTextSize(textSizeSp - 2);
+        binding.albumListHolder.tracksCount.setTextSize(textSizeSp - 4);
 
-        ((TextView) albumGridHolder.findViewById(R.id.album_title)).setTextSize(textSizeSp + 2);
-        ((TextView) albumGridHolder.findViewById(R.id.author)).setTextSize(textSizeSp - 4);
+        binding.albumGridHolder.albumTitle.setTextSize(textSizeSp + 2);
+        binding.albumGridHolder.author.setTextSize(textSizeSp - 4);
     }
 
     private void refreshBorderPadding(int progress) {
         int paddingDp = progress + BORDER_PADDING_MIN;
         int paddingPx = (int) convertDpToPixel(paddingDp, requireContext());
-        borderPaddingValue.setText(String.valueOf(paddingDp));
+        binding.borderPaddingValue.setText(String.valueOf(paddingDp));
 
-        albumListHolder.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+        binding.albumListHolder.getRoot().setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
     }
 
     private void refreshCoverSize(int progress) {
         int coverSizeDp = progress + COVER_SIZE_MIN;
-        coverSizeValue.setText(String.valueOf(coverSizeDp));
+        binding.coverSizeValue.setText(String.valueOf(coverSizeDp));
         int coverSizePx = (int) convertDpToPixel(coverSizeDp, requireContext());
 
-        ViewGroup.LayoutParams params = albumListHolder.findViewById(R.id.albumCover).getLayoutParams();
+        ViewGroup.LayoutParams params = binding.albumListHolder.albumCover.getLayoutParams();
         params.width = coverSizePx;
         params.height = coverSizePx;
-        albumListHolder.findViewById(R.id.albumCover).setLayoutParams(params);
+        binding.albumListHolder.albumCover.setLayoutParams(params);
     }
 
     private void refreshCoverCorners(int progress) {
         float cornerSizePx = convertDpToPixel(progress, requireContext());
 
-        ShapeableImageView gridCover = albumGridHolder.findViewById(R.id.albumCover);
+        ShapeableImageView gridCover = binding.albumGridHolder.albumCover;
         gridCover.setShapeAppearanceModel(gridCover.getShapeAppearanceModel().toBuilder()
                 .setAllCorners(CornerFamily.ROUNDED, cornerSizePx)
                 .build());
 
-        ShapeableImageView listCover = albumListHolder.findViewById(R.id.albumCover);
+        ShapeableImageView listCover = binding.albumListHolder.albumCover;
         listCover.setShapeAppearanceModel(gridCover.getShapeAppearanceModel().toBuilder()
                 .setAllCorners(CornerFamily.ROUNDED, cornerSizePx)
                 .build());
 
-        coverCornersValue.setText(String.valueOf(progress));
+        binding.coverCornersValue.setText(String.valueOf(progress));
     }
 
 
@@ -281,17 +246,17 @@ public final class AlbumItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     private void onFinishing() {
         //сохраняем состояние
-        AlbumViewType albumViewType = viewTypeToggle.getCheckedButtonId() == R.id.gridButton
+        AlbumViewType albumViewType = binding.viewTypeToggle.getCheckedButtonId() == R.id.gridButton
                 ? AlbumViewType.GRID
                 : AlbumViewType.LIST;
 
 
         AlbumItemView albumItemView = new AlbumItemView(
                 requireNonNull(albumViewType),
-                textSizeSeekBar.getProgress() + TEXT_SIZE_MIN,
-                borderPaddingSeekBar.getProgress() + BORDER_PADDING_MIN,
-                coverSizeSeekBar.getProgress() + COVER_SIZE_MIN,
-                coverCornersSeekBar.getProgress());
+                binding.textSizeSeekBar.getProgress() + TEXT_SIZE_MIN,
+                binding.borderPaddingSeekBar.getProgress() + BORDER_PADDING_MIN,
+                binding.coverSizeSeekBar.getProgress() + COVER_SIZE_MIN,
+                binding.coverCornersSeekBar.getProgress());
 
         viewSettingsInteractor.setAlbumItemViewSettings(albumItemView);
     }

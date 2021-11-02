@@ -1,9 +1,13 @@
 package com.parabola.newtone.ui.router;
 
+import androidx.annotation.FloatRange;
 import androidx.fragment.app.Fragment;
 
 import com.parabola.domain.model.Track;
 import com.parabola.newtone.ui.activity.MainActivity;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+
+import io.reactivex.Observable;
 
 public interface MainRouter {
 
@@ -18,6 +22,12 @@ public interface MainRouter {
     void scrollOnTabTrackToCurrentTrack();
     void goToArtistInTab(int artistId);
     void goToAlbumInTab(int albumId);
+
+    //offset - от 0 до 1. при 0 - панель полностью закрыта, при 1 - панель полностью раскрыта
+    void setBottomSlidePanelOffset(@FloatRange(from = 0.0f, to = 1.0f) float offset);
+    Observable<Float> observeSlidePanelOffset();
+    void setBottomSlidePanelState(PanelState state);
+    Observable<PanelState> observeSlidePanelState();
 
 
     <F extends Fragment> boolean hasInstanceInStack(Class<F> fragment);
@@ -77,4 +87,5 @@ public interface MainRouter {
     void openContactDevelopersViaEmail();
     void openPrivacyPolicyWebPage();
     void openShareTrack(String filePath);
+
 }

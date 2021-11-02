@@ -1,5 +1,7 @@
 package com.parabola.newtone.ui.fragment;
 
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Track;
@@ -21,6 +22,7 @@ import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.adapter.TrackAdapter;
+import com.parabola.newtone.databinding.ListTrackBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FolderPresenter;
 import com.parabola.newtone.mvp.view.FolderView;
@@ -30,47 +32,41 @@ import com.parabola.newtone.ui.dialog.SortingDialog;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static java.util.Objects.requireNonNull;
 
 public final class FolderFragment extends BaseSwipeToBackFragment
         implements FolderView, Sortable, Scrollable {
 
-    private final TrackAdapter tracksAdapter = new TrackAdapter();
-
     @InjectPresenter FolderPresenter presenter;
 
-    @BindView(R.id.additional_info) TextView tracksCount;
-    @BindView(R.id.tracks_list) RecyclerView tracksList;
-    @BindView(R.id.main) TextView folderTxt;
+    private ListTrackBinding binding;
+
+    private TextView tracksCount;
+    private TextView folderNameTxt;
+
+    private final TrackAdapter tracksAdapter = new TrackAdapter();
     private DividerItemDecoration itemDecoration;
 
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.list_track, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = ListTrackBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
-        tracksList.setAdapter(tracksAdapter);
+        folderNameTxt = getRootBinding().main;
+        tracksCount = getRootBinding().additionalInfo;
+
+        binding.tracksList.setAdapter(tracksAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         tracksAdapter.setOnItemClickListener(position -> presenter.onTrackClick(tracksAdapter.getAll(), position));
         tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
-    }
-
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
     }
 
 
@@ -146,10 +142,10 @@ public final class FolderFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        tracksList.removeItemDecoration(itemDecoration);
+        binding.tracksList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            tracksList.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration);
     }
 
 
@@ -180,7 +176,7 @@ public final class FolderFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setFolderPath(String folderPath) {
-        folderTxt.setText(folderPath);
+        folderNameTxt.setText(folderPath);
     }
 
     @ProvidePresenter
@@ -198,15 +194,15 @@ public final class FolderFragment extends BaseSwipeToBackFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) tracksList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            tracksList.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3);
         }
 
-        tracksList.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0);
     }
 
 }

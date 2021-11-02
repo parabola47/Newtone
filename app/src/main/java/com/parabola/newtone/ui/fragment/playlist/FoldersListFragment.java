@@ -1,6 +1,9 @@
 package com.parabola.newtone.ui.fragment.playlist;
 
 
+import static com.parabola.domain.utils.TracklistTool.isFolderListsIdentical;
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,15 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.domain.model.Folder;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
 import com.parabola.newtone.adapter.FolderAdapter;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
+import com.parabola.newtone.databinding.FragmentFoldersListBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.FoldersListPresenter;
 import com.parabola.newtone.mvp.view.FoldersListView;
@@ -30,14 +32,8 @@ import com.parabola.newtone.ui.fragment.Scrollable;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static com.parabola.domain.utils.TracklistTool.isFolderListsIdentical;
-import static java.util.Objects.requireNonNull;
 
 
 public final class FoldersListFragment extends BaseSwipeToBackFragment
@@ -45,38 +41,35 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
     @InjectPresenter FoldersListPresenter presenter;
 
+    private FragmentFoldersListBinding binding;
+
+    private final FolderAdapter foldersAdapter = new FolderAdapter();
+    private DividerItemDecoration itemDecoration;
+
+    private TextView foldersCount;
+
     public FoldersListFragment() {
         // Required empty public constructor
     }
 
-    @BindView(R.id.folders_lv) RecyclerView foldersList;
-    private DividerItemDecoration itemDecoration;
-
-    private final BaseAdapter<Folder> foldersAdapter = new FolderAdapter();
-
-
-    @BindView(R.id.main) TextView foldersTitle;
-    @BindView(R.id.additional_info) TextView foldersCount;
-
-
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.fragment_folders_list, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = FragmentFoldersListBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
+        foldersCount = getRootBinding().additionalInfo;
+        getRootBinding().main.setText(R.string.playlist_folders);
 
-        foldersList.setAdapter((RecyclerView.Adapter) foldersAdapter);
+        binding.folderList.setAdapter(foldersAdapter);
         itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
 
         foldersAdapter.setOnItemClickListener(position ->
                 presenter.onClickFolderItem(foldersAdapter.get(position).getAbsolutePath()));
         foldersAdapter.setOnItemLongClickListener(this::showArtistContextMenu);
-
-        foldersTitle.setText(R.string.playlist_folders);
+        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
 
         return root;
     }
@@ -120,11 +113,6 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
         }
     }
 
-    @OnClick(R.id.action_bar)
-    public void onClickActionBar() {
-        smoothScrollToTop();
-    }
-
 
     @Override
     public void refreshFolders(List<Folder> folders) {
@@ -138,10 +126,10 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
     @Override
     public void setItemDividerShowing(boolean showed) {
-        foldersList.removeItemDecoration(itemDecoration);
+        binding.folderList.removeItemDecoration(itemDecoration);
 
         if (showed)
-            foldersList.addItemDecoration(itemDecoration);
+            binding.folderList.addItemDecoration(itemDecoration);
     }
 
 
@@ -164,15 +152,15 @@ public final class FoldersListFragment extends BaseSwipeToBackFragment
 
     @Override
     public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) foldersList.getLayoutManager());
+        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.folderList.getLayoutManager());
         int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
 
         if (firstItemPosition > screenItemsCount * 3) {
-            foldersList.scrollToPosition(screenItemsCount * 3);
+            binding.folderList.scrollToPosition(screenItemsCount * 3);
         }
 
-        foldersList.smoothScrollToPosition(0);
+        binding.folderList.smoothScrollToPosition(0);
     }
 
 }

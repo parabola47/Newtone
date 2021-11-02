@@ -5,15 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand;
 import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.ItemEqBandBinding;
+import com.parabola.newtone.databinding.TabFxEqBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
 import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
@@ -23,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
@@ -33,32 +29,24 @@ import moxy.presenter.ProvidePresenter;
 public final class FxEqualizerFragment extends MvpAppCompatFragment
         implements TabEqualizerView {
 
-    @BindView(R.id.eq_bands) RecyclerView eqBandList;
-    @BindView(R.id.eq_switcher) SwitchCompat eqSwitch;
-
-
-    private BandAdapter bandsAdapter = new BandAdapter();
-
     @InjectPresenter TabEqualizerPresenter presenter;
+
+    private final BandAdapter bandsAdapter = new BandAdapter();
+
+    private TabFxEqBinding binding;
 
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.tab_fx_eq, container, false);
-        ButterKnife.bind(this, layout);
+        binding = TabFxEqBinding.inflate(inflater, container, false);
 
-        eqBandList.setAdapter(bandsAdapter);
-        eqSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> presenter.onClickEqSwitcher(isChecked));
+        binding.eqBands.setAdapter(bandsAdapter);
+        binding.eqSwitcher.setOnCheckedChangeListener((buttonView, isChecked) -> presenter.onClickEqSwitcher(isChecked));
+        binding.showPresetsButton.setOnClickListener(v -> presenter.onClickShowPresets());
 
-        return layout;
-    }
-
-
-    @OnClick(R.id.showPresetsButton)
-    public void onClickShowPresetsButton() {
-        presenter.onClickShowPresets();
+        return binding.getRoot();
     }
 
 
@@ -70,7 +58,7 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
 
     @Override
     public void setEqChecked(boolean enabled) {
-        eqSwitch.setChecked(enabled);
+        binding.eqSwitcher.setChecked(enabled);
         bandsAdapter.setEnabling(enabled);
     }
 
@@ -108,29 +96,30 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_eq_band, parent, false);
-            return new ViewHolder(v);
+            ItemEqBandBinding binding = ItemEqBandBinding
+                    .inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(binding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             EqBand band = bands.get(holder.getAdapterPosition());
 
-            holder.eqSeekbar.setMax(maxEqLevel - minEqLevel);
-            holder.eqSeekbar.setProgress(band.currentLevel - minEqLevel);
-            holder.eqSeekbar.setEnabled(enabling);
-            holder.eqHz.setText(String.valueOf(band.frequency < 1000 ? band.frequency : (band.frequency / 1000 + "k")));
-            holder.eqDb.setText(String.format(Locale.getDefault(), "%d", band.currentLevel));
+            holder.binding.eqSeekBar.setMax(maxEqLevel - minEqLevel);
+            holder.binding.eqSeekBar.setProgress(band.currentLevel - minEqLevel);
+            holder.binding.eqSeekBar.setEnabled(enabling);
+            holder.binding.eqHz.setText(String.valueOf(band.frequency < 1000 ? band.frequency : (band.frequency / 1000 + "k")));
+            holder.binding.eqDb.setText(String.format(Locale.getDefault(), "%d", band.currentLevel));
 
 
-            holder.eqSeekbar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+            holder.binding.eqSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     int newLevel = progress + minEqLevel;
                     band.currentLevel = (short) newLevel;
                     presenter.onChangeBandLevel(band.id, (short) newLevel);
 
-                    holder.eqDb.setText(String.format(Locale.getDefault(), "%d", newLevel));
+                    holder.binding.eqDb.setText(String.format(Locale.getDefault(), "%d", newLevel));
                 }
             });
         }
@@ -141,13 +130,11 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            @BindView(R.id.eq_seek_bar) SeekBar eqSeekbar;
-            @BindView(R.id.eq_hz) TextView eqHz;
-            @BindView(R.id.eq_db) TextView eqDb;
+            private final ItemEqBandBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
+            public ViewHolder(@NonNull ItemEqBandBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
         }
     }

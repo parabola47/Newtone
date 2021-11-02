@@ -95,8 +95,12 @@ public final class SettingPresenter extends MvpPresenter<SettingView> {
         router.openPrivacyPolicyWebPage();
     }
 
-    public void onClickNewtoneTenTimes() {
-        router.openNewtoneDialog();
+    private int appInfoBarClickCount = 0;
+
+    public void onClickAppInfoBar() {
+        if (++appInfoBarClickCount % 10 == 0) {
+            router.openNewtoneDialog();
+        }
     }
 
     public void onClickContactDevelopers() {

@@ -1,10 +1,11 @@
 package com.parabola.newtone.ui.dialog;
 
+import static java.util.Objects.requireNonNull;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,25 +17,21 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.EditTextContainerBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.CreatePlaylistPresenter;
 import com.parabola.newtone.mvp.view.CreatePlaylistView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import moxy.MvpAppCompatDialogFragment;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
-
-import static java.util.Objects.requireNonNull;
 
 public final class CreatePlaylistDialog extends MvpAppCompatDialogFragment
         implements CreatePlaylistView {
     private static final String LOG_TAG = CreatePlaylistDialog.class.getSimpleName();
 
-    @BindView(R.id.editTextView) EditText playlistTitleEdt;
-
     @InjectPresenter CreatePlaylistPresenter presenter;
+    private EditText playlistTitleEdt;
 
     public static CreatePlaylistDialog newInstance() {
         return new CreatePlaylistDialog();
@@ -47,13 +44,14 @@ public final class CreatePlaylistDialog extends MvpAppCompatDialogFragment
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View customView = LayoutInflater.from(requireContext()).inflate(R.layout.edit_text_container, null);
-        ButterKnife.bind(this, customView);
+        EditTextContainerBinding binding = EditTextContainerBinding
+                .inflate(LayoutInflater.from(requireContext()));
+        playlistTitleEdt = binding.editTextView;
         playlistTitleEdt.requestFocus();
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.create_playlist_title)
-                .setView(customView)
+                .setView(binding.getRoot())
                 .setPositiveButton(R.string.dialog_create, null)
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .create();

@@ -1,26 +1,26 @@
 package com.parabola.newtone.ui.fragment.settings;
 
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.FragmentTrackItemDisplaySettingBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
@@ -29,50 +29,14 @@ import com.parabola.newtone.util.SeekBarChangeAdapter;
 
 import javax.inject.Inject;
 
-import butterknife.BindString;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-
 public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragment {
     private static final String LOG_CAT = TrackItemDisplaySettingFragment.class.getSimpleName();
 
-    @BindView(R.id.main) TextView titleTxt;
-    @BindView(R.id.additional_info) TextView additionalInfoTxt;
-    @BindView(R.id.otherInfo) TextView otherInfoTxt;
-
-
-    @BindView(R.id.cover) ShapeableImageView cover;
-    @BindView(R.id.track_title) TextView trackTitle;
-    @BindView(R.id.additionalTrackInfo) TextView additionalTrackInfo;
-    @BindView(R.id.song_duration) TextView duration;
-    @BindView(R.id.trackHolder) View trackHolder;
-    @BindView(R.id.track_content) ViewGroup trackContent;
-
-    @BindView(R.id.coverCornersValue) TextView coverCornersValue;
-    @BindView(R.id.coverCornersSeekBar) SeekBar coverCornersSeekBar;
-    @BindView(R.id.coverCornersBar) ViewGroup coverCornersBar;
-
-    @BindView(R.id.coverSizeValue) TextView coverSizeValue;
-    @BindView(R.id.coverSizeSeekBar) SeekBar coverSizeSeekBar;
-    @BindView(R.id.coverSizeBar) ViewGroup coverSizeBar;
-
-    @BindView(R.id.textSizeValue) TextView textSizeValue;
-    @BindView(R.id.textSizeSeekBar) SeekBar textSizeSeekBar;
-
-    @BindView(R.id.borderPaddingValue) TextView borderPaddingValue;
-    @BindView(R.id.borderPaddingSeekBar) SeekBar borderPaddingSeekBar;
-
-    @BindView(R.id.showCoverSwitch) SwitchCompat showCoverSwitch;
-    @BindView(R.id.showAlbumTitleSwitch) SwitchCompat showAlbumTitleSwitch;
-
-    @BindString(R.string.default_artist) String defaultArtist;
-    @BindString(R.string.default_album) String defaultAlbum;
 
     @Inject ViewSettingsInteractor viewSettingsInteractor;
     @Inject MainRouter router;
+
+    private FragmentTrackItemDisplaySettingBinding binding;
 
 
     public static TrackItemDisplaySettingFragment newInstance() {
@@ -82,91 +46,94 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
-        View contentView = inflater.inflate(R.layout.fragment_track_item_display_setting, container, false);
-        ((ViewGroup) root.findViewById(R.id.container)).addView(contentView);
-        ButterKnife.bind(this, root);
+        binding = FragmentTrackItemDisplaySettingBinding.inflate(inflater, container, false);
+        getRootBinding().container.addView(binding.getRoot());
 
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         appComponent.inject(this);
 
-        titleTxt.setText(R.string.track_item_display_setting_screen_title);
-        additionalInfoTxt.setVisibility(View.GONE);
-        otherInfoTxt.setVisibility(View.GONE);
+        getRootBinding().main.setText(R.string.track_item_display_setting_screen_title);
+        getRootBinding().additionalInfo.setVisibility(View.GONE);
+        getRootBinding().otherInfo.setVisibility(View.GONE);
 
 
-        cover.setImageResource(R.drawable.album_default);
-        trackTitle.setText(R.string.default_track_title);
-        duration.setText(R.string.default_duration);
-        trackHolder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorListItemDefaultBackground));
+        binding.trackHolder.cover.setImageResource(R.drawable.album_default);
+        binding.trackHolder.trackTitle.setText(R.string.default_track_title);
+        binding.trackHolder.durationTxt.setText(R.string.default_duration);
+        binding.trackHolder.getRoot().setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorListItemDefaultBackground));
 
 
-        coverSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.coverSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshCoverSize(progress);
             }
         });
-        coverCornersSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.coverCornersSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshCoverCorners(progress);
             }
         });
-        textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshTextSize(progress);
             }
         });
-        borderPaddingSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
+        binding.borderPaddingSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 refreshBorderPadding(progress);
             }
         });
-        showCoverSwitch.setOnCheckedChangeListener((switchButton, isChecked) -> {
+        binding.showCoverSwitch.setOnCheckedChangeListener((switchButton, isChecked) -> {
             refreshCoverShow(isChecked);
             onChangeCoverShow(isChecked);
         });
-        showAlbumTitleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> refreshAlbumTitleShow(isChecked));
+        binding.showAlbumTitleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> refreshAlbumTitleShow(isChecked));
 
         TrackItemView trackItemView = viewSettingsInteractor.getTrackItemViewSettings();
 
-        textSizeSeekBar.setProgress(trackItemView.textSize - TEXT_SIZE_MIN);
-        borderPaddingSeekBar.setProgress(trackItemView.borderPadding - BORDER_PADDING_MIN);
-        showAlbumTitleSwitch.setChecked(trackItemView.isAlbumTitleShows);
-        showCoverSwitch.setChecked(trackItemView.isCoverShows);
-        coverSizeSeekBar.setProgress(trackItemView.coverSize - COVER_SIZE_MIN);
-        coverCornersSeekBar.setProgress(trackItemView.coverCornersRadius);
+        binding.textSizeSeekBar.setProgress(trackItemView.textSize - TEXT_SIZE_MIN);
+        binding.borderPaddingSeekBar.setProgress(trackItemView.borderPadding - BORDER_PADDING_MIN);
+        binding.showAlbumTitleSwitch.setChecked(trackItemView.isAlbumTitleShows);
+        binding.showCoverSwitch.setChecked(trackItemView.isCoverShows);
+        binding.coverSizeSeekBar.setProgress(trackItemView.coverSize - COVER_SIZE_MIN);
+        binding.coverCornersSeekBar.setProgress(trackItemView.coverCornersRadius);
+
+        binding.setDefault.setOnClickListener(v -> onClickSetDefault());
+        binding.showCoverBar.setOnClickListener(v -> binding.showCoverSwitch.toggle());
+        binding.showAlbumTitleBar.setOnClickListener(v -> binding.showAlbumTitleSwitch.toggle());
 
 
-        refreshTextSize(textSizeSeekBar.getProgress());
-        refreshBorderPadding(borderPaddingSeekBar.getProgress());
-        refreshAlbumTitleShow(showAlbumTitleSwitch.isChecked());
-        boolean isShowCoverChecked = showCoverSwitch.isChecked();
+        refreshTextSize(binding.textSizeSeekBar.getProgress());
+        refreshBorderPadding(binding.borderPaddingSeekBar.getProgress());
+        refreshAlbumTitleShow(binding.showAlbumTitleSwitch.isChecked());
+        boolean isShowCoverChecked = binding.showCoverSwitch.isChecked();
         refreshCoverShow(isShowCoverChecked);
         onChangeCoverShow(isShowCoverChecked);
-        refreshCoverSize(coverSizeSeekBar.getProgress());
-        refreshCoverCorners(coverCornersSeekBar.getProgress());
+        refreshCoverSize(binding.coverSizeSeekBar.getProgress());
+        refreshCoverCorners(binding.coverCornersSeekBar.getProgress());
 
         return root;
     }
 
 
-    @OnClick(R.id.setDefault)
     public void onClickSetDefault() {
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.reset_settings_dialog_title)
                 .setMessage(R.string.track_item_reset_settings_dialog_message)
                 .setPositiveButton(R.string.dialog_reset, (d, which) -> {
-                    coverSizeSeekBar.setProgress(40 - COVER_SIZE_MIN);
-                    coverCornersSeekBar.setProgress(4);
-                    showAlbumTitleSwitch.setChecked(false);
-                    textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
-                    borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
-                    showCoverSwitch.setChecked(true);
+                    binding.coverSizeSeekBar.setProgress(40 - COVER_SIZE_MIN);
+                    binding.coverCornersSeekBar.setProgress(4);
+                    binding.showAlbumTitleSwitch.setChecked(false);
+                    binding.textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
+                    binding.borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
+                    binding.showCoverSwitch.setChecked(true);
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .show();
@@ -186,68 +153,59 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
 
     private void refreshCoverSize(int progress) {
         int coverSizeDp = progress + COVER_SIZE_MIN;
-        coverSizeValue.setText(String.valueOf(coverSizeDp));
+        binding.coverSizeValue.setText(String.valueOf(coverSizeDp));
         int coverSizePx = (int) convertDpToPixel(coverSizeDp, requireContext());
-        ViewGroup.LayoutParams params = cover.getLayoutParams();
+        ViewGroup.LayoutParams params = binding.trackHolder.cover.getLayoutParams();
         params.width = coverSizePx;
         params.height = coverSizePx;
-        cover.setLayoutParams(params);
+        binding.trackHolder.cover.setLayoutParams(params);
     }
 
     private void refreshCoverCorners(int progress) {
         float cornerSizePx = convertDpToPixel(progress, requireContext());
 
-        cover.setShapeAppearanceModel(cover.getShapeAppearanceModel().toBuilder()
+        binding.trackHolder.cover.setShapeAppearanceModel(binding.trackHolder.cover.getShapeAppearanceModel().toBuilder()
                 .setAllCorners(CornerFamily.ROUNDED, cornerSizePx)
                 .build());
 
-        coverCornersValue.setText(String.valueOf(progress));
+        binding.coverCornersValue.setText(String.valueOf(progress));
     }
 
     private void refreshTextSize(int progress) {
         int textSizeSp = progress + TEXT_SIZE_MIN;
-        textSizeValue.setText(String.valueOf(textSizeSp));
+        binding.textSizeValue.setText(String.valueOf(textSizeSp));
 
-        trackTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
-        additionalTrackInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 2);
-        duration.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 4);
+        binding.trackHolder.trackTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
+        binding.trackHolder.additionalTrackInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 2);
+        binding.trackHolder.durationTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 4);
     }
 
     private void refreshCoverShow(boolean show) {
-        cover.setVisibility(show ? View.VISIBLE : View.GONE);
+        binding.trackHolder.cover.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void refreshAlbumTitleShow(boolean show) {
-        String text = show ? getString(R.string.track_item_artist_with_album, defaultArtist, defaultAlbum)
-                : getString(R.string.default_artist);
+        String defaultArtist = getString(R.string.default_artist);
+        String defaultAlbum = getString(R.string.default_album);
 
-        additionalTrackInfo.setText(text);
+        String text = show ? getString(R.string.track_item_artist_with_album, defaultArtist, defaultAlbum)
+                : defaultArtist;
+
+        binding.trackHolder.additionalTrackInfo.setText(text);
     }
 
     private void onChangeCoverShow(boolean show) {
-        coverSizeBar.setEnabled(show);
-        coverSizeSeekBar.setEnabled(show);
-        coverCornersBar.setEnabled(show);
-        coverCornersSeekBar.setEnabled(show);
+        binding.coverSizeBar.setEnabled(show);
+        binding.coverSizeSeekBar.setEnabled(show);
+        binding.coverCornersBar.setEnabled(show);
+        binding.coverCornersSeekBar.setEnabled(show);
     }
 
     private void refreshBorderPadding(int progress) {
         int paddingDp = progress + BORDER_PADDING_MIN;
         int paddingPx = (int) convertDpToPixel(paddingDp, requireContext());
-        borderPaddingValue.setText(String.valueOf(paddingDp));
-        trackContent.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
-    }
-
-
-    @OnClick(R.id.showCoverBar)
-    public void onClickShowCoverBar() {
-        showCoverSwitch.toggle();
-    }
-
-
-    @OnClick(R.id.showAlbumTitleBar)
-    public void onClickShowAlbumBar() {
-        showAlbumTitleSwitch.toggle();
+        binding.borderPaddingValue.setText(String.valueOf(paddingDp));
+        binding.trackHolder.trackContent.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
     }
 
 
@@ -262,12 +220,12 @@ public final class TrackItemDisplaySettingFragment extends BaseSwipeToBackFragme
     private void onFinishing() {
         //сохраняем состояние
         TrackItemView trackItemView = new TrackItemView(
-                textSizeSeekBar.getProgress() + TEXT_SIZE_MIN,
-                borderPaddingSeekBar.getProgress() + BORDER_PADDING_MIN,
-                showAlbumTitleSwitch.isChecked(),
-                showCoverSwitch.isChecked(),
-                coverSizeSeekBar.getProgress() + COVER_SIZE_MIN,
-                coverCornersSeekBar.getProgress());
+                binding.textSizeSeekBar.getProgress() + TEXT_SIZE_MIN,
+                binding.borderPaddingSeekBar.getProgress() + BORDER_PADDING_MIN,
+                binding.showAlbumTitleSwitch.isChecked(),
+                binding.showCoverSwitch.isChecked(),
+                binding.coverSizeSeekBar.getProgress() + COVER_SIZE_MIN,
+                binding.coverCornersSeekBar.getProgress());
 
         viewSettingsInteractor.setTrackItemView(trackItemView);
     }

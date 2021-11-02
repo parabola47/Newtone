@@ -44,9 +44,12 @@ import com.parabola.newtone.ui.fragment.settings.SettingFragment;
 import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment;
 import com.parabola.newtone.ui.fragment.settings.dialog.IsaacNewtoneDialog;
 import com.parabola.newtone.ui.fragment.start.StartFragment;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import java.io.File;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 public final class MainRouterImpl implements MainRouter {
     private MainActivity activity;
@@ -86,7 +89,7 @@ public final class MainRouterImpl implements MainRouter {
 
     @Override
     public void collapseBottomSlider() {
-        activity.setBottomSliderPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        activity.setBottomSliderPanelState(PanelState.COLLAPSED);
     }
 
     @Override
@@ -551,4 +554,32 @@ public final class MainRouterImpl implements MainRouter {
                 .setType("audio/*");
         activity.startActivity(Intent.createChooser(share, activity.getString(R.string.track_menu_share_track_intent_title)));
     }
+
+
+    private final BehaviorSubject<Float> slidePanelOffsetUpdates = BehaviorSubject.createDefault(0f);
+    private final BehaviorSubject<PanelState> slidePanelStateUpdates = BehaviorSubject.createDefault(PanelState.COLLAPSED);
+
+    @Override
+    public void setBottomSlidePanelOffset(float offset) {
+        if (offset < 0f || offset > 1f) {
+            return;
+        }
+        slidePanelOffsetUpdates.onNext(offset);
+    }
+
+    @Override
+    public Observable<Float> observeSlidePanelOffset() {
+        return slidePanelOffsetUpdates;
+    }
+
+    @Override
+    public void setBottomSlidePanelState(PanelState state) {
+        slidePanelStateUpdates.onNext(state);
+    }
+
+    @Override
+    public Observable<PanelState> observeSlidePanelState() {
+        return slidePanelStateUpdates;
+    }
+
 }

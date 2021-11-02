@@ -15,10 +15,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,7 +24,6 @@ import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.progressindicator.ProgressIndicator;
 import com.parabola.data.AudioDeletedReceiver;
 import com.parabola.data.PermissionChangeReceiver;
 import com.parabola.domain.settings.ViewSettingsInteractor;
@@ -36,6 +31,7 @@ import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.adapter.ListPopupWindowAdapter;
+import com.parabola.newtone.databinding.ActivityMainBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.presenter.MainPresenter;
 import com.parabola.newtone.mvp.view.MainView;
@@ -48,13 +44,9 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
@@ -62,22 +54,12 @@ import moxy.presenter.ProvidePresenter;
 public final class MainActivity extends MvpAppCompatActivity implements MainView {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    @BindView(R.id.bottom_slider) SlidingUpPanelLayout bottomSlider;
-    @BindView(R.id.player_bar) ViewGroup playerBar;
-    @BindView(R.id.track_settings) ImageButton playerSetting;
-    @BindView(R.id.trackPositionProgressBar) ProgressIndicator trackPositionProgressBar;
-
-    @BindView(R.id.track_title) TextView trackTitleTxt;
-    @BindView(R.id.song_artist) TextView artistTxt;
-
-    @BindView(R.id.player_toggle) ImageView playerToggle;
+    @InjectPresenter MainPresenter presenter;
 
     @Inject MainRouter router;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
 
-    @InjectPresenter MainPresenter presenter;
-
-    private Fragment playerFragment;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,14 +79,15 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         setTheme(themeId);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         router.setActivity(this);
 
-        playerFragment = getSupportFragmentManager().findFragmentById(R.id.player_fragment);
-
         addBottomSliderPanelListener();
+
+        binding.playerBar.playerToggle.setOnClickListener(v -> presenter.onClickPlayButton());
+        binding.playerBar.menuButton.setOnClickListener(v -> onClickMenuButton());
     }
 
     @Override
@@ -117,8 +100,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     public void onBackPressed() {
-        if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
-            bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        if (binding.bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
+            binding.bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         else {
             try {
                 super.onBackPressed();
@@ -127,17 +110,6 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         }
     }
 
-    @OnClick(R.id.player_toggle)
-    public void onClickPlayButton() {
-        presenter.onClickPlayButton();
-    }
-
-    @OnClick(R.id.drop_down)
-    public void onClickDropDownButton() {
-        bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-    }
-
-    @OnClick(R.id.menu_button)
     public void onClickMenuButton() {
         Fragment currentFragment = router.currentFragment();
 
@@ -159,7 +131,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         });
 
         popupWindow.setAdapter(adapter);
-        popupWindow.setAnchorView(playerBar.findViewById(R.id.menu_tmp));
+        popupWindow.setAnchorView(binding.playerBar.menuTmp);
         popupWindow.setModal(true);
         popupWindow.setWidth(adapter.measureContentWidth());
         popupWindow.setOnItemClickListener((parent, view, position, id) -> {
@@ -197,7 +169,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     }
 
     public void setBottomSliderPanelState(SlidingUpPanelLayout.PanelState panelState) {
-        bottomSlider.setPanelState(panelState);
+        binding.bottomSlider.setPanelState(panelState);
     }
 
 
@@ -225,48 +197,48 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     public void setTrackTitle(String trackTitle) {
-        trackTitleTxt.setText(trackTitle);
+        binding.playerBar.trackTitle.setText(trackTitle);
     }
 
     @Override
     public void setArtistName(String artist) {
-        artistTxt.setText(artist);
+        binding.playerBar.songArtist.setText(artist);
     }
 
 
     @Override
     public void setPlaybackButtonAsPause() {
-        playerToggle.setImageResource(R.drawable.ic_pause_accent);
+        binding.playerBar.playerToggle.setImageResource(R.drawable.ic_pause_accent);
     }
 
     @Override
     public void setPlaybackButtonAsPlay() {
-        playerToggle.setImageResource(R.drawable.ic_play_accent);
+        binding.playerBar.playerToggle.setImageResource(R.drawable.ic_play_accent);
     }
 
     @Override
     public void showBottomSlider() {
-        if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN)
-            bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        if (binding.bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN)
+            binding.bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
     }
 
     @Override
     public void hideBottomSlider() {
-        bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        binding.bottomSlider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     }
 
     private void addBottomSliderPanelListener() {
-        bottomSlider.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+        binding.bottomSlider.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                updateVisibility(slideOffset);
+                router.setBottomSlidePanelOffset(slideOffset);
             }
 
             @Override
             public void onPanelStateChanged(View panel,
                                             SlidingUpPanelLayout.PanelState previousState,
                                             SlidingUpPanelLayout.PanelState newState) {
-                updateVisibility(newState);
+                router.setBottomSlidePanelState(newState);
             }
         });
     }
@@ -274,40 +246,11 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @Override
     protected void onResume() {
         super.onResume();
-        updateVisibility(bottomSlider.getPanelState());
-        if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
-            updateVisibility(1.0f);
-        } else if (bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-            updateVisibility(0.0f);
-        }
-    }
-
-    private void updateVisibility(float slidePanelOffset) {
-        playerBar.setAlpha(1f - slidePanelOffset);
-        playerSetting.setRotation(360 * slidePanelOffset);
-        Optional.ofNullable(playerFragment.getView())
-                .ifPresent(view -> view.setAlpha(slidePanelOffset));
-    }
-
-    private void updateVisibility(SlidingUpPanelLayout.PanelState bottomPanelState) {
-        switch (bottomPanelState) {
-            case EXPANDED:
-                playerBar.setVisibility(View.GONE);
-                Optional.ofNullable(playerFragment.getView())
-                        .ifPresent(view -> view.setVisibility(View.VISIBLE));
-                break;
-            case DRAGGING:
-                playerBar.setVisibility(View.VISIBLE);
-                Optional.ofNullable(playerFragment.getView())
-                        .ifPresent(view -> view.setVisibility(View.VISIBLE));
-                break;
-            case COLLAPSED:
-                playerBar.setVisibility(View.VISIBLE);
-                Optional.ofNullable(playerFragment.getView())
-                        .ifPresent(view -> view.setVisibility(View.GONE));
-                break;
-            default:
-                break;
+        router.setBottomSlidePanelState(binding.bottomSlider.getPanelState());
+        if (binding.bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            router.setBottomSlidePanelOffset(1.0f);
+        } else if (binding.bottomSlider.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+            router.setBottomSlidePanelOffset(0.0f);
         }
     }
 
@@ -340,14 +283,23 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     public void setDurationMax(int max) {
-        trackPositionProgressBar.setMax(max);
+        binding.playerBar.trackPositionProgressBar.setMax(max);
     }
 
     @Override
     public void setDurationProgress(int progress) {
-        trackPositionProgressBar.setProgress(progress);
+        binding.playerBar.trackPositionProgressBar.setProgress(progress);
     }
 
+    @Override
+    public void setPlayerBarOpacity(float alpha) {
+        binding.playerBar.getRoot().setAlpha(alpha);
+    }
+
+    @Override
+    public void setPlayerBarVisibility(boolean visible) {
+        binding.playerBar.getRoot().setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
 
     private int deleteTrackId = -1;
 
@@ -386,4 +338,5 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
             sendBroadcast(new Intent(PermissionChangeReceiver.ACTION_FILE_STORAGE_PERMISSION_UPDATE));
         }
     }
+
 }

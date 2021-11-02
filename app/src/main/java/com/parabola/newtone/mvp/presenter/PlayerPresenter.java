@@ -1,5 +1,7 @@
 package com.parabola.newtone.mvp.presenter;
 
+import static com.parabola.domain.utils.EmptyItems.NO_TRACK;
+
 import com.parabola.domain.executor.SchedulerProvider;
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
@@ -12,17 +14,19 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.PlayerView;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.parabola.newtone.util.TimeFormatterTool;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
-
-import static com.parabola.domain.utils.EmptyItems.NO_TRACK;
 
 @InjectViewState
 public final class PlayerPresenter extends MvpPresenter<PlayerView> {
@@ -51,6 +55,8 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         disposables.addAll(
                 observeTracklistChanging(),
                 observeCurrentTrack(),
+                observeBottomSlidePanelOffset(),
+                observeBottomSlidePanelState(),
                 observePlayerState(),
                 observePlaybackPosition(),
                 observeTimerState(),
@@ -146,6 +152,30 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                 });
     }
 
+    private Disposable observeBottomSlidePanelOffset() {
+        return router.observeSlidePanelOffset()
+                .subscribe(offset -> {
+                    getViewState().setTrackSettingsRotation(360 * offset);//переводим в угол поворота
+                    getViewState().setRootViewOpacity(offset);
+                });
+    }
+
+    private Disposable observeBottomSlidePanelState() {
+        return router.observeSlidePanelState()
+                .flatMap((Function<SlidingUpPanelLayout.PanelState, ObservableSource<Boolean>>) state -> {
+                    switch (state) {
+                        case EXPANDED:
+                        case DRAGGING:
+                            return Observable.just(Boolean.TRUE);
+                        case COLLAPSED:
+                            return Observable.just(Boolean.FALSE);
+                        default:
+                            return Observable.empty();
+                    }
+                })
+                .subscribe(getViewState()::setRootViewVisibility);
+    }
+
     public void onClickTimerButton() {
         if (timerInteractor.launched())
             router.openSleepTimerInfoDialog();
@@ -201,6 +231,9 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
         router.goToTab(3, false);
     }
 
+    public void onClickDropDown() {
+        router.collapseBottomSlider();
+    }
 
     public void onStartSeekbarPressed() {
         isSeekbarPressed = true;
