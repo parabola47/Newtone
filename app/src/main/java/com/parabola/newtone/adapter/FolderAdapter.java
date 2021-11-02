@@ -1,21 +1,18 @@
 package com.parabola.newtone.adapter;
 
+import static androidx.core.content.ContextCompat.getColor;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.domain.model.Folder;
 import com.parabola.newtone.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-import static androidx.core.content.ContextCompat.getColor;
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+import com.parabola.newtone.databinding.ItemFolderBinding;
 
 public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter.FolderViewHolder> {
 
@@ -23,9 +20,8 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
     @NonNull
     @Override
     public FolderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = inflateByViewType(parent.getContext(), R.layout.item_folder, parent);
-
-        return new FolderViewHolder(v);
+        View view = inflateByViewType(parent.getContext(), R.layout.item_folder, parent);
+        return new FolderViewHolder(ItemFolderBinding.bind(view));
     }
 
     @Override
@@ -34,22 +30,22 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
         Folder item = get(holder.getAdapterPosition());
         Context context = holder.itemView.getContext();
 
-        holder.folderNameTxt.setText(item.getFolderName());
-        holder.pathToFolder.setText(item.getPathToParent());
+        holder.binding.folder.setText(item.getFolderName());
+        holder.binding.path.setText(item.getPathToParent());
 
         String tracksCountText = holder.itemView.getResources()
                 .getQuantityString(R.plurals.tracks_count, item.getTracksCount(), item.getTracksCount());
-        holder.tracksCount.setText(tracksCountText);
+        holder.binding.tracksCount.setText(tracksCountText);
 
         if (isContextSelected(holder.getAdapterPosition())) {
-            holder.folderNameTxt.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.pathToFolder.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.folder.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.path.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         } else {
-            holder.folderNameTxt.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
-            holder.pathToFolder.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
-            holder.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.binding.folder.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.binding.path.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.binding.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
             holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
         }
     }
@@ -60,15 +56,12 @@ public final class FolderAdapter extends SimpleListAdapter<Folder, FolderAdapter
     }
 
     static class FolderViewHolder extends RecyclerView.ViewHolder {
+        private final ItemFolderBinding binding;
 
-        @BindView(R.id.folder) TextView folderNameTxt;
-        @BindView(R.id.path) TextView pathToFolder;
-        @BindView(R.id.tracks_count) TextView tracksCount;
 
-        private FolderViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private FolderViewHolder(ItemFolderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
-
     }
 }

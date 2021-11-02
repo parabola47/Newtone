@@ -1,9 +1,12 @@
 package com.parabola.newtone.adapter;
 
+import static androidx.core.content.ContextCompat.getColor;
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,16 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.ItemArtistBinding;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.Optional;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-import static androidx.core.content.ContextCompat.getColor;
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 
 public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter.ArtistViewHolder>
@@ -30,9 +27,8 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
     @NonNull
     @Override
     public ArtistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = inflateByViewType(parent.getContext(), R.layout.item_artist, parent);
-
-        return new ArtistViewHolder(v);
+        View view = inflateByViewType(parent.getContext(), R.layout.item_artist, parent);
+        return new ArtistViewHolder(ItemArtistBinding.bind(view));
     }
 
     private ArtistItemView artistItemView;
@@ -53,25 +49,25 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
             buildItemLayout(holder);
 
         String artistName = Optional.ofNullable(artistItem.getName())
-                .orElse(holder.artistTxt.getContext().getString(R.string.unknown_artist));
-        holder.artistTxt.setText(artistName);
+                .orElse(holder.binding.artist.getContext().getString(R.string.unknown_artist));
+        holder.binding.artist.setText(artistName);
 
-        holder.artistInfo.setText(getTracksAndAlbumsCount(artistItem));
+        holder.binding.artistInfo.setText(getTracksAndAlbumsCount(artistItem));
 
         if (isContextSelected(holder.getAdapterPosition())) {
-            holder.artistTxt.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.artistInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.artist.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.artistInfo.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         } else {
-            holder.artistTxt.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
-            holder.artistInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.binding.artist.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.binding.artistInfo.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
             holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
         }
     }
 
     private void buildItemLayout(ArtistViewHolder holder) {
-        holder.artistTxt.setTextSize(artistItemView.textSize);
-        holder.artistInfo.setTextSize(artistItemView.textSize - 2);
+        holder.binding.artist.setTextSize(artistItemView.textSize);
+        holder.binding.artistInfo.setTextSize(artistItemView.textSize - 2);
 
 
         int paddingPx = (int) convertDpToPixel(artistItemView.borderPadding, holder.itemView.getContext());
@@ -107,13 +103,12 @@ public final class ArtistAdapter extends SimpleListAdapter<Artist, ArtistAdapter
     }
 
     static class ArtistViewHolder extends RecyclerView.ViewHolder {
+        private final ItemArtistBinding binding;
 
-        @BindView(R.id.artist) TextView artistTxt;
-        @BindView(R.id.artist_info) TextView artistInfo;
 
-        private ArtistViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private ArtistViewHolder(ItemArtistBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 

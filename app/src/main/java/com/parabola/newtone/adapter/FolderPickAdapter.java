@@ -2,19 +2,15 @@ package com.parabola.newtone.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.DialogFolderListItemBinding;
 
 import java.util.function.Function;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 
 public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter.FolderPickerItem, FolderPickAdapter.FolderViewHolder> {
@@ -30,8 +26,8 @@ public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter
     @NonNull
     @Override
     public FolderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = inflateByViewType(parent.getContext(), R.layout.dialog_folder_list_item, parent);
-        return new FolderViewHolder(v);
+        View view = inflateByViewType(parent.getContext(), R.layout.dialog_folder_list_item, parent);
+        return new FolderViewHolder(DialogFolderListItemBinding.bind(view));
     }
 
     @Override
@@ -40,21 +36,21 @@ public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter
 
         FolderPickerItem item = get(holder.getAdapterPosition());
 
-        holder.folderName.setText(item.getFilename());
+        holder.binding.folderName.setText(item.getFilename());
         if (position == 0 && item.getFilename().startsWith("..")) {
-            holder.folderAdd.setVisibility(View.GONE);
-            holder.folderAddInfo.setVisibility(View.GONE);
+            holder.binding.folderAdd.setVisibility(View.GONE);
+            holder.binding.folderAddInfo.setVisibility(View.GONE);
         } else {
-            holder.folderAdd.setVisibility(View.VISIBLE);
+            holder.binding.folderAdd.setVisibility(View.VISIBLE);
             if (additionalInfoMapper == null) {
-                holder.folderAddInfo.setVisibility(View.GONE);
+                holder.binding.folderAddInfo.setVisibility(View.GONE);
             } else {
-                holder.folderAddInfo.setVisibility(View.VISIBLE);
-                holder.folderAddInfo.setText(additionalInfoMapper.apply(item));
+                holder.binding.folderAddInfo.setVisibility(View.VISIBLE);
+                holder.binding.folderAddInfo.setText(additionalInfoMapper.apply(item));
             }
         }
 
-        holder.folderAdd.setOnClickListener(v -> onFolderPickListener.onFolderPick(item.getLocation()));
+        holder.binding.folderAdd.setOnClickListener(v -> onFolderPickListener.onFolderPick(item.getLocation()));
     }
 
 
@@ -65,13 +61,12 @@ public final class FolderPickAdapter extends SimpleListAdapter<FolderPickAdapter
 
 
     static class FolderViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.folderName) TextView folderName;
-        @BindView(R.id.folderAddInfo) TextView folderAddInfo;
-        @BindView(R.id.folder_add) ImageView folderAdd;
+        private final DialogFolderListItemBinding binding;
 
-        private FolderViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+
+        private FolderViewHolder(DialogFolderListItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 

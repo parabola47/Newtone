@@ -1,35 +1,33 @@
 package com.parabola.newtone.adapter;
 
+import static androidx.core.content.ContextCompat.getColor;
+import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
+import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.parabola.domain.model.Album;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType;
 import com.parabola.newtone.R;
+import com.parabola.newtone.databinding.ItemAlbumGridBinding;
+import com.parabola.newtone.databinding.ItemAlbumListBinding;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.Optional;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-
-import static androidx.core.content.ContextCompat.getColor;
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
 
 public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.ViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -56,14 +54,13 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = inflateByViewType(parent.getContext(), viewType, parent);
-        switch (viewType) {
-            case R.layout.item_album_grid:
-                return new GridAlbumViewHolder(itemView);
-            case R.layout.item_album_list:
-                return new ListAlbumViewHolder(itemView);
-            default: throw new IllegalArgumentException("viewType is not correct");
+        View view = inflateByViewType(parent.getContext(), viewType, parent);
+        if (viewType == R.layout.item_album_grid) {
+            return new GridAlbumViewHolder(ItemAlbumGridBinding.bind(view));
+        } else if (viewType == R.layout.item_album_list) {
+            return new ListAlbumViewHolder(ItemAlbumListBinding.bind(view));
         }
+        throw new IllegalArgumentException("viewType is not correct");
     }
 
 
@@ -99,48 +96,48 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
 
         if (holder instanceof GridAlbumViewHolder) {
             GridAlbumViewHolder gridHolder = (GridAlbumViewHolder) holder;
-            gridHolder.albumTitle.setTextSize(albumItemView.textSize + 2);
-            gridHolder.albumArtist.setTextSize(albumItemView.textSize - 4);
-            gridHolder.cover.setShapeAppearanceModel(gridHolder.cover.getShapeAppearanceModel().toBuilder()
+            gridHolder.binding.albumTitle.setTextSize(albumItemView.textSize + 2);
+            gridHolder.binding.author.setTextSize(albumItemView.textSize - 4);
+            gridHolder.binding.albumCover.setShapeAppearanceModel(gridHolder.binding.albumCover.getShapeAppearanceModel().toBuilder()
                     .setAllCorners(CornerFamily.ROUNDED, coverCornersRadius)
                     .build());
         } else if (holder instanceof ListAlbumViewHolder) {
             ListAlbumViewHolder listHolder = (ListAlbumViewHolder) holder;
-            listHolder.albumTitle.setTextSize(albumItemView.textSize);
-            listHolder.albumArtist.setTextSize(albumItemView.textSize - 2);
-            listHolder.tracksCount.setTextSize(albumItemView.textSize - 4);
+            listHolder.binding.albumTitle.setTextSize(albumItemView.textSize);
+            listHolder.binding.author.setTextSize(albumItemView.textSize - 2);
+            listHolder.binding.tracksCount.setTextSize(albumItemView.textSize - 4);
 
             listHolder.itemView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
 
-            ViewGroup.LayoutParams params = listHolder.cover.getLayoutParams();
+            ViewGroup.LayoutParams params = listHolder.binding.albumCover.getLayoutParams();
             params.width = coverSizePx;
             params.height = coverSizePx;
-            listHolder.cover.setLayoutParams(params);
+            listHolder.binding.albumCover.setLayoutParams(params);
 
-            listHolder.cover.setShapeAppearanceModel(listHolder.cover.getShapeAppearanceModel().toBuilder()
+            listHolder.binding.albumCover.setShapeAppearanceModel(listHolder.binding.albumCover.getShapeAppearanceModel().toBuilder()
                     .setAllCorners(CornerFamily.ROUNDED, coverCornersRadius)
                     .build());
         }
     }
 
     private void handleAsGrid(GridAlbumViewHolder holder, Album albumItem) {
-        Context context = holder.albumTitle.getContext();
+        Context context = holder.binding.albumTitle.getContext();
         String albumTitle = Optional.ofNullable(albumItem.getTitle())
                 .orElse(context.getString(R.string.unknown_album));
-        holder.albumTitle.setText(albumTitle);
+        holder.binding.albumTitle.setText(albumTitle);
 
         String artistName = Optional.ofNullable(albumItem.getArtistName())
                 .orElse(context.getString(R.string.unknown_artist));
 
-        holder.albumArtist.setText(artistName);
+        holder.binding.author.setText(artistName);
 
         Single.fromCallable(albumItem::getArtImage)
                 .cast(Bitmap.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ConsumerSingleObserver<>(
-                        bitmap -> holder.cover.setImageBitmap(bitmap),
-                        error -> holder.cover.setImageResource(R.drawable.album_default)));
+                        holder.binding.albumCover::setImageBitmap,
+                        error -> holder.binding.albumCover.setImageResource(R.drawable.album_default)));
 
         if (isContextSelected(holder.getAdapterPosition()))
             holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
@@ -149,37 +146,37 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
     }
 
     private void handleAsList(ListAlbumViewHolder holder, Album albumItem) {
-        Context context = holder.albumArtist.getContext();
+        Context context = holder.binding.author.getContext();
         String albumTitle = Optional.ofNullable(albumItem.getTitle())
                 .orElse(context.getString(R.string.unknown_album));
-        holder.albumTitle.setText(albumTitle);
+        holder.binding.albumTitle.setText(albumTitle);
 
         String artistName = Optional.ofNullable(albumItem.getArtistName())
                 .orElse(context.getString(R.string.unknown_artist));
 
-        holder.albumArtist.setText(artistName);
+        holder.binding.author.setText(artistName);
 
         String tracksCountString = context.getResources()
                 .getQuantityString(R.plurals.tracks_count, albumItem.getTracksCount(), albumItem.getTracksCount());
-        holder.tracksCount.setText(tracksCountString);
+        holder.binding.tracksCount.setText(tracksCountString);
 
         Single.fromCallable(albumItem::getArtImage)
                 .cast(Bitmap.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ConsumerSingleObserver<>(
-                        bitmap -> holder.cover.setImageBitmap(bitmap),
-                        error -> holder.cover.setImageResource(R.drawable.album_default)));
+                        holder.binding.albumCover::setImageBitmap,
+                        error -> holder.binding.albumCover.setImageResource(R.drawable.album_default)));
 
         if (isContextSelected(holder.getAdapterPosition())) {
-            holder.albumTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.albumArtist.setTextColor(getColor(context, R.color.colorListItemSelectedText));
-            holder.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.albumTitle.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.author.setTextColor(getColor(context, R.color.colorListItemSelectedText));
+            holder.binding.tracksCount.setTextColor(getColor(context, R.color.colorListItemSelectedText));
             holder.itemView.setBackgroundColor(getStyledColor(context, R.attr.colorPrimaryDark));
         } else {
-            holder.albumTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
-            holder.albumArtist.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
-            holder.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.binding.albumTitle.setTextColor(getColor(context, R.color.colorNewtonePrimaryText));
+            holder.binding.author.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
+            holder.binding.tracksCount.setTextColor(getColor(context, R.color.colorNewtoneSecondaryText));
             holder.itemView.setBackgroundColor(getColor(context, R.color.colorListItemDefaultBackground));
         }
     }
@@ -200,28 +197,23 @@ public final class AlbumAdapter extends SimpleListAdapter<Album, RecyclerView.Vi
         return showSection ? String.valueOf(getSection(position)) : "";
     }
 
-    static class GridAlbumViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.album_title) TextView albumTitle;
-        @BindView(R.id.author) TextView albumArtist;
-        @BindView(R.id.albumCover) ShapeableImageView cover;
+    private static class GridAlbumViewHolder extends RecyclerView.ViewHolder {
+        private final ItemAlbumGridBinding binding;
 
 
-        private GridAlbumViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private GridAlbumViewHolder(ItemAlbumGridBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
-    static class ListAlbumViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.album_title) TextView albumTitle;
-        @BindView(R.id.author) TextView albumArtist;
-        @BindView(R.id.tracks_count) TextView tracksCount;
-        @BindView(R.id.albumCover) ShapeableImageView cover;
+    private static class ListAlbumViewHolder extends RecyclerView.ViewHolder {
+        private final ItemAlbumListBinding binding;
 
 
-        private ListAlbumViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private ListAlbumViewHolder(ItemAlbumListBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
