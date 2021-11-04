@@ -217,7 +217,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
 
         if (isPlaylistChanged) {
             exoPlayer.pause();
-            exoPlayer.setMediaItems(getMediaItemsFromTrackTrackList(tracklist), trackPosition, playbackPositionMs);
+            exoPlayer.setMediaItems(createMediaItemsFromTrackList(tracklist), trackPosition, playbackPositionMs);
         } else {
             boolean isCurrentTrackChanged = currentTrackPosition() != trackPosition;
             if (isCurrentTrackChanged) {
@@ -242,13 +242,13 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
         return true;
     }
 
-    private List<MediaItem> getMediaItemsFromTrackTrackList(List<Track> tracklist) {
+    private List<MediaItem> createMediaItemsFromTrackList(List<Track> tracklist) {
         return tracklist.stream()
-                .map(this::mediaSourceFromTrack)
+                .map(this::createMediaItemFromTrack)
                 .collect(Collectors.toList());
     }
 
-    private MediaItem mediaSourceFromTrack(Track track) {
+    private MediaItem createMediaItemFromTrack(Track track) {
         return new MediaItem.Builder()
                 .setUri(Uri.fromFile(new File(track.getFilePath())))
                 .setTag(track.getId())
@@ -262,7 +262,7 @@ public final class PlayerInteractorImpl implements PlayerInteractor {
             return;
         exoPlayer.pause();
 
-        exoPlayer.setMediaItems(getMediaItemsFromTrackTrackList(tracklist));
+        exoPlayer.setMediaItems(createMediaItemsFromTrackList(tracklist));
         setShuffleMode(true);
 
         exoPlayer.play();
