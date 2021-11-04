@@ -7,7 +7,6 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
-import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface RecentlyAddedPlaylistView extends MvpView {
@@ -19,8 +18,5 @@ public interface RecentlyAddedPlaylistView extends MvpView {
     void removeTrack(int trackId);
 
     void setCurrentTrack(int trackId);
-
-    @OneExecution
-    void showToast(String message);
 
 }

@@ -11,7 +11,5 @@ public interface CreatePlaylistView extends MvpView {
     void showPlaylistTitleIsEmptyError();
     void showPlaylistTitleAlreadyExistsError();
 
-    void showPlaylistCreatedToast(String playlistTitle);
-
     void closeScreen();
 }

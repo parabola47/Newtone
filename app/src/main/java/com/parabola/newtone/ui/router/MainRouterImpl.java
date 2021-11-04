@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -73,6 +75,15 @@ public final class MainRouterImpl implements MainRouter {
     public void clearActivity() {
         this.activity = null;
         this.firstFragment = null;
+    }
+
+    @Override
+    public void showToast(String toastText, boolean longLength, boolean showAtCenter) {
+        Toast toast = Toast.makeText(activity, toastText, longLength ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        if (showAtCenter) {
+            toast.setGravity(Gravity.CENTER, 0, 0);
+        }
+        toast.show();
     }
 
     @Override

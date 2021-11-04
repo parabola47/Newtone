@@ -12,10 +12,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -265,9 +263,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             ActivityCompat.requestPermissions(this, STORAGE_PERMISSIONS, STORAGE_PERMISSIONS_REQUEST_CODE);
         } else {
-            Toast toast = Toast.makeText(this, R.string.request_permission_toast, Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            router.showToast(getString(R.string.request_permission_toast), true, true);
 
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -327,7 +323,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
                     .putExtra(AudioDeletedReceiver.TRACK_ID_ARG, deleteTrackId);
             sendBroadcast(intent);
             deleteTrackId = -1;
-            Toast.makeText(this, R.string.file_deleted_successfully_toast, Toast.LENGTH_LONG).show();
+            router.showToast(getString(R.string.file_deleted_successfully_toast), true);
         }
     }
 

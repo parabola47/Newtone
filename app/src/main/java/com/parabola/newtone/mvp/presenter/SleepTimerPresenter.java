@@ -5,6 +5,7 @@ import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SleepTimerView;
+import com.parabola.newtone.ui.router.MainRouter;
 import com.parabola.newtone.util.TimeFormatterTool;
 
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
 
     @Inject SleepTimerInteractor timerInteractor;
     @Inject ResourceRepository resourceRepo;
+    @Inject MainRouter router;
 
     public SleepTimerPresenter(AppComponent appComponent) {
         appComponent.inject(this);
@@ -30,7 +32,7 @@ public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
                         error -> {
                             if (error instanceof SleepTimerInteractor.TimerAlreadyLaunchedException) {
                                 String toastText = resourceRepo.getString(R.string.toast_sleep_timer_already_launched);
-                                getViewState().showToast(toastText);
+                                router.showToast(toastText);
                             } else {
                                 throw new RuntimeException(error);
                             }
@@ -38,7 +40,7 @@ public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
                         () -> {
                             String sleepTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(timeToSleepMs);
                             String toastText = resourceRepo.getString(R.string.toast_sleep_timer_on_start, sleepTimeFormatted);
-                            getViewState().showToast(toastText);
+                            router.showToast(toastText);
                         }));
     }
 

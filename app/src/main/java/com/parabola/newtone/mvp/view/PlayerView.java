@@ -7,7 +7,6 @@ import java.util.List;
 
 import moxy.MvpView;
 import moxy.viewstate.strategy.alias.AddToEndSingle;
-import moxy.viewstate.strategy.alias.OneExecution;
 
 @AddToEndSingle
 public interface PlayerView extends MvpView {
@@ -37,8 +36,5 @@ public interface PlayerView extends MvpView {
 
     void setRootViewOpacity(float alpha);
     void setRootViewVisibility(boolean visible);
-
-    @OneExecution
-    void showToast(String toastMessage);
 
 }

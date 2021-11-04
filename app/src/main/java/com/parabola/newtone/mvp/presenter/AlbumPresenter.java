@@ -126,7 +126,7 @@ public final class AlbumPresenter extends MvpPresenter<AlbumView> {
                     getViewState().setAlbumArt(album.getArtImage());
                 }, error -> {
                     String toastText = resourceRepo.getString(R.string.album_screen_album_load_error_toast);
-                    getViewState().showToast(toastText);
+                    router.showToast(toastText);
                     router.goBack();
                 });
     }

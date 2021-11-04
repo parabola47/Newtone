@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -201,12 +200,6 @@ public final class ArtistTracksFragment extends BaseSwipeToBackFragment
         }
 
         binding.tracksList.smoothScrollToPosition(0);
-    }
-
-
-    @Override
-    public void showToast(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 
 }

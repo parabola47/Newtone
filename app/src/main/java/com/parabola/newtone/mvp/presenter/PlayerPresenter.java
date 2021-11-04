@@ -189,7 +189,7 @@ public final class PlayerPresenter extends MvpPresenter<PlayerView> {
                     .map(TimeFormatterTool::formatMillisecondsToMinutes)
                     .map(timeToEndStr -> resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, timeToEndStr))
                     .subscribe(new ConsumerSingleObserver<>(
-                            getViewState()::showToast, Functions.ERROR_CONSUMER));
+                            router::showToast, Functions.ERROR_CONSUMER));
         }
     }
 

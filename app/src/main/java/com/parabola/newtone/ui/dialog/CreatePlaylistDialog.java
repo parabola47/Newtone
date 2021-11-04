@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -92,13 +91,6 @@ public final class CreatePlaylistDialog extends MvpAppCompatDialogFragment
         String errorText = getString(R.string.toast_playlist_already_exist);
         playlistTitleEdt.setError(errorText);
     }
-
-    @Override
-    public void showPlaylistCreatedToast(String playlistTitle) {
-        String toastText = getString(R.string.toast_playlist_created, playlistTitle);
-        Toast.makeText(requireContext(), toastText, Toast.LENGTH_SHORT).show();
-    }
-
 
     @Override
     public void closeScreen() {

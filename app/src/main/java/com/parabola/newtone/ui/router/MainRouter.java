@@ -14,6 +14,16 @@ public interface MainRouter {
     void setActivity(MainActivity activity);
     void clearActivity();
 
+    default void showToast(String toastText) {
+        showToast(toastText, false);
+    }
+
+    default void showToast(String toastText, boolean longLength) {
+        showToast(toastText, longLength, false);
+    }
+
+    void showToast(String toastText, boolean longLength, boolean showAtCenter);
+
     Fragment currentFragment();
 
     //    ACTIONS

@@ -2,7 +2,6 @@ package com.parabola.newtone.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,11 +67,6 @@ public final class SleepTimerDialog extends MvpAppCompatDialogFragment
     SleepTimerPresenter providePresenter() {
         AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
         return new SleepTimerPresenter(appComponent);
-    }
-
-    @Override
-    public void showToast(String toastText) {
-        Toast.makeText(requireContext(), toastText, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -3,7 +3,6 @@ package com.parabola.newtone.ui.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +13,7 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.newtone.MainApplication;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
+import com.parabola.newtone.ui.router.MainRouter;
 
 import javax.inject.Inject;
 
@@ -30,6 +30,7 @@ public final class DeleteTrackDialog extends MvpAppCompatDialogFragment {
     @Inject TrackRepository trackRepo;
     @Inject SchedulerProvider schedulers;
     @Inject Context appContext;
+    @Inject MainRouter router;
 
 
     public DeleteTrackDialog() {
@@ -74,7 +75,7 @@ public final class DeleteTrackDialog extends MvpAppCompatDialogFragment {
                 .map(appContext::getString)
                 .observeOn(schedulers.ui())
                 .subscribe(new ConsumerSingleObserver<>(
-                        s -> Toast.makeText(appContext, s, Toast.LENGTH_LONG).show(),
+                        s -> router.showToast(s, true),
                         Functions.ERROR_CONSUMER));
     }
 
