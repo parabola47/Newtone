@@ -4,6 +4,7 @@ import com.parabola.domain.model.Artist;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 public interface ArtistRepository {
@@ -13,8 +14,7 @@ public interface ArtistRepository {
     default Single<List<Artist>> getAll() {
         return getAll(null);
     }
-
-    Single<List<Artist>> getByQuery(String query, int limit);
+    Observable<Artist> getAllAsObservable();
 
 
     enum Sorting {

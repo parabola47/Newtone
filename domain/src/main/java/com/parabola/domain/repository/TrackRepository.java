@@ -23,8 +23,7 @@ public interface TrackRepository {
     default Single<List<Track>> getAll() {
         return getAll(null);
     }
-
-    Single<List<Track>> getByQuery(String query, int limit);
+    Observable<Track> getAllAsObservable();
 
     Observable<Integer> observeTrackDeleting(); //возвращает id удалённого трека
     Single<Boolean> deleteTrack(int trackId); //true, если удалось удалить файл

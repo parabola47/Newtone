@@ -7,6 +7,10 @@ public interface Artist {
     int getAlbumsCount();
     int getTracksCount();
 
+    default String getSearchView() {
+        return getName().toLowerCase();
+    }
+
     default boolean equals(Artist o) {
         return getId() == o.getId();
     }

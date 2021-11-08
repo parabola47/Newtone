@@ -11,6 +11,10 @@ public interface Album {
 
     int getTracksCount();
 
+    default String getSearchView() {
+        return (getArtistName() + " " + getTitle()).toLowerCase();
+    }
+
     default boolean equals(Album o) {
         return getId() == o.getId();
     }

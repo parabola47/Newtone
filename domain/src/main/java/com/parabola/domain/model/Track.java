@@ -34,6 +34,10 @@ public interface Track {
 
     boolean isFavourite();
 
+    default String getSearchView() {
+        return (getArtistName() + " " + getAlbumTitle() + " " + getTitle()).toLowerCase();
+    }
+
 
     default boolean equals(Track o) {
         return getId() == o.getId();

@@ -13,8 +13,7 @@ public interface PlaylistRepository {
 
     Single<Playlist> getById(int playlistId);
     Single<List<Playlist>> getAll();
-
-    Single<List<Playlist>> getByQuery(String query, int limit);
+    Observable<Playlist> getAllAsObservable();
 
     //выбрасывает ошибку в Rx AlreadyExistsException,
     //если плейлист с таким именем уже существует

@@ -1,5 +1,10 @@
 package com.parabola.data.repository;
 
+import static android.provider.BaseColumns._ID;
+import static android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
+import static android.provider.MediaStore.Audio.PlaylistsColumns.DATE_ADDED;
+import static android.provider.MediaStore.Audio.PlaylistsColumns.NAME;
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -26,11 +31,6 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.subjects.BehaviorSubject;
-
-import static android.provider.BaseColumns._ID;
-import static android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
-import static android.provider.MediaStore.Audio.PlaylistsColumns.DATE_ADDED;
-import static android.provider.MediaStore.Audio.PlaylistsColumns.NAME;
 
 public final class PlaylistRepositoryImpl implements PlaylistRepository {
     private static final String LOG_TAG = PlaylistRepositoryImpl.class.getSimpleName();
@@ -146,24 +146,19 @@ public final class PlaylistRepositoryImpl implements PlaylistRepository {
 
 
     @Override
-    public Single<List<Playlist>> getByQuery(String query, int limit) {
+    public Observable<Playlist> getAllAsObservable() {
         if (!accessRepo.hasPermission(Type.FILE_STORAGE))
-            return Single.just(Collections.emptyList());
-
-        String selection = NAME + " LIKE ?";
-
-        Uri uri = EXTERNAL_CONTENT_URI.buildUpon()
-                .appendQueryParameter("limit", String.valueOf(limit))
-                .build();
+            return Observable.empty();
 
         return Single.fromCallable(() ->
                 contentResolver.query(
-                        uri,
+                        EXTERNAL_CONTENT_URI,
                         PLAYLIST_QUERY_SELECTIONS,
-                        selection, new String[]{"%" + query + "%"}, null))
+                        null, null, DATE_ADDED + " DESC"))
                 .doAfterSuccess(Cursor::close)
-                .map(this::extractPlaylistsFromCursor);
+                .flatMapObservable(cursor -> Observable.fromIterable(extractPlaylistsFromCursor(cursor)));
     }
+
 
     @Override
     public Single<Playlist> addNew(String newPlaylistTitle) {

@@ -1,5 +1,7 @@
 package com.parabola.data.repository;
 
+import static com.parabola.data.utils.SortingUtil.getArtistComparatorBySorting;
+
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.repository.ArtistRepository;
 
@@ -7,8 +9,6 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-
-import static com.parabola.data.utils.SortingUtil.getArtistComparatorBySorting;
 
 
 public final class ArtistRepositoryImpl implements ArtistRepository {
@@ -38,13 +38,8 @@ public final class ArtistRepositoryImpl implements ArtistRepository {
 
 
     @Override
-    public Single<List<Artist>> getByQuery(String query, int limit) {
-        String validatedQuery = query.toLowerCase();
-
-        return Observable.fromIterable(dataExtractor.artists)
-                .filter(artist -> artist.getName().toLowerCase().contains(validatedQuery))
-                .take(limit)
-                .toList(limit);
+    public Observable<Artist> getAllAsObservable() {
+        return Observable.fromIterable(dataExtractor.artists);
     }
 
 }

@@ -1,2 +1,3 @@
 include ':Slidr'
 include ':app', ':domain', ':data', ':player_feature', ':countdown_timer_feature'
+include ':search_feature'

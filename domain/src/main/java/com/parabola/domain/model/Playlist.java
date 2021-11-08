@@ -8,6 +8,10 @@ public interface Playlist {
     List<TrackItem> getPlaylistTracks();
     int size();
 
+    default String getSearchView() {
+        return getTitle().toLowerCase();
+    }
+
     default boolean equals(Playlist o) {
         return getId() == o.getId();
     }

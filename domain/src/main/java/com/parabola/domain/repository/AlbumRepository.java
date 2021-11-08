@@ -4,6 +4,7 @@ import com.parabola.domain.model.Album;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 public interface AlbumRepository {
@@ -14,8 +15,7 @@ public interface AlbumRepository {
     default Single<List<Album>> getAll() {
         return getAll(null);
     }
-
-    Single<List<Album>> getByQuery(String query, int limit);
+    Observable<Album> getAllAsObservable();
 
     Single<List<Album>> getByArtist(int artistId, Sorting sorting);
     default Single<List<Album>> getByArtist(int artistId) {

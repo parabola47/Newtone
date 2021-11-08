@@ -1,66 +1,38 @@
 package com.parabola.domain.interactor;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+
 import com.parabola.domain.model.Album;
 import com.parabola.domain.model.Artist;
 import com.parabola.domain.model.Playlist;
 import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.AlbumRepository;
-import com.parabola.domain.repository.ArtistRepository;
-import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.TrackRepository;
 
 import java.util.List;
 
 import io.reactivex.Single;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
+public abstract class SearchInteractor {
 
-public final class SearchInteractor {
-
-    private static final int ARTISTS_SEARCH_MAX_LIMIT = 3;
-    private static final int ALBUMS_SEARCH_MAX_LIMIT = 5;
-    private static final int TRACKS_SEARCH_MAX_LIMIT = 20;
-    private static final int PLAYLIST_SEARCH_MAX_LIMIT = 5;
-
-    private final ArtistRepository artistRepo;
-    private final AlbumRepository albumRepo;
-    private final TrackRepository trackRepo;
-    private final PlaylistRepository playlistRepo;
+    protected static final int ARTISTS_SEARCH_MAX_LIMIT = 3;
+    protected static final int ALBUMS_SEARCH_MAX_LIMIT = 5;
+    protected static final int TRACKS_SEARCH_MAX_LIMIT = 20;
+    protected static final int PLAYLIST_SEARCH_MAX_LIMIT = 5;
 
 
-    public SearchInteractor(ArtistRepository artistRepo,
-                            AlbumRepository albumRepo,
-                            TrackRepository trackRepo,
-                            PlaylistRepository playlistRepo) {
-        this.artistRepo = artistRepo;
-        this.albumRepo = albumRepo;
-        this.trackRepo = trackRepo;
-        this.playlistRepo = playlistRepo;
-    }
-
-
-    public Single<SearchResult> search(String query) {
+    public final Single<SearchResult> search(String query) {
         return Single.zip(searchArtists(query), searchAlbums(query), searchTracks(query), searchPlaylists(query), SearchResult::new)
                 .onErrorReturnItem(SearchResult.EMPTY_SEARCH_RESULT);
     }
 
 
-    private Single<List<Artist>> searchArtists(String query) {
-        return artistRepo.getByQuery(query, ARTISTS_SEARCH_MAX_LIMIT);
-    }
+    public abstract Single<List<Artist>> searchArtists(String query);
 
-    private Single<List<Album>> searchAlbums(String query) {
-        return albumRepo.getByQuery(query, ALBUMS_SEARCH_MAX_LIMIT);
-    }
+    public abstract Single<List<Album>> searchAlbums(String query);
 
-    private Single<List<Track>> searchTracks(String query) {
-        return trackRepo.getByQuery(query, TRACKS_SEARCH_MAX_LIMIT);
-    }
+    public abstract Single<List<Track>> searchTracks(String query);
 
-    private Single<List<Playlist>> searchPlaylists(String query) {
-        return playlistRepo.getByQuery(query, PLAYLIST_SEARCH_MAX_LIMIT);
-    }
+    public abstract Single<List<Playlist>> searchPlaylists(String query);
 
 
     public static final class SearchResult {

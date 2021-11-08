@@ -1,5 +1,7 @@
 package com.parabola.data.repository;
 
+import static com.parabola.data.utils.SortingUtil.getTrackComparatorBySorting;
+
 import android.content.Context;
 import android.content.IntentFilter;
 
@@ -11,14 +13,13 @@ import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.TrackRepository;
 
+import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
-
-import static com.parabola.data.utils.SortingUtil.getTrackComparatorBySorting;
 
 public final class TrackRepositoryImpl implements TrackRepository {
     private static final String LOG_TAG = TrackRepositoryImpl.class.getSimpleName();
@@ -56,7 +57,7 @@ public final class TrackRepositoryImpl implements TrackRepository {
         return Observable.fromIterable(dataExtractor.tracks)
                 .filter(track -> trackIds.contains(track.getId()))
                 //  упорядочиваем список, чтобы он соответствовал переданным в качестве параметра идентификатораи
-                .toSortedList((t1, t2) -> Integer.compare(trackIds.indexOf(t1.getId()), trackIds.indexOf(t2.getId())));
+                .toSortedList(Comparator.comparingInt(t -> trackIds.indexOf(t.getId())));
     }
 
     @Override
@@ -81,13 +82,8 @@ public final class TrackRepositoryImpl implements TrackRepository {
     }
 
     @Override
-    public Single<List<Track>> getByQuery(String query, int limit) {
-        String validatedQuery = query.toLowerCase();
-
-        return Observable.fromIterable(dataExtractor.tracks)
-                .filter(track -> (track.getArtistName() + " " + track.getAlbumTitle() + " " + track.getTitle()).toLowerCase().contains(validatedQuery))
-                .take(limit)
-                .toList(limit);
+    public Observable<Track> getAllAsObservable() {
+        return Observable.fromIterable(dataExtractor.tracks);
     }
 
 

@@ -22,6 +22,7 @@ import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.player_feature.PlayerInteractorImpl;
+import com.parabola.search_feature.SearchInteractorImpl;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -104,6 +105,6 @@ public final class InteractorModule {
     @Provides
     SearchInteractor provideSearchInteractor(ArtistRepository artistRepo, AlbumRepository albumRepo,
                                              TrackRepository trackRepo, PlaylistRepository playlistRepo) {
-        return new SearchInteractor(artistRepo, albumRepo, trackRepo, playlistRepo);
+        return new SearchInteractorImpl(artistRepo, albumRepo, trackRepo, playlistRepo);
     }
 }
