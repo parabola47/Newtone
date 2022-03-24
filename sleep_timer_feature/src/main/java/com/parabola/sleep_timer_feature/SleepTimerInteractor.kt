@@ -1,29 +1,23 @@
-package com.parabola.sleep_timer_feature;
+package com.parabola.sleep_timer_feature
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 
-public interface SleepTimerInteractor {
+interface SleepTimerInteractor {
+    fun start(timeToSleepMs: Long): Completable
 
-    Completable start(long timeToSleepMs);
+    fun reset(): Completable
 
-    Completable reset();
+    fun launched(): Boolean
 
-    boolean launched();
+    fun remainingTimeToEnd(): Single<Long>
 
-    Single<Long> remainingTimeToEnd();
+    fun observeRemainingTimeToEnd(): Observable<Long>
+    fun observeIsTimerRunning(): Observable<Boolean>
 
-    Observable<Long> observeRemainingTimeToEnd();
+    fun onTimerFinished(): Observable<Int>
 
-    Observable<Boolean> observeIsTimerRunning();
-
-    Observable<Integer> onTimerFinished();
-
-
-    class TimerNotLaunchedException extends IllegalStateException {
-    }
-
-    class TimerAlreadyLaunchedException extends IllegalStateException {
-    }
+    class TimerNotLaunchedException : IllegalStateException()
+    class TimerAlreadyLaunchedException : IllegalStateException()
 }

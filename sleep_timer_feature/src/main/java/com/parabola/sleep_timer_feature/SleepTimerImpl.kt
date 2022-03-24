@@ -1,94 +1,83 @@
-package com.parabola.sleep_timer_feature;
+package com.parabola.sleep_timer_feature
 
-import java.util.concurrent.TimeUnit;
+import com.parabola.sleep_timer_feature.SleepTimerInteractor.TimerAlreadyLaunchedException
+import com.parabola.sleep_timer_feature.SleepTimerInteractor.TimerNotLaunchedException
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
+class SleepTimerImpl : SleepTimerInteractor {
+    private val observeIsTimerRunning = BehaviorSubject.createDefault(false)
 
-public class SleepTimerImpl implements SleepTimerInteractor {
+    private val onTimerFinished = PublishSubject.create<Int>()
+    private val remainingTimeObserver = BehaviorSubject.createDefault(0L)
 
+    private var timerTask: Disposable? = null
 
-    private final BehaviorSubject<Boolean> observeIsTimerRunning = BehaviorSubject.createDefault(Boolean.FALSE);
-    private final PublishSubject<Integer> onTimerFinished = PublishSubject.create();
-
-    private final BehaviorSubject<Long> remainingTimeObserver = BehaviorSubject.createDefault(0L);
-
-    private Disposable timerTask;
-
-    private static final Long UPDATE_NOTIFYING_TIME_MS = 200L;
-
-    @Override
-    public Completable start(long timeToSleepMs) {
-        return Single.fromCallable(this::launched)
-                .flatMapCompletable(isTimerLaunched -> {
-                    if (isTimerLaunched)
-                        return Completable.error(new TimerAlreadyLaunchedException());
-                    return Completable.fromAction(() ->
-                            timerTask = startTimerDisposable(timeToSleepMs));
-                });
+    override fun start(timeToSleepMs: Long): Completable {
+        return Single.fromCallable { launched() }
+            .flatMapCompletable { isTimerLaunched: Boolean ->
+                if (isTimerLaunched) return@flatMapCompletable Completable.error(
+                    TimerAlreadyLaunchedException()
+                )
+                Completable.fromAction { timerTask = startTimerDisposable(timeToSleepMs) }
+            }
     }
 
-    private Disposable startTimerDisposable(long timeToSleepMs) {
+    private fun startTimerDisposable(timeToSleepMs: Long): Disposable {
         return Observable.interval(UPDATE_NOTIFYING_TIME_MS, TimeUnit.MILLISECONDS)
-                .doOnNext(count -> remainingTimeObserver.onNext(timeToSleepMs - (count * UPDATE_NOTIFYING_TIME_MS)))
-                .take(timeToSleepMs, TimeUnit.MILLISECONDS)
-                .doOnSubscribe(d -> {
-                    observeIsTimerRunning.onNext(Boolean.TRUE);
-                    remainingTimeObserver.onNext(timeToSleepMs);
-                })
-                .doFinally(() -> {
-                    timerTask = null;
-                    remainingTimeObserver.onNext(0L);
-                    observeIsTimerRunning.onNext(Boolean.FALSE);
-                })
-                .doOnComplete(() -> onTimerFinished.onNext(1))
-                .subscribe();
+            .doOnNext { count: Long -> remainingTimeObserver.onNext(timeToSleepMs - count * UPDATE_NOTIFYING_TIME_MS) }
+            .take(timeToSleepMs, TimeUnit.MILLISECONDS)
+            .doOnSubscribe { d: Disposable? ->
+                observeIsTimerRunning.onNext(true)
+                remainingTimeObserver.onNext(timeToSleepMs)
+            }
+            .doFinally {
+                timerTask = null
+                remainingTimeObserver.onNext(0L)
+                observeIsTimerRunning.onNext(false)
+            }
+            .doOnComplete { onTimerFinished.onNext(1) }
+            .subscribe()
     }
 
-
-    @Override
-    public Completable reset() {
-        return Completable.fromAction(timerTask::dispose);
+    override fun reset(): Completable {
+        return Completable.fromAction { timerTask!!.dispose() }
     }
 
-    @Override
-    public boolean launched() {
-        return observeIsTimerRunning.getValue();
+    override fun launched(): Boolean {
+        return observeIsTimerRunning.value!!
     }
 
-
-    @Override
-    public Single<Long> remainingTimeToEnd() {
-        return Single.fromCallable(this::launched)
-                .flatMap(isTimerLaunched -> {
-                    if (!isTimerLaunched)
-                        return Single.error(new TimerNotLaunchedException());
-
-                    return Single.just(remainingTimeInternal());
-                });
+    override fun remainingTimeToEnd(): Single<Long> {
+        return Single.fromCallable { launched() }
+            .flatMap { isTimerLaunched: Boolean? ->
+                if (!isTimerLaunched!!) return@flatMap Single.error<Long>(TimerNotLaunchedException())
+                Single.just(remainingTimeInternal())
+            }
     }
 
-
-    @Override
-    public Observable<Long> observeRemainingTimeToEnd() {
-        return remainingTimeObserver;
+    override fun observeRemainingTimeToEnd(): Observable<Long> {
+        return remainingTimeObserver
     }
 
-    private long remainingTimeInternal() {
-        return remainingTimeObserver.getValue();
+    private fun remainingTimeInternal(): Long {
+        return remainingTimeObserver.value!!
     }
 
-
-    public Observable<Boolean> observeIsTimerRunning() {
-        return observeIsTimerRunning;
+    override fun observeIsTimerRunning(): Observable<Boolean> {
+        return observeIsTimerRunning
     }
 
-    @Override
-    public Observable<Integer> onTimerFinished() {
-        return onTimerFinished;
+    override fun onTimerFinished(): Observable<Int> {
+        return onTimerFinished
+    }
+
+    companion object {
+        private const val UPDATE_NOTIFYING_TIME_MS = 200L
     }
 }
