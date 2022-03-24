@@ -4,14 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.parabola.countdown_timer_feature.SleepTimerImpl;
 import com.parabola.data.repository.DataExtractor;
 import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.interactor.ArtistInteractor;
 import com.parabola.domain.interactor.FolderInteractor;
 import com.parabola.domain.interactor.RepositoryInteractor;
-import com.parabola.search_feature.SearchInteractor;
-import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
@@ -22,7 +19,10 @@ import com.parabola.domain.repository.PlaylistRepository;
 import com.parabola.domain.repository.SortingRepository;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.player_feature.PlayerInteractorImpl;
+import com.parabola.search_feature.SearchInteractor;
 import com.parabola.search_feature.SearchInteractorImpl;
+import com.parabola.sleep_timer_feature.SleepTimerImpl;
+import com.parabola.sleep_timer_feature.SleepTimerInteractor;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

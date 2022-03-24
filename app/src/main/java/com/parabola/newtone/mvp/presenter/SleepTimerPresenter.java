@@ -1,12 +1,12 @@
 package com.parabola.newtone.mvp.presenter;
 
-import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.repository.ResourceRepository;
 import com.parabola.newtone.R;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SleepTimerView;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.parabola.newtone.util.TimeFormatterTool;
+import com.parabola.sleep_timer_feature.SleepTimerInteractor;
 
 import javax.inject.Inject;
 
@@ -17,9 +17,12 @@ import moxy.MvpPresenter;
 @InjectViewState
 public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
 
-    @Inject SleepTimerInteractor timerInteractor;
-    @Inject ResourceRepository resourceRepo;
-    @Inject MainRouter router;
+    @Inject
+    SleepTimerInteractor timerInteractor;
+    @Inject
+    ResourceRepository resourceRepo;
+    @Inject
+    MainRouter router;
 
     public SleepTimerPresenter(AppComponent appComponent) {
         appComponent.inject(this);

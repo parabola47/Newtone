@@ -3,7 +3,6 @@ package com.parabola.newtone.mvp.presenter;
 import static com.parabola.domain.utils.EmptyItems.NO_TRACK;
 
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.repository.ResourceRepository;
@@ -14,6 +13,7 @@ import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.PlayerView;
 import com.parabola.newtone.ui.router.MainRouter;
 import com.parabola.newtone.util.TimeFormatterTool;
+import com.parabola.sleep_timer_feature.SleepTimerInteractor;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import javax.inject.Inject;
@@ -31,14 +31,20 @@ import moxy.MvpPresenter;
 @InjectViewState
 public final class PlayerPresenter extends MvpPresenter<PlayerView> {
 
-    @Inject MainRouter router;
+    @Inject
+    MainRouter router;
 
-    @Inject PlayerInteractor playerInteractor;
-    @Inject SleepTimerInteractor timerInteractor;
-    @Inject ResourceRepository resourceRepo;
-    @Inject TrackRepository trackRepo;
+    @Inject
+    PlayerInteractor playerInteractor;
+    @Inject
+    SleepTimerInteractor timerInteractor;
+    @Inject
+    ResourceRepository resourceRepo;
+    @Inject
+    TrackRepository trackRepo;
 
-    @Inject SchedulerProvider schedulers;
+    @Inject
+    SchedulerProvider schedulers;
 
     private int currentTrackId = NO_TRACK.getId();
 

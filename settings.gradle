@@ -1,3 +1,4 @@
 include ':Slidr'
-include ':app', ':domain', ':data', ':player_feature', ':countdown_timer_feature'
+include ':app', ':domain', ':data', ':player_feature'
 include ':search_feature'
+include ':sleep_timer_feature'

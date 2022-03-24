@@ -2,7 +2,6 @@ package com.parabola.newtone.di.app;
 
 import android.content.Intent;
 
-import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
@@ -13,6 +12,7 @@ import com.parabola.newtone.di.app.modules.DataModule;
 import com.parabola.newtone.di.app.modules.IntentModule;
 import com.parabola.newtone.di.app.modules.InteractorModule;
 import com.parabola.newtone.di.app.modules.NavigationModule;
+import com.parabola.sleep_timer_feature.SleepTimerInteractor;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
