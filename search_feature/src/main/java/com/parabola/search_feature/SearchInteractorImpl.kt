@@ -1,6 +1,5 @@
 package com.parabola.search_feature
 
-import com.parabola.domain.interactor.SearchInteractor
 import com.parabola.domain.model.Album
 import com.parabola.domain.model.Artist
 import com.parabola.domain.model.Playlist
@@ -45,7 +44,7 @@ class SearchInteractorImpl(
                 passMinimumThreshold(query, it.searchView, artistMinimumThreshold)
             }
             .sorted(artistComparator)
-            .take(ARTISTS_SEARCH_MAX_LIMIT.toLong())
+            .take(ARTISTS_SEARCH_MAX_LIMIT)
             .toList()
     }
 
@@ -62,7 +61,7 @@ class SearchInteractorImpl(
                 passMinimumThreshold(validatedQuery, it.searchView, albumMinimumThreshold)
             }
             .sorted(albumComparator)
-            .take(ALBUMS_SEARCH_MAX_LIMIT.toLong())
+            .take(ALBUMS_SEARCH_MAX_LIMIT)
             .toList()
     }
 
@@ -79,7 +78,7 @@ class SearchInteractorImpl(
                 passMinimumThreshold(validatedQuery, it.searchView, trackMinimumThreshold)
             }
             .sorted(trackComparator)
-            .take(TRACKS_SEARCH_MAX_LIMIT.toLong())
+            .take(TRACKS_SEARCH_MAX_LIMIT)
             .toList()
     }
 
@@ -96,7 +95,7 @@ class SearchInteractorImpl(
                 passMinimumThreshold(validatedQuery, it.searchView, playlistMinimumThreshold)
             }
             .sorted(playlistComparator)
-            .take(PLAYLIST_SEARCH_MAX_LIMIT.toLong())
+            .take(PLAYLIST_SEARCH_MAX_LIMIT)
             .toList()
     }
 

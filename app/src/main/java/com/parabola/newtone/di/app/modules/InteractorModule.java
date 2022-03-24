@@ -10,7 +10,7 @@ import com.parabola.domain.interactor.AlbumInteractor;
 import com.parabola.domain.interactor.ArtistInteractor;
 import com.parabola.domain.interactor.FolderInteractor;
 import com.parabola.domain.interactor.RepositoryInteractor;
-import com.parabola.domain.interactor.SearchInteractor;
+import com.parabola.search_feature.SearchInteractor;
 import com.parabola.domain.interactor.SleepTimerInteractor;
 import com.parabola.domain.interactor.TrackInteractor;
 import com.parabola.domain.interactor.player.AudioEffectsInteractor;

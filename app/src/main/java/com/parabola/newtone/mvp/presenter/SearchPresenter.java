@@ -1,13 +1,14 @@
 package com.parabola.newtone.mvp.presenter;
 
 import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.SearchInteractor;
 import com.parabola.domain.interactor.player.PlayerInteractor;
 import com.parabola.domain.model.Track;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.mvp.view.SearchFragmentView;
 import com.parabola.newtone.ui.router.MainRouter;
+import com.parabola.search_feature.SearchInteractor;
+import com.parabola.search_feature.SearchResult;
 
 import java.util.List;
 
@@ -21,11 +22,16 @@ import moxy.MvpPresenter;
 @InjectViewState
 public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
 
-    @Inject MainRouter router;
-    @Inject PlayerInteractor playerInteractor;
-    @Inject SearchInteractor searchInteractor;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject SchedulerProvider schedulers;
+    @Inject
+    MainRouter router;
+    @Inject
+    PlayerInteractor playerInteractor;
+    @Inject
+    SearchInteractor searchInteractor;
+    @Inject
+    ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    SchedulerProvider schedulers;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable querySearchDisposable;
@@ -85,7 +91,7 @@ public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
         disposables.add(querySearchDisposable);
     }
 
-    private void refreshAll(SearchInteractor.SearchResult searchResult) {
+    private void refreshAll(SearchResult searchResult) {
         getViewState().refreshArtists(searchResult.artists);
         getViewState().refreshAlbums(searchResult.albums);
         getViewState().refreshTracks(searchResult.tracks);
