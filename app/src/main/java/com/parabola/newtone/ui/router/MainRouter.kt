@@ -1,101 +1,97 @@
-package com.parabola.newtone.ui.router;
+package com.parabola.newtone.ui.router
 
-import androidx.annotation.FloatRange;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.FloatRange
+import androidx.fragment.app.Fragment
+import com.parabola.domain.model.Track
+import com.parabola.newtone.ui.activity.MainActivity
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
+import io.reactivex.Observable
 
-import com.parabola.domain.model.Track;
-import com.parabola.newtone.ui.activity.MainActivity;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+interface MainRouter {
 
-import io.reactivex.Observable;
+    fun setActivity(activity: MainActivity)
+    fun clearActivity()
 
-public interface MainRouter {
+    fun showToast(toastText: String) = showToast(toastText, longLength = false)
+    fun showToast(toastText: String, longLength: Boolean = false) =
+        showToast(toastText, longLength, showAtCenter = false)
 
-    void setActivity(MainActivity activity);
-    void clearActivity();
+    // после перехода на котлин всех классов, использующих этот метод можно будет убрать верхние
+    // дефолт-методы
+    fun showToast(
+        toastText: String,
+        longLength: Boolean = false,
+        showAtCenter: Boolean = false
+    )
 
-    default void showToast(String toastText) {
-        showToast(toastText, false);
-    }
-
-    default void showToast(String toastText, boolean longLength) {
-        showToast(toastText, longLength, false);
-    }
-
-    void showToast(String toastText, boolean longLength, boolean showAtCenter);
-
-    Fragment currentFragment();
+    fun currentFragment(): Fragment?
 
     //    ACTIONS
-    void collapseBottomSlider();
-    void goToTab(int tabNumber, boolean smoothScroll);
-    void scrollOnTabTrackToCurrentTrack();
-    void goToArtistInTab(int artistId);
-    void goToAlbumInTab(int albumId);
+    fun collapseBottomSlider()
+    fun goToTab(tabNumber: Int, smoothScroll: Boolean = false)
+    fun scrollOnTabTrackToCurrentTrack()
+    fun goToArtistInTab(artistId: Int)
+    fun goToAlbumInTab(albumId: Int)
 
     //offset - от 0 до 1. при 0 - панель полностью закрыта, при 1 - панель полностью раскрыта
-    void setBottomSlidePanelOffset(@FloatRange(from = 0.0f, to = 1.0f) float offset);
-    Observable<Float> observeSlidePanelOffset();
-    void setBottomSlidePanelState(PanelState state);
-    Observable<PanelState> observeSlidePanelState();
+    fun setBottomSlidePanelOffset(@FloatRange(from = 0.0, to = 1.0) offset: Float)
+    fun observeSlidePanelOffset(): Observable<Float>
+    fun setBottomSlidePanelState(state: PanelState)
+    fun observeSlidePanelState(): Observable<PanelState>
 
-
-    <F extends Fragment> boolean hasInstanceInStack(Class<F> fragment);
-    void backToRoot();
-    boolean isRoot();
-    void goBack();
-
+    fun <F : Fragment> hasInstanceInStack(fragment: Class<F>): Boolean
+    fun backToRoot()
+    val isRoot: Boolean
+    fun goBack()
 
     //    FROM START
-    void openArtist(int artistId);
-    void openArtistFromBackStackIfAvailable(int artistId);
+    fun openArtist(artistId: Int)
+    fun openArtistFromBackStackIfAvailable(artistId: Int)
+    fun openAlbum(albumId: Int)
+    fun openAlbumFromBackStackIfAvailable(albumId: Int)
+    fun openPlaylist(playlistId: Int)
+    fun openRequestStoragePermissionScreen()
+    fun openSearchScreen()
 
-    void openAlbum(int albumId);
-    void openAlbumFromBackStackIfAvailable(int albumId);
-    void openPlaylist(int playlistId);
-    void openRequestStoragePermissionScreen();
-    void openSearchScreen();
     //    SYSTEM PLAYLISTS
-    void openRecentlyAdded();
-    void openFavourites();
-    void openFavouritesFromBackStackIfAvailable();
-    void openQueue();
-    void openQueueFromBackStackIfAvailable();
-    void openFoldersList();
+    fun openRecentlyAdded()
+    fun openFavourites()
+    fun openFavouritesFromBackStackIfAvailable()
+    fun openQueue()
+    fun openQueueFromBackStackIfAvailable()
+    fun openFoldersList()
 
     //    SETTINGS
-    void openSettings();
-    void openSettingsIfAvailable();
-    void openColorThemeSelectorSettings();
-    void openExcludedFolders();
-    void openTrackItemDisplaySettings();
-    void openAlbumItemDisplaySettings();
-    void openArtistItemDisplaySettings();
-
+    fun openSettings()
+    fun openSettingsIfAvailable()
+    fun openColorThemeSelectorSettings()
+    fun openExcludedFolders()
+    fun openTrackItemDisplaySettings()
+    fun openAlbumItemDisplaySettings()
+    fun openArtistItemDisplaySettings()
 
     //    FROM FOLDERS LIST
-    void openFolder(String folderPath);
+    fun openFolder(folderPath: String)
 
     //    FROM ARTIST
-    void openArtistTracks(int artistId);
+    fun openArtistTracks(artistId: Int)
 
     //    DIALOGUES
-    void openCreatePlaylistDialog();
-    void openRenamePlaylistDialog(int playlistId);
-    void openStartSleepTimerDialog();
-    void openSleepTimerInfoDialog();
-    void openAddToPlaylistDialog(int... trackIds);
-    void openSortingDialog(String sortingListType);
-    void openTrackAdditionInfo(int trackId);
-    void openAudioEffectsDialog();
-    void openEqPresetsSelectorDialog();
-    void openNewtoneDialog();
-    void openDeleteTrackDialog(int trackId);
+    fun openCreatePlaylistDialog()
+    fun openRenamePlaylistDialog(playlistId: Int)
+    fun openStartSleepTimerDialog()
+    fun openSleepTimerInfoDialog()
+    fun openAddToPlaylistDialog(vararg trackIds: Int)
+    fun openSortingDialog(sortingListType: String)
+    fun openTrackAdditionInfo(trackId: Int)
+    fun openAudioEffectsDialog()
+    fun openEqPresetsSelectorDialog()
+    fun openNewtoneDialog()
+    fun openDeleteTrackDialog(trackId: Int)
 
     //    COMMUNICATION WITH OTHER APPS
-    void openLyricsSearch(Track track);
-    void openContactDevelopersViaEmail();
-    void openPrivacyPolicyWebPage();
-    void openShareTrack(String filePath);
-
+    fun openLyricsSearch(track: Track)
+    fun openContactDevelopersViaEmail()
+    fun openPrivacyPolicyWebPage()
+    fun openShareTrack(filePath: String)
 }
