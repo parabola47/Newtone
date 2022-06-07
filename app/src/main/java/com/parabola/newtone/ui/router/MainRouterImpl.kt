@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.parabola.domain.model.Track
 import com.parabola.newtone.BuildConfig
@@ -118,13 +119,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openArtist(artistId: Int) {
-        val artistFragment = ArtistFragment.newInstance(artistId)
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, artistFragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(artistFragment)
-            .commit()
+        openFragment(ArtistFragment.newInstance(artistId))
     }
 
     override fun openArtistFromBackStackIfAvailable(artistId: Int) {
@@ -139,13 +134,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openAlbum(albumId: Int) {
-        val fragment = AlbumFragment.newInstance(albumId)
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(AlbumFragment.newInstance(albumId))
     }
 
     override fun openAlbumFromBackStackIfAvailable(albumId: Int) {
@@ -160,13 +149,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openPlaylist(playlistId: Int) {
-        val playlistFragment = PlaylistFragment.newInstance(playlistId)
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, playlistFragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(playlistFragment)
-            .commit()
+        openFragment(PlaylistFragment.newInstance(playlistId))
     }
 
     override fun openRequestStoragePermissionScreen() {
@@ -174,22 +157,11 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openSearchScreen() {
-        val searchFragment = SearchFragment.newInstance()
-        activity!!.supportFragmentManager.beginTransaction()
-            .add(R.id.nav_host_fragment, searchFragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(searchFragment)
-            .commit()
+        openFragment(SearchFragment.newInstance(), false)
     }
 
     override fun openSettings() {
-        val fragment = SettingFragment()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(SettingFragment())
     }
 
     override fun openSettingsIfAvailable() {
@@ -204,13 +176,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openColorThemeSelectorSettings() {
-        val fragment = ColorThemeSelectorFragment()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(ColorThemeSelectorFragment())
     }
 
     override fun openExcludedFolders() {
@@ -226,63 +192,27 @@ class MainRouterImpl : MainRouter {
             }
         }
         fragmentTransaction.commit()
-        val fragment = ExcludedFoldersFragment.newInstance()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(ExcludedFoldersFragment.newInstance())
     }
 
     override fun openTrackItemDisplaySettings() {
-        val fragment = TrackItemDisplaySettingFragment.newInstance()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(TrackItemDisplaySettingFragment.newInstance())
     }
 
     override fun openAlbumItemDisplaySettings() {
-        val fragment = AlbumItemDisplaySettingFragment.newInstance()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(AlbumItemDisplaySettingFragment.newInstance())
     }
 
     override fun openArtistItemDisplaySettings() {
-        val fragment = ArtistItemDisplaySettingFragment.newInstance()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(ArtistItemDisplaySettingFragment.newInstance())
     }
 
     override fun openRecentlyAdded() {
-        val fragment = RecentlyAddedPlaylistFragment()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(RecentlyAddedPlaylistFragment())
     }
 
     override fun openFavourites() {
-        val fragment = FavoritesPlaylistFragment()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(FavoritesPlaylistFragment())
     }
 
     override fun openFavouritesFromBackStackIfAvailable() {
@@ -297,13 +227,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openQueue() {
-        val fragment = QueueFragment()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(QueueFragment())
     }
 
     override fun openQueueFromBackStackIfAvailable() {
@@ -318,13 +242,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openFoldersList() {
-        val fragment = FoldersListFragment()
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(FoldersListFragment())
     }
 
     override fun openFolder(folderPath: String) {
@@ -332,12 +250,7 @@ class MainRouterImpl : MainRouter {
         args.putString("folderPath", folderPath)
         val fragment = FolderFragment()
         fragment.arguments = args
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(fragment)
     }
 
     override fun openArtistTracks(artistId: Int) {
@@ -345,70 +258,54 @@ class MainRouterImpl : MainRouter {
         args.putInt("artistId", artistId)
         val fragment = ArtistTracksFragment()
         fragment.arguments = args
-        activity!!.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.anim_in, R.anim.anim_out, R.anim.anim_in, R.anim.anim_out)
-            .add(R.id.nav_host_fragment, fragment)
-            .addToBackStack(null)
-            .setPrimaryNavigationFragment(fragment)
-            .commit()
+        openFragment(fragment)
     }
 
     override fun openCreatePlaylistDialog() {
-        val dialogFragment = CreatePlaylistDialog.newInstance()
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(CreatePlaylistDialog.newInstance())
     }
 
     override fun openRenamePlaylistDialog(playlistId: Int) {
-        val dialogFragment = RenamePlaylistDialog.newInstance(playlistId)
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(RenamePlaylistDialog.newInstance(playlistId))
     }
 
     override fun openStartSleepTimerDialog() {
-        val dialogFragment = SleepTimerDialog.newInstance()
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(SleepTimerDialog.newInstance())
     }
 
     override fun openSleepTimerInfoDialog() {
-        val dialogFragment = TimeToSleepInfoDialog.newInstance()
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(TimeToSleepInfoDialog.newInstance())
     }
 
     override fun openAddToPlaylistDialog(vararg trackIds: Int) {
-        val dialogFragment = ChoosePlaylistDialog.newInstance(*trackIds)
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(ChoosePlaylistDialog.newInstance(*trackIds))
     }
 
     override fun openSortingDialog(sortingListType: String) {
-        val dialogFragment = SortingDialog.newInstance(sortingListType)
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(SortingDialog.newInstance(sortingListType))
     }
 
     override fun openTrackAdditionInfo(trackId: Int) {
-        val dialogFragment = TrackAdditionalInfoDialog.newInstance(trackId)
-        dialogFragment.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(TrackAdditionalInfoDialog.newInstance(trackId))
     }
 
     override fun openAudioEffectsDialog() {
-        val dialog = AudioEffectsDialog()
-        dialog.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(AudioEffectsDialog())
     }
 
     override fun openEqPresetsSelectorDialog() {
-        val dialog = EqPresetsSelectorDialog()
-        dialog.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(EqPresetsSelectorDialog())
     }
 
     override fun openNewtoneDialog() {
-        val dialog = IsaacNewtoneDialog()
-        dialog.show(activity!!.supportFragmentManager, null)
+        showDialogFragment(IsaacNewtoneDialog())
     }
 
     override fun openDeleteTrackDialog(trackId: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity!!.showRequestForDeletingTrack(trackId)
         } else {
-            val dialog = DeleteTrackDialog.newInstance(trackId)
-            dialog.show(activity!!.supportFragmentManager, null)
+            showDialogFragment(DeleteTrackDialog.newInstance(trackId))
         }
     }
 
@@ -416,23 +313,31 @@ class MainRouterImpl : MainRouter {
         val searchQuery = String.format("%s %s lyrics", track.artistName, track.title)
         val intent = Intent(Intent.ACTION_WEB_SEARCH)
             .putExtra(SearchManager.QUERY, searchQuery)
-        activity!!.startActivity(intent)
+        startActivity(intent)
     }
 
     override fun openContactDevelopersViaEmail() {
-        val sendMailIntent = Intent(Intent.ACTION_SENDTO)
-        sendMailIntent.data = Uri.parse("mailto:") // only email apps should handle this
-        sendMailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("zizik.zizik@gmail.com"))
-        sendMailIntent.putExtra(Intent.EXTRA_SUBJECT, "Newtone. Android")
-        val intentTitle = activity!!.getString(R.string.setting_contact_developers_intent_title)
-        activity!!.startActivity(Intent.createChooser(sendMailIntent, intentTitle))
+        val sendMailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:") // only email apps should handle this
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("zizik.zizik@gmail.com"))
+            putExtra(Intent.EXTRA_SUBJECT, "Newtone. Android")
+        }
+        Intent.createChooser(
+            sendMailIntent,
+            activity!!.getString(R.string.setting_contact_developers_intent_title)
+        )
+
+        activity?.apply {
+            val intentTitle = getString(R.string.setting_contact_developers_intent_title)
+            startActivity(Intent.createChooser(sendMailIntent, intentTitle))
+        }
     }
 
     override fun openPrivacyPolicyWebPage() {
         val url = "https://github.com/parabola47/privacy_policy/blob/master/newtone_pp.md"
-        val i = Intent(Intent.ACTION_VIEW)
+        val intent = Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse(url))
-        activity?.startActivity(i)
+        startActivity(intent)
     }
 
     override fun openShareTrack(filePath: String) {
@@ -444,12 +349,36 @@ class MainRouterImpl : MainRouter {
         val share = Intent(Intent.ACTION_SEND)
             .putExtra(Intent.EXTRA_STREAM, uri)
             .setType("audio/*")
-        activity!!.startActivity(
-            Intent.createChooser(
-                share,
-                activity!!.getString(R.string.track_menu_share_track_intent_title)
-            )
+        val intent = Intent.createChooser(
+            share,
+            activity!!.getString(R.string.track_menu_share_track_intent_title)
         )
+        startActivity(intent)
+    }
+
+    private fun startActivity(intent: Intent) {
+        activity?.startActivity(intent)
+    }
+
+    private fun openFragment(fragment: Fragment, withAnimation: Boolean = true) {
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            if (withAnimation) {
+                setCustomAnimations(
+                    R.anim.anim_in,
+                    R.anim.anim_out,
+                    R.anim.anim_in,
+                    R.anim.anim_out,
+                )
+            }
+            add(R.id.nav_host_fragment, fragment)
+            addToBackStack(null)
+            setPrimaryNavigationFragment(fragment)
+            commit()
+        }
+    }
+
+    private fun showDialogFragment(dialog: DialogFragment) {
+        activity?.supportFragmentManager?.let { dialog.show(it, null) }
     }
 
     private val slidePanelOffsetUpdates = BehaviorSubject.createDefault(0f)
