@@ -1,189 +1,177 @@
-package com.parabola.newtone.ui.fragment.start;
+package com.parabola.newtone.ui.fragment.start
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.DialogInterface
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.domain.model.Playlist
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.ListPopupWindowAdapter
+import com.parabola.newtone.adapter.PlaylistAdapter
+import com.parabola.newtone.databinding.FragmentTabPlaylistBinding
+import com.parabola.newtone.databinding.ItemSystemPlaylistBinding
+import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter
+import com.parabola.newtone.mvp.view.TabPlaylistView
+import com.parabola.newtone.ui.base.BaseDialogFragment
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
+import com.parabola.newtone.ui.fragment.Scrollable
+import com.parabola.newtone.ui.fragment.start.TabPlaylistFragment.SystemPlaylistAdapter.SystemPlaylistViewHolder
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
+class TabPlaylistFragment : MvpAppCompatFragment(),
+    TabPlaylistView, Scrollable {
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.model.Playlist;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.ListPopupWindowAdapter;
-import com.parabola.newtone.adapter.PlaylistAdapter;
-import com.parabola.newtone.databinding.FragmentTabPlaylistBinding;
-import com.parabola.newtone.databinding.ItemSystemPlaylistBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
-import com.parabola.newtone.mvp.view.TabPlaylistView;
-import com.parabola.newtone.ui.base.BaseDialogFragment;
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
-import com.parabola.newtone.ui.fragment.Scrollable;
+    @InjectPresenter
+    lateinit var presenter: TabPlaylistPresenter
 
-import java.util.List;
+    private var _binding: FragmentTabPlaylistBinding? = null
+    private val binding get() = _binding!!
 
-import moxy.MvpAppCompatFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
+    private val playlistAdapter = PlaylistAdapter()
+    private val sysPlaylistAdapter = SystemPlaylistAdapter()
 
-public final class TabPlaylistFragment extends MvpAppCompatFragment
-        implements TabPlaylistView, Scrollable {
-    private static final String LOG_TAG = TabPlaylistFragment.class.getSimpleName();
+    private var itemDecoration: DividerItemDecoration? = null
 
-    private FragmentTabPlaylistBinding binding;
 
-    private DividerItemDecoration itemDecoration;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTabPlaylistBinding.inflate(inflater, container, false)
 
-    private final PlaylistAdapter playlistAdapter = new PlaylistAdapter();
-    private final SystemPlaylistAdapter sysPlaylistAdapter = new SystemPlaylistAdapter();
+        binding.playlists.adapter = playlistAdapter
+        binding.sysPlaylists.adapter = sysPlaylistAdapter
+        itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
 
-    @InjectPresenter TabPlaylistPresenter presenter;
+        playlistAdapter.setOnItemClickListener { position: Int ->
+            presenter.onClickPlaylistItem(playlistAdapter[position].id)
+        }
+        playlistAdapter.setOnItemLongClickListener { position: Int ->
+            showPlaylistContextMenu(position)
+        }
 
-    public TabPlaylistFragment() {
-        // Required empty public constructor
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentTabPlaylistBinding.inflate(inflater, container, false);
+    private fun showPlaylistContextMenu(position: Int) {
+        val playlist = playlistAdapter[position]
+        val menuAdapter = ListPopupWindowAdapter(requireContext(), R.menu.playlist_menu)
 
-
-        binding.playlists.setAdapter(playlistAdapter);
-        binding.sysPlaylists.setAdapter(sysPlaylistAdapter);
-        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-
-        playlistAdapter.setOnItemClickListener(position -> presenter.onClickPlaylistItem(playlistAdapter.get(position).getId()));
-        playlistAdapter.setOnItemLongClickListener(this::showPlaylistContextMenu);
-
-        return binding.getRoot();
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(playlist.title)
+            .setAdapter(menuAdapter) { _: DialogInterface?, which: Int ->
+                handleSelectedMenu(menuAdapter.getItem(which), playlist.id)
+            }
+            .create()
+        dialog.setOnShowListener { playlistAdapter.setContextSelected(position) }
+        dialog.setOnDismissListener { d: DialogInterface? -> playlistAdapter.clearContextSelected() }
+        lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
+        dialog.show()
     }
 
-
-    private void showPlaylistContextMenu(int position) {
-        Playlist playlist = playlistAdapter.get(position);
-        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.playlist_menu);
-
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(playlist.getTitle())
-                .setAdapter(menuAdapter, (d, which) ->
-                        handleSelectedMenu(menuAdapter.getItem(which), playlist.getId()))
-                .create();
-        dialog.setOnShowListener(d -> playlistAdapter.setContextSelected(position));
-        dialog.setOnDismissListener(d -> playlistAdapter.clearContextSelected());
-        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
-        dialog.show();
-    }
-
-    private void handleSelectedMenu(MenuItem menuItem, int selectedPlaylistId) {
-        switch (menuItem.getItemId()) {
-            case R.id.rename:
-                presenter.onClickMenuRename(selectedPlaylistId);
-                break;
-            case R.id.shuffle:
-                presenter.onClickMenuShuffle(selectedPlaylistId);
-                break;
-            case R.id.delete:
-                AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.delete_playlist_title)
-                        .setMessage(R.string.delete_playlist_desc)
-                        .setPositiveButton(R.string.dialog_delete, (d, w) -> presenter.onClickMenuDelete(selectedPlaylistId))
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .create();
-
-                DialogFragment dialogFragment = BaseDialogFragment.build(dialog);
-                dialogFragment.show(requireActivity().getSupportFragmentManager(), null);
-                break;
+    private fun handleSelectedMenu(menuItem: MenuItem, selectedPlaylistId: Int) {
+        when (menuItem.itemId) {
+            R.id.rename -> presenter.onClickMenuRename(selectedPlaylistId)
+            R.id.shuffle -> presenter.onClickMenuShuffle(selectedPlaylistId)
+            R.id.delete -> {
+                val dialog = MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.delete_playlist_title)
+                    .setMessage(R.string.delete_playlist_desc)
+                    .setPositiveButton(R.string.dialog_delete) { _: DialogInterface?, _: Int ->
+                        presenter.onClickMenuDelete(selectedPlaylistId)
+                    }
+                    .setNegativeButton(R.string.dialog_cancel, null)
+                    .create()
+                val dialogFragment: DialogFragment = BaseDialogFragment.build(dialog)
+                dialogFragment.show(requireActivity().supportFragmentManager, null)
+            }
         }
     }
 
     @ProvidePresenter
-    public TabPlaylistPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        return new TabPlaylistPresenter(appComponent);
+    fun providePresenter(): TabPlaylistPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return TabPlaylistPresenter(appComponent)
     }
 
-
-    @Override
-    public void refreshPlaylists(List<Playlist> playlists) {
-        playlistAdapter.replaceAll(playlists);
-        binding.myPlaylistsTxt.setVisibility(playlists.isEmpty() ? View.GONE : View.VISIBLE);
+    override fun refreshPlaylists(playlists: List<Playlist>) {
+        playlistAdapter.replaceAll(playlists)
+        binding.myPlaylistsTxt.visibility = if (playlists.isEmpty()) View.GONE else View.VISIBLE
     }
 
-    @Override
-    public void setItemDividerShowing(boolean showed) {
-        binding.sysPlaylists.removeItemDecoration(itemDecoration);
-        binding.playlists.removeItemDecoration(itemDecoration);
+    override fun setItemDividerShowing(showed: Boolean) {
+        binding.sysPlaylists.removeItemDecoration(itemDecoration!!)
+        binding.playlists.removeItemDecoration(itemDecoration!!)
 
         if (showed) {
-            binding.sysPlaylists.addItemDecoration(itemDecoration);
-            binding.playlists.addItemDecoration(itemDecoration);
+            binding.sysPlaylists.addItemDecoration(itemDecoration!!)
+            binding.playlists.addItemDecoration(itemDecoration!!)
         }
     }
 
-
-    @Override
-    public void smoothScrollToTop() {
-        ((NestedScrollView) requireView()).smoothScrollTo(0, 0);
+    override fun smoothScrollToTop() {
+        (requireView() as NestedScrollView).smoothScrollTo(0, 0)
     }
 
-    public class SystemPlaylistAdapter extends RecyclerView.Adapter<SystemPlaylistAdapter.SystemPlaylistViewHolder> {
-        @NonNull
-        @Override
-        public SystemPlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ItemSystemPlaylistBinding binding = ItemSystemPlaylistBinding
-                    .inflate(LayoutInflater.from(parent.getContext()), parent, false);
-            return new SystemPlaylistViewHolder(binding);
+    inner class SystemPlaylistAdapter : RecyclerView.Adapter<SystemPlaylistViewHolder>() {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): SystemPlaylistViewHolder {
+            val binding = ItemSystemPlaylistBinding
+                .inflate(LayoutInflater.from(parent.context), parent, false)
+            return SystemPlaylistViewHolder(binding)
         }
 
-        @Override
-        public void onBindViewHolder(@NonNull SystemPlaylistViewHolder holder, int position) {
-            switch (holder.getAdapterPosition()) {
-                case 0:
-                    holder.binding.icon.setImageResource(R.drawable.ic_favourite_white);
-                    holder.binding.title.setText(R.string.playlist_favourites);
-                    holder.binding.getRoot().setOnClickListener(v -> presenter.onClickFavourites());
-                    break;
-                case 1:
-                    holder.binding.icon.setImageResource(R.drawable.ic_recent_add);
-                    holder.binding.title.setText(R.string.playlist_recently_added);
-                    holder.binding.getRoot().setOnClickListener(v -> presenter.onClickRecentlyAdded());
-                    break;
-                case 2:
-                    holder.binding.icon.setImageResource(R.drawable.ic_queue);
-                    holder.binding.title.setText(R.string.playlist_queue);
-                    holder.binding.getRoot().setOnClickListener(v -> presenter.onClickQueue());
-                    break;
-                case 3:
-                    holder.binding.icon.setImageResource(R.drawable.ic_folder);
-                    holder.binding.title.setText(R.string.playlist_folders);
-                    holder.binding.getRoot().setOnClickListener(v -> presenter.onClickFolders());
-                    break;
-                default:
+        override fun onBindViewHolder(holder: SystemPlaylistViewHolder, position: Int) {
+            when (holder.adapterPosition) {
+                0 -> {
+                    holder.binding.icon.setImageResource(R.drawable.ic_favourite_white)
+                    holder.binding.title.setText(R.string.playlist_favourites)
+                    holder.binding.root.setOnClickListener { presenter.onClickFavourites() }
+                }
+                1 -> {
+                    holder.binding.icon.setImageResource(R.drawable.ic_recent_add)
+                    holder.binding.title.setText(R.string.playlist_recently_added)
+                    holder.binding.root.setOnClickListener { presenter.onClickRecentlyAdded() }
+                }
+                2 -> {
+                    holder.binding.icon.setImageResource(R.drawable.ic_queue)
+                    holder.binding.title.setText(R.string.playlist_queue)
+                    holder.binding.root.setOnClickListener { presenter.onClickQueue() }
+                }
+                3 -> {
+                    holder.binding.icon.setImageResource(R.drawable.ic_folder)
+                    holder.binding.title.setText(R.string.playlist_folders)
+                    holder.binding.root.setOnClickListener { presenter.onClickFolders() }
+                }
+                else -> {}
             }
         }
 
-        @Override
-        public int getItemCount() {
-            return 4;
+        override fun getItemCount(): Int {
+            return 4
         }
 
-        class SystemPlaylistViewHolder extends RecyclerView.ViewHolder {
-            private final ItemSystemPlaylistBinding binding;
-
-            SystemPlaylistViewHolder(ItemSystemPlaylistBinding binding) {
-                super(binding.getRoot());
-                this.binding = binding;
-            }
-        }
+        inner class SystemPlaylistViewHolder(val binding: ItemSystemPlaylistBinding) :
+            RecyclerView.ViewHolder(binding.root)
     }
+
 }
