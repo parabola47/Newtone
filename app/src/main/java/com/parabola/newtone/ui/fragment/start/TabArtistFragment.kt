@@ -39,7 +39,8 @@ class TabArtistFragment : MvpAppCompatFragment(),
     private lateinit var itemDecoration: DividerItemDecoration
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTabArtistBinding.inflate(inflater, container, false)
