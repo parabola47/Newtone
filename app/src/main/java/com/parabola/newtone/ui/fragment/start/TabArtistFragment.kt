@@ -66,11 +66,8 @@ class TabArtistFragment : MvpAppCompatFragment(),
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(selectedArtist.name)
-            .setAdapter(menuAdapter) { _: DialogInterface?, which: Int ->
-                handleSelectedMenu(
-                    menuAdapter.getItem(which),
-                    selectedArtist
-                )
+            .setAdapter(menuAdapter) { _: DialogInterface, which: Int ->
+                handleSelectedMenu(menuAdapter.getItem(which), selectedArtist)
             }
             .create()
         dialog.setOnShowListener { artistsAdapter.setContextSelected(position) }
@@ -118,9 +115,7 @@ class TabArtistFragment : MvpAppCompatFragment(),
         artistsAdapter.setSectionEnabled(enable)
     }
 
-    override fun getListType(): String {
-        return SortingDialog.ALL_ARTISTS_SORTING
-    }
+    override fun getListType(): String = SortingDialog.ALL_ARTISTS_SORTING
 
     override fun smoothScrollToTop() {
         val layoutManager = binding.artistsList.layoutManager as LinearLayoutManager
