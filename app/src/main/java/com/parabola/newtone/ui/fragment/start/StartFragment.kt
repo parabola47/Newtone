@@ -34,11 +34,16 @@ import moxy.presenter.ProvidePresenter
 class StartFragment : MvpAppCompatFragment(), StartView {
 
     @InjectPresenter
-    private lateinit var presenter: StartPresenter
+    lateinit var presenter: StartPresenter
 
-    private lateinit var binding: FragmentStartBinding
+    private var _binding: FragmentStartBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var fragmentPagerAdapter: StartFragmentPagerAdapter
+
+    private var selectedTabIconTint = 0
+    private var defaultTabIconTint = 0
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,7 +56,7 @@ class StartFragment : MvpAppCompatFragment(), StartView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStartBinding.inflate(inflater, container, false)
+        _binding = FragmentStartBinding.inflate(inflater, container, false)
 
         fragmentPagerAdapter = StartFragmentPagerAdapter(requireContext(), childFragmentManager)
         binding.fragmentPager.adapter = fragmentPagerAdapter
@@ -69,14 +74,18 @@ class StartFragment : MvpAppCompatFragment(), StartView {
             }
             fragmentPagerAdapter.initTabsFragments(tabFragments)
         }
+
+        binding.requestPermissionPanel.requestPermissionBtn
+            .setOnClickListener { presenter.onClickRequestPermission() }
+
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        binding.requestPermissionPanel.requestPermissionBtn
-            .setOnClickListener { presenter.onClickRequestPermission() }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
+
 
     override fun setPermissionPanelVisibility(visible: Boolean) {
         binding.requestPermissionPanel.root.visibility = if (visible) View.VISIBLE else View.GONE
@@ -90,9 +99,6 @@ class StartFragment : MvpAppCompatFragment(), StartView {
         val tabTrackFragment = fragmentPagerAdapter.getItem(2) as TabTrackFragment
         tabTrackFragment.scrollToCurrentTrack()
     }
-
-    private var selectedTabIconTint = 0
-    private var defaultTabIconTint = 0
 
     private fun setupTabLayout() {
         binding.tabLayout.setupWithViewPager(binding.fragmentPager)
