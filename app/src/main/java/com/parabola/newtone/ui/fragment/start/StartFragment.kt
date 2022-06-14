@@ -60,8 +60,6 @@ class StartFragment : MvpAppCompatFragment(), StartView {
 
         fragmentPagerAdapter = StartFragmentPagerAdapter(requireContext(), childFragmentManager)
         binding.fragmentPager.adapter = fragmentPagerAdapter
-        setupTabLayout()
-        binding.fragmentPager.offscreenPageLimit = binding.tabLayout.tabCount
 
         //берём старые фрагменты, если экран не создаётся с нуля
         if (savedInstanceState != null) {
@@ -75,10 +73,17 @@ class StartFragment : MvpAppCompatFragment(), StartView {
             fragmentPagerAdapter.initTabsFragments(tabFragments)
         }
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupTabLayout()
+        binding.fragmentPager.offscreenPageLimit = binding.tabLayout.tabCount
+
         binding.requestPermissionPanel.requestPermissionBtn
             .setOnClickListener { presenter.onClickRequestPermission() }
-
-        return binding.root
     }
 
     override fun onDestroyView() {
