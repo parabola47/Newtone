@@ -1,74 +1,58 @@
-package com.parabola.newtone.di.app;
+package com.parabola.newtone.di.app
 
-import android.content.Intent;
-
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.di.app.modules.AndroidAppModule;
-import com.parabola.newtone.di.app.modules.ConfigModule;
-import com.parabola.newtone.di.app.modules.DataModule;
-import com.parabola.newtone.di.app.modules.IntentModule;
-import com.parabola.newtone.di.app.modules.InteractorModule;
-import com.parabola.newtone.di.app.modules.NavigationModule;
-import com.parabola.sleep_timer_feature.SleepTimerInteractor;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import dagger.Component;
-
-import static com.parabola.newtone.di.app.modules.IntentModule.GO_NEXT_TRACK_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.GO_PREVIOUS_TRACK_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.OPEN_ACTIVITY_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.TOGGLE_PLAYER_STATE_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.TOGGLE_REPEAT_MODE_INTENT;
-import static com.parabola.newtone.di.app.modules.IntentModule.TOGGLE_SHUFFLE_MODE_INTENT;
+import android.content.Intent
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.di.app.modules.*
+import com.parabola.sleep_timer_feature.SleepTimerInteractor
+import dagger.Component
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Singleton
-@Component(modules = {
-        AndroidAppModule.class,
-        IntentModule.class,
-        InteractorModule.class,
-        DataModule.class,
-        NavigationModule.class,
-        ConfigModule.class}
+@Component(
+    modules = [
+        AndroidAppModule::class,
+        IntentModule::class,
+        InteractorModule::class,
+        DataModule::class,
+        NavigationModule::class,
+        ConfigModule::class,
+    ]
 )
-public interface AppComponent extends AppComponentInjects {
+interface AppComponent : AppComponentInjects {
 
-    final class Initializer {
-
-        private Initializer() {
-        } // No instances.
-
-        public static AppComponent init(MainApplication app) {
+    object Initializer {
+        fun init(app: MainApplication): AppComponent {
             return DaggerAppComponent.builder()
-                    .androidAppModule(new AndroidAppModule(app))
-                    .build();
+                .androidAppModule(AndroidAppModule(app))
+                .build()
         }
     }
 
-    PlayerInteractor providePlayerInteractor();
-    SleepTimerInteractor provideSleepTimerInteractor();
-    TrackRepository provideTrackRepo();
-    ViewSettingsInteractor provideViewSettingsInteractor();
+    fun providePlayerInteractor(): PlayerInteractor
+    fun provideSleepTimerInteractor(): SleepTimerInteractor
+    fun provideTrackRepo(): TrackRepository
+    fun provideViewSettingsInteractor(): ViewSettingsInteractor
 
+    @Named(IntentModule.TOGGLE_PLAYER_STATE_INTENT)
+    fun provideTogglePlayerIntent(): Intent
 
-    @Named(TOGGLE_PLAYER_STATE_INTENT)
-    Intent provideTogglePlayerIntent();
+    @Named(IntentModule.GO_NEXT_TRACK_INTENT)
+    fun provideGoNextIntent(): Intent
 
-    @Named(GO_NEXT_TRACK_INTENT)
-    Intent provideGoNextIntent();
-    @Named(GO_PREVIOUS_TRACK_INTENT)
-    Intent provideGoPreviousIntent();
+    @Named(IntentModule.GO_PREVIOUS_TRACK_INTENT)
+    fun provideGoPreviousIntent(): Intent
 
-    @Named(TOGGLE_REPEAT_MODE_INTENT)
-    Intent provideToggleRepeatModeIntent();
-    @Named(TOGGLE_SHUFFLE_MODE_INTENT)
-    Intent provideToggleShuffleModeIntent();
+    @Named(IntentModule.TOGGLE_REPEAT_MODE_INTENT)
+    fun provideToggleRepeatModeIntent(): Intent
 
-    @Named(OPEN_ACTIVITY_INTENT)
-    Intent provideOpenActivityIntent();
+    @Named(IntentModule.TOGGLE_SHUFFLE_MODE_INTENT)
+    fun provideToggleShuffleModeIntent(): Intent
+
+    @Named(IntentModule.OPEN_ACTIVITY_INTENT)
+    fun provideOpenActivityIntent(): Intent
 
 }

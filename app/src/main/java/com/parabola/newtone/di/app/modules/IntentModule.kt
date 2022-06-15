@@ -1,80 +1,69 @@
-package com.parabola.newtone.di.app.modules;
+package com.parabola.newtone.di.app.modules
 
-import android.content.Context;
-import android.content.Intent;
-
-import com.parabola.newtone.ui.activity.MainActivity;
-import com.parabola.player_feature.PlayerService;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
+import android.content.Context
+import android.content.Intent
+import com.parabola.newtone.ui.activity.MainActivity
+import com.parabola.player_feature.PlayerService
+import dagger.Module
+import dagger.Provides
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
-public final class IntentModule {
-
-    public static final String OPEN_ACTIVITY_INTENT = "OPEN_ACTIVITY_INTENT";
-
-    public static final String PAUSE_PLAYER_INTENT = "PAUSE_PLAYER_INTENT";
-    public static final String RESUME_PLAYER_INTENT = "RESUME_PLAYER_INTENT";
-    public static final String TOGGLE_PLAYER_STATE_INTENT = "TOGGLE_PLAYER_STATE_INTENT";
-
-    public static final String GO_NEXT_TRACK_INTENT = "GO_NEXT_TRACK_INTENT";
-    public static final String GO_PREVIOUS_TRACK_INTENT = "GO_PREVIOUS_TRACK_INTENT";
-
-    public static final String TOGGLE_REPEAT_MODE_INTENT = "TOGGLE_REPEAT_MODE_INTENT";
-    public static final String TOGGLE_SHUFFLE_MODE_INTENT = "TOGGLE_SHUFFLE_MODE_INTENT";
-
+class IntentModule {
 
     @Singleton
     @Provides
     @Named(OPEN_ACTIVITY_INTENT)
-    Intent provideOpenActivityIntent(Context newtoneApp) {
-        return new Intent(newtoneApp, MainActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    }
+    fun provideOpenActivityIntent(newtoneApp: Context): Intent =
+        Intent(newtoneApp, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
     @Singleton
     @Provides
     @Named(TOGGLE_PLAYER_STATE_INTENT)
-    Intent provideTogglePlayerStateIntent(Context newtoneApp) {
-        return new Intent(newtoneApp, PlayerService.class)
-                .setAction(PlayerService.ACTION_TOGGLE_PLAYING);
-    }
+    fun provideTogglePlayerStateIntent(newtoneApp: Context): Intent =
+        Intent(newtoneApp, PlayerService::class.java)
+            .setAction(PlayerService.ACTION_TOGGLE_PLAYING)
 
     @Singleton
     @Provides
     @Named(GO_NEXT_TRACK_INTENT)
-    Intent provideGoNextIntent(Context newtoneApp) {
-        return new Intent(newtoneApp, PlayerService.class)
-                .setAction(PlayerService.ACTION_NEXT);
-    }
+    fun provideGoNextIntent(newtoneApp: Context): Intent =
+        Intent(newtoneApp, PlayerService::class.java)
+            .setAction(PlayerService.ACTION_NEXT)
 
     @Singleton
     @Provides
     @Named(GO_PREVIOUS_TRACK_INTENT)
-    Intent provideGoPreviousIntent(Context newtoneApp) {
-        return new Intent(newtoneApp, PlayerService.class)
-                .setAction(PlayerService.ACTION_PREVIOUS);
-    }
+    fun provideGoPreviousIntent(newtoneApp: Context): Intent =
+        Intent(newtoneApp, PlayerService::class.java)
+            .setAction(PlayerService.ACTION_PREVIOUS)
 
     @Singleton
     @Provides
     @Named(TOGGLE_REPEAT_MODE_INTENT)
-    Intent provideToggleRepeatModeIntent(Context newtoneApp) {
-        return new Intent(newtoneApp, PlayerService.class)
-                .setAction(PlayerService.ACTION_TOGGLE_REPEAT_MODE);
-    }
+    fun provideToggleRepeatModeIntent(newtoneApp: Context): Intent =
+        Intent(newtoneApp, PlayerService::class.java)
+            .setAction(PlayerService.ACTION_TOGGLE_REPEAT_MODE)
 
     @Singleton
     @Provides
     @Named(TOGGLE_SHUFFLE_MODE_INTENT)
-    Intent provideToggleShuffleModeIntent(Context newtoneApp) {
-        return new Intent(newtoneApp, PlayerService.class)
-                .setAction(PlayerService.ACTION_TOGGLE_SHUFFLE_MODE);
-    }
+    fun provideToggleShuffleModeIntent(newtoneApp: Context): Intent =
+        Intent(newtoneApp, PlayerService::class.java)
+            .setAction(PlayerService.ACTION_TOGGLE_SHUFFLE_MODE)
 
+    companion object {
+        const val OPEN_ACTIVITY_INTENT = "OPEN_ACTIVITY_INTENT"
+
+        const val TOGGLE_PLAYER_STATE_INTENT = "TOGGLE_PLAYER_STATE_INTENT"
+
+        const val GO_NEXT_TRACK_INTENT = "GO_NEXT_TRACK_INTENT"
+        const val GO_PREVIOUS_TRACK_INTENT = "GO_PREVIOUS_TRACK_INTENT"
+
+        const val TOGGLE_REPEAT_MODE_INTENT = "TOGGLE_REPEAT_MODE_INTENT"
+        const val TOGGLE_SHUFFLE_MODE_INTENT = "TOGGLE_SHUFFLE_MODE_INTENT"
+    }
 }

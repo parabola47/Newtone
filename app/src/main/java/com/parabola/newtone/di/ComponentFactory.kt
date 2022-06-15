@@ -1,14 +1,12 @@
-package com.parabola.newtone.di;
+package com.parabola.newtone.di
 
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.di.app.AppComponent;
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.di.app.AppComponent
 
-public final class ComponentFactory {
-
-    private ComponentFactory() {
-    }
-
-    public static AppComponent createApplicationComponent(final MainApplication app) {
-        return AppComponent.Initializer.init(app);
+object ComponentFactory {
+    // TODO убрать аннотацию после того как MainApplication будет переведён на котлин
+    @JvmStatic
+    fun createApplicationComponent(app: MainApplication): AppComponent {
+        return AppComponent.Initializer.init(app)
     }
 }

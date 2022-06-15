@@ -1,81 +1,67 @@
-package com.parabola.newtone.di.app.modules;
+package com.parabola.newtone.di.app.modules
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import com.parabola.data.repository.AlbumRepositoryImpl;
-import com.parabola.data.repository.ArtistRepositoryImpl;
-import com.parabola.data.repository.DataExtractor;
-import com.parabola.data.repository.ExcludedFolderRepositoryImpl;
-import com.parabola.data.repository.FolderRepositoryImpl;
-import com.parabola.data.repository.PlaylistRepositoryImpl;
-import com.parabola.data.repository.TrackRepositoryImpl;
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.AlbumRepository;
-import com.parabola.domain.repository.ArtistRepository;
-import com.parabola.domain.repository.ExcludedFolderRepository;
-import com.parabola.domain.repository.FolderRepository;
-import com.parabola.domain.repository.PermissionHandler;
-import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.TrackRepository;
-
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
+import android.content.ContentResolver
+import android.content.Context
+import android.content.SharedPreferences
+import com.parabola.data.repository.*
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.repository.*
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-public final class DataModule {
+class DataModule {
 
     @Singleton
     @Provides
-    DataExtractor provideDataExtractor(ExcludedFolderRepository excludedFolderRepo,
-                                       SchedulerProvider schedulers,
-                                       PermissionHandler permissionHandler,
-                                       ContentResolver contentResolver,
-                                       SharedPreferences preferences) {
-        return new DataExtractor(excludedFolderRepo, schedulers, permissionHandler, contentResolver, preferences);
-    }
+    fun provideDataExtractor(
+        excludedFolderRepo: ExcludedFolderRepository,
+        schedulers: SchedulerProvider,
+        permissionHandler: PermissionHandler,
+        contentResolver: ContentResolver,
+        preferences: SharedPreferences,
+    ): DataExtractor = DataExtractor(
+        excludedFolderRepo,
+        schedulers,
+        permissionHandler,
+        contentResolver,
+        preferences
+    )
 
     @Singleton
     @Provides
-    TrackRepository provideTrackRepository(Context context,
-                                           PlaylistRepository playlistRepo, DataExtractor dataExtractor) {
-        return new TrackRepositoryImpl(context, playlistRepo, dataExtractor);
-    }
+    fun provideTrackRepository(
+        context: Context,
+        playlistRepo: PlaylistRepository,
+        dataExtractor: DataExtractor
+    ): TrackRepository = TrackRepositoryImpl(context, playlistRepo, dataExtractor)
 
     @Singleton
     @Provides
-    AlbumRepository provideAlbumRepository(DataExtractor dataExtractor) {
-        return new AlbumRepositoryImpl(dataExtractor);
-    }
+    fun provideAlbumRepository(dataExtractor: DataExtractor): AlbumRepository =
+        AlbumRepositoryImpl(dataExtractor)
 
     @Singleton
     @Provides
-    ArtistRepository provideArtistRepository(DataExtractor dataExtractor) {
-        return new ArtistRepositoryImpl(dataExtractor);
-    }
+    fun provideArtistRepository(dataExtractor: DataExtractor): ArtistRepository =
+        ArtistRepositoryImpl(dataExtractor)
 
     @Singleton
     @Provides
-    PlaylistRepository providePlaylistRepository(DataExtractor dataExtractor,
-                                                 ContentResolver contentResolver,
-                                                 PermissionHandler accessRepo) {
-        return new PlaylistRepositoryImpl(dataExtractor, contentResolver, accessRepo);
-    }
+    fun providePlaylistRepository(
+        dataExtractor: DataExtractor,
+        contentResolver: ContentResolver,
+        accessRepo: PermissionHandler,
+    ): PlaylistRepository = PlaylistRepositoryImpl(dataExtractor, contentResolver, accessRepo)
 
     @Singleton
     @Provides
-    FolderRepository provideFolderRepository(DataExtractor dataExtractor) {
-        return new FolderRepositoryImpl(dataExtractor);
-    }
-
+    fun provideFolderRepository(dataExtractor: DataExtractor): FolderRepository =
+        FolderRepositoryImpl(dataExtractor)
 
     @Singleton
     @Provides
-    ExcludedFolderRepository provideExcludedFolderRepository(SharedPreferences prefs) {
-        return new ExcludedFolderRepositoryImpl(prefs);
-    }
-
+    fun provideExcludedFolderRepository(prefs: SharedPreferences): ExcludedFolderRepository =
+        ExcludedFolderRepositoryImpl(prefs)
 }

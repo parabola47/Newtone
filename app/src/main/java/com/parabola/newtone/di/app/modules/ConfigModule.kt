@@ -1,31 +1,27 @@
-package com.parabola.newtone.di.app.modules;
+package com.parabola.newtone.di.app.modules
 
-import android.content.SharedPreferences;
-
-import com.parabola.data.repository.SortingRepositoryImpl;
-import com.parabola.data.settings.ViewSettingsInteractorImpl;
-import com.parabola.domain.repository.PermissionHandler;
-import com.parabola.domain.repository.SortingRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
+import android.content.SharedPreferences
+import com.parabola.data.repository.SortingRepositoryImpl
+import com.parabola.data.settings.ViewSettingsInteractorImpl
+import com.parabola.domain.repository.PermissionHandler
+import com.parabola.domain.repository.SortingRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-public final class ConfigModule {
+class ConfigModule {
 
     @Singleton
     @Provides
-    SortingRepository provideTrackSortingRepository(SharedPreferences preferences, PermissionHandler accessRepo) {
-        return new SortingRepositoryImpl(preferences, accessRepo);
-    }
+    fun provideTrackSortingRepository(
+        preferences: SharedPreferences,
+        accessRepo: PermissionHandler,
+    ): SortingRepository = SortingRepositoryImpl(preferences, accessRepo)
 
     @Singleton
     @Provides
-    ViewSettingsInteractor provideViewSettingsInteractor(SharedPreferences preferences) {
-        return new ViewSettingsInteractorImpl(preferences);
-    }
-
+    fun provideViewSettingsInteractor(preferences: SharedPreferences): ViewSettingsInteractor =
+        ViewSettingsInteractorImpl(preferences)
 }

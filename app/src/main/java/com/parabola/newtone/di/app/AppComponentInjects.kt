@@ -1,94 +1,61 @@
-package com.parabola.newtone.di.app;
+package com.parabola.newtone.di.app
 
-import com.parabola.newtone.mvp.presenter.AlbumPresenter;
-import com.parabola.newtone.mvp.presenter.ArtistPresenter;
-import com.parabola.newtone.mvp.presenter.ArtistTracksPresenter;
-import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.ColorThemeSelectorPresenter;
-import com.parabola.newtone.mvp.presenter.CreatePlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.FavouritesPlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.FolderPresenter;
-import com.parabola.newtone.mvp.presenter.FoldersListPresenter;
-import com.parabola.newtone.mvp.presenter.MainPresenter;
-import com.parabola.newtone.mvp.presenter.PlayerPresenter;
-import com.parabola.newtone.mvp.presenter.PlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.QueuePresenter;
-import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.RenamePlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.SearchPresenter;
-import com.parabola.newtone.mvp.presenter.SettingPresenter;
-import com.parabola.newtone.mvp.presenter.SleepTimerPresenter;
-import com.parabola.newtone.mvp.presenter.StartPresenter;
-import com.parabola.newtone.mvp.presenter.TabAlbumPresenter;
-import com.parabola.newtone.mvp.presenter.TabArtistPresenter;
-import com.parabola.newtone.mvp.presenter.TabPlaylistPresenter;
-import com.parabola.newtone.mvp.presenter.TabTrackPresenter;
-import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter;
-import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter;
-import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter;
-import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
-import com.parabola.newtone.ui.activity.MainActivity;
-import com.parabola.newtone.ui.dialog.DeleteTrackDialog;
-import com.parabola.newtone.ui.dialog.SortingDialog;
-import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog;
-import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment;
-import com.parabola.newtone.ui.fragment.settings.ArtistItemDisplaySettingFragment;
-import com.parabola.newtone.ui.fragment.settings.ExcludedFoldersFragment;
-import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment;
+import com.parabola.newtone.mvp.presenter.*
+import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter
+import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
+import com.parabola.newtone.ui.activity.MainActivity
+import com.parabola.newtone.ui.dialog.DeleteTrackDialog
+import com.parabola.newtone.ui.dialog.SortingDialog
+import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
+import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment
+import com.parabola.newtone.ui.fragment.settings.ArtistItemDisplaySettingFragment
+import com.parabola.newtone.ui.fragment.settings.ExcludedFoldersFragment
+import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment
 
-public interface AppComponentInjects {
-
-    void inject(MainActivity activity);
-
-    void inject(MainPresenter presenter);
+interface AppComponentInjects {
+    fun inject(activity: MainActivity)
+    fun inject(presenter: MainPresenter)
 
     //    FIRST SCREENS
-    void inject(StartPresenter presenter);
-    void inject(TabArtistPresenter presenter);
-    void inject(TabAlbumPresenter presenter);
-    void inject(TabTrackPresenter presenter);
-    void inject(TabPlaylistPresenter presenter);
-
-
-    void inject(ArtistPresenter presenter);
-    void inject(AlbumPresenter presenter);
-    void inject(ArtistTracksPresenter presenter);
-    void inject(PlayerPresenter presenter);
-    void inject(FolderPresenter presenter);
-    void inject(SearchPresenter presenter);
-
+    fun inject(presenter: StartPresenter)
+    fun inject(presenter: TabArtistPresenter)
+    fun inject(presenter: TabAlbumPresenter)
+    fun inject(presenter: TabTrackPresenter)
+    fun inject(presenter: TabPlaylistPresenter)
+    fun inject(presenter: ArtistPresenter)
+    fun inject(presenter: AlbumPresenter)
+    fun inject(presenter: ArtistTracksPresenter)
+    fun inject(presenter: PlayerPresenter)
+    fun inject(presenter: FolderPresenter)
+    fun inject(presenter: SearchPresenter)
 
     //  SETTINGS
-    void inject(SettingPresenter presenter);
-    void inject(ColorThemeSelectorPresenter presenter);
-    void inject(ExcludedFoldersFragment fragment);
-    void inject(TrackItemDisplaySettingFragment fragment);
-    void inject(AlbumItemDisplaySettingFragment fragment);
-    void inject(ArtistItemDisplaySettingFragment fragment);
-
+    fun inject(presenter: SettingPresenter)
+    fun inject(presenter: ColorThemeSelectorPresenter)
+    fun inject(fragment: ExcludedFoldersFragment)
+    fun inject(fragment: TrackItemDisplaySettingFragment)
+    fun inject(fragment: AlbumItemDisplaySettingFragment)
+    fun inject(fragment: ArtistItemDisplaySettingFragment)
 
     //  PLAYLISTS
-    void inject(PlaylistPresenter presenter);
-    void inject(FavouritesPlaylistPresenter presenter);
-    void inject(RecentlyAddedPlaylistPresenter presenter);
-    void inject(QueuePresenter presenter);
-    void inject(FoldersListPresenter presenter);
-
+    fun inject(presenter: PlaylistPresenter)
+    fun inject(presenter: FavouritesPlaylistPresenter)
+    fun inject(presenter: RecentlyAddedPlaylistPresenter)
+    fun inject(presenter: QueuePresenter)
+    fun inject(presenter: FoldersListPresenter)
 
     //    DIALOGS
-    void inject(CreatePlaylistPresenter presenter);
-    void inject(RenamePlaylistPresenter presenter);
-    void inject(SleepTimerPresenter presenter);
-    void inject(TimeToSleepInfoPresenter presenter);
-    void inject(ChoosePlaylistPresenter presenter);
-    void inject(SortingDialog dialog);
-    void inject(EqPresetsSelectorDialog dialog);
-    void inject(TrackAdditionalInfoPresenter presenter);
-    void inject(DeleteTrackDialog dialog);
-
+    fun inject(presenter: CreatePlaylistPresenter)
+    fun inject(presenter: RenamePlaylistPresenter)
+    fun inject(presenter: SleepTimerPresenter)
+    fun inject(presenter: TimeToSleepInfoPresenter)
+    fun inject(presenter: ChoosePlaylistPresenter)
+    fun inject(dialog: SortingDialog)
+    fun inject(dialog: EqPresetsSelectorDialog)
+    fun inject(presenter: TrackAdditionalInfoPresenter)
+    fun inject(dialog: DeleteTrackDialog)
 
     //    FXs
-    void inject(TabEqualizerPresenter presenter);
-    void inject(FxAudioSettingsPresenter presenter);
-
+    fun inject(presenter: TabEqualizerPresenter)
+    fun inject(presenter: FxAudioSettingsPresenter)
 }

@@ -1,68 +1,49 @@
-package com.parabola.newtone.di.app.modules;
+package com.parabola.newtone.di.app.modules
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import com.parabola.data.executor.SchedulerProviderImpl;
-import com.parabola.data.repository.PermissionHandlerImpl;
-import com.parabola.data.repository.ResourceRepositoryImpl;
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.PermissionHandler;
-import com.parabola.domain.repository.ResourceRepository;
-import com.parabola.newtone.MainApplication;
-
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
+import android.content.ContentResolver
+import android.content.Context
+import android.content.SharedPreferences
+import com.parabola.data.executor.SchedulerProviderImpl
+import com.parabola.data.repository.PermissionHandlerImpl
+import com.parabola.data.repository.ResourceRepositoryImpl
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.repository.PermissionHandler
+import com.parabola.domain.repository.ResourceRepository
+import com.parabola.newtone.MainApplication
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-public final class AndroidAppModule {
-
-    private final MainApplication newtoneApp;
-
-    public AndroidAppModule(MainApplication newtoneApp) {
-        this.newtoneApp = newtoneApp;
-    }
-
-    @Provides
-    @Singleton
-    Context provideContext() {
-        return newtoneApp;
-    }
+class AndroidAppModule(private val newtoneApp: MainApplication) {
 
     @Singleton
     @Provides
-    SchedulerProvider schedulerProvider() {
-        return new SchedulerProviderImpl();
-    }
-
-
-    private static final String SHARED_PREFERENCES_NAME = "com.parabola.newtone.SHARED_PREFERENCES";
+    fun provideContext(): Context = newtoneApp
 
     @Singleton
     @Provides
-    SharedPreferences provideSharedPreferences(Context context) {
-        return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    }
+    fun schedulerProvider(): SchedulerProvider = SchedulerProviderImpl()
 
     @Singleton
     @Provides
-    ContentResolver provideContentResolver() {
-        return newtoneApp.getContentResolver();
-    }
+    fun provideSharedPreferences(context: Context): SharedPreferences =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     @Singleton
     @Provides
-    PermissionHandler permissionService(Context context) {
-        return new PermissionHandlerImpl(context);
-    }
+    fun provideContentResolver(): ContentResolver = newtoneApp.contentResolver
 
     @Singleton
     @Provides
-    ResourceRepository provideResourcesProvider(Context context) {
-        return new ResourceRepositoryImpl(context);
-    }
+    fun permissionService(context: Context): PermissionHandler = PermissionHandlerImpl(context)
 
+    @Singleton
+    @Provides
+    fun provideResourcesProvider(context: Context): ResourceRepository =
+        ResourceRepositoryImpl(context)
+
+    companion object {
+        private const val SHARED_PREFERENCES_NAME = "com.parabola.newtone.SHARED_PREFERENCES"
+    }
 }

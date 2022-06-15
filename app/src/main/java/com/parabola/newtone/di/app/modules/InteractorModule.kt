@@ -1,110 +1,117 @@
-package com.parabola.newtone.di.app.modules;
+package com.parabola.newtone.di.app.modules
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-
-import com.parabola.data.repository.DataExtractor;
-import com.parabola.domain.interactor.AlbumInteractor;
-import com.parabola.domain.interactor.ArtistInteractor;
-import com.parabola.domain.interactor.FolderInteractor;
-import com.parabola.domain.interactor.RepositoryInteractor;
-import com.parabola.domain.interactor.TrackInteractor;
-import com.parabola.domain.interactor.player.AudioEffectsInteractor;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.interactor.player.PlayerSetting;
-import com.parabola.domain.repository.AlbumRepository;
-import com.parabola.domain.repository.ArtistRepository;
-import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.SortingRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.player_feature.PlayerInteractorImpl;
-import com.parabola.search_feature.SearchInteractor;
-import com.parabola.search_feature.SearchInteractorImpl;
-import com.parabola.sleep_timer_feature.SleepTimerImpl;
-import com.parabola.sleep_timer_feature.SleepTimerInteractor;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import com.parabola.data.repository.DataExtractor
+import com.parabola.domain.interactor.*
+import com.parabola.domain.interactor.player.AudioEffectsInteractor
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.interactor.player.PlayerSetting
+import com.parabola.domain.repository.*
+import com.parabola.player_feature.PlayerInteractorImpl
+import com.parabola.search_feature.SearchInteractor
+import com.parabola.search_feature.SearchInteractorImpl
+import com.parabola.sleep_timer_feature.SleepTimerImpl
+import com.parabola.sleep_timer_feature.SleepTimerInteractor
+import dagger.Module
+import dagger.Provides
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
-public final class InteractorModule {
+class InteractorModule {
 
     @Singleton
     @Provides
-    PlayerInteractor providePlayerInteractor(Context context, SharedPreferences preferences,
-                                             TrackRepository trackRepo,
-                                             RepositoryInteractor repositoryInteractor,
-                                             @Named(IntentModule.OPEN_ACTIVITY_INTENT) Intent openActivityIntent) {
-        return new PlayerInteractorImpl(context, preferences, trackRepo, repositoryInteractor, openActivityIntent);
-    }
+    fun providePlayerInteractor(
+        context: Context,
+        preferences: SharedPreferences,
+        trackRepo: TrackRepository,
+        repositoryInteractor: RepositoryInteractor,
+        @Named(IntentModule.OPEN_ACTIVITY_INTENT) openActivityIntent: Intent,
+    ): PlayerInteractor = PlayerInteractorImpl(
+        context,
+        preferences,
+        trackRepo,
+        repositoryInteractor,
+        openActivityIntent
+    )
 
     @Singleton
     @Provides
-    AudioEffectsInteractor provideFxInteractor(PlayerInteractor playerInteractor) {
-        return playerInteractor.getAudioEffectInteractor();
-    }
+    fun provideFxInteractor(playerInteractor: PlayerInteractor): AudioEffectsInteractor =
+        playerInteractor.audioEffectInteractor
 
     @Singleton
     @Provides
-    PlayerSetting providePlayerSetting(PlayerInteractor playerInteractor) {
-        return playerInteractor.getPlayerSetting();
-    }
+    fun providePlayerSetting(playerInteractor: PlayerInteractor): PlayerSetting =
+        playerInteractor.playerSetting
 
     @Singleton
     @Provides
-    SleepTimerInteractor provideSleepTimerInteractor() {
-        return new SleepTimerImpl();
-    }
-
+    fun provideSleepTimerInteractor(): SleepTimerInteractor = SleepTimerImpl()
 
     @Singleton
     @Provides
-    RepositoryInteractor provideRepositoryInteractor(DataExtractor dataExtractor) {
-        return dataExtractor;
-    }
-
+    fun provideRepositoryInteractor(dataExtractor: DataExtractor): RepositoryInteractor =
+        dataExtractor
 
     @Singleton
     @Provides
-    TrackInteractor provideTrackInteractor(TrackRepository trackRepo,
-                                           RepositoryInteractor repositoryInteractor,
-                                           PlayerInteractor playerInteractor,
-                                           SortingRepository trackSortingRepo) {
-        return new TrackInteractor(trackRepo, repositoryInteractor, playerInteractor, trackSortingRepo);
-    }
+    fun provideTrackInteractor(
+        trackRepo: TrackRepository,
+        repositoryInteractor: RepositoryInteractor,
+        playerInteractor: PlayerInteractor,
+        trackSortingRepo: SortingRepository,
+    ): TrackInteractor =
+        TrackInteractor(trackRepo, repositoryInteractor, playerInteractor, trackSortingRepo)
 
     @Singleton
     @Provides
-    AlbumInteractor provideAlbumInteractor(AlbumRepository albumRepo, TrackRepository trackRepo,
-                                           PlayerInteractor playerInteractor,
-                                           RepositoryInteractor repositoryInteractor,
-                                           SortingRepository sortingRepo) {
-        return new AlbumInteractor(albumRepo, trackRepo, playerInteractor, repositoryInteractor, sortingRepo);
-    }
+    fun provideAlbumInteractor(
+        albumRepo: AlbumRepository,
+        trackRepo: TrackRepository,
+        playerInteractor: PlayerInteractor,
+        repositoryInteractor: RepositoryInteractor,
+        sortingRepo: SortingRepository,
+    ): AlbumInteractor = AlbumInteractor(
+        albumRepo,
+        trackRepo,
+        playerInteractor,
+        repositoryInteractor,
+        sortingRepo
+    )
 
     @Singleton
     @Provides
-    ArtistInteractor provideArtistInteractor(ArtistRepository artistRepo, TrackRepository trackRepo,
-                                             PlayerInteractor playerInteractor,
-                                             RepositoryInteractor repositoryInteractor,
-                                             SortingRepository sortingRepo) {
-        return new ArtistInteractor(artistRepo, trackRepo, playerInteractor, repositoryInteractor, sortingRepo);
-    }
+    fun provideArtistInteractor(
+        artistRepo: ArtistRepository,
+        trackRepo: TrackRepository,
+        playerInteractor: PlayerInteractor,
+        repositoryInteractor: RepositoryInteractor,
+        sortingRepo: SortingRepository,
+    ): ArtistInteractor = ArtistInteractor(
+        artistRepo,
+        trackRepo,
+        playerInteractor,
+        repositoryInteractor,
+        sortingRepo
+    )
 
     @Singleton
     @Provides
-    FolderInteractor provideFolderInteractor(TrackRepository trackRepo, PlayerInteractor playerInteractor) {
-        return new FolderInteractor(trackRepo, playerInteractor);
-    }
+    fun provideFolderInteractor(
+        trackRepo: TrackRepository,
+        playerInteractor: PlayerInteractor,
+    ): FolderInteractor = FolderInteractor(trackRepo, playerInteractor)
 
     @Singleton
     @Provides
-    SearchInteractor provideSearchInteractor(ArtistRepository artistRepo, AlbumRepository albumRepo,
-                                             TrackRepository trackRepo, PlaylistRepository playlistRepo) {
-        return new SearchInteractorImpl(artistRepo, albumRepo, trackRepo, playlistRepo);
-    }
+    fun provideSearchInteractor(
+        artistRepo: ArtistRepository,
+        albumRepo: AlbumRepository,
+        trackRepo: TrackRepository,
+        playlistRepo: PlaylistRepository,
+    ): SearchInteractor = SearchInteractorImpl(artistRepo, albumRepo, trackRepo, playlistRepo)
 }
