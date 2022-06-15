@@ -3,6 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -81,6 +82,8 @@ dependencies {
     // for use the support libraries
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.29.1'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.29.1'
+    kapt 'com.google.dagger:dagger-compiler:2.29.1'
+
 
     //    RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -88,7 +91,8 @@ dependencies {
     //    MOXY
     implementation "com.github.moxy-community:moxy:2.2.0"
     implementation "com.github.moxy-community:moxy-androidx:2.2.0"
-    annotationProcessor "com.github.moxy-community:moxy-compiler:2.2.0"
+    annotationProcessor "com.github.moxy-community:moxy-compiler:2.2.0" // можно будет убрать после полного переноса на kotlin
+    kapt "com.github.moxy-community:moxy-compiler:2.2.0"
 
     //    Vertical ProgressBar
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
