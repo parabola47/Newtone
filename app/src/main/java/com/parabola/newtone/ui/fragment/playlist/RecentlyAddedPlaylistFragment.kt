@@ -131,7 +131,7 @@ class RecentlyAddedPlaylistFragment : BaseSwipeToBackFragment(),
                     selectedTrack.title
                 )
             )
-            .setAdapter(menuAdapter) { _: DialogInterface?, which: Int ->
+            .setAdapter(menuAdapter) { _: DialogInterface, which: Int ->
                 handleSelectedMenu(
                     menuAdapter.getItem(which),
                     selectedTrack,
