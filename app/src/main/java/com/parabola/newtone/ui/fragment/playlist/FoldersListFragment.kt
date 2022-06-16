@@ -1,166 +1,151 @@
-package com.parabola.newtone.ui.fragment.playlist;
+package com.parabola.newtone.ui.fragment.playlist
 
+import android.content.DialogInterface
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.domain.model.Folder
+import com.parabola.domain.utils.TracklistTool
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.FolderAdapter
+import com.parabola.newtone.adapter.ListPopupWindowAdapter
+import com.parabola.newtone.databinding.FragmentFoldersListBinding
+import com.parabola.newtone.mvp.presenter.FoldersListPresenter
+import com.parabola.newtone.mvp.view.FoldersListView
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
+import com.parabola.newtone.ui.fragment.Scrollable
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import static com.parabola.domain.utils.TracklistTool.isFolderListsIdentical;
-import static java.util.Objects.requireNonNull;
+class FoldersListFragment : BaseSwipeToBackFragment(),
+    FoldersListView, Scrollable {
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+    @InjectPresenter
+    lateinit var presenter: FoldersListPresenter
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
+    private var _binding: FragmentFoldersListBinding? = null
+    private val binding get() = _binding!!
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.model.Folder;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.FolderAdapter;
-import com.parabola.newtone.adapter.ListPopupWindowAdapter;
-import com.parabola.newtone.databinding.FragmentFoldersListBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.FoldersListPresenter;
-import com.parabola.newtone.mvp.view.FoldersListView;
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
-import com.parabola.newtone.ui.fragment.Scrollable;
+    private val foldersAdapter = FolderAdapter()
+    private lateinit var itemDecoration: DividerItemDecoration
 
-import java.util.List;
+    private lateinit var foldersCount: TextView
 
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentFoldersListBinding.inflate(inflater, container, false)
+        rootBinding.container.addView(binding.root)
 
+        foldersCount = rootBinding.additionalInfo
+        rootBinding.main.setText(R.string.playlist_folders)
 
-public final class FoldersListFragment extends BaseSwipeToBackFragment
-        implements FoldersListView, Scrollable {
+        binding.folderList.adapter = foldersAdapter
+        itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
 
-    @InjectPresenter FoldersListPresenter presenter;
+        foldersAdapter.setOnItemClickListener { position: Int ->
+            presenter.onClickFolderItem(foldersAdapter[position].absolutePath)
+        }
+        foldersAdapter.setOnItemLongClickListener(this::showFolderContextMenu)
+        rootBinding.actionBar.setOnClickListener { smoothScrollToTop() }
 
-    private FragmentFoldersListBinding binding;
-
-    private final FolderAdapter foldersAdapter = new FolderAdapter();
-    private DividerItemDecoration itemDecoration;
-
-    private TextView foldersCount;
-
-    public FoldersListFragment() {
-        // Required empty public constructor
+        return root
     }
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentFoldersListBinding.inflate(inflater, container, false);
-        getRootBinding().container.addView(binding.getRoot());
-
-        foldersCount = getRootBinding().additionalInfo;
-        getRootBinding().main.setText(R.string.playlist_folders);
-
-        binding.folderList.setAdapter(foldersAdapter);
-        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-
-        foldersAdapter.setOnItemClickListener(position ->
-                presenter.onClickFolderItem(foldersAdapter.get(position).getAbsolutePath()));
-        foldersAdapter.setOnItemLongClickListener(this::showArtistContextMenu);
-        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
-
-        return root;
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
-    private void showArtistContextMenu(int position) {
-        Folder selectedFolder = foldersAdapter.get(position);
-        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.folder_menu);
+    private fun showFolderContextMenu(position: Int) {
+        val selectedFolder = foldersAdapter[position]
+        val menuAdapter = ListPopupWindowAdapter(requireContext(), R.menu.folder_menu)
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(selectedFolder.getFolderName())
-                .setAdapter(menuAdapter, (d, which) ->
-                        handleSelectedMenu(menuAdapter.getItem(which), selectedFolder))
-                .create();
-        dialog.setOnShowListener(d -> foldersAdapter.setContextSelected(position));
-        dialog.setOnDismissListener(d -> foldersAdapter.clearContextSelected());
-        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
-        dialog.show();
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(selectedFolder.folderName)
+            .setAdapter(menuAdapter) { _: DialogInterface, which: Int ->
+                handleSelectedMenu(menuAdapter.getItem(which), selectedFolder)
+            }
+            .create()
+        dialog.setOnShowListener { foldersAdapter.setContextSelected(position) }
+        dialog.setOnDismissListener { foldersAdapter.clearContextSelected() }
+        lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
+        dialog.show()
     }
 
-    private void handleSelectedMenu(MenuItem item, Folder selectedFolder) {
-        switch (item.getItemId()) {
-            case R.id.shuffle:
-                presenter.onClickMenuShuffle(selectedFolder.getAbsolutePath());
-                break;
-            case R.id.add_to_playlist:
-                presenter.onClickMenuAddToPlaylist(selectedFolder.getAbsolutePath());
-                break;
-            case R.id.exclude_folder:
-                AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.folder_menu_exclude_folder_dialog_title)
-                        .setMessage(getString(R.string.folder_menu_exclude_folder_dialog_desc, selectedFolder.getFolderName()))
-                        .setPositiveButton(R.string.dialog_exclude, (dialogInterface, i) -> {
-                            foldersAdapter.removeWithCondition(selectedFolder::equals);
-                            presenter.onClickMenuExcludeFolder(selectedFolder.getAbsolutePath());
-                        })
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .show();
-                getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
-                break;
+    private fun handleSelectedMenu(item: MenuItem, selectedFolder: Folder) {
+        when (item.itemId) {
+            R.id.shuffle -> presenter.onClickMenuShuffle(selectedFolder.absolutePath)
+            R.id.add_to_playlist -> presenter.onClickMenuAddToPlaylist(selectedFolder.absolutePath)
+            R.id.exclude_folder -> {
+                val dialog = MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.folder_menu_exclude_folder_dialog_title)
+                    .setMessage(
+                        getString(
+                            R.string.folder_menu_exclude_folder_dialog_desc,
+                            selectedFolder.folderName
+                        )
+                    )
+                    .setPositiveButton(R.string.dialog_exclude) { _: DialogInterface, _: Int ->
+                        foldersAdapter.removeWithCondition(selectedFolder::equals)
+                        presenter.onClickMenuExcludeFolder(selectedFolder.absolutePath)
+                    }
+                    .setNegativeButton(R.string.dialog_cancel, null)
+                    .show()
+                lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
+            }
         }
     }
 
-
-    @Override
-    public void refreshFolders(List<Folder> folders) {
-        String foldersCountStr = getResources()
-                .getQuantityString(R.plurals.folders_count, folders.size(), folders.size());
-        foldersCount.setText(foldersCountStr);
-        if (!isFolderListsIdentical(foldersAdapter.getAll(), folders)) {
-            foldersAdapter.replaceAll(folders);
+    override fun refreshFolders(folders: List<Folder>) {
+        val foldersCountStr = resources
+            .getQuantityString(R.plurals.folders_count, folders.size, folders.size)
+        foldersCount.text = foldersCountStr
+        if (!TracklistTool.isFolderListsIdentical(foldersAdapter.all, folders)) {
+            foldersAdapter.replaceAll(folders)
         }
     }
 
-    @Override
-    public void setItemDividerShowing(boolean showed) {
-        binding.folderList.removeItemDecoration(itemDecoration);
-
-        if (showed)
-            binding.folderList.addItemDecoration(itemDecoration);
+    override fun setItemDividerShowing(showed: Boolean) {
+        binding.folderList.removeItemDecoration(itemDecoration)
+        if (showed) binding.folderList.addItemDecoration(itemDecoration)
     }
 
-
-    @Override
-    protected void onClickBackButton() {
-        presenter.onClickBack();
+    override fun onClickBackButton() {
+        presenter.onClickBack()
     }
 
-    @Override
-    protected void onEndSlidingAnimation() {
-        presenter.onEnterSlideAnimationEnded();
+    override fun onEndSlidingAnimation() {
+        presenter.onEnterSlideAnimationEnded()
     }
 
     @ProvidePresenter
-    FoldersListPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        return new FoldersListPresenter(appComponent);
+    fun providePresenter(): FoldersListPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return FoldersListPresenter(appComponent)
     }
 
-
-    @Override
-    public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.folderList.getLayoutManager());
-        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+    override fun smoothScrollToTop() {
+        val layoutManager = binding.folderList.layoutManager as LinearLayoutManager
+        val firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+        val screenItemsCount =
+            layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()
 
         if (firstItemPosition > screenItemsCount * 3) {
-            binding.folderList.scrollToPosition(screenItemsCount * 3);
+            binding.folderList.scrollToPosition(screenItemsCount * 3)
         }
-
-        binding.folderList.smoothScrollToPosition(0);
+        binding.folderList.smoothScrollToPosition(0)
     }
-
 }
