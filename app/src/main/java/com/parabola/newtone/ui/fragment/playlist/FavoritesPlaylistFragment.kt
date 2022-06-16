@@ -80,6 +80,7 @@ class FavoritesPlaylistFragment : BaseSwipeToBackFragment(),
         _binding = null
     }
 
+
     private fun initDragSwitcherButton() {
         dragSwitcherButton = AppCompatImageButton(requireContext())
         dragSwitcherButton.setImageResource(R.drawable.ic_drag)
