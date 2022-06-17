@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,8 +36,6 @@ class FoldersListFragment : BaseSwipeToBackFragment(),
     private val foldersAdapter = FolderAdapter()
     private lateinit var itemDecoration: DividerItemDecoration
 
-    private lateinit var foldersCount: TextView
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,7 +45,6 @@ class FoldersListFragment : BaseSwipeToBackFragment(),
         _binding = FragmentFoldersListBinding.inflate(inflater, container, false)
         rootBinding.container.addView(binding.root)
 
-        foldersCount = rootBinding.additionalInfo
         rootBinding.main.setText(R.string.playlist_folders)
 
         binding.folderList.adapter = foldersAdapter
@@ -112,7 +108,7 @@ class FoldersListFragment : BaseSwipeToBackFragment(),
     override fun refreshFolders(folders: List<Folder>) {
         val foldersCountStr = resources
             .getQuantityString(R.plurals.folders_count, folders.size, folders.size)
-        foldersCount.text = foldersCountStr
+        rootBinding.additionalInfo.text = foldersCountStr
         if (!TracklistTool.isFolderListsIdentical(foldersAdapter.all, folders)) {
             foldersAdapter.replaceAll(folders)
         }

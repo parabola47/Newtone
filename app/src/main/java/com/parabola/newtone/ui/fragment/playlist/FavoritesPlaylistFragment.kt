@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -45,7 +44,6 @@ class FavoritesPlaylistFragment : BaseSwipeToBackFragment(),
     private val tracklistAdapter = TrackAdapter()
     private lateinit var itemDecoration: DividerItemDecoration
 
-    private lateinit var tracksCountTxt: TextView
     private lateinit var dragSwitcherButton: ImageButton
 
     override fun onCreateView(
@@ -56,8 +54,6 @@ class FavoritesPlaylistFragment : BaseSwipeToBackFragment(),
         val root = super.onCreateView(inflater, container, savedInstanceState)
         _binding = ListTrackBinding.inflate(inflater, container, false)
         rootBinding.container.addView(binding.root)
-
-        tracksCountTxt = rootBinding.additionalInfo
 
         rootBinding.main.setText(R.string.playlist_favourites)
 
@@ -130,7 +126,7 @@ class FavoritesPlaylistFragment : BaseSwipeToBackFragment(),
     override fun refreshTracks(trackList: List<Track>) {
         val tracksCount = resources
             .getQuantityString(R.plurals.tracks_count, trackList.size, trackList.size)
-        tracksCountTxt.text = tracksCount
+        rootBinding.additionalInfo.text = tracksCount
         if (!TracklistTool.isTracklistsIdentical(trackList, tracklistAdapter.all)) {
             tracklistAdapter.replaceAll(trackList)
         }
