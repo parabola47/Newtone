@@ -22,6 +22,9 @@ import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
 import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.fragment.Scrollable
 import com.parabola.newtone.ui.fragment.Sortable
+import com.parabola.newtone.util.scrollUp
+import com.parabola.newtone.util.smoothScrollToTop
+import com.parabola.newtone.util.visibleItemsCount
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -146,16 +149,9 @@ class TabTrackFragment : MvpAppCompatFragment(),
     override fun getListType(): String = SortingDialog.ALL_TRACKS_SORTING
 
     override fun smoothScrollToTop() {
-        val layoutManager = binding.tracksList.layoutManager as LinearLayoutManager
-        val firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
-        val screenItemsCount =
-            layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()
-
-        if (firstItemPosition > screenItemsCount * 3) {
-            binding.tracksList.scrollToPosition(screenItemsCount * 3)
-        }
-
-        binding.tracksList.smoothScrollToPosition(0)
+        val fastScrollMinimalPosition =
+            (binding.tracksList.layoutManager as LinearLayoutManager).visibleItemsCount() * 3
+        binding.tracksList.scrollUp(fastScrollMinimalPosition)
+        binding.tracksList.smoothScrollToTop()
     }
-
 }
