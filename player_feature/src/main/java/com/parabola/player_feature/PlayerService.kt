@@ -1,129 +1,114 @@
-package com.parabola.player_feature;
+package com.parabola.player_feature
 
-import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.Build;
-import android.os.IBinder;
-
-import androidx.annotation.Nullable;
-
-public class PlayerService extends Service {
+import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.Service
+import android.content.Intent
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
+import com.parabola.player_feature.PlayerInteractorImpl.NewtonePlayerListener
 
 
-    public static final String ACTION_TOGGLE_PLAYING = "com.parabola.newtone.TOGGLE_PLAYING";
-    public static final String ACTION_NEXT = "com.parabola.newtone.NEXT";
-    public static final String ACTION_PREVIOUS = "com.parabola.newtone.PREVIOUS";
+class PlayerService : Service() {
 
-    public static final String ACTION_TOGGLE_REPEAT_MODE = "com.parabola.newtone.TOGGLE_REPEAT_MODE";
-    public static final String ACTION_TOGGLE_SHUFFLE_MODE = "com.parabola.newtone.TOGGLE_SHUFFLE_MODE";
+    private var notificationId = 0
+    private var notification: Notification? = null
 
-    private static final String ACTION_START_FOREGROUND = "com.parabola.newtone.START_FOREGROUND";
-    private static final String ACTION_STOP_FOREGROUND = "com.parabola.newtone.STOP_FOREGROUND";
-    private static final String ACTION_STOP_SERVICE = "com.parabola.newtone.STOP_SERVICE";
+    override fun onCreate() {
+        playerInteractor!!.setNewtonePlayerListener(object : NewtonePlayerListener {
 
+            override fun onNotificationPosted(
+                notificationId: Int,
+                notification: Notification,
+                ongoing: Boolean,
+            ) {
+                this@PlayerService.notificationId = notificationId
+                this@PlayerService.notification = notification
 
-    @SuppressLint("StaticFieldLeak")
-    static PlayerInteractorImpl playerInteractor;
+                val intent = Intent(this@PlayerService, PlayerService::class.java)
+                    .setAction(if (ongoing) ACTION_START_FOREGROUND else ACTION_STOP_FOREGROUND)
 
-    private int notificationId;
-    private Notification notification;
-
-    @Override
-    public void onCreate() {
-        playerInteractor.setNewtonePlayerListener(new PlayerInteractorImpl.NewtonePlayerListener() {
-
-            @Override
-            public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-                PlayerService.this.notificationId = notificationId;
-                PlayerService.this.notification = notification;
-
-                Intent intent = new Intent(PlayerService.this, PlayerService.class)
-                        .setAction(ongoing ? ACTION_START_FOREGROUND : ACTION_STOP_FOREGROUND);
-
-                if (ongoing && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    startForegroundService(intent);
-                else {
+                if (ongoing && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent)
+                } else {
                     try {
-                        startService(intent);
-                    } catch (IllegalStateException e) {
-                        if (ongoing) startForeground(notificationId, notification);
-                        else stopForeground(false);
+                        startService(intent)
+                    } catch (e: IllegalStateException) {
+                        if (ongoing) startForeground(notificationId, notification)
+                        else stopForeground(false)
                     }
                 }
             }
 
-            @Override
-            public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                Intent intent = new Intent(PlayerService.this, PlayerService.class)
-                        .setAction(ACTION_STOP_SERVICE);
+            override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                val intent = Intent(this@PlayerService, PlayerService::class.java)
+                    .setAction(ACTION_STOP_SERVICE)
+
                 try {
-                    startService(intent);
-                } catch (IllegalStateException e) {
-                    stopForeground(true);
-                    stopSelf();
+                    startService(intent)
+                } catch (e: IllegalStateException) {
+                    stopForeground(true)
+                    stopSelf()
                 }
             }
-        });
+        })
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && intent.getAction() != null)
-            handleAction(intent.getAction());
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if (intent.action != null)
+            handleAction(intent.action!!)
 
-        return START_STICKY;
+        return START_STICKY
     }
 
-    private void handleAction(String action) {
-        switch (action) {
-            case ACTION_TOGGLE_PLAYING:
-                playerInteractor.toggle();
-                break;
-            case ACTION_NEXT:
-                playerInteractor.next();
-                break;
-            case ACTION_PREVIOUS:
-                playerInteractor.previous();
-                break;
-            case ACTION_TOGGLE_REPEAT_MODE:
-                playerInteractor.toggleRepeatMode();
-                break;
-            case ACTION_TOGGLE_SHUFFLE_MODE:
-                playerInteractor.toggleShuffleMode();
-                break;
-            case ACTION_START_FOREGROUND:
-                startForeground(notificationId, notification);
-                break;
-            case ACTION_STOP_FOREGROUND:
-                stopForeground(false);
-                break;
-            case ACTION_STOP_SERVICE:
-                stopForeground(true);
-                stopSelf();
-                break;
-            default: throw new IllegalArgumentException(action);
+    private fun handleAction(action: String) {
+        when (action) {
+            ACTION_TOGGLE_PLAYING -> playerInteractor!!.toggle()
+            ACTION_NEXT -> playerInteractor!!.next()
+            ACTION_PREVIOUS -> playerInteractor!!.previous()
+            ACTION_TOGGLE_REPEAT_MODE -> playerInteractor!!.toggleRepeatMode()
+            ACTION_TOGGLE_SHUFFLE_MODE -> playerInteractor!!.toggleShuffleMode()
+            ACTION_START_FOREGROUND -> startForeground(notificationId, notification)
+            ACTION_STOP_FOREGROUND -> stopForeground(false)
+            ACTION_STOP_SERVICE -> {
+                stopForeground(true)
+                stopSelf()
+            }
+            else -> throw IllegalArgumentException(action)
         }
     }
 
-    @Override
-    public void onDestroy() {
-        playerInteractor.setNewtonePlayerListener(null);
+    override fun onDestroy() {
+        playerInteractor!!.setNewtonePlayerListener(null)
     }
 
-    private LocalBinder binder = new LocalBinder();
+    private val binder = LocalBinder()
 
-    private class LocalBinder extends Binder {
-        public PlayerService getService() {
-            return PlayerService.this;
-        }
+    private inner class LocalBinder : Binder() {
+        val service: PlayerService
+            get() = this@PlayerService
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
+    override fun onBind(intent: Intent): IBinder {
+        return binder
+    }
+
+    companion object {
+        const val ACTION_TOGGLE_PLAYING = "com.parabola.newtone.TOGGLE_PLAYING"
+        const val ACTION_NEXT = "com.parabola.newtone.NEXT"
+        const val ACTION_PREVIOUS = "com.parabola.newtone.PREVIOUS"
+
+        const val ACTION_TOGGLE_REPEAT_MODE = "com.parabola.newtone.TOGGLE_REPEAT_MODE"
+        const val ACTION_TOGGLE_SHUFFLE_MODE = "com.parabola.newtone.TOGGLE_SHUFFLE_MODE"
+
+
+        private const val ACTION_START_FOREGROUND = "com.parabola.newtone.START_FOREGROUND"
+        private const val ACTION_STOP_FOREGROUND = "com.parabola.newtone.STOP_FOREGROUND"
+        private const val ACTION_STOP_SERVICE = "com.parabola.newtone.STOP_SERVICE"
+
+
+        @SuppressLint("StaticFieldLeak")
+        var playerInteractor: PlayerInteractorImpl? = null
     }
 }

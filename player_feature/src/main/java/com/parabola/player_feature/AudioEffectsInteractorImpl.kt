@@ -1,343 +1,273 @@
-package com.parabola.player_feature;
+package com.parabola.player_feature
 
-import android.media.audiofx.BassBoost;
-import android.media.audiofx.Equalizer;
-import android.media.audiofx.Virtualizer;
+import android.media.audiofx.BassBoost
+import android.media.audiofx.Equalizer
+import android.media.audiofx.Virtualizer
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.audio.AudioListener
+import com.parabola.domain.interactor.player.AudioEffectsInteractor
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
+import java.util.*
 
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioListener;
-import com.parabola.domain.interactor.player.AudioEffectsInteractor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+private const val DEFAULT_PLAYBACK_SPEED = 1.0f
+private const val DEFAULT_PLAYBACK_PITCH = 1.0f
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
+internal class AudioEffectsInteractorImpl(
+    private val exoPlayer: SimpleExoPlayer,
+    private val settings: PlayerSettingSaver,
+) : AudioEffectsInteractor {
 
-public class AudioEffectsInteractorImpl implements AudioEffectsInteractor {
-    private static final String LOG_TAG = AudioEffectsInteractorImpl.class.getSimpleName();
-
-    private final BehaviorSubject<Boolean> playbackSpeedEnabledUpdates;
-    private final BehaviorSubject<Float> savedPlaybackSpeed;
-    private final BehaviorSubject<Boolean> playbackPitchEnabledUpdates;
-    private final BehaviorSubject<Float> savedPlaybackPitch;
-    private final BehaviorSubject<Boolean> eqEnablingUpdates = BehaviorSubject.createDefault(Boolean.FALSE);
-
-    private final BehaviorSubject<Short> savedVirtualizerLevelUpdates;
-    private final BehaviorSubject<Short> savedBassBoostLevelUpdates;
-
-    private final SimpleExoPlayer exoPlayer;
-    private final PlayerSettingSaver settings;
-
+    private val playbackSpeedEnabledUpdates: BehaviorSubject<Boolean>
+    private val savedPlaybackSpeed: BehaviorSubject<Float>
+    private val playbackPitchEnabledUpdates: BehaviorSubject<Boolean>
+    private val savedPlaybackPitch: BehaviorSubject<Float>
+    private val eqEnablingUpdates = BehaviorSubject.createDefault(java.lang.Boolean.FALSE)
+    private val savedVirtualizerLevelUpdates: BehaviorSubject<Short>
+    private val savedBassBoostLevelUpdates: BehaviorSubject<Short>
 
     //FXs
-    private Equalizer equalizer;
-    private BassBoost bassBoost;
-    private Virtualizer virtualizer;
+    private var equalizer: Equalizer? = null
+    private var bassBoost: BassBoost? = null
+    private var virtualizer: Virtualizer? = null
 
-    private static final float DEFAULT_PLAYBACK_SPEED = 1.0f;
-    private static final float DEFAULT_PLAYBACK_PITCH = 1.0f;
 
-    AudioEffectsInteractorImpl(SimpleExoPlayer exoPlayer, PlayerSettingSaver settings) {
-        this.exoPlayer = exoPlayer;
-        this.settings = settings;
+    init {
+        val speed =
+            if (settings.isPlaybackSpeedEnabled) settings.playbackSpeed
+            else DEFAULT_PLAYBACK_SPEED
+        val pitch =
+            if (settings.isPlaybackPitchEnabled) settings.playbackPitch
+            else DEFAULT_PLAYBACK_PITCH
 
-        float speed = settings.getSavedPlaybackSpeedEnabled() ? settings.getSavedPlaybackSpeed() : DEFAULT_PLAYBACK_SPEED;
-        float pitch = settings.getSavedPlaybackPitchEnabled() ? settings.getSavedPlaybackPitch() : DEFAULT_PLAYBACK_PITCH;
+        val playbackParameters = PlaybackParameters(speed, pitch)
+        exoPlayer.setPlaybackParameters(playbackParameters)
 
-        PlaybackParameters playbackParameters = new PlaybackParameters(speed, pitch);
-        this.exoPlayer.setPlaybackParameters(playbackParameters);
+        savedPlaybackSpeed = BehaviorSubject.createDefault(settings.playbackSpeed)
+        savedPlaybackPitch = BehaviorSubject.createDefault(settings.playbackPitch)
 
-        savedPlaybackSpeed = BehaviorSubject.createDefault(settings.getSavedPlaybackSpeed());
-        savedPlaybackPitch = BehaviorSubject.createDefault(settings.getSavedPlaybackPitch());
+        playbackSpeedEnabledUpdates =
+            BehaviorSubject.createDefault(settings.isPlaybackSpeedEnabled)
+        playbackPitchEnabledUpdates =
+            BehaviorSubject.createDefault(settings.isPlaybackPitchEnabled)
 
-        playbackSpeedEnabledUpdates = BehaviorSubject.createDefault(settings.getSavedPlaybackSpeedEnabled());
-        playbackPitchEnabledUpdates = BehaviorSubject.createDefault(settings.getSavedPlaybackPitchEnabled());
+        savedVirtualizerLevelUpdates =
+            BehaviorSubject.createDefault(settings.virtualizerStrength)
+        savedBassBoostLevelUpdates = BehaviorSubject.createDefault(settings.bassBoostStrength)
 
-        savedVirtualizerLevelUpdates = BehaviorSubject.createDefault(settings.getSavedVirtualizerStrength());
-        savedBassBoostLevelUpdates = BehaviorSubject.createDefault(settings.getSavedBassBoostStrength());
-
-        this.exoPlayer.addListener(new Player.EventListener() {
-            @Override
-            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-                if (savedPlaybackSpeed.getValue() != playbackParameters.speed && settings.getSavedPlaybackSpeedEnabled()) {
-                    savedPlaybackSpeed.onNext(playbackParameters.speed);
+        exoPlayer.addListener(object : Player.EventListener {
+            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+                if (savedPlaybackSpeed.value != playbackParameters.speed && settings.isPlaybackSpeedEnabled) {
+                    savedPlaybackSpeed.onNext(playbackParameters.speed)
                 }
-                if (savedPlaybackPitch.getValue() != playbackParameters.pitch && settings.getSavedPlaybackPitchEnabled()) {
-                    savedPlaybackPitch.onNext(playbackParameters.pitch);
+                if (savedPlaybackPitch.value != playbackParameters.pitch && settings.isPlaybackPitchEnabled) {
+                    savedPlaybackPitch.onNext(playbackParameters.pitch)
                 }
             }
-        });
+        })
 
-        this.exoPlayer.addAudioListener(new AudioListener() {
-            @Override
-            public void onAudioSessionId(int audioSessionId) {
+        exoPlayer.addAudioListener(object : AudioListener {
+            override fun onAudioSessionId(audioSessionId: Int) {
                 try {
-                    bassBoost = new BassBoost(0, audioSessionId);
-                } catch (RuntimeException ignored) {
+                    bassBoost = BassBoost(0, audioSessionId)
+                } catch (ignored: RuntimeException) {
                 }
-                if (isBassBoostAvailable()) {
-                    bassBoost.setEnabled(settings.getSavedBassBoostEnabled());
-                    bassBoost.setStrength(settings.getSavedBassBoostStrength());
+                if (isBassBoostAvailable) {
+                    bassBoost!!.enabled = settings.isBassBoostEnabled
+                    bassBoost!!.setStrength(settings.bassBoostStrength)
                 }
-
                 try {
-                    virtualizer = new Virtualizer(0, audioSessionId);
-                } catch (RuntimeException ignored) {
+                    virtualizer = Virtualizer(0, audioSessionId)
+                } catch (ignored: RuntimeException) {
                 }
-                if (isVirtualizerAvailable()) {
-                    virtualizer.setEnabled(settings.getSavedVirtualizerEnabled());
-                    virtualizer.setStrength(settings.getSavedVirtualizerStrength());
+                if (isVirtualizerAvailable) {
+                    virtualizer!!.enabled = settings.isVirtualizerEnabled
+                    virtualizer!!.setStrength(settings.virtualizerStrength)
                 }
-
                 try {
-                    equalizer = new Equalizer(0, audioSessionId);
-                } catch (RuntimeException ignored) {
+                    equalizer = Equalizer(0, audioSessionId)
+                } catch (ignored: RuntimeException) {
                 }
-                if (isEqAvailable()) {
-                    equalizer.setEnabled(settings.getSavedIsEqEnabled());
-                    eqEnablingUpdates.onNext(equalizer.getEnabled());
-                    for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
-                        equalizer.setBandLevel(i, (short) (settings.getSavedBandLevel(i) * 100));
+                if (isEqAvailable) {
+                    equalizer!!.enabled = settings.isEqEnabled
+                    eqEnablingUpdates.onNext(equalizer!!.enabled)
+                    for (i in 0 until equalizer!!.numberOfBands) {
+                        equalizer!!.setBandLevel(
+                            i.toShort(),
+                            (settings.getSavedBandLevel(i.toShort()) * 100).toShort()
+                        )
                     }
                 }
             }
-        });
+        })
     }
 
 
     //    SPEED
-    @Override
-    public Observable<Boolean> observeIsPlaybackSpeedEnabled() {
-        return playbackSpeedEnabledUpdates;
+    override fun observeIsPlaybackSpeedEnabled(): Observable<Boolean> = playbackSpeedEnabledUpdates
+
+    override fun setPlaybackSpeedEnabled(enable: Boolean) {
+        settings.isPlaybackSpeedEnabled = enable
+        playbackSpeedEnabledUpdates.onNext(enable)
+
+        val speed = if (enable) settings.playbackSpeed else DEFAULT_PLAYBACK_SPEED
+
+        val playbackParameters = PlaybackParameters(speed, exoPlayer.playbackParameters.pitch)
+        exoPlayer.setPlaybackParameters(playbackParameters)
     }
 
-    @Override
-    public void setPlaybackSpeedEnabled(boolean enable) {
-        settings.setSavedPlaybackSpeedEnabled(enable);
-        playbackSpeedEnabledUpdates.onNext(enable);
+    override fun getSavedPlaybackSpeed(): Float = savedPlaybackSpeed.value!!
 
-        float speed = enable ? settings.getSavedPlaybackSpeed() : DEFAULT_PLAYBACK_SPEED;
+    override fun observePlaybackSpeed(): Observable<Float> = savedPlaybackSpeed
 
-        PlaybackParameters playbackParameters = new PlaybackParameters(
-                speed, exoPlayer.getPlaybackParameters().pitch);
-        this.exoPlayer.setPlaybackParameters(playbackParameters);
-    }
+    override fun setSavedPlaybackSpeed(speed: Float) {
+        settings.playbackSpeed = speed
 
-    @Override
-    public float getSavedPlaybackSpeed() {
-        return savedPlaybackSpeed.getValue();
-    }
-
-    @Override
-    public Observable<Float> observePlaybackSpeed() {
-        return savedPlaybackSpeed;
-    }
-
-    @Override
-    public void setSavedPlaybackSpeed(float speed) {
-        settings.setPlaybackSpeed(speed);
-
-        if (settings.getSavedPlaybackSpeedEnabled()) {
-            PlaybackParameters playbackParameters = new PlaybackParameters(
-                    speed, exoPlayer.getPlaybackParameters().pitch);
-
-            exoPlayer.setPlaybackParameters(playbackParameters);
+        if (settings.isPlaybackSpeedEnabled) {
+            val playbackParameters = PlaybackParameters(speed, exoPlayer.playbackParameters.pitch)
+            exoPlayer.setPlaybackParameters(playbackParameters)
         }
     }
 
 
     //    PITCH
-    @Override
-    public Observable<Boolean> observeIsPlaybackPitchEnabled() {
-        return playbackPitchEnabledUpdates;
+    override fun observeIsPlaybackPitchEnabled(): Observable<Boolean> = playbackPitchEnabledUpdates
+
+    override fun setPlaybackPitchEnabled(enabled: Boolean) {
+        settings.isPlaybackPitchEnabled = enabled
+        playbackPitchEnabledUpdates.onNext(enabled)
+
+        val pitch = if (enabled) settings.playbackPitch else DEFAULT_PLAYBACK_PITCH
+
+        val playbackParameters = PlaybackParameters(exoPlayer.playbackParameters.speed, pitch)
+        exoPlayer.setPlaybackParameters(playbackParameters)
     }
 
-    @Override
-    public void setPlaybackPitchEnabled(boolean enabled) {
-        settings.setSavedPlaybackPitchEnabled(enabled);
-        playbackPitchEnabledUpdates.onNext(enabled);
-
-        float pitch = enabled ? settings.getSavedPlaybackPitch() : DEFAULT_PLAYBACK_PITCH;
-
-        PlaybackParameters playbackParameters = new PlaybackParameters(
-                exoPlayer.getPlaybackParameters().speed, pitch);
-        this.exoPlayer.setPlaybackParameters(playbackParameters);
+    override fun getSavedPlaybackPitch(): Float {
+        return savedPlaybackPitch.value!!
     }
 
-    @Override
-    public float getSavedPlaybackPitch() {
-        return savedPlaybackPitch.getValue();
+    override fun observePlaybackPitch(): Observable<Float> {
+        return savedPlaybackPitch
     }
 
-    @Override
-    public Observable<Float> observePlaybackPitch() {
-        return savedPlaybackPitch;
-    }
-
-    @Override
-    public void setSavedPlaybackPitch(float pitch) {
-        settings.setPlaybackPitch(pitch);
-
-        if (settings.getSavedPlaybackPitchEnabled()) {
-            PlaybackParameters playbackParameters = new PlaybackParameters(
-                    exoPlayer.getPlaybackParameters().speed, pitch);
-
-            exoPlayer.setPlaybackParameters(playbackParameters);
+    override fun setSavedPlaybackPitch(pitch: Float) {
+        settings.playbackPitch = pitch
+        if (settings.isPlaybackPitchEnabled) {
+            val playbackParameters = PlaybackParameters(
+                exoPlayer.playbackParameters.speed, pitch
+            )
+            exoPlayer.setPlaybackParameters(playbackParameters)
         }
     }
 
 
     //    BASS BOOST
-    @Override
-    public boolean isBassBoostAvailable() {
-        return bassBoost != null && bassBoost.getStrengthSupported();
+    override fun isBassBoostAvailable(): Boolean = bassBoost?.strengthSupported ?: false
+
+    override fun isBassBoostEnabled(): Boolean = bassBoost?.enabled ?: false
+
+    override fun setBassBoostEnable(enable: Boolean) {
+        bassBoost?.enabled = enable
+        settings.isBassBoostEnabled = enable
     }
 
-    @Override
-    public boolean isBassBoostEnabled() {
-        return bassBoost != null && bassBoost.getEnabled();
-    }
+    override fun observeBassBoostLevel(): Observable<Short> = savedBassBoostLevelUpdates
 
-    @Override
-    public void setBassBoostEnable(boolean enable) {
-        if (bassBoost != null)
-            bassBoost.setEnabled(enable);
+    override fun setBassBoostLevel(strength: Short) {
+        if (isBassBoostAvailable) bassBoost!!.setStrength(strength)
 
-        settings.setBassBoostEnabled(enable);
-    }
-
-    @Override
-    public Observable<Short> observeBassBoostLevel() {
-        return savedBassBoostLevelUpdates;
-    }
-
-    @Override
-    public void setBassBoostLevel(short strength) {
-        if (isBassBoostAvailable())
-            bassBoost.setStrength(strength);
-
-        settings.setBassBoostStrength(strength);
-        savedBassBoostLevelUpdates.onNext(strength);
+        settings.bassBoostStrength = strength
+        savedBassBoostLevelUpdates.onNext(strength)
     }
 
 
     //    VIRTUALIZER
-    @Override
-    public boolean isVirtualizerAvailable() {
-        return virtualizer != null && virtualizer.getStrengthSupported();
+    override fun isVirtualizerAvailable(): Boolean = virtualizer?.strengthSupported ?: false
+
+    override fun isVirtualizerEnabled(): Boolean = virtualizer?.enabled ?: false
+
+    override fun setVirtualizerEnable(enable: Boolean) {
+        virtualizer?.enabled = enable
+        settings.isVirtualizerEnabled = enable
     }
 
-    @Override
-    public boolean isVirtualizerEnabled() {
-        return virtualizer != null && virtualizer.getEnabled();
+    override fun observeVirtualizerLevel(): Observable<Short> = savedVirtualizerLevelUpdates
+
+    override fun setVirtualizerLevel(strength: Short) {
+        if (isVirtualizerAvailable) virtualizer!!.setStrength(strength)
+
+        settings.virtualizerStrength = strength
+        savedVirtualizerLevelUpdates.onNext(strength)
     }
 
-    @Override
-    public void setVirtualizerEnable(boolean enable) {
-        if (virtualizer != null)
-            virtualizer.setEnabled(enable);
-
-        settings.setVirtualizerEnabled(enable);
-    }
-
-    @Override
-    public Observable<Short> observeVirtualizerLevel() {
-        return savedVirtualizerLevelUpdates;
-    }
-
-    @Override
-    public void setVirtualizerLevel(short strength) {
-        if (isVirtualizerAvailable())
-            virtualizer.setStrength(strength);
-
-        settings.setVirtualizerStrength(strength);
-        savedVirtualizerLevelUpdates.onNext(strength);
-    }
 
     //    EQ
-    @Override
-    public boolean isEqAvailable() {
-        return equalizer != null && equalizer.getNumberOfBands() > 0;
+    override fun isEqAvailable(): Boolean = (equalizer?.numberOfBands ?: 0) > 0
+
+    override fun setEqEnable(enable: Boolean) {
+        equalizer?.enabled = enable
+
+        settings.isEqEnabled = enable
+        eqEnablingUpdates.onNext(enable)
     }
 
-    @Override
-    public void setEqEnable(boolean enable) {
-        if (equalizer != null)
-            equalizer.setEnabled(enable);
-
-        settings.setEqEnabled(enable);
-        eqEnablingUpdates.onNext(enable);
+    override fun getMaxEqBandLevel(): Short {
+        return if (equalizer != null) (equalizer!!.bandLevelRange[1] / 100).toShort() else 0
     }
 
-    @Override
-    public short getMaxEqBandLevel() {
-        return equalizer != null ? (short) ((equalizer.getBandLevelRange()[1]) / 100) : 0;
+    override fun getMinEqBandLevel(): Short {
+        return if (equalizer != null) (equalizer!!.bandLevelRange[0] / 100).toShort() else 0
     }
 
-    @Override
-    public short getMinEqBandLevel() {
-        return equalizer != null ? (short) (equalizer.getBandLevelRange()[0] / 100) : 0;
+    override fun observeEqEnabling(): Observable<Boolean> = eqEnablingUpdates
+
+    override fun setBandLevel(bandId: Int, bandLevel: Short) {
+        if (isEqAvailable)
+            equalizer!!.setBandLevel(bandId.toShort(), (bandLevel * 100).toShort())
+
+        settings.setBandLevel(bandId.toShort(), bandLevel)
     }
 
-    @Override
-    public Observable<Boolean> observeEqEnabling() {
-        return eqEnablingUpdates;
-    }
+    override fun getBands(): List<AudioEffectsInteractor.EqBand> {
+        if (equalizer == null) return emptyList()
 
-    @Override
-    public void setBandLevel(int bandId, short bandLevel) {
-        if (isEqAvailable())
-            equalizer.setBandLevel((short) bandId, (short) (bandLevel * 100));
+        val bands = mutableListOf<AudioEffectsInteractor.EqBand>()
 
-        settings.setBandLevel((short) bandId, bandLevel);
-    }
-
-    @Override
-    public List<EqBand> getBands() {
-        if (equalizer == null)
-            return Collections.emptyList();
-
-        List<EqBand> bands = new ArrayList<>(equalizer.getNumberOfBands());
-
-        for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
-            EqBand band = new EqBand();
-            band.id = i;
-            band.frequency = equalizer.getCenterFreq(i) / 1000;
-            band.currentLevel = (short) (equalizer.getBandLevel(i) / 100);
-            bands.add(band);
+        for (i in 0 until equalizer!!.numberOfBands) {
+            val band = AudioEffectsInteractor.EqBand()
+            band.id = i
+            band.frequency = equalizer!!.getCenterFreq(i.toShort()) / 1000
+            band.currentLevel = (equalizer!!.getBandLevel(i.toShort()) / 100).toShort()
+            bands.add(band)
         }
 
-        return bands;
+        return bands
     }
 
 
-    @Override
-    public void usePreset(short presetIndex) {
-        equalizer.usePreset(presetIndex);
+    override fun usePreset(presetIndex: Short) {
+        equalizer!!.usePreset(presetIndex)
     }
 
-    private List<String> presetsCache;
+    private var presetsCache: MutableList<String>? = null
 
-    @Override
-    public List<String> getPresets() {
+    override fun getPresets(): List<String> {
         if (presetsCache != null)
-            return Collections.unmodifiableList(presetsCache);
+            return Collections.unmodifiableList(presetsCache!!)
 
         if (equalizer == null) {
-            presetsCache = Collections.emptyList();
-            return Collections.unmodifiableList(presetsCache);
+            presetsCache = mutableListOf()
+            return Collections.unmodifiableList(presetsCache!!)
         }
-
-        presetsCache = new ArrayList<>();
-        for (short i = 0; i < equalizer.getNumberOfPresets(); i++) {
-            presetsCache.add(equalizer.getPresetName(i));
+        presetsCache = mutableListOf()
+        for (i in 0 until equalizer!!.numberOfPresets) {
+            presetsCache!!.add(equalizer!!.getPresetName(i.toShort()))
         }
-
-        return Collections.unmodifiableList(presetsCache);
+        return Collections.unmodifiableList(presetsCache!!)
     }
 
 }

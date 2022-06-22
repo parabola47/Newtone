@@ -1,62 +1,49 @@
-package com.parabola.player_feature;
+package com.parabola.player_feature
 
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.parabola.domain.interactor.player.PlayerSetting;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.parabola.domain.interactor.player.PlayerSetting
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
+class PlayerSettingImpl(
+    private val settingSaver: PlayerSettingSaver,
+    private val notificationManager: PlayerNotificationManager,
+) : PlayerSetting {
 
-public final class PlayerSettingImpl implements PlayerSetting {
+    private val observeIsNotificationColorized: BehaviorSubject<Boolean> =
+        BehaviorSubject.createDefault(settingSaver.isNotificationBackgroundColorized)
+    private val observeIsNotificationArtworkShow: BehaviorSubject<Boolean> =
+        BehaviorSubject.createDefault(settingSaver.isNotificationArtworkShow)
 
-    private final PlayerSettingSaver settingSaver;
-    private final PlayerNotificationManager notificationManager;
 
-    private final BehaviorSubject<Boolean> observeIsNotificationColorized;
-    private final BehaviorSubject<Boolean> observeIsNotificationArtworkShow;
-
-    public PlayerSettingImpl(PlayerSettingSaver settingSaver, PlayerNotificationManager notificationManager) {
-        this.settingSaver = settingSaver;
-        this.notificationManager = notificationManager;
-
+    init {
         //  Восстанавливаем режим отображения уведомлений
-        this.observeIsNotificationColorized = BehaviorSubject.createDefault(settingSaver.isNotificationBackgroundColorized());
-        this.observeIsNotificationArtworkShow = BehaviorSubject.createDefault(settingSaver.isNotificationArtworkShow());
-
-        this.notificationManager.setColorized(observeIsNotificationColorized.getValue());
+        notificationManager.setColorized(observeIsNotificationColorized.value!!)
     }
 
-    @Override
-    public void setNotificationBackgroundColorized(boolean colorized) {
-        settingSaver.setNotificationBackgroundColorized(colorized);
-        observeIsNotificationColorized.onNext(colorized);
-        notificationManager.setColorized(colorized);
+    override fun setNotificationBackgroundColorized(colorized: Boolean) {
+        settingSaver.isNotificationBackgroundColorized = colorized
+        observeIsNotificationColorized.onNext(colorized)
+        notificationManager.setColorized(colorized)
     }
 
-    @Override
-    public boolean isNotificationBackgroundColorized() {
-        return observeIsNotificationColorized.getValue();
-    }
+    override fun isNotificationBackgroundColorized(): Boolean =
+        observeIsNotificationColorized.value!!
 
-    @Override
-    public Observable<Boolean> observeIsNotificationBackgroundColorized() {
-        return observeIsNotificationColorized;
-    }
+    override fun observeIsNotificationBackgroundColorized(): Observable<Boolean> =
+        observeIsNotificationColorized
 
 
-    @Override
-    public void setNotificationArtworkShow(boolean show) {
-        settingSaver.setNotificationArtworkShow(show);
-        observeIsNotificationArtworkShow.onNext(show);
-        notificationManager.invalidate();
+    override fun setNotificationArtworkShow(show: Boolean) {
+        settingSaver.isNotificationArtworkShow = show
+        observeIsNotificationArtworkShow.onNext(show)
+        notificationManager.invalidate()
     }
 
-    @Override
-    public boolean isNotificationArtworkShow() {
-        return observeIsNotificationArtworkShow.getValue();
-    }
+    override fun isNotificationArtworkShow(): Boolean =
+        observeIsNotificationArtworkShow.value!!
 
-    @Override
-    public Observable<Boolean> observeNotificationArtworkShow() {
-        return observeIsNotificationArtworkShow;
-    }
+    override fun observeNotificationArtworkShow(): Observable<Boolean> =
+        observeIsNotificationArtworkShow
+
 }

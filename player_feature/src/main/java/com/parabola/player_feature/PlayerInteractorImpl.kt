@@ -1,718 +1,643 @@
-package com.parabola.player_feature;
+package com.parabola.player_feature
 
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.IBinder;
-import android.support.v4.media.session.MediaSessionCompat;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultControlDispatcher;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.google.android.exoplayer2.util.NotificationUtil;
-import com.parabola.domain.interactor.RepositoryInteractor;
-import com.parabola.domain.interactor.observer.ConsumerObserver;
-import com.parabola.domain.interactor.player.AudioEffectsInteractor;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.interactor.player.PlayerSetting;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.utils.EmptyItems;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import io.reactivex.subjects.BehaviorSubject;
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.*
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.IBinder
+import android.support.v4.media.session.MediaSessionCompat
+import androidx.core.app.NotificationCompat
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.util.NotificationUtil
+import com.parabola.domain.interactor.RepositoryInteractor
+import com.parabola.domain.interactor.RepositoryInteractor.LoadingState
+import com.parabola.domain.interactor.observer.ConsumerObserver
+import com.parabola.domain.interactor.player.AudioEffectsInteractor
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode
+import com.parabola.domain.interactor.player.PlayerSetting
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.utils.EmptyItems
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import io.reactivex.subjects.BehaviorSubject
+import java.io.File
+import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 
 
-public final class PlayerInteractorImpl implements PlayerInteractor {
-    private static final String LOG_TAG = PlayerInteractorImpl.class.getSimpleName();
+private const val PLAYBACK_UPDATE_TIME_MS = 200L
 
-    private final AudioEffectsInteractorImpl audioEffects;
-    private final PlayerSetting playerSetting;
-    private final PlayerSettingSaver settingSaver;
+
+private const val NOTIFICATION_CHANNEL_ID =
+    "com.parabola.player_feature.PlayerInteractorImpl.NOTIFICATION_CHANNEL_ID"
+
+private const val NOTIFICATION_ID = 47
+
+
+private const val CUSTOM_ACTION_ADD_TO_FAVORITES =
+    "com.parabola.player_feature.PlayerInteractorImpl.ADD_TO_FAVORITES"
+private const val CUSTOM_ACTION_REMOVE_FROM_FAVORITES =
+    "com.parabola.player_feature.PlayerInteractorImpl.REMOVE_FROM_FAVORITES"
+
+
+class PlayerInteractorImpl(
+    private val context: Context,
+    preferences: SharedPreferences,
+    private val trackRepo: TrackRepository,
+    repositoryInteractor: RepositoryInteractor,
+    private val notificationClickIntent: Intent
+) : PlayerInteractor {
+
+
+    private val audioEffects: AudioEffectsInteractorImpl
+    private val playerSetting: PlayerSetting
+    private val settingSaver: PlayerSettingSaver
 
 
     //    ExoPlayer
-    private final SimpleExoPlayer exoPlayer;
-    private final DefaultControlDispatcher DEFAULT_CONTROL_DISPATCHER = new DefaultControlDispatcher(0, 0);
-    private final PlayerNotificationManager notificationManager;
-
-
-    private final Context context;
-    private final TrackRepository trackRepo;
-    private final Intent notificationClickIntent;
+    private val exoPlayer: SimpleExoPlayer =
+        SimpleExoPlayer.Builder(context, AudioRenderersFactory(context))
+            .setTrackSelector(DefaultTrackSelector(context))
+            .build()
+    private val defaultControlDispatcher = DefaultControlDispatcher(0, 0)
+    private val notificationManager: PlayerNotificationManager
 
 
     //    RX Update listeners
-    private final BehaviorSubject<Integer> currentTrackIdObserver = BehaviorSubject.createDefault(EmptyItems.NO_TRACK.getId());
-    private final BehaviorSubject<List<Integer>> currentTracklistUpdate = BehaviorSubject.createDefault(Collections.emptyList());
-    private final BehaviorSubject<Boolean> isPlayingObserver = BehaviorSubject.createDefault(Boolean.FALSE);
-    private final BehaviorSubject<RepeatMode> repeatModeObserver;
-    private final BehaviorSubject<Boolean> shuffleModeObserver;
-
-    private static final long PLAYBACK_UPDATE_TIME_MS = 200;
-
-    public PlayerInteractorImpl(Context context, SharedPreferences preferences,
-                                TrackRepository trackRepo,
-                                RepositoryInteractor repositoryInteractor,
-                                Intent notificationClickIntent) {
-        exoPlayer = new SimpleExoPlayer.Builder(context, new AudioRenderersFactory(context))
-                .setTrackSelector(new DefaultTrackSelector(context))
-                .build();
-        exoPlayer.prepare();
-        this.context = context;
-        this.trackRepo = trackRepo;
-        this.notificationClickIntent = notificationClickIntent;
+    private val currentTrackIdObserver = BehaviorSubject.createDefault(EmptyItems.NO_TRACK.id)
+    private val currentTracklistUpdate = BehaviorSubject.createDefault(emptyList<Int>())
+    private val isPlayingObserver = BehaviorSubject.createDefault(java.lang.Boolean.FALSE)
+    private val repeatModeObserver: BehaviorSubject<RepeatMode>
+    private val shuffleModeObserver: BehaviorSubject<Boolean>
 
 
-        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+    init {
+        exoPlayer.apply {
+            prepare()
+
+            val audioAttributes = AudioAttributes.Builder()
                 .setContentType(C.CONTENT_TYPE_MUSIC)
                 .setUsage(C.USAGE_MEDIA)
-                .build();
+                .build()
 
-        exoPlayer.setAudioAttributes(audioAttributes, true);
-        exoPlayer.setHandleAudioBecomingNoisy(true);    // приостанавливаем воспроизведении при отключении наушников
-        exoPlayer.setWakeMode(C.WAKE_MODE_LOCAL);
+            setAudioAttributes(audioAttributes, true)
+            setHandleAudioBecomingNoisy(true) // приостанавливаем воспроизведении при отключении наушников
+            setWakeMode(C.WAKE_MODE_LOCAL)
+        }
 
-        MediaSessionCompat mediaSession = setupMediaSession(context);
-        notificationManager = setupNotificationManager(context, mediaSession);
+        val mediaSession = setupMediaSession(context)
+        notificationManager = setupNotificationManager(context, mediaSession)
 
 
-        settingSaver = new PlayerSettingSaver(preferences);
-        audioEffects = new AudioEffectsInteractorImpl(exoPlayer, settingSaver);
-        playerSetting = new PlayerSettingImpl(settingSaver, notificationManager);
+        settingSaver = PlayerSettingSaver(preferences)
+        audioEffects = AudioEffectsInteractorImpl(exoPlayer, settingSaver)
+        playerSetting = PlayerSettingImpl(settingSaver, notificationManager)
+
 
         //  Восстанавливаем режим повторения
-        RepeatMode repeatMode = settingSaver.getSavedRepeatMode();
-        switch (repeatMode) {
-            case OFF: exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF); break;
-            case ALL: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL); break;
-            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
-            default: throw new IllegalArgumentException(repeatMode.name());
+        val repeatMode = settingSaver.repeatMode
+        when (repeatMode) {
+            RepeatMode.OFF -> exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
+            RepeatMode.ALL -> exoPlayer.repeatMode = Player.REPEAT_MODE_ALL
+            RepeatMode.ONE -> exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+            else -> throw IllegalArgumentException(repeatMode.name)
         }
-        repeatModeObserver = BehaviorSubject.createDefault(repeatMode);
+        repeatModeObserver = BehaviorSubject.createDefault(repeatMode)
 
 
         //  Восстанавливаем режим перемешивания
-        exoPlayer.setShuffleModeEnabled(settingSaver.isShuffleModeEnabled());
-        shuffleModeObserver = BehaviorSubject.createDefault(settingSaver.isShuffleModeEnabled());
+        exoPlayer.shuffleModeEnabled = settingSaver.isShuffleModeEnabled
+        shuffleModeObserver = BehaviorSubject.createDefault(settingSaver.isShuffleModeEnabled)
 
-        exoPlayer.addListener(new PlayerListener());
+        exoPlayer.addListener(PlayerListener())
 
         //  Исключаем трек из плейлиста если он был удалён с устройства
         this.trackRepo.observeTrackDeleting()
-                .subscribe(new ConsumerObserver<>(this::removeAllById));
-
+            .subscribe(ConsumerObserver(this::removeAllById))
         this.trackRepo.observeFavouritesChanged()
-                .subscribe(new ConsumerObserver<>(i -> notificationManager.invalidate()));
+            .subscribe(ConsumerObserver { notificationManager.invalidate() })
 
         //  Восстанавливаем состояние плеера, которое было перед выходом из приложения
         repositoryInteractor.observeLoadingState()
-                .filter(loadingState -> loadingState == RepositoryInteractor.LoadingState.LOADED)
-                .firstOrError()
-                .flatMap(loadingState -> trackRepo.getByIds(settingSaver.getSavedPlaylist()))
-                .onErrorReturnItem(Collections.emptyList()) //в случае ошибки восстановления не происходит
-                .subscribe(new ConsumerSingleObserver<>(
-                        tracks -> start(tracks, settingSaver.getSavedWindowIndex(), false, settingSaver.getSavedPlaybackPosition()),
-                        Functions.ERROR_CONSUMER));
+            .filter { loadingState: LoadingState -> loadingState == LoadingState.LOADED }
+            .firstOrError()
+            .flatMap { trackRepo.getByIds(settingSaver.savedPlaylist) }
+            .onErrorReturnItem(emptyList()) //в случае ошибки восстановления не происходит
+            .subscribe(
+                ConsumerSingleObserver(
+                    { tracks: List<Track> ->
+                        start(
+                            tracks,
+                            settingSaver.savedWindowIndex,
+                            false,
+                            settingSaver.playbackPosition
+                        )
+                    },
+                    Functions.ERROR_CONSUMER
+                )
+            )
 
         // после обновления списка исключённых папок из плеера удаляются те треки, у которых папки есть в списке исключения
         // игнорируем первую загрузку, так как первая загрзука не будет списком исключённых папок
         repositoryInteractor.observeLoadingState()
-                .filter(loadingState -> loadingState == RepositoryInteractor.LoadingState.LOADED)
-                .skip(1)
-                .subscribe(ConsumerObserver.fromConsumer(loadingState -> {
-                    for (Integer trackId : getTrackIds()) {
-                        if (!trackRepo.isExists(trackId)) {
-                            removeAllById(trackId);
-                        }
+            .filter { loadingState: LoadingState -> loadingState == LoadingState.LOADED }
+            .skip(1)
+            .subscribe(ConsumerObserver.fromConsumer {
+                for (trackId in trackIds) {
+                    if (!trackRepo.isExists(trackId)) {
+                        removeAllById(trackId)
                     }
-                }));
+                }
+            })
 
         //закрываем уведомление, если очередь воспроизведения пуста
         currentTracklistUpdate
-                .observeOn(AndroidSchedulers.from(exoPlayer.getApplicationLooper()))
-                .subscribe(ConsumerObserver.fromConsumer(trackIds -> {
-                    if (trackIds.isEmpty())
-                        clearNotificationManagerAndUnbindService();
-                }));
+            .observeOn(AndroidSchedulers.from(exoPlayer.applicationLooper))
+            .subscribe(ConsumerObserver.fromConsumer { trackIds: List<Int> -> if (trackIds.isEmpty()) clearNotificationManagerAndUnbindService() })
 
-        PlayerService.playerInteractor = this;
+        PlayerService.playerInteractor = this
     }
 
 
-    public void closeNotificationIfPaused() {
-        if (!isPlayWhenReady())
-            clearNotificationManagerAndUnbindService();
+    fun closeNotificationIfPaused() {
+        if (!isPlayWhenReady) clearNotificationManagerAndUnbindService()
     }
 
-    private MediaSessionCompat setupMediaSession(Context context) {
-        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "Newtone");
-        MediaSessionConnector mediaSessionConnector = new MediaSessionConnector(mediaSession);
-        mediaSessionConnector.setPlayer(exoPlayer);
+    private fun setupMediaSession(context: Context): MediaSessionCompat {
+        val mediaSession = MediaSessionCompat(context, "Newtone")
+        val mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setPlayer(exoPlayer)
 
-        return mediaSession;
-    }
-
-
-    private static final String NOTIFICATION_CHANNEL_ID = "com.parabola.player_feature.PlayerInteractorImpl.NOTIFICATION_CHANNEL_ID";
-    private static final int NOTIFICATION_ID = 47;
-
-
-    private PlayerNotificationManager setupNotificationManager(Context context, MediaSessionCompat mediaSession) {
-        NotificationUtil.createNotificationChannel(context,
-                NOTIFICATION_CHANNEL_ID, R.string.notification_channel_id, 0,
-                NotificationUtil.IMPORTANCE_LOW);
-        PlayerNotificationManager notificationManager = new PlayerNotificationManager(
-                context, NOTIFICATION_CHANNEL_ID, NOTIFICATION_ID,
-                mediaDescriptionAdapter, playerNotificationListener, customActionReceiver);
-
-        notificationManager.setMediaSessionToken(mediaSession.getSessionToken());
-        notificationManager.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        notificationManager.setUseNavigationActionsInCompactView(true);
-        notificationManager.setPriority(NotificationCompat.PRIORITY_MAX);
-        notificationManager.setUseChronometer(false);
-        notificationManager.setControlDispatcher(DEFAULT_CONTROL_DISPATCHER);
-
-        return notificationManager;
+        return mediaSession
     }
 
 
-    @Override
-    public void start(List<Track> tracklist, int trackPosition, boolean startImmediately, long playbackPositionMs) {
-        if (tracklist.isEmpty() || trackPosition < 0 || trackPosition >= tracklist.size())
-            return;
+    private fun setupNotificationManager(
+        context: Context,
+        mediaSession: MediaSessionCompat,
+    ): PlayerNotificationManager {
+        NotificationUtil.createNotificationChannel(
+            context,
+            NOTIFICATION_CHANNEL_ID,
+            R.string.notification_channel_id,
+            0,
+            NotificationUtil.IMPORTANCE_LOW
+        )
 
-        boolean isPlaylistChanged = !isNewPlaylistIdentical(tracklist);
+        return PlayerNotificationManager(
+            context, NOTIFICATION_CHANNEL_ID, NOTIFICATION_ID,
+            PlayerMediaDescriptorAdapter(),
+            playerNotificationListener,
+            PlayerCustomActionReceiver(),
+        ).apply {
+            setMediaSessionToken(mediaSession.sessionToken)
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            setUseNavigationActionsInCompactView(true)
+            setPriority(NotificationCompat.PRIORITY_MAX)
+            setUseChronometer(false)
+            setControlDispatcher(defaultControlDispatcher)
+        }
+    }
+
+
+    override fun start(
+        tracklist: List<Track>,
+        trackPosition: Int,
+        startImmediately: Boolean,
+        playbackPositionMs: Long
+    ) {
+        if (tracklist.isEmpty() || trackPosition < 0 || trackPosition >= tracklist.size) return
+
+        val isPlaylistChanged = !isNewPlaylistIdentical(tracklist)
 
         if (isPlaylistChanged) {
-            exoPlayer.pause();
-            exoPlayer.setMediaItems(createMediaItemsFromTrackList(tracklist), trackPosition, playbackPositionMs);
+            exoPlayer.pause()
+            exoPlayer.setMediaItems(
+                createMediaItemsFromTrackList(tracklist),
+                trackPosition,
+                playbackPositionMs
+            )
         } else {
-            boolean isCurrentTrackChanged = currentTrackPosition() != trackPosition;
+            val isCurrentTrackChanged = currentTrackPosition() != trackPosition
             if (isCurrentTrackChanged) {
-                exoPlayer.pause();
-                exoPlayer.seekTo(trackPosition, playbackPositionMs);
+                exoPlayer.pause()
+                exoPlayer.seekTo(trackPosition, playbackPositionMs)
             }
         }
-        exoPlayer.setPlayWhenReady(startImmediately);
+        exoPlayer.playWhenReady = startImmediately
     }
 
-    private boolean isNewPlaylistIdentical(List<Track> second) {
-        if (second == null
-                || tracksCount() != second.size()) {
-            return false;
+    private fun isNewPlaylistIdentical(second: List<Track>): Boolean {
+        if (tracksCount() != second.size) {
+            return false
         }
 
-        for (int i = 0; i < tracksCount(); i++) {
-            if (!getTrackIdByPosition(i).equals(second.get(i).getId()))
-                return false;
+        for (i in 0 until tracksCount()) {
+            if (getTrackIdByPosition(i) != second[i].id) return false
         }
 
-        return true;
+        return true
     }
 
-    private List<MediaItem> createMediaItemsFromTrackList(List<Track> tracklist) {
+    private fun createMediaItemsFromTrackList(tracklist: List<Track>): List<MediaItem> {
         return tracklist.stream()
-                .map(this::createMediaItemFromTrack)
-                .collect(Collectors.toList());
+            .map(this::createMediaItemFromTrack)
+            .collect(Collectors.toList())
     }
 
-    private MediaItem createMediaItemFromTrack(Track track) {
-        return new MediaItem.Builder()
-                .setUri(Uri.fromFile(new File(track.getFilePath())))
-                .setTag(track.getId())
-                .build();
-    }
-
-
-    @Override
-    public void startInShuffleMode(List<Track> tracklist) {
-        if (tracklist.isEmpty())
-            return;
-        exoPlayer.pause();
-
-        exoPlayer.setMediaItems(createMediaItemsFromTrackList(tracklist));
-        setShuffleMode(true);
-
-        exoPlayer.play();
-    }
-
-    @Override
-    public void stop() {
-        pause();
-        exoPlayer.stop();
-        seekTo(0L);
-    }
-
-    @Override
-    public void next() {
-        exoPlayer.next();
-    }
-
-    @Override
-    public void previous() {
-        exoPlayer.previous();
-    }
-
-    @Override
-    public int tracksCount() {
-        return exoPlayer.getMediaItemCount();
-    }
-
-    @Override
-    public int currentTrackPosition() {
-        return exoPlayer.getMediaItemCount() != 0
-                ? exoPlayer.getCurrentWindowIndex()
-                : -1;
-    }
-
-    @Override
-    public int currentTrackId() {
-        if (exoPlayer.getCurrentMediaItem() == null || exoPlayer.getCurrentMediaItem().playbackProperties == null)
-            return EmptyItems.NO_TRACK.getId();
-        return (int) exoPlayer.getCurrentMediaItem().playbackProperties.tag;
+    private fun createMediaItemFromTrack(track: Track): MediaItem {
+        return MediaItem.Builder()
+            .setUri(Uri.fromFile(File(track.filePath)))
+            .setTag(track.id)
+            .build()
     }
 
 
-    @Override
-    public Completable moveTrack(int oldPosition, int newPosition) {
-        return Completable.fromAction(() -> exoPlayer.moveMediaItem(oldPosition, newPosition));
+    override fun startInShuffleMode(tracklist: List<Track>) {
+        if (tracklist.isEmpty()) return
+
+        exoPlayer.pause()
+
+        exoPlayer.setMediaItems(createMediaItemsFromTrackList(tracklist))
+        setShuffleMode(true)
+
+        exoPlayer.play()
     }
 
-    @Override
-    public Completable remove(int trackPosition) {
+    override fun stop() {
+        pause()
+        exoPlayer.stop()
+        seekTo(0L)
+    }
+
+    override fun next() {
+        exoPlayer.next()
+    }
+
+    override fun previous() {
+        exoPlayer.previous()
+    }
+
+    override fun tracksCount(): Int = exoPlayer.mediaItemCount
+
+    override fun currentTrackPosition(): Int =
+        if (exoPlayer.mediaItemCount != 0) exoPlayer.currentWindowIndex else -1
+
+    override fun currentTrackId(): Int {
+        if (exoPlayer.currentMediaItem == null || exoPlayer.currentMediaItem!!.playbackProperties == null)
+            return EmptyItems.NO_TRACK.id
+
+        return exoPlayer.currentMediaItem!!.playbackProperties!!.tag as Int
+    }
+
+
+    override fun moveTrack(oldPosition: Int, newPosition: Int): Completable =
+        Completable.fromAction { exoPlayer.moveMediaItem(oldPosition, newPosition) }
+
+    override fun remove(trackPosition: Int): Completable {
         //сейчас exoPlayer перекидывает на первый трек в случае, если установлен режим повтора одного трека
-        if (getRepeatMode() == RepeatMode.ONE
-                && trackPosition == currentTrackPosition())
-            next();
+        if (repeatMode == RepeatMode.ONE && trackPosition == currentTrackPosition()) {
+            next()
+        }
 
-        return Completable.fromAction(() -> exoPlayer.removeMediaItem(trackPosition));
+        return Completable.fromAction { exoPlayer.removeMediaItem(trackPosition) }
     }
 
 
-    private void removeAllById(int deletedTrackId) {
-        for (int i = 0; i < exoPlayer.getMediaItemCount(); i++) {
-            if (getTrackIdByPosition(i).equals(deletedTrackId)) {
-                exoPlayer.removeMediaItem(i);
+    private fun removeAllById(deletedTrackId: Int) {
+        for (i in 0 until exoPlayer.mediaItemCount) {
+            if (getTrackIdByPosition(i) == deletedTrackId) {
+                exoPlayer.removeMediaItem(i)
             }
         }
     }
 
-
-    @Override
-    public void resume() {
-        exoPlayer.play();
+    override fun resume() {
+        exoPlayer.play()
     }
 
-    @Override
-    public void pause() {
-        exoPlayer.pause();
+    override fun pause() {
+        exoPlayer.pause()
     }
 
-
-    @Override
-    public void seekTo(long playbackPositionMs) {
-        exoPlayer.seekTo(playbackPositionMs);
-        settingSaver.setPlaybackPosition(playbackPositionMs);
+    override fun seekTo(playbackPositionMs: Long) {
+        exoPlayer.seekTo(playbackPositionMs)
+        settingSaver.playbackPosition = playbackPositionMs
     }
 
 
-    private Long lastPlaybackPosition = -1L;
+    private var lastPlaybackPosition = -1L
 
-    @Override
-    public long playbackPosition() {
-        return exoPlayer.getCurrentPosition();
-    }
+    override fun playbackPosition(): Long = exoPlayer.currentPosition
 
-    @Override
-    public Flowable<Long> onChangePlaybackPosition() {
-        return Flowable.interval(0, PLAYBACK_UPDATE_TIME_MS, TimeUnit.MILLISECONDS, AndroidSchedulers.from(exoPlayer.getApplicationLooper()))
-                .filter(count -> lastPlaybackPosition != exoPlayer.getCurrentPosition())
-                .doOnNext(count -> lastPlaybackPosition = exoPlayer.getCurrentPosition())
-                .map(count -> exoPlayer.getCurrentPosition());
-    }
+    override fun onChangePlaybackPosition(): Flowable<Long> =
+        Flowable.interval(
+            0,
+            PLAYBACK_UPDATE_TIME_MS,
+            TimeUnit.MILLISECONDS,
+            AndroidSchedulers.from(exoPlayer.applicationLooper)
+        )
+            .filter { lastPlaybackPosition != exoPlayer.currentPosition }
+            .doOnNext { lastPlaybackPosition = exoPlayer.currentPosition }
+            .map { exoPlayer.currentPosition }
 
-    @Override
-    public void toggleRepeatMode() {
-        RepeatMode repeatMode = getRepeatMode();
-        switch (repeatMode) {
-            case OFF: setRepeatMode(RepeatMode.ALL); break;
-            case ALL: setRepeatMode(RepeatMode.ONE); break;
-            case ONE: setRepeatMode(RepeatMode.OFF); break;
-            default: throw new IllegalStateException(repeatMode.name());
+    override fun toggleRepeatMode() {
+        repeatMode = when (repeatMode) {
+            RepeatMode.OFF -> RepeatMode.ALL
+            RepeatMode.ALL -> RepeatMode.ONE
+            RepeatMode.ONE -> RepeatMode.OFF
+            else -> RepeatMode.OFF
         }
     }
 
-    @Override
-    public void setRepeatMode(RepeatMode repeatMode) {
-        settingSaver.setRepeatMode(repeatMode);
+    override fun setRepeatMode(repeatMode: RepeatMode) {
+        settingSaver.repeatMode = repeatMode
 
-        switch (repeatMode) {
-            case OFF: exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF); break;
-            case ALL: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL); break;
-            case ONE: exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE); break;
-            default: throw new IllegalArgumentException(repeatMode.name());
+        exoPlayer.repeatMode = when (repeatMode) {
+            RepeatMode.OFF -> Player.REPEAT_MODE_OFF
+            RepeatMode.ALL -> Player.REPEAT_MODE_ALL
+            RepeatMode.ONE -> Player.REPEAT_MODE_ONE
+            else -> Player.REPEAT_MODE_OFF
         }
     }
 
-    @Override
-    public Observable<RepeatMode> onRepeatModeChange() {
-        return repeatModeObserver;
+    override fun onRepeatModeChange(): Observable<RepeatMode> = repeatModeObserver
+
+    override fun getRepeatMode(): RepeatMode = repeatModeObserver.value!!
+
+    override fun toggleShuffleMode() {
+        setShuffleMode(!exoPlayer.shuffleModeEnabled)
     }
 
-    @Override
-    public RepeatMode getRepeatMode() {
-        return repeatModeObserver.getValue();
+    override fun setShuffleMode(enable: Boolean) {
+        settingSaver.isShuffleModeEnabled = enable
+        exoPlayer.shuffleModeEnabled = enable
     }
 
-    @Override
-    public void toggleShuffleMode() {
-        setShuffleMode(!exoPlayer.getShuffleModeEnabled());
+    override fun onShuffleModeChange(): Observable<Boolean> = shuffleModeObserver
+
+    override fun isShuffleEnabled(): Boolean = exoPlayer.shuffleModeEnabled
+
+    override fun isPlayWhenReady(): Boolean = exoPlayer.playWhenReady
+
+    override fun onChangeCurrentTrackId(): Observable<Int> = currentTrackIdObserver
+
+    private fun getTrackIdByPosition(trackPosition: Int): Int {
+        val mediaItem = exoPlayer.getMediaItemAt(trackPosition)
+        if (mediaItem.playbackProperties == null || mediaItem.playbackProperties!!.tag == null)
+            throw NullPointerException()
+
+        return mediaItem.playbackProperties!!.tag as Int
     }
 
-    @Override
-    public void setShuffleMode(boolean enable) {
-        settingSaver.setShuffleMode(enable);
-        exoPlayer.setShuffleModeEnabled(enable);
-    }
-
-    @Override
-    public Observable<Boolean> onShuffleModeChange() {
-        return shuffleModeObserver;
-    }
-
-    @Override
-    public boolean isShuffleEnabled() {
-        return exoPlayer.getShuffleModeEnabled();
-    }
-
-    @Override
-    public boolean isPlayWhenReady() {
-        return exoPlayer.getPlayWhenReady();
-    }
-
-    @Override
-    public Observable<Integer> onChangeCurrentTrackId() {
-        return currentTrackIdObserver;
-    }
-
-    private Integer getTrackIdByPosition(int trackPosition) {
-        MediaItem mediaItem = exoPlayer.getMediaItemAt(trackPosition);
-        if (mediaItem == null
-                || mediaItem.playbackProperties == null
-                || mediaItem.playbackProperties.tag == null)
-            throw new NullPointerException();
-        return (Integer) mediaItem.playbackProperties.tag;
-    }
-
-    private List<Integer> getTrackIds() {
-        List<Integer> ids = new ArrayList<>(exoPlayer.getMediaItemCount());
-        for (int i = 0; i < exoPlayer.getMediaItemCount(); i++) {
-            ids.add(getTrackIdByPosition(i));
+    private val trackIds: List<Int>
+        get() {
+            val ids: MutableList<Int> = ArrayList(exoPlayer.mediaItemCount)
+            for (i in 0 until exoPlayer.mediaItemCount) {
+                ids.add(getTrackIdByPosition(i))
+            }
+            return ids
         }
-        return ids;
-    }
 
-    @Override
-    public Observable<List<Integer>> onTracklistChanged() {
-        return currentTracklistUpdate;
-    }
+    override fun onTracklistChanged(): Observable<List<Int>> = currentTracklistUpdate
 
-    @Override
-    public Observable<Boolean> onChangePlayingState() {
-        return isPlayingObserver;
-    }
+    override fun onChangePlayingState(): Observable<Boolean> = isPlayingObserver
 
-    @Override
-    public AudioEffectsInteractor getAudioEffectInteractor() {
-        return audioEffects;
-    }
+    override fun getAudioEffectInteractor(): AudioEffectsInteractor = audioEffects
 
-    @Override
-    public PlayerSetting getPlayerSetting() {
-        return playerSetting;
-    }
+    override fun getPlayerSetting(): PlayerSetting = playerSetting
 
 
-    private void clearNotificationManagerAndUnbindService() {
-        notificationManager.setPlayer(null);
+    private fun clearNotificationManagerAndUnbindService() {
+        notificationManager.setPlayer(null)
         if (isServiceBound) {
-            context.unbindService(serviceConnection);
-            isServiceBound = false;
+            context.unbindService(serviceConnection)
+            isServiceBound = false
         }
     }
 
+    private var newtonePlayerListener: NewtonePlayerListener? = null
 
-    private NewtonePlayerListener newtonePlayerListener;
-
-    void setNewtonePlayerListener(NewtonePlayerListener listener) {
-        newtonePlayerListener = listener;
+    fun setNewtonePlayerListener(listener: NewtonePlayerListener?) {
+        newtonePlayerListener = listener
     }
 
     interface NewtonePlayerListener {
-        void onNotificationPosted(int notificationId, Notification notification, boolean ongoing);
-        void onNotificationCancelled(int notificationId, boolean dismissedByUser);
+        fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean)
+        fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean)
     }
 
+    private val playerNotificationListener: PlayerNotificationManager.NotificationListener =
+        object : PlayerNotificationManager.NotificationListener {
 
-    private final PlayerNotificationManager.NotificationListener playerNotificationListener = new PlayerNotificationManager.NotificationListener() {
-        @Override
-        @SuppressWarnings("deprecation")
-        public void onNotificationStarted(int notificationId, Notification notification) {
-        }
-
-        @Override
-        @SuppressWarnings("deprecation")
-        public void onNotificationCancelled(int notificationId) {
-        }
-
-        @Override
-        public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-            if (newtonePlayerListener != null) {
-                newtonePlayerListener.onNotificationCancelled(notificationId, dismissedByUser);
+            override fun onNotificationPosted(
+                notificationId: Int,
+                notification: Notification,
+                ongoing: Boolean
+            ) {
+                newtonePlayerListener?.onNotificationPosted(
+                    notificationId,
+                    notification,
+                    ongoing
+                )
             }
-            clearNotificationManagerAndUnbindService();
-        }
 
-        @Override
-        public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-            if (newtonePlayerListener != null) {
-                newtonePlayerListener.onNotificationPosted(notificationId, notification, ongoing);
+            override fun onNotificationCancelled(
+                notificationId: Int,
+                dismissedByUser: Boolean,
+            ) {
+                newtonePlayerListener?.onNotificationCancelled(notificationId, dismissedByUser)
+                clearNotificationManagerAndUnbindService()
             }
         }
-    };
 
 
-    private boolean isServiceBound = false;
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            notificationManager.setPlayer(exoPlayer);
+    private var isServiceBound = false
+    private val serviceConnection: ServiceConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            notificationManager.setPlayer(exoPlayer)
         }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
+        override fun onServiceDisconnected(name: ComponentName) {}
+    }
 
-
-    private class PlayerListener implements Player.EventListener {
-        @Override
-        public void onTimelineChanged(Timeline timeline, int reason) {
+    private inner class PlayerListener : Player.EventListener {
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
             if (reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
-                List<Integer> trackIds = getTrackIds();
-                currentTracklistUpdate.onNext(trackIds);
-                settingSaver.setSavedPlaylist(trackIds, exoPlayer.getCurrentWindowIndex());
+                val trackIds = trackIds
+                currentTracklistUpdate.onNext(trackIds)
+                settingSaver.savePlaylist(trackIds, exoPlayer.currentWindowIndex)
             }
         }
 
-        @Override
-        public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
-            if (playWhenReady != isPlayingObserver.getValue()) {
-                isPlayingObserver.onNext(playWhenReady);
-                settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
-                runServiceIfNeeded(playWhenReady);
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            if (playWhenReady != isPlayingObserver.value) {
+                isPlayingObserver.onNext(playWhenReady)
+                settingSaver.playbackPosition = exoPlayer.currentPosition
+                runServiceIfNeeded(playWhenReady)
             }
         }
 
-        @Override
-        public void onPlaybackStateChanged(int state) {
+        override fun onPlaybackStateChanged(state: Int) {
             if (state == Player.STATE_ENDED) {
-                onQueueEnded();
+                onQueueEnded()
             }
         }
 
-        private void runServiceIfNeeded(boolean isPlaying) {
+        private fun runServiceIfNeeded(isPlaying: Boolean) {
             if (isPlaying && !isServiceBound) {
-                Intent intent = new Intent(context, PlayerService.class);
-                context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-                isServiceBound = true;
+                val intent = Intent(context, PlayerService::class.java)
+                context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+                isServiceBound = true
             }
         }
 
-        private void onQueueEnded() {
-            pause();
-            seekTo(0);
+        private fun onQueueEnded() {
+            pause()
+            seekTo(0)
         }
 
-        @Override
-        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
-            refreshCurrentTrack();
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            refreshCurrentTrack()
         }
 
-        @Override
-        public void onRepeatModeChanged(int repeatMode) {
-            switch (repeatMode) {
-                case Player.REPEAT_MODE_OFF: repeatModeObserver.onNext(RepeatMode.OFF); break;
-                case Player.REPEAT_MODE_ALL: repeatModeObserver.onNext(RepeatMode.ALL); break;
-                case Player.REPEAT_MODE_ONE: repeatModeObserver.onNext(RepeatMode.ONE); break;
-                default: throw new IllegalArgumentException("Repeat mode: " + repeatMode);
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            when (repeatMode) {
+                Player.REPEAT_MODE_OFF -> repeatModeObserver.onNext(RepeatMode.OFF)
+                Player.REPEAT_MODE_ALL -> repeatModeObserver.onNext(RepeatMode.ALL)
+                Player.REPEAT_MODE_ONE -> repeatModeObserver.onNext(RepeatMode.ONE)
+                else -> throw IllegalArgumentException("Repeat mode: $repeatMode")
             }
         }
 
-        @Override
-        public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-            shuffleModeObserver.onNext(shuffleModeEnabled);
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            shuffleModeObserver.onNext(shuffleModeEnabled)
         }
 
-        private void refreshCurrentTrack() {
-            if (exoPlayer.getMediaItemCount() == 0) {
-                currentTrackIdObserver.onNext(EmptyItems.NO_TRACK.getId());
+        private fun refreshCurrentTrack() {
+            if (exoPlayer.mediaItemCount == 0) {
+                currentTrackIdObserver.onNext(EmptyItems.NO_TRACK.id)
             } else {
-                currentTrackIdObserver.onNext(currentTrackId());
+                currentTrackIdObserver.onNext(currentTrackId())
 
-                settingSaver.setCurrentWindowIndex(exoPlayer.getCurrentWindowIndex());
-                settingSaver.setPlaybackPosition(exoPlayer.getCurrentPosition());
+                settingSaver.savedWindowIndex = exoPlayer.currentWindowIndex
+                settingSaver.playbackPosition = exoPlayer.currentPosition
             }
         }
     }
 
 
-    private Bitmap defaultNotificationAlbumArt;
+    private lateinit var defaultNotificationAlbumArt: Bitmap
 
-    public void setDefaultNotificationAlbumArt(Bitmap bitmap) {
-        this.defaultNotificationAlbumArt = bitmap;
-        notificationManager.invalidate();
+    fun setDefaultNotificationAlbumArt(bitmap: Bitmap) {
+        defaultNotificationAlbumArt = bitmap
+        notificationManager.invalidate()
     }
 
-    private final PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter = new PlayerNotificationManager.MediaDescriptionAdapter() {
-        private Track currentTrack = EmptyItems.NO_TRACK;
 
-        private Track getCurrentTrack(Player player) {
-            if (player.getMediaItemCount() == 0) {
-                currentTrack = EmptyItems.NO_TRACK;
-                return currentTrack;
+    private inner class PlayerMediaDescriptorAdapter :
+        PlayerNotificationManager.MediaDescriptionAdapter {
+        private var currentTrack: Track = EmptyItems.NO_TRACK
+
+        private fun getCurrentTrack(player: Player): Track {
+            if (player.mediaItemCount == 0) {
+                currentTrack = EmptyItems.NO_TRACK
+                return currentTrack
             }
 
-            int currentTrackId = currentTrackId();
+            val currentTrackId = currentTrackId()
 
-            if (currentTrackId != currentTrack.getId()) {
+            if (currentTrackId != currentTrack.id) {
                 currentTrack = trackRepo.getById(currentTrackId)
-                        .onErrorReturnItem(EmptyItems.NO_TRACK)
-                        .blockingGet();
+                    .onErrorReturnItem(EmptyItems.NO_TRACK)
+                    .blockingGet()
             }
 
-            return currentTrack;
+            return currentTrack
         }
 
-        @Override
-        @NonNull
-        public String getCurrentContentTitle(@NonNull Player player) {
-            return getCurrentTrack(player).getTitle();
-        }
+        override fun getCurrentContentTitle(player: Player): String =
+            getCurrentTrack(player).title
 
-        @Nullable
-        @Override
-        public PendingIntent createCurrentContentIntent(@NonNull Player player) {
-            return PendingIntent.getActivity(context, 0, notificationClickIntent, 0);
-        }
+        override fun createCurrentContentIntent(player: Player): PendingIntent =
+            PendingIntent.getActivity(context, 0, notificationClickIntent, 0)
 
-        @Override
-        public String getCurrentContentText(@NonNull Player player) {
-            Track currentTrack = getCurrentTrack(player);
-            return currentTrack.getArtistName() + " - " + currentTrack.getAlbumTitle();
-        }
+        override fun getCurrentContentText(player: Player): String =
+            getCurrentTrack(player).run { "$artistName - $albumTitle" }
 
-        @Nullable
-        @Override
-        public Bitmap getCurrentLargeIcon(@NonNull Player player, @NonNull PlayerNotificationManager.BitmapCallback bitmapCallback) {
-            if (!playerSetting.isNotificationArtworkShow()) {
-                return null;
+        override fun getCurrentLargeIcon(
+            player: Player,
+            bitmapCallback: PlayerNotificationManager.BitmapCallback
+        ): Bitmap? {
+            if (!playerSetting.isNotificationArtworkShow) {
+                return null
             }
 
-            Track track = getCurrentTrack(player);
-            Bitmap image = track.getArtImage();
-            if (image == null) {
-                image = defaultNotificationAlbumArt;
-            }
-            return image;
+            val track = getCurrentTrack(player)
+            return track.getArtImage<Bitmap>() ?: defaultNotificationAlbumArt
         }
-    };
+    }
+
+    private inner class PlayerCustomActionReceiver :
+        PlayerNotificationManager.CustomActionReceiver {
 
 
-    private final PlayerNotificationManager.CustomActionReceiver customActionReceiver = new PlayerNotificationManager.CustomActionReceiver() {
+        private fun createBroadcastIntent(action: String, instanceId: Int): PendingIntent {
+            val intent = Intent(action)
+                .setPackage(context.packageName)
+                .putExtra(PlayerNotificationManager.EXTRA_INSTANCE_ID, instanceId)
 
-        private static final String CUSTOM_ACTION_ADD_TO_FAVORITES = "com.parabola.player.feature.PlayerInteractorImpl.ADD_TO_FAVORITES";
-        private static final String CUSTOM_ACTION_REMOVE_FROM_FAVORITES = "com.parabola.player.feature.PlayerInteractorImpl.REMOVE_FROM_FAVORITES";
-
-
-        private PendingIntent createBroadcastIntent(String action, int instanceId) {
-            Intent intent = new Intent(action).setPackage(context.getPackageName());
-            intent.putExtra(PlayerNotificationManager.EXTRA_INSTANCE_ID, instanceId);
-
-            return PendingIntent.getBroadcast(
-                    context, instanceId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            return PendingIntent.getBroadcast(context, instanceId, intent, 0)
         }
 
+        override fun createCustomActions(
+            context: Context,
+            instanceId: Int,
+        ): Map<String, NotificationCompat.Action> = mapOf(
+            CUSTOM_ACTION_ADD_TO_FAVORITES to NotificationCompat.Action(
+                R.drawable.ic_notification_not_favourite,
+                context.getString(R.string.notification_action_add_to_favourites),
+                createBroadcastIntent(CUSTOM_ACTION_ADD_TO_FAVORITES, instanceId)
+            ),
+            CUSTOM_ACTION_REMOVE_FROM_FAVORITES to NotificationCompat.Action(
+                R.drawable.ic_notification_favourite,
+                context.getString(R.string.notification_action_remove_from_favourites),
+                createBroadcastIntent(CUSTOM_ACTION_REMOVE_FROM_FAVORITES, instanceId)
+            )
+        )
 
-        @NonNull
-        @Override
-        public Map<String, NotificationCompat.Action> createCustomActions(@NonNull Context context, int instanceId) {
-            Map<String, NotificationCompat.Action> customActions = new HashMap<>();
+        override fun getCustomActions(player: Player): List<String> {
+            val action =
+                if (trackRepo.isFavourite(currentTrackId())) CUSTOM_ACTION_REMOVE_FROM_FAVORITES
+                else CUSTOM_ACTION_ADD_TO_FAVORITES
 
-            customActions.put(CUSTOM_ACTION_ADD_TO_FAVORITES, new NotificationCompat.Action(
-                    R.drawable.ic_notification_not_favourite, context.getString(R.string.notification_action_add_to_favourites),
-                    createBroadcastIntent(CUSTOM_ACTION_ADD_TO_FAVORITES, instanceId)));
-            customActions.put(CUSTOM_ACTION_REMOVE_FROM_FAVORITES, new NotificationCompat.Action(
-                    R.drawable.ic_notification_favourite, context.getString(R.string.notification_action_remove_from_favourites),
-                    createBroadcastIntent(CUSTOM_ACTION_REMOVE_FROM_FAVORITES, instanceId)));
-
-            return customActions;
+            return listOf(action)
         }
 
-        @NonNull
-        @Override
-        public List<String> getCustomActions(@NonNull Player player) {
-            List<String> customActions = new ArrayList<>();
-            if (trackRepo.isFavourite(currentTrackId()))
-                customActions.add(CUSTOM_ACTION_REMOVE_FROM_FAVORITES);
-            else customActions.add(CUSTOM_ACTION_ADD_TO_FAVORITES);
-
-            return customActions;
-        }
-
-        @Override
-        public void onCustomAction(@NonNull Player player, @NonNull String action, @NonNull Intent intent) {
-            switch (action) {
-                case CUSTOM_ACTION_ADD_TO_FAVORITES:
-                    trackRepo.addToFavourites(currentTrackId());
-                    break;
-                case CUSTOM_ACTION_REMOVE_FROM_FAVORITES:
-                    trackRepo.removeFromFavourites(currentTrackId());
-                    break;
+        override fun onCustomAction(
+            player: Player,
+            action: String,
+            intent: Intent,
+        ) {
+            when (action) {
+                CUSTOM_ACTION_ADD_TO_FAVORITES -> trackRepo.addToFavourites(currentTrackId())
+                CUSTOM_ACTION_REMOVE_FROM_FAVORITES -> trackRepo.removeFromFavourites(
+                    currentTrackId()
+                )
             }
         }
-    };
+    }
 
 }
