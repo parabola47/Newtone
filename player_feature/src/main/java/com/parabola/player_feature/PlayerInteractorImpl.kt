@@ -77,7 +77,7 @@ class PlayerInteractorImpl(
     //    RX Update listeners
     private val currentTrackIdObserver = BehaviorSubject.createDefault(EmptyItems.NO_TRACK.id)
     private val currentTracklistUpdate = BehaviorSubject.createDefault(emptyList<Int>())
-    private val isPlayingObserver = BehaviorSubject.createDefault(java.lang.Boolean.FALSE)
+    private val isPlayingObserver = BehaviorSubject.createDefault(false)
     private val repeatModeObserver: BehaviorSubject<RepeatMode>
     private val shuffleModeObserver: BehaviorSubject<Boolean>
 

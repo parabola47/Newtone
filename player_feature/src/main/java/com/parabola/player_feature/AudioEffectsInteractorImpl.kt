@@ -25,7 +25,7 @@ internal class AudioEffectsInteractorImpl(
     private val savedPlaybackSpeed: BehaviorSubject<Float>
     private val playbackPitchEnabledUpdates: BehaviorSubject<Boolean>
     private val savedPlaybackPitch: BehaviorSubject<Float>
-    private val eqEnablingUpdates = BehaviorSubject.createDefault(java.lang.Boolean.FALSE)
+    private val eqEnablingUpdates = BehaviorSubject.createDefault(false)
     private val savedVirtualizerLevelUpdates: BehaviorSubject<Short>
     private val savedBassBoostLevelUpdates: BehaviorSubject<Short>
 
