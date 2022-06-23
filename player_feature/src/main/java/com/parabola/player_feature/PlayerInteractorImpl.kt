@@ -33,17 +33,13 @@ import io.reactivex.internal.observers.ConsumerSingleObserver
 import io.reactivex.subjects.BehaviorSubject
 import java.io.File
 import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
 
 private const val PLAYBACK_UPDATE_TIME_MS = 200L
 
-
 private const val NOTIFICATION_CHANNEL_ID =
     "com.parabola.player_feature.PlayerInteractorImpl.NOTIFICATION_CHANNEL_ID"
-
 private const val NOTIFICATION_ID = 47
-
 
 private const val CUSTOM_ACTION_ADD_TO_FAVORITES =
     "com.parabola.player_feature.PlayerInteractorImpl.ADD_TO_FAVORITES"
@@ -107,10 +103,10 @@ class PlayerInteractorImpl(
 
         //  Восстанавливаем режим повторения
         val repeatMode = settingSaver.repeatMode
-        when (repeatMode) {
-            RepeatMode.OFF -> exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
-            RepeatMode.ALL -> exoPlayer.repeatMode = Player.REPEAT_MODE_ALL
-            RepeatMode.ONE -> exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+        exoPlayer.repeatMode = when (repeatMode) {
+            RepeatMode.OFF -> Player.REPEAT_MODE_OFF
+            RepeatMode.ALL -> Player.REPEAT_MODE_ALL
+            RepeatMode.ONE -> Player.REPEAT_MODE_ONE
             else -> throw IllegalArgumentException(repeatMode.name)
         }
         repeatModeObserver = BehaviorSubject.createDefault(repeatMode)
@@ -123,9 +119,9 @@ class PlayerInteractorImpl(
         exoPlayer.addListener(PlayerListener())
 
         //  Исключаем трек из плейлиста если он был удалён с устройства
-        this.trackRepo.observeTrackDeleting()
+        trackRepo.observeTrackDeleting()
             .subscribe(ConsumerObserver(this::removeAllById))
-        this.trackRepo.observeFavouritesChanged()
+        trackRepo.observeFavouritesChanged()
             .subscribe(ConsumerObserver { notificationManager.invalidate() })
 
         //  Восстанавливаем состояние плеера, которое было перед выходом из приложения
@@ -251,9 +247,7 @@ class PlayerInteractorImpl(
     }
 
     private fun createMediaItemsFromTrackList(tracklist: List<Track>): List<MediaItem> {
-        return tracklist.stream()
-            .map(this::createMediaItemFromTrack)
-            .collect(Collectors.toList())
+        return tracklist.map(this::createMediaItemFromTrack)
     }
 
     private fun createMediaItemFromTrack(track: Track): MediaItem {
@@ -618,13 +612,14 @@ class PlayerInteractorImpl(
             )
         )
 
-        override fun getCustomActions(player: Player): List<String> {
-            val action =
-                if (trackRepo.isFavourite(currentTrackId())) CUSTOM_ACTION_REMOVE_FROM_FAVORITES
+        // возвращается экшн с добавлением/удалением трека в/из избранное
+        // конкретный экшн зависит от того, находится ли этот трек в избранном
+        override fun getCustomActions(player: Player): List<String> =
+            listOf(
+                if (trackRepo.isFavourite(currentTrackId()))
+                    CUSTOM_ACTION_REMOVE_FROM_FAVORITES
                 else CUSTOM_ACTION_ADD_TO_FAVORITES
-
-            return listOf(action)
-        }
+            )
 
         override fun onCustomAction(
             player: Player,
@@ -632,10 +627,10 @@ class PlayerInteractorImpl(
             intent: Intent,
         ) {
             when (action) {
-                CUSTOM_ACTION_ADD_TO_FAVORITES -> trackRepo.addToFavourites(currentTrackId())
-                CUSTOM_ACTION_REMOVE_FROM_FAVORITES -> trackRepo.removeFromFavourites(
-                    currentTrackId()
-                )
+                CUSTOM_ACTION_ADD_TO_FAVORITES ->
+                    trackRepo.addToFavourites(currentTrackId())
+                CUSTOM_ACTION_REMOVE_FROM_FAVORITES ->
+                    trackRepo.removeFromFavourites(currentTrackId())
             }
         }
     }

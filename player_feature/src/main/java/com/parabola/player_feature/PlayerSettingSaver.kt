@@ -3,50 +3,6 @@ package com.parabola.player_feature
 import android.content.SharedPreferences
 import com.parabola.domain.interactor.player.PlayerInteractor
 import java.util.*
-import java.util.stream.Collectors
-
-private const val NOTIFICATION_BACKGROUND_COLORIZED_KEY =
-    "com.parabola.player_feature.NOTIFICATION_BACKGROUND_COLORIZED"
-private const val NOTIFICATION_ARTWORK_SHOW_KEY =
-    "com.parabola.player_feature.NOTIFICATION_ARTWORK_SHOW_KEY"
-
-
-private const val SHUFFLE_MODE_KEY = "com.parabola.player_feature.SHUFFLE_MODE_KEY"
-private const val REPEAT_MODE_KEY = "com.parabola.player_feature.REPEAT_MODE"
-
-
-private const val SAVED_PLAYLIST_KEY = "com.parabola.player_feature.SAVED_PLAYLIST_KEY"
-private const val SAVED_PLAYLIST_POSITION_KEY =
-    "com.parabola.player_feature.SAVED_PLAYLIST_POSITION_KEY"
-
-private const val SAVED_PLAYBACK_POSITION_KEY =
-    "com.parabola.player_feature.SAVED_PLAYBACK_POSITION_KEY"
-
-private const val SAVED_PLAYBACK_SPEED_ENABLED_KEY =
-    "com.parabola.player_feature.SAVED_PLAYBACK_SPEED_ENABLED_KEY"
-private const val SAVED_PLAYBACK_SPEED_KEY =
-    "com.parabola.player_feature.SAVED_PLAYBACK_SPEED_KEY"
-
-private const val SAVED_PLAYBACK_PITCH_ENABLED_KEY =
-    "com.parabola.player_feature.SAVED_PLAYBACK_PITCH_ENABLED_KEY"
-private const val SAVED_PLAYBACK_PITCH_KEY =
-    "com.parabola.player_feature.SAVED_PLAYBACK_PITCH_KEY"
-
-private const val SAVED_BASS_BOOST_ENABLED_KEY =
-    "com.parabola.player_feature.SAVED_BASS_BOOST_ENABLED_KEY"
-private const val SAVED_BASS_BOOST_STRENGTH_KEY =
-    "com.parabola.player_feature.SAVED_BASS_BOOST_STRENGTH_KEY"
-
-private const val SAVED_VIRTUALIZER_ENABLED_KEY =
-    "com.parabola.player_feature.SAVED_VIRTUALIZER_ENABLED_KEY"
-private const val SAVED_VIRTUALIZER_STRENGTH_KEY =
-    "com.parabola.player_feature.SAVED_VIRTUALIZER_STRENGTH_KEY"
-
-private const val SAVED_EQ_ENABLED_KEY = "com.parabola.player_feature.SAVED_EQ_ENABLED_KEY"
-private const val SAVED_EQ_BAND_ENABLED_KEY_FORMAT =
-    "com.parabola.player_feature.SAVED_EQ_BAND_ENABLED_KEY_FORMAT%d"
-
-private const val SAVED_PLAYLIST_DELIMITER = ";"
 
 class PlayerSettingSaver(private val prefs: SharedPreferences) {
 
@@ -96,16 +52,16 @@ class PlayerSettingSaver(private val prefs: SharedPreferences) {
             if (savedString == null || savedString.isEmpty()) {
                 return emptyList()
             }
-            val idsStr = savedString.split(SAVED_PLAYLIST_DELIMITER).toTypedArray()
-            return Arrays.stream(idsStr)
-                .map { s: String -> s.toInt() }
-                .collect(Collectors.toList())
+
+            return savedString.split(SAVED_PLAYLIST_DELIMITER)
+                .map { id: String -> id.toInt() }
         }
 
+    // сохраняет треки в формате чисел, разеделённых символом ;
+    // например 345;4502;5431;33;895
     fun savePlaylist(trackIds: List<Int>, currentWindowIndex: Int) {
-        val savedPlaylist = trackIds.stream()
-            .map { id: Int -> id.toString() }
-            .collect(Collectors.joining(SAVED_PLAYLIST_DELIMITER))
+        val savedPlaylist = trackIds.joinToString(SAVED_PLAYLIST_DELIMITER)
+
         prefs.edit()
             .putString(SAVED_PLAYLIST_KEY, savedPlaylist)
             .putInt(SAVED_PLAYLIST_POSITION_KEY, currentWindowIndex)
@@ -227,3 +183,47 @@ class PlayerSettingSaver(private val prefs: SharedPreferences) {
     }
 
 }
+
+
+private const val NOTIFICATION_BACKGROUND_COLORIZED_KEY =
+    "com.parabola.player_feature.NOTIFICATION_BACKGROUND_COLORIZED"
+private const val NOTIFICATION_ARTWORK_SHOW_KEY =
+    "com.parabola.player_feature.NOTIFICATION_ARTWORK_SHOW_KEY"
+
+
+private const val SHUFFLE_MODE_KEY = "com.parabola.player_feature.SHUFFLE_MODE_KEY"
+private const val REPEAT_MODE_KEY = "com.parabola.player_feature.REPEAT_MODE"
+
+
+private const val SAVED_PLAYLIST_KEY = "com.parabola.player_feature.SAVED_PLAYLIST_KEY"
+private const val SAVED_PLAYLIST_POSITION_KEY =
+    "com.parabola.player_feature.SAVED_PLAYLIST_POSITION_KEY"
+
+private const val SAVED_PLAYBACK_POSITION_KEY =
+    "com.parabola.player_feature.SAVED_PLAYBACK_POSITION_KEY"
+
+private const val SAVED_PLAYBACK_SPEED_ENABLED_KEY =
+    "com.parabola.player_feature.SAVED_PLAYBACK_SPEED_ENABLED_KEY"
+private const val SAVED_PLAYBACK_SPEED_KEY =
+    "com.parabola.player_feature.SAVED_PLAYBACK_SPEED_KEY"
+
+private const val SAVED_PLAYBACK_PITCH_ENABLED_KEY =
+    "com.parabola.player_feature.SAVED_PLAYBACK_PITCH_ENABLED_KEY"
+private const val SAVED_PLAYBACK_PITCH_KEY =
+    "com.parabola.player_feature.SAVED_PLAYBACK_PITCH_KEY"
+
+private const val SAVED_BASS_BOOST_ENABLED_KEY =
+    "com.parabola.player_feature.SAVED_BASS_BOOST_ENABLED_KEY"
+private const val SAVED_BASS_BOOST_STRENGTH_KEY =
+    "com.parabola.player_feature.SAVED_BASS_BOOST_STRENGTH_KEY"
+
+private const val SAVED_VIRTUALIZER_ENABLED_KEY =
+    "com.parabola.player_feature.SAVED_VIRTUALIZER_ENABLED_KEY"
+private const val SAVED_VIRTUALIZER_STRENGTH_KEY =
+    "com.parabola.player_feature.SAVED_VIRTUALIZER_STRENGTH_KEY"
+
+private const val SAVED_EQ_ENABLED_KEY = "com.parabola.player_feature.SAVED_EQ_ENABLED_KEY"
+private const val SAVED_EQ_BAND_ENABLED_KEY_FORMAT =
+    "com.parabola.player_feature.SAVED_EQ_BAND_ENABLED_KEY_FORMAT%d"
+
+private const val SAVED_PLAYLIST_DELIMITER = ";"

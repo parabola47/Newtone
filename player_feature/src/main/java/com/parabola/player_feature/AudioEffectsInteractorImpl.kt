@@ -29,6 +29,8 @@ internal class AudioEffectsInteractorImpl(
     private val savedVirtualizerLevelUpdates: BehaviorSubject<Short>
     private val savedBassBoostLevelUpdates: BehaviorSubject<Short>
 
+
+    // TODO [23.06.2022] убрать nullable у переменных, узнать как это выделяется в отдельную абстракцию
     //FXs
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
@@ -43,8 +45,7 @@ internal class AudioEffectsInteractorImpl(
             if (settings.isPlaybackPitchEnabled) settings.playbackPitch
             else DEFAULT_PLAYBACK_PITCH
 
-        val playbackParameters = PlaybackParameters(speed, pitch)
-        exoPlayer.setPlaybackParameters(playbackParameters)
+        exoPlayer.setPlaybackParameters(PlaybackParameters(speed, pitch))
 
         savedPlaybackSpeed = BehaviorSubject.createDefault(settings.playbackSpeed)
         savedPlaybackPitch = BehaviorSubject.createDefault(settings.playbackPitch)
@@ -60,10 +61,14 @@ internal class AudioEffectsInteractorImpl(
 
         exoPlayer.addListener(object : Player.EventListener {
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-                if (savedPlaybackSpeed.value != playbackParameters.speed && settings.isPlaybackSpeedEnabled) {
+                if (savedPlaybackSpeed.value != playbackParameters.speed
+                    && settings.isPlaybackSpeedEnabled
+                ) {
                     savedPlaybackSpeed.onNext(playbackParameters.speed)
                 }
-                if (savedPlaybackPitch.value != playbackParameters.pitch && settings.isPlaybackPitchEnabled) {
+                if (savedPlaybackPitch.value != playbackParameters.pitch
+                    && settings.isPlaybackPitchEnabled
+                ) {
                     savedPlaybackPitch.onNext(playbackParameters.pitch)
                 }
             }
@@ -71,35 +76,37 @@ internal class AudioEffectsInteractorImpl(
 
         exoPlayer.addAudioListener(object : AudioListener {
             override fun onAudioSessionId(audioSessionId: Int) {
-                try {
-                    bassBoost = BassBoost(0, audioSessionId)
-                } catch (ignored: RuntimeException) {
-                }
-                if (isBassBoostAvailable) {
-                    bassBoost!!.enabled = settings.isBassBoostEnabled
-                    bassBoost!!.setStrength(settings.bassBoostStrength)
-                }
-                try {
-                    virtualizer = Virtualizer(0, audioSessionId)
-                } catch (ignored: RuntimeException) {
-                }
-                if (isVirtualizerAvailable) {
-                    virtualizer!!.enabled = settings.isVirtualizerEnabled
-                    virtualizer!!.setStrength(settings.virtualizerStrength)
-                }
-                try {
-                    equalizer = Equalizer(0, audioSessionId)
-                } catch (ignored: RuntimeException) {
-                }
-                if (isEqAvailable) {
-                    equalizer!!.enabled = settings.isEqEnabled
-                    eqEnablingUpdates.onNext(equalizer!!.enabled)
-                    for (i in 0 until equalizer!!.numberOfBands) {
-                        equalizer!!.setBandLevel(
-                            i.toShort(),
-                            (settings.getSavedBandLevel(i.toShort()) * 100).toShort()
-                        )
+                bassBoost = try {
+                    BassBoost(0, audioSessionId).apply {
+                        enabled = settings.isBassBoostEnabled
+                        setStrength(settings.bassBoostStrength)
                     }
+                } catch (e: RuntimeException) {
+                    null
+                }
+
+                virtualizer = try {
+                    Virtualizer(0, audioSessionId).apply {
+                        enabled = settings.isVirtualizerEnabled
+                        setStrength(settings.virtualizerStrength)
+                    }
+                } catch (e: RuntimeException) {
+                    null
+                }
+
+                equalizer = try {
+                    Equalizer(0, audioSessionId).apply {
+                        enabled = settings.isEqEnabled
+                        eqEnablingUpdates.onNext(enabled)
+                        for (bandNumber in 0 until numberOfBands) {
+                            setBandLevel(
+                                bandNumber.toShort(),
+                                (settings.getSavedBandLevel(bandNumber.toShort()) * 100).toShort()
+                            )
+                        }
+                    }
+                } catch (e: RuntimeException) {
+                    null
                 }
             }
         })
