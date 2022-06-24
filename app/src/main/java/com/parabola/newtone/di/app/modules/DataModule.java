@@ -1,7 +1,6 @@
 package com.parabola.newtone.di.app.modules;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.parabola.data.repository.AlbumRepositoryImpl;
@@ -40,9 +39,9 @@ public final class DataModule {
 
     @Singleton
     @Provides
-    TrackRepository provideTrackRepository(Context context,
-                                           PlaylistRepository playlistRepo, DataExtractor dataExtractor) {
-        return new TrackRepositoryImpl(context, playlistRepo, dataExtractor);
+    TrackRepository provideTrackRepository(PlaylistRepository playlistRepo,
+                                           DataExtractor dataExtractor) {
+        return new TrackRepositoryImpl(playlistRepo, dataExtractor);
     }
 
     @Singleton
