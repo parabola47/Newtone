@@ -116,8 +116,8 @@ public final class FxEqualizerFragment extends MvpAppCompatFragment
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     int newLevel = progress + minEqLevel;
-                    band.currentLevel = (short) newLevel;
-                    presenter.onChangeBandLevel(band.id, (short) newLevel);
+                    band.currentLevel = newLevel;
+                    presenter.onChangeBandLevel(band.id, newLevel);
 
                     holder.binding.eqDb.setText(String.format(Locale.getDefault(), "%d", newLevel));
                 }

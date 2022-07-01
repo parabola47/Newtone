@@ -2,7 +2,6 @@ package com.parabola.player_feature
 
 import android.content.SharedPreferences
 import com.parabola.domain.interactor.player.PlayerInteractor
-import java.util.*
 
 class PlayerSettingSaver(private val prefs: SharedPreferences) {
 
@@ -165,20 +164,22 @@ class PlayerSettingSaver(private val prefs: SharedPreferences) {
                 .apply()
         }
 
+    val savedBandLevels: List<Int>
+        get() {
+            val bandLevels = prefs.getString(SAVED_EQ_BAND_LEVELS_KEY, "")
+            if (bandLevels == null || bandLevels.isEmpty()) {
+                return emptyList()
+            }
 
-    fun getSavedBandLevel(bandId: Short): Short {
-        return prefs.getInt(
-            String.format(Locale.getDefault(), SAVED_EQ_BAND_ENABLED_KEY_FORMAT, bandId),
-            0
-        ).toShort()
-    }
+            return bandLevels.split(SAVED_EQ_BAND_LEVELS_DELIMITER)
+                .map { it.toInt() }
+        }
 
-    fun setBandLevel(bandId: Short, bandLevel: Short) {
+    fun saveBandLevels(bandLevels: List<Int>) {
+        val savedPlaylist = bandLevels.joinToString(SAVED_EQ_BAND_LEVELS_DELIMITER)
+
         prefs.edit()
-            .putInt(
-                String.format(Locale.getDefault(), SAVED_EQ_BAND_ENABLED_KEY_FORMAT, bandId),
-                bandLevel.toInt()
-            )
+            .putString(SAVED_EQ_BAND_LEVELS_KEY, savedPlaylist)
             .apply()
     }
 
@@ -198,6 +199,7 @@ private const val REPEAT_MODE_KEY = "com.parabola.player_feature.REPEAT_MODE"
 private const val SAVED_PLAYLIST_KEY = "com.parabola.player_feature.SAVED_PLAYLIST_KEY"
 private const val SAVED_PLAYLIST_POSITION_KEY =
     "com.parabola.player_feature.SAVED_PLAYLIST_POSITION_KEY"
+private const val SAVED_PLAYLIST_DELIMITER = ";"
 
 private const val SAVED_PLAYBACK_POSITION_KEY =
     "com.parabola.player_feature.SAVED_PLAYBACK_POSITION_KEY"
@@ -223,7 +225,6 @@ private const val SAVED_VIRTUALIZER_STRENGTH_KEY =
     "com.parabola.player_feature.SAVED_VIRTUALIZER_STRENGTH_KEY"
 
 private const val SAVED_EQ_ENABLED_KEY = "com.parabola.player_feature.SAVED_EQ_ENABLED_KEY"
-private const val SAVED_EQ_BAND_ENABLED_KEY_FORMAT =
-    "com.parabola.player_feature.SAVED_EQ_BAND_ENABLED_KEY_FORMAT%d"
-
-private const val SAVED_PLAYLIST_DELIMITER = ";"
+private const val SAVED_EQ_BAND_LEVELS_KEY =
+    "com.parabola.player_feature.SAVED_EQ_BAND_LEVELS_KEY"
+private const val SAVED_EQ_BAND_LEVELS_DELIMITER = ";"

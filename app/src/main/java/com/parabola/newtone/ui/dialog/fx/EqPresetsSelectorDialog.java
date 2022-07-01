@@ -32,7 +32,7 @@ public final class EqPresetsSelectorDialog extends MvpAppCompatDialogFragment {
         return new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.preset_selector_dialog_title)
                 .setItems(items, (d, presetIndex) -> {
-                    fxInteractor.usePreset((short) presetIndex);
+                    fxInteractor.usePreset(presetIndex);
                     fxInteractor.setEqEnable(true);
                 })
                 .setNegativeButton(R.string.dialog_cancel, null)
