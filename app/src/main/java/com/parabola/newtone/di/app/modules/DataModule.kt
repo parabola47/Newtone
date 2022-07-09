@@ -1,7 +1,6 @@
 package com.parabola.newtone.di.app.modules
 
 import android.content.ContentResolver
-import android.content.Context
 import android.content.SharedPreferences
 import com.parabola.data.repository.*
 import com.parabola.domain.executor.SchedulerProvider
@@ -32,10 +31,9 @@ class DataModule {
     @Singleton
     @Provides
     fun provideTrackRepository(
-        context: Context,
         playlistRepo: PlaylistRepository,
         dataExtractor: DataExtractor
-    ): TrackRepository = TrackRepositoryImpl(context, playlistRepo, dataExtractor)
+    ): TrackRepository = TrackRepositoryImpl(playlistRepo, dataExtractor)
 
     @Singleton
     @Provides
