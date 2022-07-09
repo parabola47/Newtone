@@ -42,9 +42,11 @@ class TabArtistPresenter(appComponent: AppComponent) : MvpPresenter<TabArtistVie
 
     private val disposables = CompositeDisposable()
 
+
     init {
         appComponent.inject(this)
     }
+
 
     override fun onFirstViewAttach() {
         disposables.addAll(
@@ -59,6 +61,7 @@ class TabArtistPresenter(appComponent: AppComponent) : MvpPresenter<TabArtistVie
     override fun onDestroy() {
         disposables.dispose()
     }
+
 
     private fun observeAllArtists(): Disposable {
         return artistInteractor.observeAllArtistsUpdates()
@@ -89,6 +92,7 @@ class TabArtistPresenter(appComponent: AppComponent) : MvpPresenter<TabArtistVie
             .observeOn(schedulers.ui())
             .subscribe(viewState::refreshArtists)
     }
+
 
     fun onItemClick(artistId: Int) {
         router.openArtist(artistId)

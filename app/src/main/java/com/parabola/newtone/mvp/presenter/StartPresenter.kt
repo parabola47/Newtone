@@ -24,9 +24,11 @@ class StartPresenter(appComponent: AppComponent) : MvpPresenter<StartView>() {
 
     private lateinit var storagePermissionObserver: Disposable
 
+
     init {
         appComponent.inject(this)
     }
+
 
     override fun onFirstViewAttach() {
         storagePermissionObserver =
@@ -37,6 +39,7 @@ class StartPresenter(appComponent: AppComponent) : MvpPresenter<StartView>() {
     override fun onDestroy() {
         storagePermissionObserver.dispose()
     }
+
 
     fun onClickRequestPermission() {
         router.openRequestStoragePermissionScreen()

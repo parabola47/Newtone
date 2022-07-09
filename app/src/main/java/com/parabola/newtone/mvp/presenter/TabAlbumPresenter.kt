@@ -44,9 +44,11 @@ class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>
 
     private val disposables = CompositeDisposable()
 
+
     init {
         appComponent.inject(this)
     }
+
 
     override fun onFirstViewAttach() {
         disposables.addAll(
@@ -60,6 +62,7 @@ class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>
     override fun onDestroy() {
         disposables.dispose()
     }
+
 
     private fun observerAllAlbums(): Disposable {
         return albumInteractor.observeAllAlbumsUpdates()
@@ -93,6 +96,7 @@ class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>
         }
             .subscribe()
     }
+
 
     fun onItemClick(albumId: Int) {
         router.openAlbum(albumId)
