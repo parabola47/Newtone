@@ -1,107 +1,121 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.TabPlaylistView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.repository.PlaylistRepository
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.TabPlaylistView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class TabPlaylistPresenter extends MvpPresenter<TabPlaylistView> {
+class TabPlaylistPresenter(appComponent: AppComponent) : MvpPresenter<TabPlaylistView>() {
 
-    @Inject MainRouter router;
+    @Inject
+    lateinit var router: MainRouter
 
-    @Inject PlayerInteractor playerInteractor;
-    @Inject PlaylistRepository playlistRepo;
-    @Inject TrackRepository trackRepo;
-    @Inject SchedulerProvider schedulers;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    lateinit var playerInteractor: PlayerInteractor
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var playlistRepo: PlaylistRepository
 
-    public TabPlaylistPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    @Inject
+    lateinit var trackRepo: TrackRepository
+
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    private val disposables = CompositeDisposable()
+
+
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
+
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                observePlaylistsUpdates(),
-                observeIsItemDividerShowed(),
-                observeTrackDeleting());
+            observePlaylistsUpdates(),
+            observeIsItemDividerShowed(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable observePlaylistsUpdates() {
+
+    private fun observePlaylistsUpdates(): Disposable {
         return playlistRepo.observePlaylistsUpdates()
-                .flatMapSingle(o -> playlistRepo.getAll())
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshPlaylists);
+            .flatMapSingle { playlistRepo.all }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshPlaylists)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
+            .subscribe(viewState::setItemDividerShowing)
     }
 
-    private Disposable observeTrackDeleting() {
+    private fun observeTrackDeleting(): Disposable {
         return trackRepo.observeTrackDeleting()
-                .flatMapSingle(deletedTrackId -> playlistRepo.getAll())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshPlaylists);
+            .flatMapSingle { playlistRepo.all }
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshPlaylists)
     }
 
-    public void onClickPlaylistItem(int selectedPlaylistId) {
-        router.openPlaylist(selectedPlaylistId);
+
+    fun onClickPlaylistItem(selectedPlaylistId: Int) {
+        router.openPlaylist(selectedPlaylistId)
     }
 
-    public void onClickMenuRename(int playlistId) {
-        router.openRenamePlaylistDialog(playlistId);
+    fun onClickMenuRename(playlistId: Int) {
+        router.openRenamePlaylistDialog(playlistId)
     }
 
-    public void onClickMenuShuffle(int playlistId) {
+    fun onClickMenuShuffle(playlistId: Int) {
         trackRepo.getByPlaylist(playlistId)
-                .subscribe(new ConsumerSingleObserver<>(
-                        playerInteractor::startInShuffleMode,
-                        Functions.ERROR_CONSUMER));
+            .subscribe(
+                ConsumerSingleObserver(
+                    playerInteractor::startInShuffleMode,
+                    Functions.ERROR_CONSUMER
+                )
+            )
     }
 
-    public void onClickMenuDelete(int deletedPlaylistId) {
+    fun onClickMenuDelete(deletedPlaylistId: Int) {
         playlistRepo.remove(deletedPlaylistId)
-                .subscribe();
+            .subscribe()
     }
 
-    public void onClickRecentlyAdded() {
-        router.openRecentlyAdded();
+    fun onClickRecentlyAdded() {
+        router.openRecentlyAdded()
     }
 
-    public void onClickFavourites() {
-        router.openFavourites();
+    fun onClickFavourites() {
+        router.openFavourites()
     }
 
-    public void onClickQueue() {
-        router.openQueue();
+    fun onClickQueue() {
+        router.openQueue()
     }
 
-    public void onClickFolders() {
-        router.openFoldersList();
+    fun onClickFolders() {
+        router.openFoldersList()
     }
 
 }
