@@ -22,8 +22,8 @@ import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.parabola.data.AudioDeletedReceiver;
-import com.parabola.data.PermissionChangeReceiver;
+import com.parabola.domain.repository.PermissionHandler;
+import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
 import com.parabola.newtone.MainApplication;
@@ -50,12 +50,13 @@ import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 
 public final class MainActivity extends MvpAppCompatActivity implements MainView {
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     @InjectPresenter MainPresenter presenter;
 
     @Inject MainRouter router;
     @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject PermissionHandler permissionHandler;
+    @Inject TrackRepository trackRepository;
 
     private ActivityMainBinding binding;
 
@@ -317,11 +318,10 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == STORAGE_PERMISSIONS_REQUEST_CODE) {
-            sendBroadcast(new Intent(PermissionChangeReceiver.ACTION_FILE_STORAGE_PERMISSION_UPDATE));
-        } else if (requestCode == DELETE_TRACK_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Intent intent = new Intent(AudioDeletedReceiver.ACTION_AUDIO_REMOVED_FROM_STORAGE)
-                    .putExtra(AudioDeletedReceiver.TRACK_ID_ARG, deleteTrackId);
-            sendBroadcast(intent);
+            permissionHandler.invalidatePermission(PermissionHandler.Type.FILE_STORAGE);
+        } else if (requestCode == DELETE_TRACK_REQUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
+            trackRepository.trackDeletedInternally(deleteTrackId);
             deleteTrackId = -1;
             router.showToast(getString(R.string.file_deleted_successfully_toast), true);
         }
@@ -331,7 +331,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == STORAGE_PERMISSIONS_REQUEST_CODE) {
-            sendBroadcast(new Intent(PermissionChangeReceiver.ACTION_FILE_STORAGE_PERMISSION_UPDATE));
+            permissionHandler.invalidatePermission(PermissionHandler.Type.FILE_STORAGE);
         }
     }
 

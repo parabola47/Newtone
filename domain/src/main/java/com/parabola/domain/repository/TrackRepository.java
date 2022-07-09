@@ -27,6 +27,8 @@ public interface TrackRepository {
 
     Observable<Integer> observeTrackDeleting(); //возвращает id удалённого трека
     Single<Boolean> deleteTrack(int trackId); //true, если удалось удалить файл
+    // вызывать если трек удалён системой или каким либо другим способом
+    void trackDeletedInternally(int trackId);
 
     Single<List<Track>> getByAlbum(int albumId, Sorting sorting);
     default Single<List<Track>> getByAlbum(int albumId) {

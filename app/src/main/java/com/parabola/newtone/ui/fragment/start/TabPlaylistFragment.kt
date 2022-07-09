@@ -81,7 +81,7 @@ class TabPlaylistFragment : MvpAppCompatFragment(),
             }
             .create()
         dialog.setOnShowListener { playlistAdapter.setContextSelected(position) }
-        dialog.setOnDismissListener { d: DialogInterface? -> playlistAdapter.clearContextSelected() }
+        dialog.setOnDismissListener { playlistAdapter.clearContextSelected() }
         lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
         dialog.show()
     }

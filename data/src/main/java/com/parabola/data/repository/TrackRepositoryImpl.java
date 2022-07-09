@@ -2,10 +2,6 @@ package com.parabola.data.repository;
 
 import static com.parabola.data.utils.SortingUtil.getTrackComparatorBySorting;
 
-import android.content.Context;
-import android.content.IntentFilter;
-
-import com.parabola.data.AudioDeletedReceiver;
 import com.parabola.domain.interactor.type.Irrelevant;
 import com.parabola.domain.model.Playlist;
 import com.parabola.domain.model.Playlist.TrackItem;
@@ -22,26 +18,16 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public final class TrackRepositoryImpl implements TrackRepository {
-    private static final String LOG_TAG = TrackRepositoryImpl.class.getSimpleName();
-
 
     private final PlaylistRepository playlistRepo;
     private final DataExtractor dataExtractor;
     private final FavouriteTrackHelper favouriteTrackHelper;
 
 
-    public TrackRepositoryImpl(Context context, PlaylistRepository playlistRepo, DataExtractor dataExtractor) {
+    public TrackRepositoryImpl(PlaylistRepository playlistRepo, DataExtractor dataExtractor) {
         this.playlistRepo = playlistRepo;
         this.dataExtractor = dataExtractor;
         this.favouriteTrackHelper = dataExtractor.favouriteTrackHelper;
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(AudioDeletedReceiver.ACTION_AUDIO_REMOVED_FROM_STORAGE);
-        AudioDeletedReceiver receiver = new AudioDeletedReceiver();
-
-        receiver.setListener(trackId -> removeFromRepository(trackId)
-                .subscribe());
-        context.registerReceiver(receiver, filter);
     }
 
 
@@ -110,6 +96,12 @@ public final class TrackRepositoryImpl implements TrackRepository {
                     if (isDeleted) trackDeletingObserver.onNext(trackId);
                 })
                 .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public void trackDeletedInternally(int trackId) {
+        removeFromRepository(trackId)
+                .subscribe();
     }
 
     @Override
