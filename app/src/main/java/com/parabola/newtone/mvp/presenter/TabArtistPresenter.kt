@@ -1,112 +1,115 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.ArtistInteractor;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.ArtistRepository;
-import com.parabola.domain.repository.SortingRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.TabArtistView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.ArtistInteractor
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.ArtistRepository
+import com.parabola.domain.repository.SortingRepository
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.TabArtistView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class TabArtistPresenter extends MvpPresenter<TabArtistView> {
+class TabArtistPresenter(appComponent: AppComponent) : MvpPresenter<TabArtistView>() {
 
-    private static final String TAG = TabArtistPresenter.class.getSimpleName();
+    @Inject
+    lateinit var router: MainRouter
 
-    @Inject MainRouter router;
+    @Inject
+    lateinit var artistInteractor: ArtistInteractor
 
-    @Inject ArtistInteractor artistInteractor;
-    @Inject SortingRepository sortingRepo;
-    @Inject TrackRepository trackRepo;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    lateinit var sortingRepo: SortingRepository
 
-    @Inject SchedulerProvider schedulers;
+    @Inject
+    lateinit var trackRepo: TrackRepository
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
 
-    public TabArtistPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    private val disposables = CompositeDisposable()
+
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                observeAllArtists(),
-                observeAllArtistsSorting(),
-                observeTrackItemViewUpdates(),
-                observeIsItemDividerShowed(),
-                observeTrackDeleting());
+            observeAllArtists(),
+            observeAllArtistsSorting(),
+            observeTrackItemViewUpdates(),
+            observeIsItemDividerShowed(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-
-    private Disposable observeAllArtists() {
+    private fun observeAllArtists(): Disposable {
         return artistInteractor.observeAllArtistsUpdates()
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshArtists);
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshArtists)
     }
 
-
-    private Disposable observeAllArtistsSorting() {
-        return sortingRepo.observeAllArtistsSorting()
-                //включаем/отключаем показ секции в списке, если отсортирован по имени
-                .map(sorting -> sorting == ArtistRepository.Sorting.BY_NAME)
-                .subscribe(getViewState()::setSectionShowing);
+    private fun observeAllArtistsSorting(): Disposable {
+        return sortingRepo.observeAllArtistsSorting() //включаем/отключаем показ секции в списке, если отсортирован по имени
+            .map { it == ArtistRepository.Sorting.BY_NAME }
+            .subscribe(viewState::setSectionShowing)
     }
 
-    private Disposable observeTrackItemViewUpdates() {
+    private fun observeTrackItemViewUpdates(): Disposable {
         return viewSettingsInteractor.observeArtistItemViewUpdates()
-                .subscribe(getViewState()::setItemViewSettings);
+            .subscribe(viewState::setItemViewSettings)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
+            .subscribe(viewState::setItemDividerShowing)
     }
 
-    private Disposable observeTrackDeleting() {
+    private fun observeTrackDeleting(): Disposable {
         return trackRepo.observeTrackDeleting()
-                .flatMapSingle(deletedTrackId -> artistInteractor.getAll())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshArtists);
+            .flatMapSingle { artistInteractor.all }
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshArtists)
     }
 
-    public void onItemClick(int artistId) {
-        router.openArtist(artistId);
+    fun onItemClick(artistId: Int) {
+        router.openArtist(artistId)
     }
 
-
-    public void onClickMenuShuffle(int artistId) {
-        artistInteractor.shuffleArtist(artistId);
+    fun onClickMenuShuffle(artistId: Int) {
+        artistInteractor.shuffleArtist(artistId)
     }
 
-    public void onClickMenuAddToPlaylist(int artistId) {
+    fun onClickMenuAddToPlaylist(artistId: Int) {
         trackRepo.getByArtist(artistId)
-                .flatMapObservable(Observable::fromIterable)
-                .map(Track::getId)
-                .toList()
-                .map(ids -> ids.stream().mapToInt(Integer::intValue).toArray())
-                .subscribe(new ConsumerSingleObserver<>(
-                        router::openAddToPlaylistDialog,
-                        Functions.ERROR_CONSUMER
-                ));
+            .flatMapObservable { artistTracks -> Observable.fromIterable(artistTracks) }
+            .map(Track::getId)
+            .toList()
+            .map { trackIds -> trackIds.toIntArray() }
+            .subscribe(
+                ConsumerSingleObserver(
+                    router::openAddToPlaylistDialog,
+                    Functions.ERROR_CONSUMER
+                )
+            )
     }
+
 }
