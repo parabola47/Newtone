@@ -54,7 +54,10 @@ class FavouritesPlaylistPresenter(component: AppComponent) :
         viewState.setPlaylistChangerActivation(isPlaylistChangerActivated)
         trackInteractor.favourites
             // ожидаем пока прогрузится анимация входа
-            .doOnSubscribe { while (!enterSlideAnimationEnded); }
+            .doOnSubscribe {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
             .subscribe(

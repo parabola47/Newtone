@@ -68,7 +68,10 @@ class FoldersListPresenter(component: AppComponent) : MvpPresenter<FoldersListVi
     private fun refreshList(): Disposable {
         return folderRepo.all
             // ожидаем пока прогрузится анимация входа
-            .doOnSuccess { while (!enterSlideAnimationEnded); }
+            .doOnSuccess {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
             .subscribe(viewState::refreshFolders)
