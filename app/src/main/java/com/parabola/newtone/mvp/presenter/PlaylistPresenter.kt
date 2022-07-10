@@ -85,7 +85,10 @@ class PlaylistPresenter(
         return playlistRepo.observePlaylistsUpdates()
             .flatMapSingle { trackInteractor.getByPlaylist(playlistId) }
             // ожидаем пока прогрузится анимация входа
-            .doOnNext { while (!enterSlideAnimationEnded); }
+            .doOnNext {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
             .subscribe { playlistTracks ->
@@ -141,7 +144,7 @@ class PlaylistPresenter(
 
     fun onClickDragSwitcher() {
         isPlaylistChangerActivated = !isPlaylistChangerActivated
-        viewState!!.setPlaylistChangerActivation(isPlaylistChangerActivated)
+        viewState.setPlaylistChangerActivation(isPlaylistChangerActivated)
     }
 
     @Volatile
