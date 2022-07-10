@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment.start
+package com.parabola.newtone.ui.fragment.playlist
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -6,34 +6,41 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.parabola.domain.model.Track
 import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView
+import com.parabola.domain.utils.TracklistTool.isTracklistsIdentical
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.adapter.TrackAdapter
 import com.parabola.newtone.databinding.ListTrackBinding
-import com.parabola.newtone.mvp.presenter.TabTrackPresenter
-import com.parabola.newtone.mvp.view.TabTrackView
+import com.parabola.newtone.mvp.presenter.PlaylistPresenter
+import com.parabola.newtone.mvp.view.PlaylistView
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.fragment.Scrollable
-import com.parabola.newtone.ui.fragment.Sortable
 import com.parabola.newtone.util.scrollUp
 import com.parabola.newtone.util.smoothScrollToTop
 import com.parabola.newtone.util.visibleItemsCount
-import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
-class TabTrackFragment : MvpAppCompatFragment(),
-    TabTrackView, Sortable, Scrollable {
+class PlaylistFragment : BaseSwipeToBackFragment(),
+    PlaylistView, Scrollable {
 
     @InjectPresenter
-    lateinit var presenter: TabTrackPresenter
+    lateinit var presenter: PlaylistPresenter
 
     private var _binding: ListTrackBinding? = null
     private val binding get() = _binding!!
@@ -41,12 +48,18 @@ class TabTrackFragment : MvpAppCompatFragment(),
     private val tracksAdapter = TrackAdapter()
     private lateinit var itemDecoration: DividerItemDecoration
 
+    private lateinit var dragSwitcherButton: ImageButton
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
         _binding = ListTrackBinding.inflate(inflater, container, false)
+        rootBinding.container.addView(binding.root)
+
+        initDragSwitcherButton()
 
         binding.tracksList.adapter = tracksAdapter
         itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
@@ -54,9 +67,9 @@ class TabTrackFragment : MvpAppCompatFragment(),
         tracksAdapter.setOnItemClickListener { position: Int ->
             presenter.onClickTrackItem(tracksAdapter.all, position)
         }
-        tracksAdapter.setOnItemLongClickListener { position: Int -> showTrackContextMenu(position) }
+        rootBinding.actionBar.setOnClickListener { smoothScrollToTop() }
 
-        return binding.root
+        return root
     }
 
     override fun onDestroyView() {
@@ -65,11 +78,25 @@ class TabTrackFragment : MvpAppCompatFragment(),
     }
 
 
-    fun scrollToCurrentTrack() {
-        val selectedTrackPosition = tracksAdapter.selectedPosition
-        if (selectedTrackPosition.isPresent) {
-            binding.tracksList.scrollToPosition(selectedTrackPosition.asInt)
+    private fun initDragSwitcherButton() {
+        dragSwitcherButton = AppCompatImageButton(requireContext())
+        dragSwitcherButton.setImageResource(R.drawable.ic_drag)
+        val imageSize = resources.getDimension(R.dimen.playlist_fragment_drag_switcher_size).toInt()
+        dragSwitcherButton.layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
+        rootBinding.actionBar.addView(dragSwitcherButton)
+        dragSwitcherButton.setOnClickListener {
+            if (binding.tracksList.scrollState == RecyclerView.SCROLL_STATE_IDLE)
+                presenter.onClickDragSwitcher()
         }
+
+        val backgroundTintList = ContextCompat.getColorStateList(
+            requireContext(),
+            R.color.drag_button_background_color_selector
+        )
+        ViewCompat.setBackgroundTintList(dragSwitcherButton, backgroundTintList)
+        val imageTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.colorNewtoneIconTint)
+        ImageViewCompat.setImageTintList(dragSwitcherButton, imageTintList)
     }
 
     private fun showTrackContextMenu(position: Int) {
@@ -80,16 +107,20 @@ class TabTrackFragment : MvpAppCompatFragment(),
             when (menuItem.itemId) {
                 R.id.add_to_favorites -> return@setMenuVisibility !selectedTrack.isFavourite
                 R.id.remove_from_favourites -> return@setMenuVisibility selectedTrack.isFavourite
-                R.id.remove_from_playlist -> return@setMenuVisibility false
+                R.id.add_to_playlist -> return@setMenuVisibility false
                 else -> return@setMenuVisibility true
             }
         }
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(
-                getString(R.string.track_menu_title, selectedTrack.artistName, selectedTrack.title)
+                getString(
+                    R.string.track_menu_title,
+                    selectedTrack.artistName,
+                    selectedTrack.title
+                )
             )
-            .setAdapter(menuAdapter) { _: DialogInterface?, which: Int ->
+            .setAdapter(menuAdapter) { _: DialogInterface, which: Int ->
                 handleSelectedMenu(menuAdapter.getItem(which), selectedTrack, position)
             }
             .create()
@@ -105,7 +136,9 @@ class TabTrackFragment : MvpAppCompatFragment(),
                 val tracks = tracksAdapter.all
                 presenter.onClickMenuPlay(tracks, itemPosition)
             }
-            R.id.add_to_playlist -> presenter.onClickMenuAddToPlaylist(selectedTrack.id)
+            R.id.remove_from_playlist -> presenter.onClickMenuRemoveFromCurrentPlaylist(
+                selectedTrack.id
+            )
             R.id.add_to_favorites -> presenter.onClickMenuAddToFavourites(selectedTrack.id)
             R.id.remove_from_favourites -> presenter.onClickMenuRemoveFromFavourites(selectedTrack.id)
             R.id.share_track -> presenter.onClickMenuShareTrack(selectedTrack)
@@ -114,14 +147,54 @@ class TabTrackFragment : MvpAppCompatFragment(),
         }
     }
 
+    override fun onClickBackButton() {
+        presenter.onClickBack()
+    }
+
+    override fun onEndSlidingAnimation() {
+        presenter.onEnterSlideAnimationEnded()
+    }
+
     @ProvidePresenter
-    fun providePresenter(): TabTrackPresenter {
+    fun providePresenter(): PlaylistPresenter {
         val appComponent = (requireActivity().application as MainApplication).appComponent
-        return TabTrackPresenter(appComponent)
+        val playlistId = requireArguments().getInt(SELECTED_PLAYLIST_ID)
+
+        return PlaylistPresenter(appComponent, playlistId)
+    }
+
+    override fun setPlaylistChangerActivation(activate: Boolean) {
+        dragSwitcherButton.isSelected = activate
+        tracksAdapter.setMoveItemIconVisibility(activate)
+
+        if (activate) {
+            tracksAdapter.setOnItemLongClickListener(null)
+            tracksAdapter.setOnSwipeItemListener { position: Int ->
+                val removedTrackId = tracksAdapter[position].id
+                tracksAdapter.remove(position)
+                presenter.onRemoveItem(removedTrackId)
+            }
+            tracksAdapter.setOnMoveItemListener(presenter::onMoveItem)
+        } else {
+            tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu)
+            tracksAdapter.setOnSwipeItemListener(null)
+            tracksAdapter.setOnMoveItemListener(null)
+        }
+    }
+
+    override fun setTracksCount(playlistSize: Int) {
+        rootBinding.additionalInfo.text =
+            resources.getQuantityString(R.plurals.tracks_count, playlistSize, playlistSize)
+    }
+
+    override fun setPlaylistTitle(playlistTitle: String) {
+        rootBinding.main.text = playlistTitle
     }
 
     override fun refreshTracks(tracks: List<Track>) {
-        tracksAdapter.replaceAll(tracks)
+        if (!isTracklistsIdentical(tracks, tracksAdapter.all)) {
+            tracksAdapter.replaceAll(tracks)
+        }
     }
 
     override fun setItemViewSettings(viewSettings: TrackItemView) {
@@ -130,7 +203,6 @@ class TabTrackFragment : MvpAppCompatFragment(),
 
     override fun setItemDividerShowing(showed: Boolean) {
         binding.tracksList.removeItemDecoration(itemDecoration)
-
         if (showed) binding.tracksList.addItemDecoration(itemDecoration)
     }
 
@@ -138,20 +210,21 @@ class TabTrackFragment : MvpAppCompatFragment(),
         tracksAdapter.setSelectedCondition { track: Track -> track.id == trackId }
     }
 
-    override fun setSectionShowing(enable: Boolean) {
-        tracksAdapter.setSectionEnabled(enable)
-    }
-
-    override fun removeTrack(trackId: Int) {
-        tracksAdapter.removeWithCondition { track: Track -> track.id == trackId }
-    }
-
-    override fun getListType(): String = SortingDialog.ALL_TRACKS_SORTING
-
     override fun smoothScrollToTop() {
         val fastScrollMinimalPosition =
             (binding.tracksList.layoutManager as LinearLayoutManager).visibleItemsCount() * 3
         binding.tracksList.scrollUp(fastScrollMinimalPosition)
         binding.tracksList.smoothScrollToTop()
+    }
+
+    companion object {
+        private const val SELECTED_PLAYLIST_ID = "playlist id"
+
+        //todo убрать аннотацию, когда MainRouterImpl будет переведён на котлин
+        @JvmStatic
+        fun newInstance(playlistId: Int) =
+            PlaylistFragment().apply {
+                arguments = bundleOf(Pair(SELECTED_PLAYLIST_ID, playlistId))
+            }
     }
 }

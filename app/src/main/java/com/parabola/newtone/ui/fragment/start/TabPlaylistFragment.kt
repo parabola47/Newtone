@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -127,7 +126,7 @@ class TabPlaylistFragment : MvpAppCompatFragment(),
     }
 
     override fun smoothScrollToTop() {
-        (requireView() as NestedScrollView).smoothScrollTo(0, 0)
+        binding.root.smoothScrollTo(0, 0)
     }
 
     inner class SystemPlaylistAdapter : RecyclerView.Adapter<SystemPlaylistViewHolder>() {

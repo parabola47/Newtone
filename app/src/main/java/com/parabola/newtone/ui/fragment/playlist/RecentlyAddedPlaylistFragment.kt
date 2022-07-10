@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment.start
+package com.parabola.newtone.ui.fragment.playlist
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -16,29 +16,27 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.adapter.TrackAdapter
 import com.parabola.newtone.databinding.ListTrackBinding
-import com.parabola.newtone.mvp.presenter.TabTrackPresenter
-import com.parabola.newtone.mvp.view.TabTrackView
+import com.parabola.newtone.mvp.presenter.RecentlyAddedPlaylistPresenter
+import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.fragment.Scrollable
-import com.parabola.newtone.ui.fragment.Sortable
 import com.parabola.newtone.util.scrollUp
 import com.parabola.newtone.util.smoothScrollToTop
 import com.parabola.newtone.util.visibleItemsCount
-import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
-class TabTrackFragment : MvpAppCompatFragment(),
-    TabTrackView, Sortable, Scrollable {
+class RecentlyAddedPlaylistFragment : BaseSwipeToBackFragment(),
+    RecentlyAddedPlaylistView, Scrollable {
 
     @InjectPresenter
-    lateinit var presenter: TabTrackPresenter
+    lateinit var presenter: RecentlyAddedPlaylistPresenter
 
     private var _binding: ListTrackBinding? = null
     private val binding get() = _binding!!
 
-    private val tracksAdapter = TrackAdapter()
+    private val tracklistAdapter = TrackAdapter()
     private lateinit var itemDecoration: DividerItemDecoration
 
     override fun onCreateView(
@@ -46,17 +44,22 @@ class TabTrackFragment : MvpAppCompatFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
         _binding = ListTrackBinding.inflate(inflater, container, false)
+        rootBinding.container.addView(binding.root)
 
-        binding.tracksList.adapter = tracksAdapter
+        binding.tracksList.adapter = tracklistAdapter
         itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
 
-        tracksAdapter.setOnItemClickListener { position: Int ->
-            presenter.onClickTrackItem(tracksAdapter.all, position)
+        tracklistAdapter.setOnItemClickListener { position: Int ->
+            presenter.onClickTrackItem(tracklistAdapter.all, position)
         }
-        tracksAdapter.setOnItemLongClickListener { position: Int -> showTrackContextMenu(position) }
+        tracklistAdapter.setOnItemLongClickListener(this::showTrackContextMenu)
 
-        return binding.root
+        rootBinding.main.setText(R.string.playlist_recently_added)
+        rootBinding.actionBar.setOnClickListener { smoothScrollToTop() }
+
+        return root
     }
 
     override fun onDestroyView() {
@@ -65,15 +68,53 @@ class TabTrackFragment : MvpAppCompatFragment(),
     }
 
 
-    fun scrollToCurrentTrack() {
-        val selectedTrackPosition = tracksAdapter.selectedPosition
-        if (selectedTrackPosition.isPresent) {
-            binding.tracksList.scrollToPosition(selectedTrackPosition.asInt)
-        }
+    override fun onClickBackButton() {
+        presenter.onClickBack()
+    }
+
+    override fun onEndSlidingAnimation() {
+        presenter.onEnterSlideAnimationEnded()
+    }
+
+    override fun refreshTracks(trackList: List<Track>) {
+        tracklistAdapter.replaceAll(trackList)
+        val tracksCount = resources
+            .getQuantityString(R.plurals.tracks_count, trackList.size, trackList.size)
+        rootBinding.additionalInfo.text = tracksCount
+    }
+
+    override fun setItemViewSettings(viewSettings: TrackItemView) {
+        tracklistAdapter.setViewSettings(viewSettings)
+    }
+
+    override fun setItemDividerShowing(showed: Boolean) {
+        binding.tracksList.removeItemDecoration(itemDecoration)
+        if (showed) binding.tracksList.addItemDecoration(itemDecoration)
+    }
+
+    override fun removeTrack(trackId: Int) {
+        tracklistAdapter.removeWithCondition { track: Track -> track.id == trackId }
+        val tracksCount = resources
+            .getQuantityString(
+                R.plurals.tracks_count,
+                tracklistAdapter.size(),
+                tracklistAdapter.size()
+            )
+        rootBinding.additionalInfo.text = tracksCount
+    }
+
+    override fun setCurrentTrack(trackId: Int) {
+        tracklistAdapter.setSelectedCondition { track: Track -> track.id == trackId }
+    }
+
+    @ProvidePresenter
+    fun providePresenter(): RecentlyAddedPlaylistPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return RecentlyAddedPlaylistPresenter(appComponent)
     }
 
     private fun showTrackContextMenu(position: Int) {
-        val selectedTrack = tracksAdapter[position]
+        val selectedTrack = tracklistAdapter[position]
         val menuAdapter = ListPopupWindowAdapter(requireContext(), R.menu.track_menu)
 
         menuAdapter.setMenuVisibility { menuItem: MenuItem ->
@@ -87,14 +128,22 @@ class TabTrackFragment : MvpAppCompatFragment(),
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(
-                getString(R.string.track_menu_title, selectedTrack.artistName, selectedTrack.title)
+                getString(
+                    R.string.track_menu_title,
+                    selectedTrack.artistName,
+                    selectedTrack.title
+                )
             )
-            .setAdapter(menuAdapter) { _: DialogInterface?, which: Int ->
-                handleSelectedMenu(menuAdapter.getItem(which), selectedTrack, position)
+            .setAdapter(menuAdapter) { _: DialogInterface, which: Int ->
+                handleSelectedMenu(
+                    menuAdapter.getItem(which),
+                    selectedTrack,
+                    position
+                )
             }
             .create()
-        dialog.setOnShowListener { tracksAdapter.setContextSelected(position) }
-        dialog.setOnDismissListener { tracksAdapter.clearContextSelected() }
+        dialog.setOnShowListener { tracklistAdapter.setContextSelected(position) }
+        dialog.setOnDismissListener { tracklistAdapter.clearContextSelected() }
         lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
         dialog.show()
     }
@@ -102,7 +151,7 @@ class TabTrackFragment : MvpAppCompatFragment(),
     private fun handleSelectedMenu(menuItem: MenuItem, selectedTrack: Track, itemPosition: Int) {
         when (menuItem.itemId) {
             R.id.play -> {
-                val tracks = tracksAdapter.all
+                val tracks = tracklistAdapter.all
                 presenter.onClickMenuPlay(tracks, itemPosition)
             }
             R.id.add_to_playlist -> presenter.onClickMenuAddToPlaylist(selectedTrack.id)
@@ -113,40 +162,6 @@ class TabTrackFragment : MvpAppCompatFragment(),
             R.id.delete_track -> presenter.onClickMenuDeleteTrack(selectedTrack.id)
         }
     }
-
-    @ProvidePresenter
-    fun providePresenter(): TabTrackPresenter {
-        val appComponent = (requireActivity().application as MainApplication).appComponent
-        return TabTrackPresenter(appComponent)
-    }
-
-    override fun refreshTracks(tracks: List<Track>) {
-        tracksAdapter.replaceAll(tracks)
-    }
-
-    override fun setItemViewSettings(viewSettings: TrackItemView) {
-        tracksAdapter.setViewSettings(viewSettings)
-    }
-
-    override fun setItemDividerShowing(showed: Boolean) {
-        binding.tracksList.removeItemDecoration(itemDecoration)
-
-        if (showed) binding.tracksList.addItemDecoration(itemDecoration)
-    }
-
-    override fun setCurrentTrack(trackId: Int) {
-        tracksAdapter.setSelectedCondition { track: Track -> track.id == trackId }
-    }
-
-    override fun setSectionShowing(enable: Boolean) {
-        tracksAdapter.setSectionEnabled(enable)
-    }
-
-    override fun removeTrack(trackId: Int) {
-        tracksAdapter.removeWithCondition { track: Track -> track.id == trackId }
-    }
-
-    override fun getListType(): String = SortingDialog.ALL_TRACKS_SORTING
 
     override fun smoothScrollToTop() {
         val fastScrollMinimalPosition =
