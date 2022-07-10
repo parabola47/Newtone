@@ -103,7 +103,7 @@ class FavouritesPlaylistPresenter(component: AppComponent) :
 
     private fun observeCurrentTrackChanged(): Disposable {
         return playerInteractor.onChangeCurrentTrackId()
-            .doOnNext { this.currentTrackId = it }
+            .doOnNext { currentTrackId = it }
             .subscribe(viewState::setCurrentTrack)
     }
 
