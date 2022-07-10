@@ -1,147 +1,156 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.TrackInteractor;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.TrackInteractor
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.domain.utils.EmptyItems
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.RecentlyAddedPlaylistView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class RecentlyAddedPlaylistPresenter extends MvpPresenter<RecentlyAddedPlaylistView> {
+class RecentlyAddedPlaylistPresenter(appComponent: AppComponent) :
+    MvpPresenter<RecentlyAddedPlaylistView>() {
 
-    @Inject MainRouter router;
-    @Inject TrackInteractor trackInteractor;
-    @Inject TrackRepository trackRepo;
-    @Inject SchedulerProvider schedulers;
-    @Inject PlayerInteractor playerInteractor;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    lateinit var router: MainRouter
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var trackInteractor: TrackInteractor
 
-    private volatile int currentTrackId = EmptyItems.NO_TRACK.getId();
+    @Inject
+    lateinit var trackRepo: TrackRepository
 
-    public RecentlyAddedPlaylistPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    @Inject
+    lateinit var playerInteractor: PlayerInteractor
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    private val disposables = CompositeDisposable()
+
+    @Volatile
+    private var currentTrackId = EmptyItems.NO_TRACK.id
+
+
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    public void onFirstViewAttach() {
+
+    public override fun onFirstViewAttach() {
         disposables.addAll(
-                refreshPlaylists(),
-                observeTrackItemViewUpdates(),
-                observeIsItemDividerShowed(),
-                observeCurrentTrack(),
-                observeTrackDeleting());
+            refreshPlaylists(),
+            observeTrackItemViewUpdates(),
+            observeIsItemDividerShowed(),
+            observeCurrentTrack(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
 
-    private Disposable observeTrackItemViewUpdates() {
+    private fun refreshPlaylists(): Disposable {
+        return trackInteractor.recentlyAddedTracks
+            // ожидаем пока прогрузится анимация входа
+            .doOnSuccess {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { tracks ->
+                viewState.refreshTracks(tracks)
+                viewState.setCurrentTrack(currentTrackId)
+            }
+    }
+
+    private fun observeTrackItemViewUpdates(): Disposable {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
-                .subscribe(getViewState()::setItemViewSettings);
+            .subscribe(viewState::setItemViewSettings)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
+            .subscribe(viewState::setItemDividerShowing)
     }
 
-    private Disposable observeCurrentTrack() {
+    private fun observeCurrentTrack(): Disposable {
         return playerInteractor.onChangeCurrentTrackId()
-                .doOnNext(currentTrackId -> this.currentTrackId = currentTrackId)
-                .subscribe(getViewState()::setCurrentTrack);
+            .doOnNext { currentTrackId = it }
+            .subscribe(viewState::setCurrentTrack)
     }
 
-    private Disposable observeTrackDeleting() {
+    private fun observeTrackDeleting(): Disposable {
         return trackRepo.observeTrackDeleting()
-                .doOnNext(deletedTrackId -> {
-                    if (deletedTrackId == currentTrackId)
-                        currentTrackId = EmptyItems.NO_TRACK.getId();
-                })
-                .observeOn(schedulers.ui())
-                .subscribe(removedTrackId -> {
-                    getViewState().removeTrack(removedTrackId);
-                    getViewState().setCurrentTrack(currentTrackId);
-                });
+            .doOnNext { deletedTrackId ->
+                if (deletedTrackId == currentTrackId)
+                    currentTrackId = EmptyItems.NO_TRACK.id
+            }
+            .observeOn(schedulers.ui())
+            .subscribe { deletedTrackId ->
+                viewState.removeTrack(deletedTrackId)
+                viewState.setCurrentTrack(currentTrackId)
+            }
     }
 
 
-    public void onClickTrackItem(List<Track> tracks, int selectedPosition) {
-        playerInteractor.start(tracks, selectedPosition);
+    fun onClickTrackItem(tracks: List<Track>, selectedPosition: Int) {
+        playerInteractor.start(tracks, selectedPosition)
+    }
+
+    fun onClickMenuPlay(tracks: List<Track>, selectedPosition: Int) {
+        playerInteractor.start(tracks, selectedPosition)
     }
 
 
-    public void onClickMenuPlay(List<Track> tracks, int selectedPosition) {
-        playerInteractor.start(tracks, selectedPosition);
+    fun onClickBack() {
+        router.goBack()
     }
 
+    @Volatile
+    private var enterSlideAnimationEnded = false
 
-    private Disposable refreshPlaylists() {
-        return trackInteractor.getRecentlyAddedTracks()
-                // ожидаем пока прогрузится анимация входа
-                .doOnSuccess(tracks -> {while (!enterSlideAnimationEnded) ;})
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(tracks -> {
-                    getViewState().refreshTracks(tracks);
-                    getViewState().setCurrentTrack(currentTrackId);
-                });
+    fun onEnterSlideAnimationEnded() {
+        enterSlideAnimationEnded = true
     }
 
-
-    public void onClickBack() {
-        router.goBack();
+    fun onClickMenuAddToPlaylist(trackId: Int) {
+        router.openAddToPlaylistDialog(trackId)
     }
 
-
-    private volatile boolean enterSlideAnimationEnded = false;
-
-    public void onEnterSlideAnimationEnded() {
-        enterSlideAnimationEnded = true;
+    fun onClickMenuAddToFavourites(trackId: Int) {
+        trackRepo.addToFavourites(trackId)
     }
 
-    public void onClickMenuAddToPlaylist(int trackId) {
-        router.openAddToPlaylistDialog(trackId);
+    fun onClickMenuRemoveFromFavourites(trackId: Int) {
+        trackRepo.removeFromFavourites(trackId)
     }
 
-    public void onClickMenuAddToFavourites(int trackId) {
-        trackRepo.addToFavourites(trackId);
+    fun onClickMenuShareTrack(selectedTrack: Track) {
+        router.openShareTrack(selectedTrack.filePath)
     }
 
-
-    public void onClickMenuRemoveFromFavourites(int trackId) {
-        trackRepo.removeFromFavourites(trackId);
+    fun onClickMenuDeleteTrack(trackId: Int) {
+        router.openDeleteTrackDialog(trackId)
     }
 
-    public void onClickMenuShareTrack(Track selectedTrack) {
-        router.openShareTrack(selectedTrack.getFilePath());
-    }
-
-
-    public void onClickMenuDeleteTrack(int trackId) {
-        router.openDeleteTrackDialog(trackId);
-    }
-
-    public void onClickMenuAdditionalInfo(int trackId) {
-        router.openTrackAdditionInfo(trackId);
+    fun onClickMenuAdditionalInfo(trackId: Int) {
+        router.openTrackAdditionInfo(trackId)
     }
 
 }
