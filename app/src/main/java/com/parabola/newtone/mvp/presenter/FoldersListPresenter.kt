@@ -1,122 +1,139 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.FolderInteractor;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.ExcludedFolderRepository;
-import com.parabola.domain.repository.FolderRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.FoldersListView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.FolderInteractor
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.ExcludedFolderRepository
+import com.parabola.domain.repository.FolderRepository
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.FoldersListView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class FoldersListPresenter extends MvpPresenter<FoldersListView> {
+class FoldersListPresenter(component: AppComponent) : MvpPresenter<FoldersListView>() {
 
-    @Inject MainRouter router;
-    @Inject FolderRepository folderRepo;
-    @Inject TrackRepository trackRepo;
-    @Inject ExcludedFolderRepository excludedFolderRepo;
-    @Inject FolderInteractor folderInteractor;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject SchedulerProvider schedulers;
+    @Inject
+    lateinit var router: MainRouter
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var folderRepo: FolderRepository
 
-    public FoldersListPresenter(AppComponent component) {
-        component.inject(this);
+    @Inject
+    lateinit var trackRepo: TrackRepository
+
+    @Inject
+    lateinit var excludedFolderRepo: ExcludedFolderRepository
+
+    @Inject
+    lateinit var folderInteractor: FolderInteractor
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    private val disposables = CompositeDisposable()
+
+
+    init {
+        component.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
+
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                refreshList(), observeExcludedFoldersUpdates(),
-                observeIsItemDividerShowed(),
-                observeTrackDeleting());
+            refreshList(),
+            observeExcludedFoldersUpdates(),
+            observeIsItemDividerShowed(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable refreshList() {
-        return folderRepo.getAll()
-                // ожидаем пока прогрузится анимация входа
-                .doOnSuccess(folders -> {while (!enterSlideAnimationEnded) ;})
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshFolders);
+
+    private fun refreshList(): Disposable {
+        return folderRepo.all // ожидаем пока прогрузится анимация входа
+            .doOnSuccess { while (!enterSlideAnimationEnded); }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshFolders)
     }
 
-    private Disposable observeExcludedFoldersUpdates() {
+    private fun observeExcludedFoldersUpdates(): Disposable {
         return excludedFolderRepo.onExcludeFoldersUpdatesObserver()
-                .flatMapSingle(irrelevant -> folderRepo.getAll())
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshFolders);
+            .flatMapSingle { folderRepo.all }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshFolders)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
+            .subscribe(viewState::setItemDividerShowing)
     }
 
-    private Disposable observeTrackDeleting() {
+    private fun observeTrackDeleting(): Disposable {
         return trackRepo.observeTrackDeleting()
-                .flatMapSingle(removedTrackId -> folderRepo.getAll())
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshFolders, error -> router.backToRoot());
+            .flatMapSingle { folderRepo.all }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(
+                viewState::refreshFolders,
+                { router.backToRoot() },
+            )
     }
 
 
-    public void onClickBack() {
-        router.goBack();
+    fun onClickBack() {
+        router.goBack()
     }
 
+    @Volatile
+    private var enterSlideAnimationEnded = false
 
-    private volatile boolean enterSlideAnimationEnded = false;
-
-    public void onEnterSlideAnimationEnded() {
-        enterSlideAnimationEnded = true;
+    fun onEnterSlideAnimationEnded() {
+        enterSlideAnimationEnded = true
     }
 
-    public void onClickFolderItem(String folderPath) {
-        router.openFolder(folderPath);
+    fun onClickFolderItem(folderPath: String) {
+        router.openFolder(folderPath)
     }
 
-
-    public void onClickMenuShuffle(String folderPath) {
-        folderInteractor.shuffleFolder(folderPath);
+    fun onClickMenuShuffle(folderPath: String) {
+        folderInteractor.shuffleFolder(folderPath)
     }
 
-    public void onClickMenuAddToPlaylist(String folderPath) {
+    fun onClickMenuAddToPlaylist(folderPath: String) {
         trackRepo.getByFolder(folderPath)
-                .flatMapObservable(Observable::fromIterable)
-                .map(Track::getId)
-                .toList()
-                .map(ids -> ids.stream().mapToInt(Integer::intValue).toArray())
-                .subscribe(new ConsumerSingleObserver<>(
-                        router::openAddToPlaylistDialog,
-                        Functions.ERROR_CONSUMER
-                ));
+            .flatMapObservable { folderTracks -> Observable.fromIterable(folderTracks) }
+            .map(Track::getId)
+            .toList()
+            .map { trackIds -> trackIds.toIntArray() }
+            .subscribe(
+                ConsumerSingleObserver(
+                    router::openAddToPlaylistDialog,
+                    Functions.ERROR_CONSUMER
+                )
+            )
     }
 
-    public void onClickMenuExcludeFolder(String excludeFolderPath) {
+    fun onClickMenuExcludeFolder(excludeFolderPath: String) {
         excludedFolderRepo.addExcludedFolder(excludeFolderPath)
-                .subscribe();
+            .subscribe()
     }
 
 }
