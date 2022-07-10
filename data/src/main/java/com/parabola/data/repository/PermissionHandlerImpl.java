@@ -2,11 +2,9 @@ package com.parabola.data.repository;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import com.parabola.data.PermissionChangeReceiver;
 import com.parabola.domain.repository.PermissionHandler;
 
 import io.reactivex.Observable;
@@ -23,21 +21,17 @@ public final class PermissionHandlerImpl implements PermissionHandler {
         this.context = context;
 
         fileStorageAccessObservable = BehaviorSubject.createDefault(hasExternalStorageAccess());
+    }
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(PermissionChangeReceiver.ACTION_FILE_STORAGE_PERMISSION_UPDATE);
-        PermissionChangeReceiver receiver = new PermissionChangeReceiver();
+    @Override
+    public void invalidatePermission(Type type) {
+        if (type != Type.FILE_STORAGE)
+            return;
 
-        receiver.setListener(changedAccessType -> {
-            if (changedAccessType != Type.FILE_STORAGE)
-                return;
-
-            boolean hasExternalStorageAccess = hasExternalStorageAccess();
-            if (fileStorageAccessObservable.getValue() != hasExternalStorageAccess) {
-                fileStorageAccessObservable.onNext(hasExternalStorageAccess);
-            }
-        });
-        context.registerReceiver(receiver, filter);
+        boolean hasExternalStorageAccess = hasExternalStorageAccess();
+        if (fileStorageAccessObservable.getValue() != hasExternalStorageAccess) {
+            fileStorageAccessObservable.onNext(hasExternalStorageAccess);
+        }
     }
 
     @Override
