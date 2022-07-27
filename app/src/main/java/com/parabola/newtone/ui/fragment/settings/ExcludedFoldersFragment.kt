@@ -1,135 +1,143 @@
-package com.parabola.newtone.ui.fragment.settings;
+package com.parabola.newtone.ui.fragment.settings
 
-import android.content.res.ColorStateList;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.os.Bundle
+import android.os.Environment
+import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import com.parabola.domain.repository.ExcludedFolderRepository
+import com.parabola.domain.repository.FolderRepository
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.ExcludedFolderAdapter
+import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem
+import com.parabola.newtone.databinding.FragmentExcludedFoldersBinding
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.ui.dialog.FolderPickerDialog
+import com.parabola.newtone.ui.router.MainRouter
+import java.util.function.Function
+import javax.inject.Inject
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
+class ExcludedFoldersFragment : BaseSwipeToBackFragment() {
 
-import com.parabola.domain.repository.ExcludedFolderRepository;
-import com.parabola.domain.repository.FolderRepository;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.ExcludedFolderAdapter;
-import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem;
-import com.parabola.newtone.databinding.FragmentExcludedFoldersBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
-import com.parabola.newtone.ui.dialog.FolderPickerDialog;
-import com.parabola.newtone.ui.router.MainRouter;
+    private var _binding: FragmentExcludedFoldersBinding? = null
+    private val binding get() = _binding!!
 
-import java.util.function.Function;
+    private val adapter = ExcludedFolderAdapter()
 
-import javax.inject.Inject;
+    @Inject
+    lateinit var router: MainRouter
 
+    @Inject
+    lateinit var excludedFolderRepo: ExcludedFolderRepository
 
-public final class ExcludedFoldersFragment extends BaseSwipeToBackFragment {
-    private static final String LOG_CAT = ExcludedFoldersFragment.class.getSimpleName();
-
-    private FragmentExcludedFoldersBinding binding;
-
-
-    private ImageButton addFolderButton;
-
-    private final ExcludedFolderAdapter adapter = new ExcludedFolderAdapter();
+    @Inject
+    lateinit var folderRepo: FolderRepository
 
 
-    @Inject MainRouter router;
-    @Inject ExcludedFolderRepository excludedFolderRepo;
-    @Inject FolderRepository folderRepo;
-
-    public static ExcludedFoldersFragment newInstance() {
-        return new ExcludedFoldersFragment();
+    init {
+        retainInstance = true
     }
 
-    public ExcludedFoldersFragment() {
-        setRetainInstance(true);
-    }
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentExcludedFoldersBinding.inflate(inflater, container, false);
-        getRootBinding().container.addView(binding.getRoot());
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentExcludedFoldersBinding.inflate(inflater, container, false)
 
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        appComponent.inject(this);
+        rootBinding.container.addView(binding.root)
 
-        initAddFolderButton();
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        appComponent.inject(this)
 
-        binding.excludedFoldersView.setAdapter(adapter);
-        adapter.setOnRemoveClickListener(adapter::remove);
-        getRootBinding().main.setText(R.string.setting_excluded_folders_title);
-        getRootBinding().additionalInfo.setVisibility(View.GONE);
-        getRootBinding().otherInfo.setVisibility(View.GONE);
+        initAddFolderButton()
+
+        binding.excludedFoldersView.adapter = adapter
+        adapter.setOnRemoveClickListener(adapter::remove)
+        rootBinding.main.setText(R.string.setting_excluded_folders_title)
+        rootBinding.additionalInfo.visibility = View.GONE
+        rootBinding.otherInfo.visibility = View.GONE
         if (savedInstanceState == null) {
-            adapter.addAll(excludedFolderRepo.getExcludedFolders());
+            adapter.addAll(excludedFolderRepo.excludedFolders)
         }
 
-        return root;
+        return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onDestroy() {
+        if (isRemoving)
+            onFinishing()
+
+        super.onDestroy()
     }
 
 
-    private void initAddFolderButton() {
-        addFolderButton = new AppCompatImageButton(requireContext());
-        addFolderButton.setImageResource(R.drawable.ic_add);
-        int imageSize = (int) getResources().getDimension(R.dimen.add_new_excluded_folder_button_size);
-        addFolderButton.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
-        getRootBinding().actionBar.addView(addFolderButton);
-        addFolderButton.setOnClickListener(v -> {
-            Function<FolderPickerItem, String> tracksCountInFolderMapper = folderItem -> {
-                long tracksCountInFolder = folderRepo.tracksCountInFolderRecursively(folderItem.getLocation());
-                return getResources().getQuantityString(R.plurals.tracks_count, (int) tracksCountInFolder, tracksCountInFolder);
-            };
+    private fun initAddFolderButton() {
+        val addFolderButton = AppCompatImageButton(requireContext())
+        addFolderButton.setImageResource(R.drawable.ic_add)
+        val imageSize = resources.getDimension(R.dimen.add_new_excluded_folder_button_size).toInt()
+        addFolderButton.layoutParams = LinearLayout.LayoutParams(imageSize, imageSize)
+        rootBinding.actionBar.addView(addFolderButton)
+        addFolderButton.setOnClickListener {
+            val tracksCountInFolderMapper = Function { folderItem: FolderPickerItem ->
+                val tracksCountInFolder =
+                    folderRepo.tracksCountInFolderRecursively(folderItem.location)
+                resources.getQuantityString(
+                    R.plurals.tracks_count,
+                    tracksCountInFolder.toInt(),
+                    tracksCountInFolder
+                )
+            }
 
-            FolderPickerDialog dialog = FolderPickerDialog.newInstance(
-                    Environment.getExternalStorageDirectory().getAbsolutePath(), tracksCountInFolderMapper);
-            dialog.setItemSelectionListener(folderPath -> {
-                boolean isNew = adapter.getAll().stream()
-                        .noneMatch(folderPath::equals);
+            val dialog = FolderPickerDialog.newInstance(
+                Environment.getExternalStorageDirectory().absolutePath, tracksCountInFolderMapper
+            )
+            dialog.setItemSelectionListener { folderPath ->
+                val isNew = adapter.all.stream()
+                    .noneMatch(folderPath::equals)
 
-                if (isNew) adapter.add(folderPath);
-            });
-            dialog.show(requireActivity().getSupportFragmentManager(), null);
-        });
+                if (isNew) adapter.add(folderPath)
+            }
+            dialog.show(requireActivity().supportFragmentManager, null)
+        }
 
-        TypedValue typedValue = new TypedValue();
-        requireContext().getTheme().resolveAttribute(R.attr.selectableItemBackgroundBorderless, typedValue, true);
-        addFolderButton.setBackgroundResource(typedValue.resourceId);
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(
+            R.attr.selectableItemBackgroundBorderless,
+            typedValue,
+            true
+        )
+        addFolderButton.setBackgroundResource(typedValue.resourceId)
 
-        ColorStateList imageTintList = ContextCompat.getColorStateList(requireContext(), R.color.colorNewtoneIconTint);
-        ImageViewCompat.setImageTintList(addFolderButton, imageTintList);
+        val imageTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.colorNewtoneIconTint)
+        ImageViewCompat.setImageTintList(addFolderButton, imageTintList)
     }
 
-
-    @Override
-    protected void onClickBackButton() {
-        router.goBack();
+    override fun onClickBackButton() {
+        router.goBack()
     }
 
-    @Override
-    public void onDestroy() {
-        if (isRemoving())
-            onFinishing();
-
-        super.onDestroy();
-    }
-
-    private void onFinishing() {
+    private fun onFinishing() {
         //сохраняем новые исключённые папки
-        excludedFolderRepo.refreshExcludedFolders(adapter.getAll())
-                .subscribe();
+        excludedFolderRepo.refreshExcludedFolders(adapter.all)
+            .subscribe()
     }
 
+    companion object {
+        fun newInstance() = ExcludedFoldersFragment()
+    }
 }
