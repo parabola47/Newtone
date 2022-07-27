@@ -1,102 +1,101 @@
-package com.parabola.newtone.ui.fragment.settings;
+package com.parabola.newtone.ui.fragment.settings
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor.*
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.databinding.FragmentColorThemeSelectorBinding
+import com.parabola.newtone.mvp.presenter.ColorThemeSelectorPresenter
+import com.parabola.newtone.mvp.view.ColorThemeSelectorView
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import androidx.annotation.NonNull;
+class ColorThemeSelectorFragment : BaseSwipeToBackFragment(),
+    ColorThemeSelectorView {
+    @InjectPresenter
+    lateinit var presenter: ColorThemeSelectorPresenter
 
-import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
-import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.databinding.FragmentColorThemeSelectorBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.ColorThemeSelectorPresenter;
-import com.parabola.newtone.mvp.view.ColorThemeSelectorView;
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
+    private var _binding: FragmentColorThemeSelectorBinding? = null
+    private val binding get() = _binding!!
 
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentColorThemeSelectorBinding.inflate(inflater, container, false)
 
-public final class ColorThemeSelectorFragment extends BaseSwipeToBackFragment
-        implements ColorThemeSelectorView {
+        rootBinding.container.addView(binding.root)
+        rootBinding.main.setText(R.string.setting_color_theme_title)
+        rootBinding.additionalInfo.visibility = View.GONE
+        rootBinding.otherInfo.visibility = View.GONE
 
-    @InjectPresenter ColorThemeSelectorPresenter presenter;
-
-    private FragmentColorThemeSelectorBinding binding;
-
-
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentColorThemeSelectorBinding.inflate(inflater, container, false);
-        getRootBinding().container.addView(binding.getRoot());
-
-
-        getRootBinding().main.setText(R.string.setting_color_theme_title);
-        getRootBinding().additionalInfo.setVisibility(View.GONE);
-        getRootBinding().otherInfo.setVisibility(View.GONE);
-
-        binding.themeToggle.addOnButtonCheckedListener((group, checkedButtonId, isChecked) -> {
+        binding.themeToggle.addOnButtonCheckedListener { _, checkedButtonId: Int, isChecked: Boolean ->
             if (isChecked) {
-                ColorTheme colorTheme = checkedButtonId == R.id.darkButton ? ColorTheme.DARK : ColorTheme.LIGHT;
-                presenter.onDarkLightSelection(colorTheme);
+                val colorTheme =
+                    if (checkedButtonId == R.id.darkButton) ColorTheme.DARK
+                    else ColorTheme.LIGHT
+                presenter.onDarkLightSelection(colorTheme)
             }
-        });
-        binding.primaryColorRadioGroup.setOnCheckedChangeListener((radioGroup, checkedButtonId) -> {
-            PrimaryColor primaryColor;
-            switch (checkedButtonId) {
-                case R.id.primaryColorNewtone: primaryColor = PrimaryColor.NEWTONE; break;
-                case R.id.primaryColorArium: primaryColor = PrimaryColor.ARIUM; break;
-                case R.id.primaryColorBlues: primaryColor = PrimaryColor.BLUES; break;
-                case R.id.primaryColorFloyd: primaryColor = PrimaryColor.FLOYD; break;
-                case R.id.primaryColorPurple: primaryColor = PrimaryColor.PURPLE; break;
-                case R.id.primaryColorPassion: primaryColor = PrimaryColor.PASSION; break;
-                case R.id.primaryColorSky: primaryColor = PrimaryColor.SKY; break;
-                default: throw new IllegalStateException();
+        }
+        binding.primaryColorRadioGroup.setOnCheckedChangeListener { _, checkedButtonId: Int ->
+            val primaryColor = when (checkedButtonId) {
+                R.id.primaryColorNewtone -> NEWTONE
+                R.id.primaryColorArium -> ARIUM
+                R.id.primaryColorBlues -> BLUES
+                R.id.primaryColorFloyd -> FLOYD
+                R.id.primaryColorPurple -> PURPLE
+                R.id.primaryColorPassion -> PASSION
+                R.id.primaryColorSky -> SKY
+                else -> throw IllegalStateException()
             }
-            presenter.onPrimaryColorSelection(primaryColor);
-        });
+            presenter.onPrimaryColorSelection(primaryColor)
+        }
 
-        return root;
+        return root
     }
 
-    @Override
-    protected void onClickBackButton() {
-        presenter.onClickBackButton();
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    @Override
-    public void setDarkLightTheme(ColorTheme colorTheme) {
-        switch (colorTheme) {
-            case DARK: binding.themeToggle.check(R.id.darkButton); break;
-            case LIGHT: binding.themeToggle.check(R.id.lightButton); break;
-            default: throw new IllegalArgumentException();
+
+    override fun onClickBackButton() {
+        presenter.onClickBackButton()
+    }
+
+    override fun setDarkLightTheme(colorTheme: ColorTheme) {
+        when (colorTheme) {
+            ColorTheme.DARK -> binding.themeToggle.check(R.id.darkButton)
+            ColorTheme.LIGHT -> binding.themeToggle.check(R.id.lightButton)
+            else -> throw IllegalArgumentException()
         }
     }
 
-
-    @Override
-    public void setPrimaryColor(PrimaryColor primaryColor) {
-        switch (primaryColor) {
-            case NEWTONE: binding.primaryColorRadioGroup.check(R.id.primaryColorNewtone); break;
-            case ARIUM: binding.primaryColorRadioGroup.check(R.id.primaryColorArium); break;
-            case BLUES: binding.primaryColorRadioGroup.check(R.id.primaryColorBlues); break;
-            case FLOYD: binding.primaryColorRadioGroup.check(R.id.primaryColorFloyd); break;
-            case PURPLE: binding.primaryColorRadioGroup.check(R.id.primaryColorPurple); break;
-            case PASSION: binding.primaryColorRadioGroup.check(R.id.primaryColorPassion); break;
-            case SKY: binding.primaryColorRadioGroup.check(R.id.primaryColorSky); break;
-            default: throw new IllegalArgumentException();
+    override fun setPrimaryColor(primaryColor: PrimaryColor) {
+        when (primaryColor) {
+            NEWTONE -> binding.primaryColorRadioGroup.check(R.id.primaryColorNewtone)
+            ARIUM -> binding.primaryColorRadioGroup.check(R.id.primaryColorArium)
+            BLUES -> binding.primaryColorRadioGroup.check(R.id.primaryColorBlues)
+            FLOYD -> binding.primaryColorRadioGroup.check(R.id.primaryColorFloyd)
+            PURPLE -> binding.primaryColorRadioGroup.check(R.id.primaryColorPurple)
+            PASSION -> binding.primaryColorRadioGroup.check(R.id.primaryColorPassion)
+            SKY -> binding.primaryColorRadioGroup.check(R.id.primaryColorSky)
+            else -> throw IllegalArgumentException()
         }
     }
 
     @ProvidePresenter
-    ColorThemeSelectorPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        return new ColorThemeSelectorPresenter(appComponent);
+    fun providePresenter(): ColorThemeSelectorPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return ColorThemeSelectorPresenter(appComponent)
     }
 }

@@ -1,66 +1,66 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
-import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.ColorThemeSelectorView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
-
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme
+import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.ColorThemeSelectorView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public class ColorThemeSelectorPresenter extends MvpPresenter<ColorThemeSelectorView> {
+class ColorThemeSelectorPresenter(appComponent: AppComponent) :
+    MvpPresenter<ColorThemeSelectorView>() {
 
-    @Inject MainRouter router;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    lateinit var router: MainRouter
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    private val disposables = CompositeDisposable()
 
 
-    public ColorThemeSelectorPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
+
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                observeColorTheme(),
-                observePrimaryColor());
+            observeColorTheme(),
+            observePrimaryColor()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable observeColorTheme() {
+    private fun observeColorTheme(): Disposable {
         return viewSettingsInteractor.observeColorTheme()
-                .subscribe(getViewState()::setDarkLightTheme);
+            .subscribe(viewState::setDarkLightTheme)
     }
 
-    private Disposable observePrimaryColor() {
+    private fun observePrimaryColor(): Disposable {
         return viewSettingsInteractor.observePrimaryColor()
-                .subscribe(getViewState()::setPrimaryColor);
+            .subscribe(viewState::setPrimaryColor)
     }
 
-
-    public void onDarkLightSelection(ColorTheme colorTheme) {
-        viewSettingsInteractor.setColorTheme(colorTheme);
+    fun onDarkLightSelection(colorTheme: ColorTheme) {
+        viewSettingsInteractor.colorTheme = colorTheme
     }
 
-    public void onPrimaryColorSelection(PrimaryColor primaryColor) {
-        viewSettingsInteractor.setPrimaryColor(primaryColor);
+    fun onPrimaryColorSelection(primaryColor: PrimaryColor) {
+        viewSettingsInteractor.primaryColor = primaryColor
     }
 
-    public void onClickBackButton() {
-        router.goBack();
+    fun onClickBackButton() {
+        router.goBack()
     }
 
 }
