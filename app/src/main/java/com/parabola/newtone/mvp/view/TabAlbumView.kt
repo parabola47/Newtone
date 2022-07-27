@@ -1,19 +1,16 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import com.parabola.domain.model.Album;
-import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
-
-import java.util.List;
-
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.AddToEndSingle;
+import com.parabola.domain.model.Album
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-public interface TabAlbumView extends MvpView {
+interface TabAlbumView : MvpView {
+    fun refreshAlbums(albums: List<Album>)
 
-    void refreshAlbums(List<Album> albums);
-    void setSectionShowing(boolean enable);
+    fun setAlbumViewSettings(viewSettings: AlbumItemView)
+    fun setItemDividerShowing(showed: Boolean)
 
-    void setAlbumViewSettings(AlbumItemView albumViewSettings);
-    void setItemDividerShowing(boolean showed);
+    fun setSectionShowing(enable: Boolean)
 }

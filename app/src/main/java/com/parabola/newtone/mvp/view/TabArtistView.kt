@@ -8,6 +8,7 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 @AddToEndSingle
 interface TabArtistView : MvpView {
     fun refreshArtists(artists: List<Artist>)
+
     fun setItemViewSettings(viewSettings: ArtistItemView)
     fun setItemDividerShowing(showed: Boolean)
 
