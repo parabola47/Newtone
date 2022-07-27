@@ -1,110 +1,116 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.interactor.player.PlayerSetting;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.SettingView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.interactor.player.PlayerSetting
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.SettingView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class SettingPresenter extends MvpPresenter<SettingView> {
-    @Inject MainRouter router;
+class SettingPresenter(appComponent: AppComponent) : MvpPresenter<SettingView>() {
 
-    @Inject PlayerSetting playerSetting;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    lateinit var router: MainRouter
+
+    @Inject
+    lateinit var playerSetting: PlayerSetting
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    private val disposables = CompositeDisposable()
 
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    init {
+        appComponent.inject(this)
+    }
 
-    public SettingPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
 
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                observeIsNotificationBackgroundColorized(),
-                observeNotificationArtworkShow(),
-                observeIsItemDividerShowed());
+            observeIsNotificationBackgroundColorized(),
+            observeNotificationArtworkShow(),
+            observeIsItemDividerShowed()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
 
-    private Disposable observeIsNotificationBackgroundColorized() {
+    private fun observeIsNotificationBackgroundColorized(): Disposable {
         return playerSetting.observeIsNotificationBackgroundColorized()
-                .subscribe(getViewState()::setNotificationColorSwitchChecked);
+            .subscribe(viewState::setNotificationColorSwitchChecked)
     }
 
-    private Disposable observeNotificationArtworkShow() {
+    private fun observeNotificationArtworkShow(): Disposable {
         return playerSetting.observeNotificationArtworkShow()
-                .subscribe(getViewState()::setNotificationArtworkSwitchChecked);
+            .subscribe(viewState::setNotificationArtworkSwitchChecked)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setShowListItemDividerSwitchChecked);
+            .subscribe(viewState::setShowListItemDividerSwitchChecked)
     }
 
 
-    public void onClickBack() {
-        router.goBack();
+    fun onClickBack() {
+        router.goBack()
     }
 
-
-    public void onClickColorThemeSettings() {
-        router.openColorThemeSelectorSettings();
+    fun onClickColorThemeSettings() {
+        router.openColorThemeSelectorSettings()
     }
 
-    public void onClickNotificationColorSetting() {
-        playerSetting.setNotificationBackgroundColorized(!playerSetting.isNotificationBackgroundColorized());
+    fun onClickNotificationArtworkShowSetting() {
+        playerSetting.isNotificationArtworkShow = !playerSetting.isNotificationArtworkShow
     }
 
-    public void onClickNotificationArtworkShowSetting() {
-        playerSetting.setNotificationArtworkShow(!playerSetting.isNotificationArtworkShow());
+    fun onClickNotificationColorSetting() {
+        playerSetting.isNotificationBackgroundColorized =
+            !playerSetting.isNotificationBackgroundColorized
     }
 
-    public void onClickShowItemDivider() {
-        viewSettingsInteractor.setIsItemDividerShowed(!viewSettingsInteractor.isItemDividerShowed());
+    fun onClickShowItemDivider() {
+        viewSettingsInteractor.setIsItemDividerShowed(!viewSettingsInteractor.isItemDividerShowed)
     }
 
-    public void onClickExcludedFolders() {
-        router.openExcludedFolders();
+    fun onClickExcludedFolders() {
+        router.openExcludedFolders()
     }
 
-    public void onClickTrackItemViewSettings() {
-        router.openTrackItemDisplaySettings();
+    fun onClickTrackItemViewSettings() {
+        router.openTrackItemDisplaySettings()
     }
 
-    public void onClickAlbumItemViewSettings() {
-        router.openAlbumItemDisplaySettings();
+    fun onClickAlbumItemViewSettings() {
+        router.openAlbumItemDisplaySettings()
     }
 
-    public void onClickArtistItemViewSettings() {
-        router.openArtistItemDisplaySettings();
+    fun onClickArtistItemViewSettings() {
+        router.openArtistItemDisplaySettings()
     }
 
-    public void onClickPrivacyPolicy() {
-        router.openPrivacyPolicyWebPage();
+    fun onClickPrivacyPolicy() {
+        router.openPrivacyPolicyWebPage()
     }
 
-    private int appInfoBarClickCount = 0;
+    fun onClickContactDevelopers() {
+        router.openContactDevelopersViaEmail()
+    }
 
-    public void onClickAppInfoBar() {
+    private var appInfoBarClickCount = 0
+
+    fun onClickAppInfoBar() {
         if (++appInfoBarClickCount % 10 == 0) {
-            router.openNewtoneDialog();
+            router.openNewtoneDialog()
         }
-    }
-
-    public void onClickContactDevelopers() {
-        router.openContactDevelopersViaEmail();
     }
 
 }
