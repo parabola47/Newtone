@@ -1,40 +1,36 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
-import com.parabola.domain.model.Track;
-
-import java.util.List;
-
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.AddToEndSingle;
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.model.Track
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-public interface PlayerView extends MvpView {
-    void setArtist(String artistName);
-    void setAlbum(String albumTitle);
-    void setTitle(String trackTitle);
-    void setDurationText(String durationFormatted);
-    void setDurationMs(int durationMs);
-    void setIsFavourite(boolean isFavourite);
+interface PlayerView : MvpView {
+    fun setArtist(artistName: String)
+    fun setAlbum(albumTitle: String)
+    fun setTitle(trackTitle: String)
+    fun setDurationText(durationFormatted: String)
+    fun setDurationMs(durationMs: Int)
+    fun setIsFavourite(isFavourite: Boolean)
 
-    void setPlaybackButtonAsPause();
-    void setPlaybackButtonAsPlay();
-    void setRepeatMode(RepeatMode repeatMode);
-    void setShuffleEnabling(boolean enable);
+    fun setPlaybackButtonAsPause()
+    fun setPlaybackButtonAsPlay()
+    fun setRepeatMode(repeatMode: PlayerInteractor.RepeatMode)
+    fun setShuffleEnabling(enable: Boolean)
 
-    void setCurrentTimeMs(int currentTimeMs);
+    fun setCurrentTimeMs(currentTimeMs: Int)
 
-    void setTimerButtonVisibility(boolean visible);
+    fun setTimerButtonVisibility(visible: Boolean)
 
-    void setViewPagerSlide(boolean lock);
+    fun setViewPagerSlide(lock: Boolean)
 
-    void refreshTracks(List<Track> tracks);
-    void setAlbumImagePosition(int currentTrackPosition, boolean smoothScroll);
+    fun refreshTracks(tracks: List<Track>)
+    fun setAlbumImagePosition(currentTrackPosition: Int, smoothScroll: Boolean)
 
     //в градусах
-    void setTrackSettingsRotation(float rotation);
+    fun setTrackSettingsRotation(rotation: Float)
 
-    void setRootViewOpacity(float alpha);
-    void setRootViewVisibility(boolean visible);
-
+    fun setRootViewOpacity(alpha: Float)
+    fun setRootViewVisibility(visible: Boolean)
 }

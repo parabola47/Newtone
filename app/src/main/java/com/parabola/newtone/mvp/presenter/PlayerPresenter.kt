@@ -11,6 +11,7 @@ import com.parabola.newtone.di.app.AppComponent
 import com.parabola.newtone.mvp.view.PlayerView
 import com.parabola.newtone.ui.router.MainRouter
 import com.parabola.newtone.util.TimeFormatterTool
+import com.parabola.newtone.util.TimeFormatterTool.formatMillisecondsToMinutes
 import com.parabola.sleep_timer_feature.SleepTimerInteractor
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import io.reactivex.Observable
@@ -111,18 +112,19 @@ class PlayerPresenter(appComponent: AppComponent) : MvpPresenter<PlayerView>() {
             .observeOn(schedulers.ui())
             .subscribe(
                 { track ->
-                    viewState.setArtist(track.artistName)
-                    viewState.setAlbum(track.albumTitle)
-                    viewState.setTitle(track.title)
-                    val durationFormatted =
-                        TimeFormatterTool.formatMillisecondsToMinutes(track.durationMs)
-                    viewState.setDurationText(durationFormatted)
-                    viewState.setDurationMs(track.durationMs.toInt())
-                    viewState.setIsFavourite(track.isFavourite)
-                    viewState.setAlbumImagePosition(
-                        playerInteractor.currentTrackPosition(),
-                        enableSlideScrolling
-                    )
+                    viewState.apply {
+                        setArtist(track.artistName)
+                        setAlbum(track.albumTitle)
+                        setTitle(track.title)
+                        val durationFormatted = formatMillisecondsToMinutes(track.durationMs)
+                        setDurationText(durationFormatted)
+                        setDurationMs(track.durationMs.toInt())
+                        setIsFavourite(track.isFavourite)
+                        setAlbumImagePosition(
+                            playerInteractor.currentTrackPosition(),
+                            enableSlideScrolling
+                        )
+                    }
                 },
                 Functions.ERROR_CONSUMER,
             )

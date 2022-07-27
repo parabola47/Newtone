@@ -1,368 +1,310 @@
-package com.parabola.newtone.ui.fragment;
+package com.parabola.newtone.ui.fragment
 
-import static com.parabola.domain.utils.TracklistTool.isTracklistsIdentical;
-import static com.parabola.newtone.util.AndroidTool.getStyledColor;
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.appcompat.widget.ListPopupWindow
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.shape.CornerFamily
+import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode
+import com.parabola.domain.model.Track
+import com.parabola.domain.utils.TracklistTool.isTracklistsIdentical
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.ListPopupWindowAdapter
+import com.parabola.newtone.databinding.FragmentPlayerBinding
+import com.parabola.newtone.mvp.presenter.PlayerPresenter
+import com.parabola.newtone.mvp.view.PlayerView
+import com.parabola.newtone.util.AndroidTool
+import com.parabola.newtone.util.TimeFormatterTool.formatMillisecondsToMinutes
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import io.reactivex.schedulers.Schedulers
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.SeekBar;
+class PlayerFragment : MvpAppCompatFragment(), PlayerView {
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.ListPopupWindow;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+    @InjectPresenter
+    lateinit var presenter: PlayerPresenter
 
-import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.shape.CornerFamily;
-import com.parabola.domain.interactor.player.PlayerInteractor.RepeatMode;
-import com.parabola.domain.model.Track;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.ListPopupWindowAdapter;
-import com.parabola.newtone.databinding.FragmentPlayerBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.PlayerPresenter;
-import com.parabola.newtone.mvp.view.PlayerView;
-import com.parabola.newtone.util.TimeFormatterTool;
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
 
-import java.util.ArrayList;
-import java.util.List;
+    private val albumCoverAdapter = AlbumCoverPagerAdapter()
 
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import io.reactivex.schedulers.Schedulers;
-import moxy.MvpAppCompatFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
 
-public final class PlayerFragment extends MvpAppCompatFragment
-        implements PlayerView {
-    private static final String LOG_TAG = PlayerFragment.class.getSimpleName();
-
-    @InjectPresenter PlayerPresenter presenter;
-
-    private FragmentPlayerBinding binding;
-
-    private final AlbumCoverPagerAdapter albumCoverAdapter = new AlbumCoverPagerAdapter();
-
-    public PlayerFragment() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentPlayerBinding.inflate(inflater, container, false);
-
-        binding.durationProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(progress);
-                binding.currentTime.setText(currentTimeFormatted);
+        binding.durationProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                val currentTimeFormatted = formatMillisecondsToMinutes(progress.toLong())
+                binding.currentTime.text = currentTimeFormatted
             }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                presenter.onStartSeekbarPressed();
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                presenter.onStartSeekbarPressed()
             }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                presenter.onStopSeekbarPressed(seekBar.getProgress());
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                presenter.onStopSeekbarPressed(seekBar.progress)
             }
-        });
-        binding.albumCoverContainer.setAdapter(albumCoverAdapter);
-        binding.albumCoverContainer.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            private int lastPosition;
+        })
+        binding.albumCoverContainer.adapter = albumCoverAdapter
+        binding.albumCoverContainer.addOnPageChangeListener(object : SimpleOnPageChangeListener() {
 
-            @Override
-            public void onPageSelected(int position) {
-                lastPosition = position;
+            private var lastPosition = 0
+
+            override fun onPageSelected(position: Int) {
+                lastPosition = position
             }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            override fun onPageScrollStateChanged(state: Int) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    presenter.onSwipeImage(lastPosition);
+                    presenter.onSwipeImage(lastPosition)
                 }
             }
-        });
+        })
 
-        return binding.getRoot();
+        return binding.root
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        binding.queue.setOnClickListener(v -> presenter.onClickQueue());
-        binding.audioEffects.setOnClickListener(v -> presenter.onClickAudioEffects());
-        binding.audioEffects.setOnLongClickListener(v -> {
-            presenter.onLongClickAudioEffects();
-            return true;
-        });
-        binding.dropDown.setOnClickListener(v -> presenter.onClickDropDown());
-        binding.favourite.setOnClickListener(v -> presenter.onClickFavourite());
-        binding.favourite.setOnLongClickListener(v -> {
-            presenter.onLongClickFavorite();
-            return true;
-        });
-        binding.timer.setOnClickListener(v -> presenter.onClickTimerButton());
-        binding.timer.setOnLongClickListener(v -> {
-            presenter.onLongClickTimerButton();
-            return true;
-        });
-        binding.trackSettings.setOnClickListener(v -> onClickTrackSettings());
+    override fun onStart() {
+        super.onStart()
+        binding.queue.setOnClickListener { presenter.onClickQueue() }
+        binding.audioEffects.setOnClickListener { presenter.onClickAudioEffects() }
+        binding.audioEffects.setOnLongClickListener {
+            presenter.onLongClickAudioEffects()
+            true
+        }
+        binding.dropDown.setOnClickListener { presenter.onClickDropDown() }
+        binding.favourite.setOnClickListener { presenter.onClickFavourite() }
+        binding.favourite.setOnLongClickListener {
+            presenter.onLongClickFavorite()
+            true
+        }
+        binding.timer.setOnClickListener { presenter.onClickTimerButton() }
+        binding.timer.setOnLongClickListener {
+            presenter.onLongClickTimerButton()
+            true
+        }
+        binding.trackSettings.setOnClickListener { onClickTrackSettings() }
 
 
-        binding.artist.setOnClickListener(v -> presenter.onClickArtist());
-        binding.artist.setOnLongClickListener(v -> {
-            presenter.onClickArtist();
-            return true;
-        });
-        binding.album.setOnClickListener(v -> presenter.onClickAlbum());
-        binding.album.setOnLongClickListener(v -> {
-            presenter.onClickAlbum();
-            return true;
-        });
-        binding.title.setOnClickListener(v -> presenter.onClickTrackTitle());
-        binding.title.setOnLongClickListener(v -> {
-            presenter.onClickTrackTitle();
-            return true;
-        });
+        binding.artist.setOnClickListener { presenter.onClickArtist() }
+        binding.artist.setOnLongClickListener {
+            presenter.onClickArtist()
+            true
+        }
+        binding.album.setOnClickListener { presenter.onClickAlbum() }
+        binding.album.setOnLongClickListener {
+            presenter.onClickAlbum()
+            true
+        }
+        binding.title.setOnClickListener { presenter.onClickTrackTitle() }
+        binding.title.setOnLongClickListener {
+            presenter.onClickTrackTitle()
+            true
+        }
 
 
-        binding.playerToggle.setOnClickListener(v -> presenter.onClickPlayButton());
-        binding.prevTrack.setOnClickListener(v -> presenter.onClickPrevTrack());
-        binding.nextTrack.setOnClickListener(v -> presenter.onClickNextTrack());
-        binding.loop.setOnClickListener(v -> presenter.onClickLoop());
-        binding.shuffle.setOnClickListener(v -> presenter.onClickShuffle());
+        binding.playerToggle.setOnClickListener { presenter.onClickPlayButton() }
+        binding.prevTrack.setOnClickListener { presenter.onClickPrevTrack() }
+        binding.nextTrack.setOnClickListener { presenter.onClickNextTrack() }
+        binding.loop.setOnClickListener { presenter.onClickLoop() }
+        binding.shuffle.setOnClickListener { presenter.onClickShuffle() }
     }
 
-
-    public void onClickTrackSettings() {
-        ListPopupWindow popupWindow = new ListPopupWindow(requireContext());
-
-        ListPopupWindowAdapter adapter = new ListPopupWindowAdapter(requireContext(), R.menu.player_menu);
-        popupWindow.setAdapter(adapter);
-        popupWindow.setAnchorView(requireView().findViewById(R.id.menu_tmp));
-        popupWindow.setModal(true);
-        popupWindow.setWidth(adapter.measureContentWidth());
-        popupWindow.setOnItemClickListener((parent, view, position, id) -> {
-            handleSelectedMenu(adapter.getItem(position));
-            popupWindow.dismiss();
-        });
-
-        popupWindow.show();
+    private fun onClickTrackSettings() {
+        val popupWindow = ListPopupWindow(requireContext()).apply {
+            val adapter = ListPopupWindowAdapter(requireContext(), R.menu.player_menu)
+            setAdapter(adapter)
+            anchorView = requireView().findViewById(R.id.menu_tmp)
+            isModal = true
+            width = adapter.measureContentWidth()
+            setOnItemClickListener { _, _, position, _ ->
+                handleSelectedMenu(adapter.getItem(position))
+                dismiss()
+            }
+        }
+        popupWindow.show()
     }
 
-    private void handleSelectedMenu(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.add_to_playlist:
-                presenter.onClickMenuAddTrackToPlaylist();
-                break;
-            case R.id.timer:
-                presenter.onClickMenuTimer();
-                break;
-            case R.id.lyrics:
-                presenter.onClickMenuLyrics();
-                break;
-            case R.id.share:
-                presenter.onClickMenuShareTrack();
-                break;
-            case R.id.additional_info:
-                presenter.onClickMenuAdditionalInfo();
-                break;
-            case R.id.delete:
-                presenter.onClickMenuDelete();
-                break;
-            case R.id.settings:
-                presenter.onClickMenuSettings();
-                break;
+    private fun handleSelectedMenu(menuItem: MenuItem) {
+        when (menuItem.itemId) {
+            R.id.add_to_playlist -> presenter.onClickMenuAddTrackToPlaylist()
+            R.id.timer -> presenter.onClickMenuTimer()
+            R.id.lyrics -> presenter.onClickMenuLyrics()
+            R.id.share -> presenter.onClickMenuShareTrack()
+            R.id.additional_info -> presenter.onClickMenuAdditionalInfo()
+            R.id.delete -> presenter.onClickMenuDelete()
+            R.id.settings -> presenter.onClickMenuSettings()
         }
     }
-
 
     @ProvidePresenter
-    PlayerPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        return new PlayerPresenter(appComponent);
+    fun providePresenter(): PlayerPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return PlayerPresenter(appComponent)
     }
 
-
-    @Override
-    public void setArtist(String artistName) {
-        binding.artist.setText(artistName);
+    override fun setArtist(artistName: String) {
+        binding.artist.text = artistName
     }
 
-    @Override
-    public void setAlbum(String albumTitle) {
-        binding.album.setText(albumTitle);
+    override fun setAlbum(albumTitle: String) {
+        binding.album.text = albumTitle
     }
 
-    @Override
-    public void setTitle(String trackTitle) {
-        binding.title.setText(trackTitle);
+    override fun setTitle(trackTitle: String) {
+        binding.title.text = trackTitle
     }
 
-    @Override
-    public void setDurationText(String durationFormatted) {
-        binding.durationTxt.setText(durationFormatted);
+    override fun setDurationText(durationFormatted: String) {
+        binding.durationTxt.text = durationFormatted
     }
 
-    @Override
-    public void setDurationMs(int durationMs) {
-        binding.durationProgress.setMax(durationMs);
+    override fun setDurationMs(durationMs: Int) {
+        binding.durationProgress.max = durationMs
     }
 
-    @Override
-    public void setIsFavourite(boolean isFavourite) {
-        if (isFavourite) binding.favourite.setImageResource(R.drawable.ic_favourite_select);
-        else binding.favourite.setImageResource(R.drawable.ic_favourite);
+    override fun setIsFavourite(isFavourite: Boolean) {
+        if (isFavourite) binding.favourite.setImageResource(R.drawable.ic_favourite_select)
+        else binding.favourite.setImageResource(R.drawable.ic_favourite)
     }
 
-    @Override
-    public void setPlaybackButtonAsPause() {
-        binding.playerToggle.setImageResource(R.drawable.ic_pause);
+    override fun setPlaybackButtonAsPause() {
+        binding.playerToggle.setImageResource(R.drawable.ic_pause)
     }
 
-
-    @Override
-    public void setPlaybackButtonAsPlay() {
-        binding.playerToggle.setImageResource(R.drawable.ic_play);
+    override fun setPlaybackButtonAsPlay() {
+        binding.playerToggle.setImageResource(R.drawable.ic_play)
     }
 
-    @Override
-    public void setRepeatMode(RepeatMode repeatMode) {
-        switch (repeatMode) {
-            case OFF:
-                binding.loop.setImageResource(R.drawable.ic_loop);
-                binding.loop.setColorFilter(ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault));
-                break;
-            case ALL:
-                binding.loop.setImageResource(R.drawable.ic_loop);
-                binding.loop.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
-                break;
-            case ONE:
-                binding.loop.setImageResource(R.drawable.ic_loop_one);
-                binding.loop.setColorFilter(getStyledColor(requireContext(), R.attr.colorPrimary));
-                break;
+    override fun setRepeatMode(repeatMode: RepeatMode) {
+        when (repeatMode) {
+            RepeatMode.OFF -> {
+                binding.loop.setImageResource(R.drawable.ic_loop)
+                binding.loop.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault)
+                )
+            }
+            RepeatMode.ALL -> {
+                binding.loop.setImageResource(R.drawable.ic_loop)
+                binding.loop.setColorFilter(
+                    AndroidTool.getStyledColor(requireContext(), R.attr.colorPrimary)
+                )
+            }
+            RepeatMode.ONE -> {
+                binding.loop.setImageResource(R.drawable.ic_loop_one)
+                binding.loop.setColorFilter(
+                    AndroidTool.getStyledColor(requireContext(), R.attr.colorPrimary)
+                )
+            }
         }
-
     }
 
-    @Override
-    public void setShuffleEnabling(boolean enable) {
-        int color = enable ? getStyledColor(requireContext(), R.attr.colorPrimary)
-                : ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault);
-
-        binding.shuffle.setColorFilter(color);
+    override fun setShuffleEnabling(enable: Boolean) {
+        val color =
+            if (enable) AndroidTool.getStyledColor(requireContext(), R.attr.colorPrimary)
+            else ContextCompat.getColor(requireContext(), R.color.colorPlayerActionIconDefault)
+        binding.shuffle.setColorFilter(color)
     }
 
-    @Override
-    public void setCurrentTimeMs(int currentTimeMs) {
-        binding.durationProgress.setProgress(currentTimeMs);
+    override fun setCurrentTimeMs(currentTimeMs: Int) {
+        binding.durationProgress.progress = currentTimeMs
 
-        String currentTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(currentTimeMs);
-        binding.currentTime.setText(currentTimeFormatted);
+        val currentTimeFormatted = formatMillisecondsToMinutes(currentTimeMs.toLong())
+        binding.currentTime.text = currentTimeFormatted
     }
 
-    @Override
-    public void setTimerButtonVisibility(boolean visible) {
-        binding.timer.setVisibility(visible ? View.VISIBLE : View.GONE);
+    override fun setTimerButtonVisibility(visible: Boolean) {
+        binding.timer.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    @Override
-    public void setViewPagerSlide(boolean lock) {
-        binding.albumCoverContainer.setSwipeLocked(lock);
+    override fun setViewPagerSlide(lock: Boolean) {
+        binding.albumCoverContainer.swipeLocked = lock
     }
 
-    @Override
-    public void refreshTracks(List<Track> tracks) {
-        if (isTracklistsIdentical(tracks, albumCoverAdapter.tracks)) return;
+    override fun refreshTracks(tracks: List<Track>) {
+        if (isTracklistsIdentical(tracks, albumCoverAdapter.tracks))
+            return
 
-        albumCoverAdapter.tracks.clear();
-        albumCoverAdapter.tracks.addAll(tracks);
+        albumCoverAdapter.tracks.clear()
+        albumCoverAdapter.tracks.addAll(tracks)
+        // обёрнут в try, потому что бывают сценарии, когда при обновлении адаптер на экране плеера
+        // не привязан к ViewPager и выдаёт NPE
         try {
-            albumCoverAdapter.notifyDataSetChanged();
-        } catch (NullPointerException ignored) {
+            albumCoverAdapter.notifyDataSetChanged()
+        } catch (ignored: NullPointerException) {
         }
     }
 
-
-    @Override
-    public void setAlbumImagePosition(int currentTrackPosition, boolean smooth) {
-        binding.albumCoverContainer.setCurrentItem(currentTrackPosition, smooth);
+    override fun setAlbumImagePosition(currentTrackPosition: Int, smoothScroll: Boolean) {
+        binding.albumCoverContainer.setCurrentItem(currentTrackPosition, smoothScroll)
     }
 
-    @Override
-    public void setTrackSettingsRotation(float rotation) {
-        binding.trackSettings.setRotation(rotation);
+    override fun setTrackSettingsRotation(rotation: Float) {
+        binding.trackSettings.rotation = rotation
     }
 
-    @Override
-    public void setRootViewOpacity(float alpha) {
-        View root = getView();
-        if (root != null)
-            root.setAlpha(alpha);
+    override fun setRootViewOpacity(alpha: Float) {
+        view?.alpha = alpha
     }
 
-    @Override
-    public void setRootViewVisibility(boolean visible) {
-        View root = getView();
-        if (root != null)
-            root.setVisibility(visible ? View.VISIBLE : View.GONE);
+    override fun setRootViewVisibility(visible: Boolean) {
+        view?.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    private static class AlbumCoverPagerAdapter extends PagerAdapter {
-        private final List<Track> tracks = new ArrayList<>();
+    private class AlbumCoverPagerAdapter : PagerAdapter() {
+        val tracks = mutableListOf<Track>()
 
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            ShapeableImageView albumCover = new ShapeableImageView(container.getContext());
-            float cornerSizePx = container.getContext().getResources().getDimension(R.dimen.player_fragment_album_cover_corner_size);
-            albumCover.setShapeAppearanceModel(albumCover.getShapeAppearanceModel().toBuilder()
-                    .setAllCorners(CornerFamily.ROUNDED, cornerSizePx)
-                    .build());
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val albumCover = ShapeableImageView(container.context)
+            val cornerSizePx =
+                container.context.resources.getDimension(R.dimen.player_fragment_album_cover_corner_size)
+            albumCover.shapeAppearanceModel = albumCover.shapeAppearanceModel.toBuilder()
+                .setAllCorners(CornerFamily.ROUNDED, cornerSizePx)
+                .build()
 
-            Single.fromCallable(() -> (Bitmap) tracks.get(position).getArtImage())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ConsumerSingleObserver<>(
-                            albumCover::setImageBitmap,
-                            error -> albumCover.setImageResource(R.drawable.album_default)));
+            Single.fromCallable { tracks[position].getArtImage<Any>() as Bitmap }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(ConsumerSingleObserver(
+                    { bm: Bitmap -> albumCover.setImageBitmap(bm) }
+                ) { albumCover.setImageResource(R.drawable.album_default) })
 
-            container.addView(albumCover, 0);
+            container.addView(albumCover, 0)
 
-            return albumCover;
+            return albumCover
         }
 
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((View) object);
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            container.removeView(`object` as View)
         }
 
-        @Override
-        public int getCount() {
-            return tracks.size();
+        override fun getCount(): Int = tracks.size
+
+        override fun isViewFromObject(view: View, `object`: Any): Boolean {
+            return view === `object`
         }
 
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view == object;
-        }
-
-
-        @Override
-        public int getItemPosition(@NonNull Object object) {
-            return POSITION_NONE;
-        }
+        override fun getItemPosition(`object`: Any): Int = POSITION_NONE
     }
+
 }
