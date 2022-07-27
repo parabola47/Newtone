@@ -76,10 +76,10 @@ class RecentlyAddedPlaylistFragment : BaseSwipeToBackFragment(),
         presenter.onEnterSlideAnimationEnded()
     }
 
-    override fun refreshTracks(trackList: List<Track>) {
-        tracklistAdapter.replaceAll(trackList)
+    override fun refreshTracks(tracks: List<Track>) {
+        tracklistAdapter.replaceAll(tracks)
         val tracksCount = resources
-            .getQuantityString(R.plurals.tracks_count, trackList.size, trackList.size)
+            .getQuantityString(R.plurals.tracks_count, tracks.size, tracks.size)
         rootBinding.additionalInfo.text = tracksCount
     }
 
