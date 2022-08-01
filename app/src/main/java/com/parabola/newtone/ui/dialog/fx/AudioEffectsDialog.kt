@@ -1,91 +1,81 @@
-package com.parabola.newtone.ui.dialog.fx;
+package com.parabola.newtone.ui.dialog.fx
 
-import static java.util.Objects.requireNonNull;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-
-import com.parabola.newtone.R;
-import com.parabola.newtone.databinding.DialogAudioEffectsBinding;
-
-import moxy.MvpAppCompatDialogFragment;
-
-public final class AudioEffectsDialog extends MvpAppCompatDialogFragment {
-
-    private AudioEffectsPagerAdapter audioEffectsPagerAdapter;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import com.parabola.newtone.R
+import com.parabola.newtone.databinding.DialogAudioEffectsBinding
+import moxy.MvpAppCompatDialogFragment
 
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        DialogAudioEffectsBinding binding = DialogAudioEffectsBinding.inflate(inflater, container, false);
+private const val TABS_COUNT = 2
 
-        audioEffectsPagerAdapter = new AudioEffectsPagerAdapter(getChildFragmentManager());
-        binding.audioEffectsPager.setAdapter(audioEffectsPagerAdapter);
-        binding.audioEffectsPager.setOffscreenPageLimit(audioEffectsPagerAdapter.getCount());
-        binding.tabs.setupWithViewPager(binding.audioEffectsPager);
 
-        requireNonNull(binding.tabs.getTabAt(0)).setIcon(R.drawable.fx_eq_icon);
-        requireNonNull(binding.tabs.getTabAt(1)).setIcon(R.drawable.fx_ic_tune);
+class AudioEffectsDialog : MvpAppCompatDialogFragment() {
+
+    private lateinit var audioEffectsPagerAdapter: AudioEffectsPagerAdapter
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = DialogAudioEffectsBinding.inflate(inflater, container, false)
+
+        audioEffectsPagerAdapter = AudioEffectsPagerAdapter(childFragmentManager)
+        binding.apply {
+            audioEffectsPager.adapter = audioEffectsPagerAdapter
+            audioEffectsPager.offscreenPageLimit = audioEffectsPagerAdapter.count
+            tabs.setupWithViewPager(binding.audioEffectsPager)
+            tabs.getTabAt(0)!!.setIcon(R.drawable.fx_eq_icon)
+            tabs.getTabAt(1)!!.setIcon(R.drawable.fx_ic_tune)
+        }
 
         //берём старые фрагменты, если экран не создаётся с нуля
         if (savedInstanceState != null) {
-            Fragment[] tabFragments = new Fragment[2];
-            for (Fragment fragment : getChildFragmentManager().getFragments()) {
-                if (fragment instanceof FxEqualizerFragment) tabFragments[0] = fragment;
-                if (fragment instanceof FxAudioSettingsFragment) tabFragments[1] = fragment;
-            }
-            audioEffectsPagerAdapter.initTabsFragments(tabFragments);
+            val tabFragments = arrayOf(
+                childFragmentManager.fragments[0],
+                childFragmentManager.fragments[1],
+            )
+            audioEffectsPagerAdapter.initTabsFragments(tabFragments)
         }
 
-        return binding.getRoot();
+        return binding.root
     }
 
-    public static class AudioEffectsPagerAdapter extends FragmentPagerAdapter {
-        private final Fragment[] fragments = new Fragment[TABS_COUNT];
-        private static final int TABS_COUNT = 2;
+
+    private class AudioEffectsPagerAdapter(fm: FragmentManager) :
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        private val fragments = arrayOfNulls<Fragment>(TABS_COUNT)
 
 
-        public AudioEffectsPagerAdapter(FragmentManager fm) {
-            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        fun initTabsFragments(tabFragments: Array<Fragment>) {
+            require(tabFragments.size == TABS_COUNT) { "Size of array tabFragments is " + tabFragments.size + ". It must be " + TABS_COUNT }
+            System.arraycopy(tabFragments, 0, fragments, 0, fragments.size)
         }
 
-
-        void initTabsFragments(Fragment[] tabFragments) {
-            if (tabFragments.length != TABS_COUNT)
-                throw new IllegalArgumentException("Size of array tabFragments is " + tabFragments.length + ". It must be " + TABS_COUNT);
-
-            System.arraycopy(tabFragments, 0, this.fragments, 0, this.fragments.length);
-        }
-
-        @Override
-        @NonNull
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    if (fragments[0] == null) fragments[0] = new FxEqualizerFragment();
-                    return fragments[0];
-                case 1:
-                    if (fragments[1] == null) fragments[1] = new FxAudioSettingsFragment();
-                    return fragments[1];
-                default:
-                    throw new IllegalArgumentException("Fragment on position " + position + " not exists");
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> {
+                    if (fragments[0] == null) fragments[0] = FxEqualizerFragment()
+                    fragments[0]!!
+                }
+                1 -> {
+                    if (fragments[1] == null) fragments[1] = FxAudioSettingsFragment()
+                    fragments[1]!!
+                }
+                else -> throw IllegalArgumentException("Fragment on position $position not exists")
             }
         }
 
-        @Override
-        public int getCount() {
-            return fragments.length;
+        override fun getCount(): Int {
+            return fragments.size
         }
     }
-
 }
