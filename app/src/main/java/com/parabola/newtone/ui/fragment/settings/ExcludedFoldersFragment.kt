@@ -40,6 +40,11 @@ class ExcludedFoldersFragment : BaseSwipeToBackFragment() {
     lateinit var folderRepo: FolderRepository
 
 
+    companion object {
+        fun newInstance() = ExcludedFoldersFragment()
+    }
+
+
     init {
         retainInstance = true
     }
@@ -135,9 +140,5 @@ class ExcludedFoldersFragment : BaseSwipeToBackFragment() {
         //сохраняем новые исключённые папки
         excludedFolderRepo.refreshExcludedFolders(adapter.all)
             .subscribe()
-    }
-
-    companion object {
-        fun newInstance() = ExcludedFoldersFragment()
     }
 }
