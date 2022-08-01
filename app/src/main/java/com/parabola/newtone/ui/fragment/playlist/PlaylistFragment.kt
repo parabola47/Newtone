@@ -36,6 +36,10 @@ import com.parabola.newtone.util.visibleItemsCount
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
+
+private const val SELECTED_PLAYLIST_ID = "playlist id"
+
+
 class PlaylistFragment : BaseSwipeToBackFragment(),
     PlaylistView, Scrollable {
 
@@ -49,6 +53,15 @@ class PlaylistFragment : BaseSwipeToBackFragment(),
     private lateinit var itemDecoration: DividerItemDecoration
 
     private lateinit var dragSwitcherButton: ImageButton
+
+
+    companion object {
+        fun newInstance(playlistId: Int) =
+            PlaylistFragment().apply {
+                arguments = bundleOf(SELECTED_PLAYLIST_ID to playlistId)
+            }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -217,14 +230,4 @@ class PlaylistFragment : BaseSwipeToBackFragment(),
         binding.tracksList.smoothScrollToTop()
     }
 
-    companion object {
-        private const val SELECTED_PLAYLIST_ID = "playlist id"
-
-        //todo убрать аннотацию, когда MainRouterImpl будет переведён на котлин
-        @JvmStatic
-        fun newInstance(playlistId: Int) =
-            PlaylistFragment().apply {
-                arguments = bundleOf(Pair(SELECTED_PLAYLIST_ID, playlistId))
-            }
-    }
 }
