@@ -1,141 +1,137 @@
-package com.parabola.newtone.ui.dialog.fx;
+package com.parabola.newtone.ui.dialog.fx
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.SeekBar;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.SeekBar
+import androidx.recyclerview.widget.RecyclerView
+import com.parabola.domain.interactor.player.AudioEffectsInteractor
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.databinding.ItemEqBandBinding
+import com.parabola.newtone.databinding.TabFxEqBinding
+import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
+import com.parabola.newtone.mvp.view.fx.TabEqualizerView
+import com.parabola.newtone.util.SeekBarChangeAdapter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class FxEqualizerFragment : MvpAppCompatFragment(),
+    TabEqualizerView {
 
-import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.databinding.ItemEqBandBinding;
-import com.parabola.newtone.databinding.TabFxEqBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter;
-import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
-import com.parabola.newtone.util.SeekBarChangeAdapter;
+    @InjectPresenter
+    lateinit var presenter: TabEqualizerPresenter
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+    private val bandsAdapter = BandAdapter()
 
-import moxy.MvpAppCompatFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
-
-public final class FxEqualizerFragment extends MvpAppCompatFragment
-        implements TabEqualizerView {
-
-    @InjectPresenter TabEqualizerPresenter presenter;
-
-    private final BandAdapter bandsAdapter = new BandAdapter();
-
-    private TabFxEqBinding binding;
+    private var _binding: TabFxEqBinding? = null
+    private val binding get() = _binding!!
 
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = TabFxEqBinding.inflate(inflater, container, false);
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = TabFxEqBinding.inflate(inflater, container, false)
 
-        binding.eqBands.setAdapter(bandsAdapter);
-        binding.eqSwitcher.setOnCheckedChangeListener((buttonView, isChecked) -> presenter.onClickEqSwitcher(isChecked));
-        binding.showPresetsButton.setOnClickListener(v -> presenter.onClickShowPresets());
+        binding.apply {
+            eqBands.adapter = bandsAdapter
+            eqSwitcher.setOnCheckedChangeListener { _, isChecked ->
+                presenter.onClickEqSwitcher(isChecked)
+            }
+            showPresetsButton.setOnClickListener { presenter.onClickShowPresets() }
+        }
 
-        return binding.getRoot();
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
     @ProvidePresenter
-    TabEqualizerPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        return new TabEqualizerPresenter(appComponent);
-    }
-
-    @Override
-    public void setEqChecked(boolean enabled) {
-        binding.eqSwitcher.setChecked(enabled);
-        bandsAdapter.setEnabling(enabled);
-    }
-
-    private int maxEqLevel;
-    private int minEqLevel;
-
-    @Override
-    public void setMaxEqLevel(int level) {
-        maxEqLevel = level;
-    }
-
-    @Override
-    public void setMinEqLevel(int level) {
-        minEqLevel = level;
-    }
-
-    @Override
-    public void refreshBands(List<EqBand> bands) {
-        bandsAdapter.bands.clear();
-        bandsAdapter.bands.addAll(bands);
-        bandsAdapter.notifyDataSetChanged();
+    fun providePresenter(): TabEqualizerPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return TabEqualizerPresenter(appComponent)
     }
 
 
-    class BandAdapter extends RecyclerView.Adapter<BandAdapter.ViewHolder> {
+    override fun setEqChecked(checked: Boolean) {
+        binding.eqSwitcher.isChecked = checked
+        bandsAdapter.setEnabling(checked)
+    }
 
-        private final List<EqBand> bands = new ArrayList<>();
-        private boolean enabling;
+    private var maxEqLevel = 0
+    private var minEqLevel = 0
 
-        private void setEnabling(boolean enabling) {
-            this.enabling = enabling;
-            notifyDataSetChanged();
+    override fun setMaxEqLevel(level: Int) {
+        maxEqLevel = level
+    }
+
+    override fun setMinEqLevel(level: Int) {
+        minEqLevel = level
+    }
+
+    override fun refreshBands(bands: List<AudioEffectsInteractor.EqBand>) {
+        bandsAdapter.bands.clear()
+        bandsAdapter.bands.addAll(bands)
+        bandsAdapter.notifyDataSetChanged()
+    }
+
+    inner class BandAdapter : RecyclerView.Adapter<BandAdapter.ViewHolder>() {
+
+        val bands = mutableListOf<AudioEffectsInteractor.EqBand>()
+        private var enabling = false
+
+        fun setEnabling(enabling: Boolean) {
+            this.enabling = enabling
+            notifyDataSetChanged()
         }
 
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ItemEqBandBinding binding = ItemEqBandBinding
-                    .inflate(LayoutInflater.from(parent.getContext()), parent, false);
-            return new ViewHolder(binding);
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding = ItemEqBandBinding
+                .inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolder(binding)
         }
 
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            EqBand band = bands.get(holder.getAdapterPosition());
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.binding.apply {
+                val band = bands[holder.adapterPosition]
 
-            holder.binding.eqSeekBar.setMax(maxEqLevel - minEqLevel);
-            holder.binding.eqSeekBar.setProgress(band.currentLevel - minEqLevel);
-            holder.binding.eqSeekBar.setEnabled(enabling);
-            holder.binding.eqHz.setText(String.valueOf(band.frequency < 1000 ? band.frequency : (band.frequency / 1000 + "k")));
-            holder.binding.eqDb.setText(String.format(Locale.getDefault(), "%d", band.currentLevel));
+                eqSeekBar.max = maxEqLevel - minEqLevel
+                eqSeekBar.progress = band.currentLevel - minEqLevel
+                eqSeekBar.isEnabled = enabling
+                val eqHzText =
+                    if (band.frequency < 1000) band.frequency.toString()
+                    else "${band.frequency / 1000}k"
+                eqHz.text = eqHzText
+                eqDb.text = band.currentLevel.toString()
 
+                eqSeekBar.setOnSeekBarChangeListener(object : SeekBarChangeAdapter() {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean,
+                    ) {
+                        val newLevel = progress + minEqLevel
+                        band.currentLevel = newLevel.toShort()
+                        presenter.onChangeBandLevel(band.id, newLevel.toShort())
 
-            holder.binding.eqSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    int newLevel = progress + minEqLevel;
-                    band.currentLevel = (short) newLevel;
-                    presenter.onChangeBandLevel(band.id, (short) newLevel);
-
-                    holder.binding.eqDb.setText(String.format(Locale.getDefault(), "%d", newLevel));
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return bands.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            private final ItemEqBandBinding binding;
-
-            public ViewHolder(@NonNull ItemEqBandBinding binding) {
-                super(binding.getRoot());
-                this.binding = binding;
+                        holder.binding.eqDb.text = newLevel.toString()
+                    }
+                })
             }
         }
+
+        override fun getItemCount(): Int {
+            return bands.size
+        }
+
+        inner class ViewHolder(val binding: ItemEqBandBinding) :
+            RecyclerView.ViewHolder(binding.root)
     }
 }

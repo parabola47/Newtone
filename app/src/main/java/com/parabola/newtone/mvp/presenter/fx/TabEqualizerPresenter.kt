@@ -1,62 +1,63 @@
-package com.parabola.newtone.mvp.presenter.fx;
+package com.parabola.newtone.mvp.presenter.fx
 
-import com.parabola.domain.interactor.player.AudioEffectsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.fx.TabEqualizerView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.interactor.player.AudioEffectsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.fx.TabEqualizerView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class TabEqualizerPresenter extends MvpPresenter<TabEqualizerView> {
+class TabEqualizerPresenter(appComponent: AppComponent) : MvpPresenter<TabEqualizerView>() {
 
-    @Inject AudioEffectsInteractor fxInteractor;
-    @Inject MainRouter router;
+    @Inject
+    lateinit var fxInteractor: AudioEffectsInteractor
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var router: MainRouter
 
-    public TabEqualizerPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    private val disposables = CompositeDisposable()
+
+
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    public void onFirstViewAttach() {
-        getViewState().setMaxEqLevel(fxInteractor.getMaxEqBandLevel());
-        getViewState().setMinEqLevel(fxInteractor.getMinEqBandLevel());
-        getViewState().refreshBands(fxInteractor.getBands());
-        disposables.addAll(
-                observeEqEnabling());
+
+    public override fun onFirstViewAttach() {
+        viewState.setMaxEqLevel(fxInteractor.maxEqBandLevel.toInt())
+        viewState.setMinEqLevel(fxInteractor.minEqBandLevel.toInt())
+        viewState.refreshBands(fxInteractor.bands)
+        disposables.addAll(observeEqEnabling())
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable observeEqEnabling() {
+
+    private fun observeEqEnabling(): Disposable {
         return fxInteractor.observeEqEnabling()
-                .subscribe(enabled -> {
-                    getViewState().setEqChecked(enabled);
-                    getViewState().refreshBands(fxInteractor.getBands());
-                });
+            .subscribe { enabled ->
+                viewState.setEqChecked(enabled)
+                viewState.refreshBands(fxInteractor.bands)
+            }
     }
 
 
-    public void onClickEqSwitcher(boolean enabled) {
-        fxInteractor.setEqEnable(enabled);
+    fun onClickEqSwitcher(enabled: Boolean) {
+        fxInteractor.setEqEnable(enabled)
     }
 
-    public void onChangeBandLevel(int bandId, short newLevel) {
-        fxInteractor.setBandLevel(bandId, newLevel);
+    fun onChangeBandLevel(bandId: Int, newLevel: Short) {
+        fxInteractor.setBandLevel(bandId, newLevel)
     }
 
-    public void onClickShowPresets() {
-        router.openEqPresetsSelectorDialog();
+    fun onClickShowPresets() {
+        router.openEqPresetsSelectorDialog()
     }
 
 }
