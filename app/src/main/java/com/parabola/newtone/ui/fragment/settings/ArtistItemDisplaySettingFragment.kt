@@ -1,148 +1,142 @@
-package com.parabola.newtone.ui.fragment.settings;
+package com.parabola.newtone.ui.fragment.settings
 
-import static com.parabola.newtone.util.AndroidTool.convertDpToPixel;
-
-import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.SeekBar;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.databinding.FragmentArtistItemDisplaySettingBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
-import com.parabola.newtone.ui.router.MainRouter;
-import com.parabola.newtone.util.SeekBarChangeAdapter;
-
-import javax.inject.Inject;
-
-public final class ArtistItemDisplaySettingFragment extends BaseSwipeToBackFragment {
-    private static final String LOG_TAG = ArtistItemDisplaySettingFragment.class.getSimpleName();
+import android.content.DialogInterface
+import android.os.Bundle
+import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.SeekBar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.domain.settings.ViewSettingsInteractor.ArtistItemView
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.databinding.FragmentArtistItemDisplaySettingBinding
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
+import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.util.AndroidTool
+import com.parabola.newtone.util.SeekBarChangeAdapter
+import javax.inject.Inject
 
 
-    private FragmentArtistItemDisplaySettingBinding binding;
+private const val TEXT_SIZE_MIN = 12
+private const val BORDER_PADDING_MIN = 8
 
 
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject MainRouter router;
+class ArtistItemDisplaySettingFragment : BaseSwipeToBackFragment() {
+
+    private var _binding: FragmentArtistItemDisplaySettingBinding? = null
+    private val binding get() = _binding!!
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    @Inject
+    lateinit var router: MainRouter
 
 
-    public static ArtistItemDisplaySettingFragment newInstance() {
-        return new ArtistItemDisplaySettingFragment();
+    companion object {
+        fun newInstance() = ArtistItemDisplaySettingFragment()
     }
 
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentArtistItemDisplaySettingBinding.inflate(inflater, container, false);
-        getRootBinding().container.addView(binding.getRoot());
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentArtistItemDisplaySettingBinding.inflate(inflater, container, false)
+        rootBinding.container.addView(binding.root)
 
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        appComponent.inject(this)
 
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        appComponent.inject(this);
+        rootBinding.main.setText(R.string.artist_item_display_setting_screen_title)
+        rootBinding.additionalInfo.visibility = View.GONE
+        rootBinding.otherInfo.visibility = View.GONE
 
-        getRootBinding().main.setText(R.string.artist_item_display_setting_screen_title);
-        getRootBinding().additionalInfo.setVisibility(View.GONE);
-        getRootBinding().otherInfo.setVisibility(View.GONE);
+        binding.apply {
+            artistHolder.artist.setText(R.string.default_artist)
+            artistHolder.artistInfo.setText(R.string.default_artist_info)
 
-        binding.artistHolder.artist.setText(R.string.default_artist);
-        binding.artistHolder.artistInfo.setText(R.string.default_artist_info);
+            textSizeSeekBar.setOnSeekBarChangeListener(object : SeekBarChangeAdapter() {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    refreshTextSize(progress)
+                }
+            })
+            borderPaddingSeekBar.setOnSeekBarChangeListener(object : SeekBarChangeAdapter() {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    refreshBorderPadding(progress)
+                }
+            })
+            setDefault.setOnClickListener { onClickSetDefault() }
 
-        binding.textSizeSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                refreshTextSize(progress);
-            }
-        });
-        binding.borderPaddingSeekBar.setOnSeekBarChangeListener(new SeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                refreshBorderPadding(progress);
-            }
-        });
-        binding.setDefault.setOnClickListener(v -> onClickSetDefault());
+            val artistItemView = viewSettingsInteractor.artistItemViewSettings
 
-        ArtistItemView artistItemView = viewSettingsInteractor.getArtistItemViewSettings();
+            textSizeSeekBar.progress = artistItemView.textSize - TEXT_SIZE_MIN
+            borderPaddingSeekBar.progress = artistItemView.borderPadding - BORDER_PADDING_MIN
 
-        binding.textSizeSeekBar.setProgress(artistItemView.textSize - TEXT_SIZE_MIN);
-        binding.borderPaddingSeekBar.setProgress(artistItemView.borderPadding - BORDER_PADDING_MIN);
+            refreshTextSize(textSizeSeekBar.progress)
+            refreshBorderPadding(borderPaddingSeekBar.progress)
+        }
 
-        refreshTextSize(binding.textSizeSeekBar.getProgress());
-        refreshBorderPadding(binding.borderPaddingSeekBar.getProgress());
-
-        return root;
+        return root
     }
 
-
-    public void onClickSetDefault() {
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.reset_settings_dialog_title)
-                .setMessage(R.string.artist_item_reset_settings_dialog_message)
-                .setPositiveButton(R.string.dialog_reset, (d, which) -> {
-                    binding.textSizeSeekBar.setProgress(16 - TEXT_SIZE_MIN);
-                    binding.borderPaddingSeekBar.setProgress(16 - BORDER_PADDING_MIN);
-                })
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .show();
-        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
+    override fun onDestroy() {
+        if (isRemoving)
+            onFinishing()
+        _binding = null
+        super.onDestroy()
     }
 
-
-    @Override
-    protected void onClickBackButton() {
-        router.goBack();
-    }
-
-
-    private static final int TEXT_SIZE_MIN = 12;
-    private static final int BORDER_PADDING_MIN = 8;
-
-
-    private void refreshTextSize(int progress) {
-        int textSizeSp = progress + TEXT_SIZE_MIN;
-        binding.textSizeValue.setText(String.valueOf(textSizeSp));
-
-        binding.artistHolder.artist.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
-        binding.artistHolder.artistInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp - 2);
-    }
-
-
-    private void refreshBorderPadding(int progress) {
-        int paddingDp = progress + BORDER_PADDING_MIN;
-        int paddingPx = (int) convertDpToPixel(paddingDp, requireContext());
-        binding.borderPaddingValue.setText(String.valueOf(paddingDp));
-        binding.artistHolder.getRoot().setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
-    }
-
-
-    @Override
-    public void onDestroy() {
-        if (isRemoving())
-            onFinishing();
-
-        super.onDestroy();
-    }
-
-    private void onFinishing() {
+    private fun onFinishing() {
         //сохраняем состояние
-        ArtistItemView artistItemView = new ArtistItemView(
-                binding.textSizeSeekBar.getProgress() + TEXT_SIZE_MIN,
-                binding.borderPaddingSeekBar.getProgress() + BORDER_PADDING_MIN);
+        val artistItemView = ArtistItemView(
+            binding.textSizeSeekBar.progress + TEXT_SIZE_MIN,
+            binding.borderPaddingSeekBar.progress + BORDER_PADDING_MIN
+        )
+        viewSettingsInteractor.artistItemViewSettings = artistItemView
+    }
 
-        viewSettingsInteractor.setArtistItemViewSettings(artistItemView);
+
+    private fun onClickSetDefault() {
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.reset_settings_dialog_title)
+            .setMessage(R.string.artist_item_reset_settings_dialog_message)
+            .setPositiveButton(R.string.dialog_reset) { d: DialogInterface?, which: Int ->
+                binding.textSizeSeekBar.progress = 16 - TEXT_SIZE_MIN
+                binding.borderPaddingSeekBar.progress = 16 - BORDER_PADDING_MIN
+            }
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .show()
+        lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
+    }
+
+    override fun onClickBackButton() {
+        router.goBack()
+    }
+
+    private fun refreshTextSize(progress: Int) {
+        binding.apply {
+            val textSizeSp = progress + TEXT_SIZE_MIN
+            textSizeValue.text = textSizeSp.toString()
+            artistHolder.artist.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
+            artistHolder.artistInfo.setTextSize(
+                TypedValue.COMPLEX_UNIT_SP,
+                (textSizeSp - 2).toFloat()
+            )
+        }
+    }
+
+    private fun refreshBorderPadding(progress: Int) {
+        val paddingDp = progress + BORDER_PADDING_MIN
+        val paddingPx = AndroidTool.convertDpToPixel(paddingDp.toFloat(), requireContext()).toInt()
+        binding.borderPaddingValue.text = paddingDp.toString()
+        binding.artistHolder.root.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
     }
 
 }
