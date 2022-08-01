@@ -1,35 +1,29 @@
-package com.parabola.newtone.ui.fragment.settings.dialog;
+package com.parabola.newtone.ui.fragment.settings.dialog
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.widget.ImageView;
+import android.app.Dialog
+import android.os.Bundle
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat.getDrawable
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.newtone.R
+import moxy.MvpAppCompatDialogFragment
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
+class IsaacNewtoneDialog : MvpAppCompatDialogFragment() {
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.newtone.R;
+    private lateinit var newtoneImage: ImageView
 
-import moxy.MvpAppCompatDialogFragment;
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        newtoneImage = AppCompatImageView(requireContext())
+        newtoneImage.setImageDrawable(
+            getDrawable(requireContext(), R.drawable.isaac_newtone)
+        )
 
-import static androidx.core.content.ContextCompat.getDrawable;
-
-public final class IsaacNewtoneDialog extends MvpAppCompatDialogFragment {
-
-    private ImageView newtoneImage;
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        newtoneImage = new AppCompatImageView(requireContext());
-        newtoneImage.setImageDrawable(getDrawable(requireContext(), R.drawable.isaac_newtone));
-
-        return new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.app_name)
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .setView(newtoneImage)
-                .create();
+        return MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.app_name)
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .setView(newtoneImage)
+            .create()
     }
 
 }
