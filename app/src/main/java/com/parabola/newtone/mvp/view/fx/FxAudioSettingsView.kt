@@ -1,27 +1,23 @@
-package com.parabola.newtone.mvp.view.fx;
+package com.parabola.newtone.mvp.view.fx
 
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.AddToEndSingle;
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-public interface FxAudioSettingsView extends MvpView {
+interface FxAudioSettingsView : MvpView {
+    fun setPlaybackSpeedSwitch(enabled: Boolean)
+    fun setPlaybackSpeedSeekbar(progress: Int)
+    fun setPlaybackSpeedText(speed: Float)
 
-    void setPlaybackSpeedSwitch(boolean enabled);
-    void setPlaybackSpeedSeekbar(int progress);
-    void setPlaybackSpeedText(float speed);
+    fun setPlaybackPitchSwitch(enabled: Boolean)
+    fun setPlaybackPitchSeekbar(progress: Int)
+    fun setPlaybackPitchText(pitch: Float)
 
+    fun hideBassBoostPanel()
+    fun setBassBoostSeekbar(currentLevel: Int)
+    fun setBassBoostSwitch(bassBoostEnabled: Boolean)
 
-    void setPlaybackPitchSwitch(boolean enabled);
-    void setPlaybackPitchSeekbar(int progress);
-    void setPlaybackPitchText(float pitch);
-
-
-    void hideBassBoostPanel();
-    void setBassBoostSeekbar(int currentLevel);
-    void setBassBoostSwitch(boolean bassBoostEnabled);
-
-
-    void hideVirtualizerPanel();
-    void setVirtualizerSeekbar(int currentLevel);
-    void setVirtualizerSwitch(boolean virtualizerEnabled);
+    fun hideVirtualizerPanel()
+    fun setVirtualizerSeekbar(currentLevel: Int)
+    fun setVirtualizerSwitch(virtualizerEnabled: Boolean)
 }

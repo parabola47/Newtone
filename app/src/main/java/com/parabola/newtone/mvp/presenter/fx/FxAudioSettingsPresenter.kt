@@ -1,136 +1,133 @@
-package com.parabola.newtone.mvp.presenter.fx;
+package com.parabola.newtone.mvp.presenter.fx
 
-import com.parabola.domain.interactor.player.AudioEffectsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.fx.FxAudioSettingsView;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.interactor.player.AudioEffectsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.fx.FxAudioSettingsView
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class FxAudioSettingsPresenter extends MvpPresenter<FxAudioSettingsView> {
+class FxAudioSettingsPresenter(appComponent: AppComponent) : MvpPresenter<FxAudioSettingsView>() {
 
-    @Inject AudioEffectsInteractor fxInteractor;
+    @Inject
+    lateinit var fxInteractor: AudioEffectsInteractor
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private val disposables = CompositeDisposable()
 
-    public FxAudioSettingsPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+
+    init {
+        appComponent.inject(this)
     }
 
 
-    @Override
-    protected void onFirstViewAttach() {
+    override fun onFirstViewAttach() {
         //BASS BOOST
-        if (fxInteractor.isBassBoostAvailable()) {
-            getViewState().setBassBoostSwitch(fxInteractor.isBassBoostEnabled());
+        if (fxInteractor.isBassBoostAvailable) {
+            viewState.setBassBoostSwitch(fxInteractor.isBassBoostEnabled)
         } else {
-            getViewState().hideBassBoostPanel();
+            viewState.hideBassBoostPanel()
         }
 
         //VIRTUALIZER
-        if (fxInteractor.isVirtualizerAvailable()) {
-            getViewState().setVirtualizerSwitch(fxInteractor.isVirtualizerEnabled());
+        if (fxInteractor.isVirtualizerAvailable) {
+            viewState.setVirtualizerSwitch(fxInteractor.isVirtualizerEnabled)
         } else {
-            getViewState().hideVirtualizerPanel();
+            viewState.hideVirtualizerPanel()
         }
 
         disposables.addAll(
-                observePlaybackSpeed(), observePlaybackSpeedEnabling(),
-                observePlaybackPitch(), observerPlaybackPitchEnabling(),
-                observeVirtualizerLevel(),
-                observeBassBoostLevel());
+            observePlaybackSpeed(), observePlaybackSpeedEnabling(),
+            observePlaybackPitch(), observerPlaybackPitchEnabling(),
+            observeVirtualizerLevel(),
+            observeBassBoostLevel()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable observePlaybackSpeed() {
+
+    private fun observePlaybackSpeed(): Disposable {
         return fxInteractor.observePlaybackSpeed()
-                .subscribe(savedSpeed -> {
-                    getViewState().setPlaybackSpeedText(savedSpeed);
-                    getViewState().setPlaybackSpeedSeekbar((int) ((savedSpeed * 100f) - 50));
-                });
+            .subscribe { savedSpeed ->
+                viewState.setPlaybackSpeedText(savedSpeed)
+                viewState.setPlaybackSpeedSeekbar((savedSpeed * 100f - 50).toInt())
+            }
     }
 
-    private Disposable observePlaybackSpeedEnabling() {
+    private fun observePlaybackSpeedEnabling(): Disposable {
         return fxInteractor.observeIsPlaybackSpeedEnabled()
-                .subscribe(getViewState()::setPlaybackSpeedSwitch);
+            .subscribe(viewState::setPlaybackSpeedSwitch)
     }
 
-    private Disposable observePlaybackPitch() {
+    private fun observePlaybackPitch(): Disposable {
         return fxInteractor.observePlaybackPitch()
-                .subscribe(savedPitch -> {
-                    getViewState().setPlaybackPitchText(savedPitch);
-                    getViewState().setPlaybackPitchSeekbar((int) ((savedPitch * 100f) - 50));
-                });
+            .subscribe { savedPitch ->
+                viewState.setPlaybackPitchText(savedPitch)
+                viewState.setPlaybackPitchSeekbar((savedPitch * 100f - 50).toInt())
+            }
     }
 
-    private Disposable observerPlaybackPitchEnabling() {
+    private fun observerPlaybackPitchEnabling(): Disposable {
         return fxInteractor.observeIsPlaybackPitchEnabled()
-                .subscribe(getViewState()::setPlaybackPitchSwitch);
+            .subscribe(viewState::setPlaybackPitchSwitch)
     }
 
-
-    private Disposable observeBassBoostLevel() {
+    private fun observeBassBoostLevel(): Disposable {
         return fxInteractor.observeBassBoostLevel()
-                .subscribe(getViewState()::setBassBoostSeekbar);
+            .subscribe { currentLevel -> viewState.setBassBoostSeekbar(currentLevel.toInt()) }
     }
 
-    private Disposable observeVirtualizerLevel() {
+    private fun observeVirtualizerLevel(): Disposable {
         return fxInteractor.observeVirtualizerLevel()
-                .subscribe(getViewState()::setVirtualizerSeekbar);
+            .subscribe { currentLevel -> viewState.setVirtualizerSeekbar(currentLevel.toInt()) }
     }
 
 
-    public void onPlaybackSpeedSwitchClick(boolean enable) {
-        fxInteractor.setPlaybackSpeedEnabled(enable);
+    fun onPlaybackSpeedSwitchClick(enable: Boolean) {
+        fxInteractor.setPlaybackSpeedEnabled(enable)
     }
 
-
-    public void onPlaybackPitchSwitchClick(boolean enable) {
-        fxInteractor.setPlaybackPitchEnabled(enable);
+    fun onPlaybackPitchSwitchClick(enable: Boolean) {
+        fxInteractor.setPlaybackPitchEnabled(enable)
     }
 
-    public void onPlaybackSpeedProgressChanged(int progress) {
-        float realSpeed = (progress + 50) / 100f;
-        if (realSpeed != fxInteractor.getSavedPlaybackSpeed()) {
-            fxInteractor.setSavedPlaybackSpeed(realSpeed);
+    fun onPlaybackSpeedProgressChanged(progress: Int) {
+        val realSpeed = (progress + 50) / 100f
+        if (realSpeed != fxInteractor.savedPlaybackSpeed) {
+            fxInteractor.savedPlaybackSpeed = realSpeed
         }
     }
 
-    public void onPlaybackPitchProgressChanged(int progress) {
-        float realPitch = (progress + 50) / 100f;
-        if (realPitch != fxInteractor.getSavedPlaybackPitch()) {
-            fxInteractor.setSavedPlaybackPitch(realPitch);
+    fun onPlaybackPitchProgressChanged(progress: Int) {
+        val realPitch = (progress + 50) / 100f
+        if (realPitch != fxInteractor.savedPlaybackPitch) {
+            fxInteractor.savedPlaybackPitch = realPitch
         }
     }
 
-
-    public void onBassBoostProgressChange(int progress) {
-        fxInteractor.setBassBoostLevel((short) progress);
-        getViewState().setBassBoostSeekbar(progress);
+    fun onBassBoostProgressChange(progress: Int) {
+        fxInteractor.setBassBoostLevel(progress.toShort())
+        viewState.setBassBoostSeekbar(progress)
     }
 
-    public void onBassBoostSwitchClick(boolean enable) {
-        fxInteractor.setBassBoostEnable(enable);
-        getViewState().setBassBoostSwitch(enable);
+    fun onBassBoostSwitchClick(enable: Boolean) {
+        fxInteractor.setBassBoostEnable(enable)
+        viewState.setBassBoostSwitch(enable)
     }
 
-    public void onVirtualizerProgressChange(int progress) {
-        fxInteractor.setVirtualizerLevel((short) progress);
-        getViewState().setVirtualizerSeekbar(progress);
+    fun onVirtualizerProgressChange(progress: Int) {
+        fxInteractor.setVirtualizerLevel(progress.toShort())
+        viewState.setVirtualizerSeekbar(progress)
     }
 
-
-    public void onVirtualizerSwitchClick(boolean enable) {
-        fxInteractor.setVirtualizerEnable(enable);
-        getViewState().setVirtualizerSwitch(enable);
+    fun onVirtualizerSwitchClick(enable: Boolean) {
+        fxInteractor.setVirtualizerEnable(enable)
+        viewState.setVirtualizerSwitch(enable)
     }
+
 }
