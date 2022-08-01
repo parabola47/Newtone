@@ -84,6 +84,11 @@ class PlayerFragment : MvpAppCompatFragment(), PlayerView {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onStart() {
         super.onStart()
         binding.queue.setOnClickListener { presenter.onClickQueue() }
@@ -129,6 +134,7 @@ class PlayerFragment : MvpAppCompatFragment(), PlayerView {
         binding.loop.setOnClickListener { presenter.onClickLoop() }
         binding.shuffle.setOnClickListener { presenter.onClickShuffle() }
     }
+
 
     private fun onClickTrackSettings() {
         val popupWindow = ListPopupWindow(requireContext()).apply {
