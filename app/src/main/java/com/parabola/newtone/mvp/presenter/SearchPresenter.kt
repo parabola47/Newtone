@@ -1,120 +1,129 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.SearchFragmentView;
-import com.parabola.newtone.ui.router.MainRouter;
-import com.parabola.search_feature.SearchInteractor;
-import com.parabola.search_feature.SearchResult;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.model.Track
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.SearchFragmentView
+import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.search_feature.SearchInteractor
+import com.parabola.search_feature.SearchResult
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class SearchPresenter extends MvpPresenter<SearchFragmentView> {
+class SearchPresenter(appComponent: AppComponent) : MvpPresenter<SearchFragmentView>() {
 
     @Inject
-    MainRouter router;
-    @Inject
-    PlayerInteractor playerInteractor;
-    @Inject
-    SearchInteractor searchInteractor;
-    @Inject
-    ViewSettingsInteractor viewSettingsInteractor;
-    @Inject
-    SchedulerProvider schedulers;
+    lateinit var router: MainRouter
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
-    private Disposable querySearchDisposable;
+    @Inject
+    lateinit var playerInteractor: PlayerInteractor
 
-    private String lastQuery = "";
+    @Inject
+    lateinit var searchInteractor: SearchInteractor
 
-    public SearchPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+
+    private val disposables = CompositeDisposable()
+
+    private var querySearchDisposable: Disposable? = null
+
+
+    private var lastQuery = ""
+
+
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
-        getViewState().clearAllLists();
-        getViewState().focusOnSearchView();
+
+    override fun onFirstViewAttach() {
+        viewState.clearAllLists()
+        viewState.focusOnSearchView()
 
         disposables.addAll(
-                observeTrackItemViewUpdates(),
-                observeIsItemDividerShowed());
+            observeTrackItemViewUpdates(),
+            observeIsItemDividerShowed(),
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable observeTrackItemViewUpdates() {
+
+    private fun observeTrackItemViewUpdates(): Disposable {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
-                .subscribe(getViewState()::setTrackItemViewSettings);
+            .subscribe(viewState::setTrackItemViewSettings)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
-    }
-
-    public void onClickBackButton() {
-        router.goBack();
+            .subscribe(viewState::setItemDividerShowing)
     }
 
 
-    public void onQueryTextSubmit(String query) {
-        query = query.trim();
-        if (query.equals(lastQuery))
-            return;
-
-        lastQuery = query;
-
-        if (querySearchDisposable != null && !querySearchDisposable.isDisposed())
-            querySearchDisposable.dispose();
-
-        querySearchDisposable = searchInteractor.search(query)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .doOnSubscribe(disposable -> getViewState().setLoadDataProgressBarVisibility(true))
-                .doFinally(() -> getViewState().setLoadDataProgressBarVisibility(false))
-                .subscribe(this::refreshAll);
-        disposables.add(querySearchDisposable);
+    fun onClickBackButton() {
+        router.goBack()
     }
 
-    private void refreshAll(SearchResult searchResult) {
-        getViewState().refreshArtists(searchResult.artists);
-        getViewState().refreshAlbums(searchResult.albums);
-        getViewState().refreshTracks(searchResult.tracks);
-        getViewState().refreshPlaylists(searchResult.playlists);
+    fun onQueryTextSubmit(query: String) {
+        var queryFormatted = query
+        queryFormatted = queryFormatted.trim { it <= ' ' }
+
+        if (queryFormatted == lastQuery)
+            return
+
+        lastQuery = queryFormatted
+
+        querySearchDisposable?.dispose()
+
+        querySearchDisposable = searchInteractor.search(queryFormatted)
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .doOnSubscribe { viewState.setLoadDataProgressBarVisibility(true) }
+            .doFinally { viewState.setLoadDataProgressBarVisibility(false) }
+            .subscribe(::refreshAll)
+            .also { disposables.add(it) }
     }
 
-    public void onClearText() {
-        getViewState().clearAllLists();
+    private fun refreshAll(searchResult: SearchResult) {
+        viewState.apply {
+            refreshArtists(searchResult.artists)
+            refreshAlbums(searchResult.albums)
+            refreshTracks(searchResult.tracks)
+            refreshPlaylists(searchResult.playlists)
+        }
     }
 
-    public void onClickArtistItem(int artistId) {
-        router.openArtist(artistId);
+    fun onClearText() {
+        viewState.clearAllLists()
     }
 
-    public void onClickAlbumItem(int albumId) {
-        router.openAlbum(albumId);
+    fun onClickArtistItem(artistId: Int) {
+        router.openArtist(artistId)
     }
 
-    public void onClickTrackItem(List<Track> tracks, int position) {
-        playerInteractor.start(tracks, position);
+    fun onClickAlbumItem(albumId: Int) {
+        router.openAlbum(albumId)
     }
 
-    public void onClickPlaylistItem(int playlistId) {
-        router.openPlaylist(playlistId);
+    fun onClickTrackItem(tracks: List<Track>, position: Int) {
+        playerInteractor.start(tracks, position)
     }
+
+    fun onClickPlaylistItem(playlistId: Int) {
+        router.openPlaylist(playlistId)
+    }
+
 }

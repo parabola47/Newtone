@@ -1,33 +1,28 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import com.parabola.domain.model.Album;
-import com.parabola.domain.model.Artist;
-import com.parabola.domain.model.Playlist;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
-
-import java.util.List;
-
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.AddToEndSingle;
-import moxy.viewstate.strategy.alias.OneExecution;
+import com.parabola.domain.model.Album
+import com.parabola.domain.model.Artist
+import com.parabola.domain.model.Playlist
+import com.parabola.domain.model.Track
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.OneExecution
 
 @AddToEndSingle
-public interface SearchFragmentView extends MvpView {
-
+interface SearchFragmentView : MvpView {
     @OneExecution
-    void focusOnSearchView();
+    fun focusOnSearchView()
 
-    void refreshArtists(List<Artist> artists);
-    void refreshAlbums(List<Album> albums);
+    fun refreshArtists(artists: List<Artist>)
+    fun refreshAlbums(albums: List<Album>)
+    fun refreshTracks(tracks: List<Track>)
+    fun refreshPlaylists(playlists: List<Playlist>)
 
-    void refreshTracks(List<Track> tracks);
-    void setTrackItemViewSettings(TrackItemView trackItemView);
-    void setItemDividerShowing(boolean showed);
+    fun setTrackItemViewSettings(trackItemView: TrackItemView)
+    fun setItemDividerShowing(showed: Boolean)
 
-    void refreshPlaylists(List<Playlist> playlists);
+    fun clearAllLists()
 
-    void clearAllLists();
-
-    void setLoadDataProgressBarVisibility(boolean visible);
+    fun setLoadDataProgressBarVisibility(visible: Boolean)
 }
