@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -24,6 +25,8 @@ import com.parabola.newtone.ui.dialog.SortingDialog
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
+private const val ARTIST_ID_ARG_KEY = "artistId"
+
 class ArtistTracksFragment : BaseSwipeToBackFragment(),
     ArtistTracksView, Sortable, Scrollable {
 
@@ -40,6 +43,13 @@ class ArtistTracksFragment : BaseSwipeToBackFragment(),
 
     private val tracksAdapter = TrackAdapter()
     private lateinit var itemDecoration: DividerItemDecoration
+
+
+    companion object {
+        fun newInstance(artistId: Int) = ArtistTracksFragment().apply {
+            arguments = bundleOf(ARTIST_ID_ARG_KEY to artistId)
+        }
+    }
 
 
     override fun onCreateView(
@@ -163,7 +173,8 @@ class ArtistTracksFragment : BaseSwipeToBackFragment(),
     @ProvidePresenter
     fun providePresenter(): ArtistTracksPresenter {
         val appComponent = (requireActivity().application as MainApplication).appComponent
-        val artistId = requireArguments().getInt("artistId")
+        val artistId = requireArguments().getInt(ARTIST_ID_ARG_KEY)
+
         return ArtistTracksPresenter(appComponent, artistId)
     }
 

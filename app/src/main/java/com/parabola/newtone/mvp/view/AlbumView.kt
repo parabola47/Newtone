@@ -1,23 +1,19 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import com.parabola.domain.model.Track;
-import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
-
-import java.util.List;
-
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.AddToEndSingle;
+import com.parabola.domain.model.Track
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-public interface AlbumView extends MvpView {
-    void setAlbumTitle(String albumTitle);
-    void setAlbumArtist(String artistName);
-    void setAlbumArt(Object artCover);
+interface AlbumView : MvpView {
+    fun setAlbumTitle(albumTitle: String)
+    fun setAlbumArtist(artistName: String)
+    fun setAlbumArt(artCover: Any?)
 
-    void refreshTracks(List<Track> tracks);
-    void setItemViewSettings(TrackItemView itemViewSettings);
-    void setItemDividerShowing(boolean showed);
+    fun refreshTracks(tracks: List<Track>)
+    fun setItemViewSettings(itemViewSettings: TrackItemView)
+    fun setItemDividerShowing(showed: Boolean)
 
-    void setCurrentTrack(int trackId);
-
+    fun setCurrentTrack(trackId: Int)
 }

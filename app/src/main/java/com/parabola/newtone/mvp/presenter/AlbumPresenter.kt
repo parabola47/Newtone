@@ -1,174 +1,197 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.TrackInteractor;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.AlbumRepository;
-import com.parabola.domain.repository.ResourceRepository;
-import com.parabola.domain.repository.SortingRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.R;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.AlbumView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.TrackInteractor
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.AlbumRepository
+import com.parabola.domain.repository.ResourceRepository
+import com.parabola.domain.repository.SortingRepository
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.domain.utils.EmptyItems
+import com.parabola.newtone.R
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.AlbumView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class AlbumPresenter extends MvpPresenter<AlbumView> {
-    private static final String LOG_TAG = AlbumPresenter.class.getSimpleName();
+class AlbumPresenter(appComponent: AppComponent, private val albumId: Int) :
+    MvpPresenter<AlbumView>() {
 
-    private final int albumId;
+    @Volatile
+    private var currentTrackId = EmptyItems.NO_TRACK.id
 
-    private volatile int currentTrackId = EmptyItems.NO_TRACK.getId();
+    @Inject
+    lateinit var router: MainRouter
 
-    private volatile boolean enterSlideAnimationEnded = false;
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    @Inject
+    lateinit var albumRepo: AlbumRepository
+
+    @Inject
+    lateinit var trackInteractor: TrackInteractor
+
+    @Inject
+    lateinit var trackRepo: TrackRepository
+
+    @Inject
+    lateinit var playerInteractor: PlayerInteractor
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    @Inject
+    lateinit var sortingRepo: SortingRepository
+
+    @Inject
+    lateinit var resourceRepo: ResourceRepository
+
+    private val disposables = CompositeDisposable()
 
 
-    @Inject MainRouter router;
-    @Inject SchedulerProvider schedulers;
-
-    @Inject AlbumRepository albumRepo;
-    @Inject TrackInteractor trackInteractor;
-    @Inject TrackRepository trackRepo;
-    @Inject PlayerInteractor playerInteractor;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject SortingRepository sortingRepo;
-    @Inject ResourceRepository resourceRepo;
-
-    private final CompositeDisposable disposables = new CompositeDisposable();
-
-    public AlbumPresenter(AppComponent appComponent, int albumId) {
-        this.albumId = albumId;
-        appComponent.inject(this);
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
+
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                loadAlbum(),
-                observeCurrentTrack(),
-                observeSortingUpdates(),
-                observeTrackItemViewUpdates(),
-                observeIsItemDividerShowed(),
-                observeTrackDeleting());
+            loadAlbum(),
+            observeCurrentTrack(),
+            observeSortingUpdates(),
+            observeTrackItemViewUpdates(),
+            observeIsItemDividerShowed(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable observeCurrentTrack() {
-        return playerInteractor.onChangeCurrentTrackId()
-                .doOnNext(currentTrackId -> this.currentTrackId = currentTrackId)
-                .subscribe(getViewState()::setCurrentTrack);
-    }
 
-    private Disposable observeSortingUpdates() {
-        return sortingRepo.observeAlbumTracksSorting()
-                .flatMapSingle(sorting -> trackInteractor.getByAlbum(albumId))
-                // ожидаем пока прогрузится анимация входа
-                .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(tracks -> {
-                    getViewState().refreshTracks(tracks);
-                    getViewState().setCurrentTrack(currentTrackId);
-                });
-    }
-
-    private Disposable observeTrackItemViewUpdates() {
-        return viewSettingsInteractor.observeTrackItemViewUpdates()
-                .subscribe(getViewState()::setItemViewSettings);
-    }
-
-    private Disposable observeIsItemDividerShowed() {
-        return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
-    }
-
-    private Disposable observeTrackDeleting() {
-        return trackRepo.observeTrackDeleting()
-                .doOnNext(removedTrackId -> {
-                    if (removedTrackId == currentTrackId)
-                        currentTrackId = EmptyItems.NO_TRACK.getId();
-                })
-                .flatMapSingle(removedTrackId -> trackInteractor.getByAlbum(albumId))
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(tracks -> {
-                    if (!tracks.isEmpty()) {
-                        getViewState().refreshTracks(tracks);
-                        getViewState().setCurrentTrack(currentTrackId);
-                    } else router.backToRoot();
-                });
-    }
-
-    private Disposable loadAlbum() {
+    private fun loadAlbum(): Disposable {
         return albumRepo.getById(albumId)
-                .doOnError(throwable -> { while (!enterSlideAnimationEnded) ; })
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(album -> {
-                    getViewState().setAlbumTitle(album.getTitle());
-                    getViewState().setAlbumArtist(album.getArtistName());
-                    getViewState().setAlbumArt(album.getArtImage());
-                }, error -> {
-                    String toastText = resourceRepo.getString(R.string.album_screen_album_load_error_toast);
-                    router.showToast(toastText);
-                    router.goBack();
-                });
+            .doOnError {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe({ album ->
+                viewState.setAlbumTitle(album.title)
+                viewState.setAlbumArtist(album.artistName)
+                viewState.setAlbumArt(album.getArtImage())
+            }) {
+                val toastText =
+                    resourceRepo.getString(R.string.album_screen_album_load_error_toast)
+                router.showToast(toastText)
+                router.goBack()
+            }
     }
 
-    public void onClickBack() {
-        router.goBack();
+    private fun observeCurrentTrack(): Disposable {
+        return playerInteractor.onChangeCurrentTrackId()
+            .doOnNext { currentTrackId = it }
+            .subscribe(viewState::setCurrentTrack)
+    }
+
+    private fun observeSortingUpdates(): Disposable {
+        return sortingRepo.observeAlbumTracksSorting()
+            .flatMapSingle { trackInteractor.getByAlbum(albumId) }
+            // ожидаем пока прогрузится анимация входа
+            .doOnNext {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { tracks ->
+                viewState.refreshTracks(tracks)
+                viewState.setCurrentTrack(currentTrackId)
+            }
+    }
+
+    private fun observeTrackItemViewUpdates(): Disposable {
+        return viewSettingsInteractor.observeTrackItemViewUpdates()
+            .subscribe(viewState::setItemViewSettings)
+    }
+
+    private fun observeIsItemDividerShowed(): Disposable {
+        return viewSettingsInteractor.observeIsItemDividerShowed()
+            .subscribe(viewState::setItemDividerShowing)
+    }
+
+    private fun observeTrackDeleting(): Disposable {
+        return trackRepo.observeTrackDeleting()
+            .doOnNext { removedTrackId ->
+                if (removedTrackId == currentTrackId)
+                    currentTrackId = EmptyItems.NO_TRACK.id
+            }
+            .flatMapSingle { trackInteractor.getByAlbum(albumId) }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { tracks: List<Track> ->
+                if (tracks.isNotEmpty()) {
+                    viewState.refreshTracks(tracks)
+                    viewState.setCurrentTrack(currentTrackId)
+                } else {
+                    router.backToRoot()
+                }
+            }
     }
 
 
-    public void onEnterSlideAnimationEnded() {
-        enterSlideAnimationEnded = true;
+    fun onClickBack() {
+        router.goBack()
     }
 
-    public void onClickTrackItem(List<Track> tracks, int selectedPosition) {
-        playerInteractor.start(tracks, selectedPosition);
+    @Volatile
+    private var enterSlideAnimationEnded = false
+
+    fun onEnterSlideAnimationEnded() {
+        enterSlideAnimationEnded = true
     }
 
-    public void onClickMenuPlay(List<Track> tracks, int selectedPosition) {
-        playerInteractor.start(tracks, selectedPosition);
+    fun onClickTrackItem(tracks: List<Track>, selectedPosition: Int) {
+        playerInteractor.start(tracks, selectedPosition)
     }
 
-    public void onClickMenuAddToPlaylist(int trackId) {
-        router.openAddToPlaylistDialog(trackId);
+
+    fun onClickMenuPlay(tracks: List<Track>, selectedPosition: Int) {
+        playerInteractor.start(tracks, selectedPosition)
     }
 
-    public void onClickMenuAddToFavourites(int trackId) {
-        trackRepo.addToFavourites(trackId);
+    fun onClickMenuAddToPlaylist(trackId: Int) {
+        router.openAddToPlaylistDialog(trackId)
     }
 
-    public void onClickMenuRemoveFromFavourites(int trackId) {
-        trackRepo.removeFromFavourites(trackId);
+    fun onClickMenuAddToFavourites(trackId: Int) {
+        trackRepo.addToFavourites(trackId)
     }
 
-    public void onClickMenuShareTrack(Track track) {
-        router.openShareTrack(track.getFilePath());
+    fun onClickMenuRemoveFromFavourites(trackId: Int) {
+        trackRepo.removeFromFavourites(trackId)
     }
 
-    public void onClickMenuDeleteTrack(int trackId) {
-        router.openDeleteTrackDialog(trackId);
+    fun onClickMenuShareTrack(track: Track) {
+        router.openShareTrack(track.filePath)
     }
 
-    public void onClickMenuAdditionalInfo(int trackId) {
-        router.openTrackAdditionInfo(trackId);
+    fun onClickMenuDeleteTrack(trackId: Int) {
+        router.openDeleteTrackDialog(trackId)
     }
+
+    fun onClickMenuAdditionalInfo(trackId: Int) {
+        router.openTrackAdditionInfo(trackId)
+    }
+
 }
