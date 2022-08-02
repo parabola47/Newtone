@@ -1,194 +1,176 @@
-package com.parabola.newtone.ui.fragment;
+package com.parabola.newtone.ui.fragment
 
-import static com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType.GRID;
-import static com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.DividerItemDecoration;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.model.Album;
-import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.AlbumAdapter;
-import com.parabola.newtone.adapter.ListPopupWindowAdapter;
-import com.parabola.newtone.databinding.FragmentArtistBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.ArtistPresenter;
-import com.parabola.newtone.mvp.view.ArtistView;
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
-import com.parabola.newtone.ui.dialog.SortingDialog;
-
-import java.util.List;
-
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
-
-public final class ArtistFragment extends BaseSwipeToBackFragment
-        implements ArtistView, Sortable, Scrollable {
-    private static final String TAG = ArtistFragment.class.getSimpleName();
-
-    @InjectPresenter ArtistPresenter presenter;
-
-    private FragmentArtistBinding binding;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.domain.model.Album
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.AlbumAdapter
+import com.parabola.newtone.adapter.ListPopupWindowAdapter
+import com.parabola.newtone.databinding.FragmentArtistBinding
+import com.parabola.newtone.mvp.presenter.ArtistPresenter
+import com.parabola.newtone.mvp.view.ArtistView
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
+import com.parabola.newtone.ui.dialog.SortingDialog
+import com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 
-    private TextView artistNameTxt;
-    private TextView albumsCountTxt;
+private const val ARTIST_ID_ARG_KEY = "artistId"
 
 
-    private final AlbumAdapter albumsAdapter = new AlbumAdapter();
-    private DividerItemDecoration itemDecoration;
+class ArtistFragment : BaseSwipeToBackFragment(),
+    ArtistView, Sortable, Scrollable {
 
-    private static final String ARTIST_ID_ARG_KEY = "artistId";
+    @InjectPresenter
+    lateinit var presenter: ArtistPresenter
 
-    public static ArtistFragment newInstance(int artistId) {
-        Bundle args = new Bundle();
-        args.putInt(ARTIST_ID_ARG_KEY, artistId);
+    private var _binding: FragmentArtistBinding? = null
+    private val binding get() = _binding!!
 
-        ArtistFragment fragment = new ArtistFragment();
-        fragment.setArguments(args);
+    private lateinit var artistNameTxt: TextView
+    private lateinit var albumsCountTxt: TextView
 
-        return fragment;
-    }
+    private val albumsAdapter = AlbumAdapter()
+    private lateinit var itemDecoration: DividerItemDecoration
 
-    public ArtistFragment() {
-        // Required empty public constructor
-    }
-
-    public int getArtistId() {
-        return requireArguments().getInt(ARTIST_ID_ARG_KEY);
-    }
+    val artistId: Int
+        get() = requireArguments().getInt(ARTIST_ID_ARG_KEY)
 
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentArtistBinding.inflate(inflater, container, false);
-        getRootBinding().container.addView(binding.getRoot());
-
-        artistNameTxt = getRootBinding().main;
-        albumsCountTxt = getRootBinding().additionalInfo;
-
-        binding.albumsList.setAdapter(albumsAdapter);
-        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-
-        albumsAdapter.setOnItemClickListener(position -> presenter.onAlbumItemClick(albumsAdapter.get(position).getId()));
-        albumsAdapter.setOnItemLongClickListener(this::showAlbumContextMenu);
-        binding.allTracksBar.setOnClickListener(v -> presenter.onClickAllTracks());
-        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
-
-        return root;
-    }
-
-    private void showAlbumContextMenu(int position) {
-        Album selectedAlbum = albumsAdapter.get(position);
-        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.album_menu);
-
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.album_menu_title, selectedAlbum.getArtistName(), selectedAlbum.getTitle()))
-                .setAdapter(menuAdapter, (d, which) ->
-                        handleSelectedMenu(menuAdapter.getItem(which), selectedAlbum))
-                .create();
-        dialog.setOnShowListener(d -> albumsAdapter.setContextSelected(position));
-        dialog.setOnDismissListener(d -> albumsAdapter.clearContextSelected());
-        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
-        dialog.show();
-    }
-
-    private void handleSelectedMenu(MenuItem menuItem, Album selectedAlbum) {
-        switch (menuItem.getItemId()) {
-            case R.id.shuffle:
-                presenter.onClickMenuShuffle(selectedAlbum.getId());
-                break;
-            case R.id.add_to_playlist:
-                presenter.onClickMenuAddToPlaylist(selectedAlbum.getId());
-                break;
+    companion object {
+        fun newInstance(artistId: Int) = ArtistFragment().apply {
+            arguments = bundleOf(ARTIST_ID_ARG_KEY to artistId)
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentArtistBinding.inflate(inflater, container, false)
+        rootBinding.container.addView(binding.root)
 
-    @Override
-    protected void onClickBackButton() {
-        presenter.onClickBack();
+        artistNameTxt = rootBinding.main
+        albumsCountTxt = rootBinding.additionalInfo
+
+        binding.albumsList.adapter = albumsAdapter
+        itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+
+        albumsAdapter.setOnItemClickListener { position ->
+            presenter.onAlbumItemClick(albumsAdapter[position].id)
+        }
+        albumsAdapter.setOnItemLongClickListener(::showAlbumContextMenu)
+        binding.allTracksBar.setOnClickListener { presenter.onClickAllTracks() }
+        rootBinding.actionBar.setOnClickListener { smoothScrollToTop() }
+
+        return root
     }
 
-    @Override
-    protected void onEndSlidingAnimation() {
-        presenter.onEnterSlideAnimationEnded();
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
+
+
+    private fun showAlbumContextMenu(position: Int) {
+        val selectedAlbum = albumsAdapter[position]
+        val menuAdapter = ListPopupWindowAdapter(requireContext(), R.menu.album_menu)
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(
+                getString(R.string.album_menu_title, selectedAlbum.artistName, selectedAlbum.title)
+            )
+            .setAdapter(menuAdapter) { _, which ->
+                handleSelectedMenu(menuAdapter.getItem(which), selectedAlbum)
+            }
+            .create()
+        dialog.setOnShowListener { albumsAdapter.setContextSelected(position) }
+        dialog.setOnDismissListener { albumsAdapter.clearContextSelected() }
+        lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
+        dialog.show()
+    }
+
+    private fun handleSelectedMenu(menuItem: MenuItem, selectedAlbum: Album) {
+        when (menuItem.itemId) {
+            R.id.shuffle -> presenter.onClickMenuShuffle(selectedAlbum.id)
+            R.id.add_to_playlist -> presenter.onClickMenuAddToPlaylist(selectedAlbum.id)
+        }
+    }
+
+    override fun onClickBackButton() {
+        presenter.onClickBack()
+    }
+
+    override fun onEndSlidingAnimation() {
+        presenter.onEnterSlideAnimationEnded()
+    }
+
 
     @ProvidePresenter
-    public ArtistPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        int artistId = requireArguments().getInt(ARTIST_ID_ARG_KEY);
+    fun providePresenter(): ArtistPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        val artistId = requireArguments().getInt(ARTIST_ID_ARG_KEY)
 
-        return new ArtistPresenter(appComponent, artistId);
-    }
-
-    @Override
-    public void setArtistName(String artistName) {
-        artistNameTxt.setText(artistName);
-    }
-
-    @Override
-    public void setTracksCount(int tracksCount) {
-        String tracksCountFormatted = getResources()
-                .getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount);
-        binding.tracksCount.setText(tracksCountFormatted);
-    }
-
-    @Override
-    public void setAlbumsCount(int albumsCount) {
-        String albumsCountFormatted = getResources()
-                .getQuantityString(R.plurals.albums_count, albumsCount, albumsCount);
-        albumsCountTxt.setText(albumsCountFormatted);
-    }
-
-    @Override
-    public void refreshAlbums(List<Album> albums) {
-        albumsAdapter.replaceAll(albums);
+        return ArtistPresenter(appComponent, artistId)
     }
 
 
-    @Override
-    public void setAlbumViewSettings(AlbumItemView viewSettings) {
-        int spanCount = viewSettings.viewType == GRID
-                ? calculateAlbumColumnCount(requireActivity())
-                : 1;
-        albumsAdapter.setViewSettings(viewSettings, spanCount);
+    override fun setArtistName(artistName: String) {
+        artistNameTxt.text = artistName
     }
 
-    @Override
-    public void setItemDividerShowing(boolean showed) {
-        binding.albumsList.removeItemDecoration(itemDecoration);
+    override fun setTracksCount(tracksCount: Int) {
+        val tracksCountFormatted = resources
+            .getQuantityString(R.plurals.tracks_count, tracksCount, tracksCount)
+        binding.tracksCount.text = tracksCountFormatted
+    }
+
+    override fun setAlbumsCount(albumsCount: Int) {
+        val albumsCountFormatted = resources
+            .getQuantityString(R.plurals.albums_count, albumsCount, albumsCount)
+        albumsCountTxt.text = albumsCountFormatted
+    }
+
+    override fun refreshAlbums(albums: List<Album>) {
+        albumsAdapter.replaceAll(albums)
+    }
+
+    override fun setAlbumViewSettings(albumViewSettings: AlbumItemView) {
+        val spanCount =
+            if (albumViewSettings.viewType == AlbumViewType.GRID)
+                calculateAlbumColumnCount(requireActivity())
+            else 1
+        albumsAdapter.setViewSettings(albumViewSettings, spanCount)
+    }
+
+    override fun setItemDividerShowing(showed: Boolean) {
+        binding.albumsList.removeItemDecoration(itemDecoration)
 
         if (showed)
-            binding.albumsList.addItemDecoration(itemDecoration);
+            binding.albumsList.addItemDecoration(itemDecoration)
     }
 
-    @Override
-    public String getListType() {
-        return SortingDialog.ARTIST_ALBUMS_SORTING;
+    override fun getListType(): String {
+        return SortingDialog.ARTIST_ALBUMS_SORTING
     }
 
-
-    @Override
-    public void smoothScrollToTop() {
-        ((NestedScrollView) requireView().findViewById(R.id.artistView)).smoothScrollTo(0, 0);
+    override fun smoothScrollToTop() {
+        (requireView().findViewById<View>(R.id.artistView) as NestedScrollView).smoothScrollTo(0, 0)
     }
 
 }

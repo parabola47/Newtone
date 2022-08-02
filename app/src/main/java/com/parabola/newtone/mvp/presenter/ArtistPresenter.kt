@@ -1,150 +1,166 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.AlbumInteractor;
-import com.parabola.domain.interactor.type.Irrelevant;
-import com.parabola.domain.model.Artist;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.ArtistRepository;
-import com.parabola.domain.repository.SortingRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.ArtistView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import java.util.AbstractMap;
-
-import javax.inject.Inject;
-
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.AlbumInteractor
+import com.parabola.domain.interactor.type.Irrelevant
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.ArtistRepository
+import com.parabola.domain.repository.SortingRepository
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.ArtistView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class ArtistPresenter extends MvpPresenter<ArtistView> {
-    private static final String TAG = ArtistPresenter.class.getSimpleName();
+class ArtistPresenter(appComponent: AppComponent, private val artistId: Int) :
+    MvpPresenter<ArtistView>() {
 
-    private final int artistId;
+    @Inject
+    lateinit var router: MainRouter
 
-    @Inject MainRouter router;
+    @Inject
+    lateinit var artistRepo: ArtistRepository
 
-    @Inject ArtistRepository artistRepo;
-    @Inject AlbumInteractor albumInteractor;
-    @Inject TrackRepository trackRepo;
-    @Inject SortingRepository sortingRepo;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
+    @Inject
+    lateinit var albumInteractor: AlbumInteractor
+
+    @Inject
+    lateinit var trackRepo: TrackRepository
+
+    @Inject
+    lateinit var sortingRepo: SortingRepository
+
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    private val disposables = CompositeDisposable()
 
 
-    @Inject SchedulerProvider schedulers;
-
-    private final CompositeDisposable disposables = new CompositeDisposable();
-
-    public ArtistPresenter(AppComponent appComponent, int artistId) {
-        this.artistId = artistId;
-        appComponent.inject(this);
+    init {
+        appComponent.inject(this)
     }
 
 
-    @Override
-    protected void onFirstViewAttach() {
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                loadArtist(),
-                observeAlbumItemViewUpdates(),
-                observeArtistAlbumsSorting(),
-                observeTrackDeleting());
+            loadArtist(),
+            observeAlbumItemViewUpdates(),
+            observeArtistAlbumsSorting(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
-    }
-
-    private Disposable observeArtistAlbumsSorting() {
-        return sortingRepo.observeArtistAlbumsSorting()
-                .flatMapSingle(sorting -> albumInteractor.getByArtist(artistId))
-                // ожидаем пока прогрузится анимация входа
-                .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshAlbums);
-    }
-
-    private Disposable observeTrackDeleting() {
-        return trackRepo.observeTrackDeleting()
-                .flatMapSingle(deletedTrackId -> Single.zip(artistRepo.getById(artistId), albumInteractor.getByArtist(artistId), AbstractMap.SimpleImmutableEntry::new))
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(
-                        artistAlbumsEntry -> {
-                            Artist artist = artistAlbumsEntry.getKey();
-                            getViewState().setTracksCount(artist.getTracksCount());
-                            getViewState().setAlbumsCount(artist.getAlbumsCount());
-                            getViewState().refreshAlbums(artistAlbumsEntry.getValue());
-                        },
-                        error -> router.backToRoot());
-    }
-
-    private Disposable observeAlbumItemViewUpdates() {
-        return Observable.combineLatest(viewSettingsInteractor.observeAlbumItemViewUpdates(), viewSettingsInteractor.observeIsItemDividerShowed(),
-                (albumItemView, isItemDividerShowed) -> {
-                    getViewState().setAlbumViewSettings(albumItemView);
-                    getViewState().setItemDividerShowing(isItemDividerShowed && albumItemView.viewType == ViewSettingsInteractor.AlbumItemView.AlbumViewType.LIST);
-
-                    return Irrelevant.INSTANCE;
-                })
-                .subscribe();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
 
-    public void onClickAllTracks() {
-        router.openArtistTracks(artistId);
-    }
-
-
-    public void onClickBack() {
-        router.goBack();
-    }
-
-    private volatile boolean enterSlideAnimationEnded = false;
-
-    public void onEnterSlideAnimationEnded() {
-        enterSlideAnimationEnded = true;
-    }
-
-    private Disposable loadArtist() {
+    private fun loadArtist(): Disposable {
         return artistRepo.getById(artistId)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(artist -> {
-                    getViewState().setArtistName(artist.getName());
-                    getViewState().setTracksCount(artist.getTracksCount());
-                    getViewState().setAlbumsCount(artist.getAlbumsCount());
-                });
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { artist ->
+                viewState.setArtistName(artist.name)
+                viewState.setTracksCount(artist.tracksCount)
+                viewState.setAlbumsCount(artist.albumsCount)
+            }
     }
 
-    public void onAlbumItemClick(int albumId) {
-        router.openAlbum(albumId);
+    private fun observeArtistAlbumsSorting(): Disposable {
+        return sortingRepo.observeArtistAlbumsSorting()
+            .flatMapSingle { albumInteractor.getByArtist(artistId) }
+            // ожидаем пока прогрузится анимация входа
+            .doOnNext {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshAlbums)
     }
 
-    public void onClickMenuShuffle(int albumId) {
-        albumInteractor.shuffleAlbum(albumId);
+    private fun observeTrackDeleting(): Disposable {
+        return trackRepo.observeTrackDeleting()
+            .flatMapSingle {
+                Single.zip(artistRepo.getById(artistId), albumInteractor.getByArtist(artistId))
+                { artist, albums -> Pair(artist, albums) }
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(
+                { (artist, albums) ->
+                    viewState.setTracksCount(artist.tracksCount)
+                    viewState.setAlbumsCount(artist.albumsCount)
+                    viewState.refreshAlbums(albums)
+                }
+            ) { router.backToRoot() }
     }
 
-    public void onClickMenuAddToPlaylist(int albumId) {
+    private fun observeAlbumItemViewUpdates(): Disposable {
+        return Observable.combineLatest(
+            viewSettingsInteractor.observeAlbumItemViewUpdates(),
+            viewSettingsInteractor.observeIsItemDividerShowed(),
+        ) { albumItemView, isItemDividerShowed ->
+            viewState.setAlbumViewSettings(albumItemView)
+            viewState.setItemDividerShowing(
+                isItemDividerShowed && albumItemView.viewType == AlbumItemView.AlbumViewType.LIST
+            )
+            Irrelevant.INSTANCE
+        }
+            .subscribe()
+    }
+
+
+    fun onClickAllTracks() {
+        router.openArtistTracks(artistId)
+    }
+
+    fun onClickBack() {
+        router.goBack()
+    }
+
+    @Volatile
+    private var enterSlideAnimationEnded = false
+
+    fun onEnterSlideAnimationEnded() {
+        enterSlideAnimationEnded = true
+    }
+
+    fun onAlbumItemClick(albumId: Int) {
+        router.openAlbum(albumId)
+    }
+
+
+    fun onClickMenuShuffle(albumId: Int) {
+        albumInteractor.shuffleAlbum(albumId)
+    }
+
+    fun onClickMenuAddToPlaylist(albumId: Int) {
         trackRepo.getByAlbum(albumId)
-                .flatMapObservable(Observable::fromIterable)
-                .map(Track::getId)
-                .toList()
-                .map(ids -> ids.stream().mapToInt(Integer::intValue).toArray())
-                .subscribe(new ConsumerSingleObserver<>(
-                        router::openAddToPlaylistDialog,
-                        Functions.ERROR_CONSUMER
-                ));
+            .flatMapObservable { Observable.fromIterable(it) }
+            .map(Track::getId)
+            .toList()
+            .map { trackIds -> trackIds.toIntArray() }
+            .subscribe(
+                ConsumerSingleObserver(
+                    router::openAddToPlaylistDialog,
+                    Functions.ERROR_CONSUMER
+                )
+            )
     }
+
 }
