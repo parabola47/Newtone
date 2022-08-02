@@ -1,179 +1,195 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.interactor.TrackInteractor;
-import com.parabola.domain.interactor.player.PlayerInteractor;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.repository.ArtistRepository;
-import com.parabola.domain.repository.ResourceRepository;
-import com.parabola.domain.repository.SortingRepository;
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.domain.settings.ViewSettingsInteractor;
-import com.parabola.domain.utils.EmptyItems;
-import com.parabola.newtone.R;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.ArtistTracksView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.interactor.TrackInteractor
+import com.parabola.domain.interactor.player.PlayerInteractor
+import com.parabola.domain.model.Track
+import com.parabola.domain.repository.ArtistRepository
+import com.parabola.domain.repository.ResourceRepository
+import com.parabola.domain.repository.SortingRepository
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.domain.settings.ViewSettingsInteractor
+import com.parabola.domain.utils.EmptyItems
+import com.parabola.newtone.R
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.ArtistTracksView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import java.util.concurrent.atomic.AtomicBoolean
+import javax.inject.Inject
 
 @InjectViewState
-public final class ArtistTracksPresenter extends MvpPresenter<ArtistTracksView> {
-    private static final String TAG = ArtistTracksPresenter.class.getSimpleName();
+class ArtistTracksPresenter(appComponent: AppComponent, private val artistId: Int) :
+    MvpPresenter<ArtistTracksView>() {
 
-    private final int artistId;
+    @Volatile
+    private var currentTrackId = EmptyItems.NO_TRACK.id
 
-    private volatile int currentTrackId = EmptyItems.NO_TRACK.getId();
+    @Inject
+    lateinit var router: MainRouter
 
-    @Inject MainRouter router;
+    @Inject
+    lateinit var trackInteractor: TrackInteractor
 
-    @Inject TrackInteractor trackInteractor;
-    @Inject ViewSettingsInteractor viewSettingsInteractor;
-    @Inject TrackRepository trackRepo;
-    @Inject ArtistRepository artistRepository;
-    @Inject PlayerInteractor playerInteractor;
-    @Inject SortingRepository sortingRepo;
-    @Inject ResourceRepository resourceRepo;
+    @Inject
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
 
-    @Inject SchedulerProvider schedulers;
+    @Inject
+    lateinit var trackRepo: TrackRepository
+
+    @Inject
+    lateinit var artistRepository: ArtistRepository
+
+    @Inject
+    lateinit var playerInteractor: PlayerInteractor
+
+    @Inject
+    lateinit var sortingRepo: SortingRepository
+
+    @Inject
+    lateinit var resourceRepo: ResourceRepository
+
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    private val disposables = CompositeDisposable()
 
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
-
-    public ArtistTracksPresenter(AppComponent appComponent, int artistId) {
-        this.artistId = artistId;
-        appComponent.inject(this);
+    init {
+        appComponent.inject(this)
     }
 
 
-    @Override
-    protected void onFirstViewAttach() {
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                loadArtist(),
-                observeCurrentTrack(),
-                observeSortingUpdates(),
-                observeTrackItemViewUpdates(),
-                observeIsItemDividerShowed(),
-                observeTrackDeleting());
+            loadArtist(),
+            observeCurrentTrack(),
+            observeSortingUpdates(),
+            observeTrackItemViewUpdates(),
+            observeIsItemDividerShowed(),
+            observeTrackDeleting()
+        )
     }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
-    private Disposable loadArtist() {
+
+    private fun loadArtist(): Disposable {
         return artistRepository.getById(artistId)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(artist -> {
-                    getViewState().setArtistName(artist.getName());
-                    updateTracksCount(artist.getTracksCount());
-                });
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { artist ->
+                viewState.setArtistName(artist.name)
+                updateTracksCount(artist.tracksCount)
+            }
     }
 
-    private Disposable observeCurrentTrack() {
+    private fun observeCurrentTrack(): Disposable {
         return playerInteractor.onChangeCurrentTrackId()
-                .doOnNext(currentTrackId -> this.currentTrackId = currentTrackId)
-                .subscribe(getViewState()::setCurrentTrack);
+            .doOnNext { currentTrackId = it }
+            .subscribe(viewState::setCurrentTrack)
     }
 
-    private Disposable observeSortingUpdates() {
-        AtomicBoolean needToShowSection = new AtomicBoolean(false);
+    private fun observeSortingUpdates(): Disposable {
+        val needToShowSection = AtomicBoolean(false)
 
         return sortingRepo.observeArtistTracksSorting()
-                //включаем/отключаем показ секции в списке, если отсортирован по названию
-                .doOnNext(sorting -> needToShowSection.set(sorting == TrackRepository.Sorting.BY_TITLE))
-                .flatMapSingle(sorting -> trackInteractor.getByArtist(artistId))
-                // ожидаем пока прогрузится анимация входа
-                .doOnNext(tracks -> {while (!enterSlideAnimationEnded) ;})
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(tracks -> {
-                    getViewState().setSectionShowing(needToShowSection.get());
-                    getViewState().refreshTracks(tracks);
-                    getViewState().setCurrentTrack(currentTrackId);
-                });
+            //включаем/отключаем показ секции в списке, если отсортирован по названию
+            .doOnNext { sorting -> needToShowSection.set(sorting == TrackRepository.Sorting.BY_TITLE) }
+            .flatMapSingle { trackInteractor.getByArtist(artistId) }
+            // ожидаем пока прогрузится анимация входа
+            .doOnNext {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!enterSlideAnimationEnded);
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { tracks ->
+                viewState.setSectionShowing(needToShowSection.get())
+                viewState.refreshTracks(tracks)
+                viewState.setCurrentTrack(currentTrackId)
+            }
     }
 
-    private Disposable observeTrackItemViewUpdates() {
+    private fun observeTrackItemViewUpdates(): Disposable {
         return viewSettingsInteractor.observeTrackItemViewUpdates()
-                .subscribe(getViewState()::setItemViewSettings);
+            .subscribe(viewState::setItemViewSettings)
     }
 
-    private Disposable observeIsItemDividerShowed() {
+    private fun observeIsItemDividerShowed(): Disposable {
         return viewSettingsInteractor.observeIsItemDividerShowed()
-                .subscribe(getViewState()::setItemDividerShowing);
+            .subscribe(viewState::setItemDividerShowing)
     }
 
-    private Disposable observeTrackDeleting() {
+    private fun observeTrackDeleting(): Disposable {
         return trackRepo.observeTrackDeleting()
-                .flatMapSingle(sorting -> trackInteractor.getByArtist(artistId))
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(tracks -> {
-                    if (!tracks.isEmpty()) {
-                        getViewState().refreshTracks(tracks);
-                        getViewState().setCurrentTrack(currentTrackId);
-                        updateTracksCount(tracks.size());
-                    } else router.backToRoot();
-                });
+            .flatMapSingle { trackInteractor.getByArtist(artistId) }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe { tracks ->
+                if (tracks.isNotEmpty()) {
+                    viewState.refreshTracks(tracks)
+                    viewState.setCurrentTrack(currentTrackId)
+                    updateTracksCount(tracks.size)
+                } else {
+                    router.backToRoot()
+                }
+            }
     }
 
 
-    public void onClickBack() {
-        router.goBack();
+    fun onClickBack() {
+        router.goBack()
     }
 
-    private volatile boolean enterSlideAnimationEnded = false;
+    @Volatile
+    private var enterSlideAnimationEnded = false
 
-    public void onEnterSlideAnimationEnded() {
-        enterSlideAnimationEnded = true;
+    fun onEnterSlideAnimationEnded() {
+        enterSlideAnimationEnded = true
     }
 
-    private void updateTracksCount(int tracksCount) {
-        String tracksCountStr = resourceRepo.getQuantityString(R.plurals.tracks_count, tracksCount);
-        getViewState().setTracksCountTxt(tracksCountStr);
+    private fun updateTracksCount(tracksCount: Int) {
+        val tracksCountStr = resourceRepo.getQuantityString(R.plurals.tracks_count, tracksCount)
+        viewState!!.setTracksCountTxt(tracksCountStr)
     }
 
-    public void onClickTrackItem(List<Track> tracks, int selectedPosition) {
-        playerInteractor.start(tracks, selectedPosition);
-    }
-
-    public void onClickMenuPlay(List<Track> tracks, int selectedPosition) {
-        playerInteractor.start(tracks, selectedPosition);
-    }
-
-    public void onClickMenuAddToPlaylist(int trackId) {
-        router.openAddToPlaylistDialog(trackId);
-    }
-
-    public void onClickMenuAddToFavourites(int trackId) {
-        trackRepo.addToFavourites(trackId);
+    fun onClickTrackItem(tracks: List<Track>, selectedPosition: Int) {
+        playerInteractor.start(tracks, selectedPosition)
     }
 
 
-    public void onClickMenuRemoveFromFavourites(int trackId) {
-        trackRepo.removeFromFavourites(trackId);
+    fun onClickMenuPlay(tracks: List<Track>, selectedPosition: Int) {
+        playerInteractor.start(tracks, selectedPosition)
     }
 
-    public void onClickMenuShareTrack(Track track) {
-        router.openShareTrack(track.getFilePath());
+    fun onClickMenuAddToPlaylist(trackId: Int) {
+        router.openAddToPlaylistDialog(trackId)
     }
 
-    public void onClickMenuDeleteTrack(int trackId) {
-        router.openDeleteTrackDialog(trackId);
+    fun onClickMenuAddToFavourites(trackId: Int) {
+        trackRepo.addToFavourites(trackId)
     }
 
-    public void onClickMenuAdditionalInfo(int trackId) {
-        router.openTrackAdditionInfo(trackId);
+    fun onClickMenuRemoveFromFavourites(trackId: Int) {
+        trackRepo.removeFromFavourites(trackId)
     }
+
+    fun onClickMenuShareTrack(track: Track) {
+        router.openShareTrack(track.filePath)
+    }
+
+    fun onClickMenuDeleteTrack(trackId: Int) {
+        router.openDeleteTrackDialog(trackId)
+    }
+
+    fun onClickMenuAdditionalInfo(trackId: Int) {
+        router.openTrackAdditionInfo(trackId)
+    }
+
 }
