@@ -254,11 +254,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openArtistTracks(artistId: Int) {
-        val args = Bundle()
-        args.putInt("artistId", artistId)
-        val fragment = ArtistTracksFragment()
-        fragment.arguments = args
-        openFragment(fragment)
+        openFragment(ArtistTracksFragment.newInstance(artistId))
     }
 
     override fun openCreatePlaylistDialog() {
