@@ -1,23 +1,19 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import com.parabola.domain.model.Track;
-import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
-
-import java.util.List;
-
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.AddToEndSingle;
+import com.parabola.domain.model.Track
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-public interface FolderView extends MvpView {
+interface FolderView : MvpView {
+    fun setFolderPath(folderPath: String)
 
-    void setFolderPath(String folderPath);
+    fun refreshTracks(tracks: List<Track>)
 
-    void refreshTracks(List<Track> tracks);
-    void setItemViewSettings(TrackItemView viewSettings);
-    void setItemDividerShowing(boolean showed);
-    void setSectionShowing(boolean enable);
+    fun setItemViewSettings(viewSettings: TrackItemView)
+    fun setItemDividerShowing(showed: Boolean)
+    fun setSectionShowing(enable: Boolean)
 
-    void setCurrentTrack(int trackId);
-
+    fun setCurrentTrack(trackId: Int)
 }

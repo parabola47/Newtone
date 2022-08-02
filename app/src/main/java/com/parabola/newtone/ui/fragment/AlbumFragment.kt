@@ -162,6 +162,7 @@ class AlbumFragment : BaseSwipeToBackFragment(),
     fun providePresenter(): AlbumPresenter {
         val appComponent = (requireActivity().application as MainApplication).appComponent
         val albumId = requireArguments().getInt(ALBUM_ID_ARG_KEY)
+
         return AlbumPresenter(appComponent, albumId)
     }
 

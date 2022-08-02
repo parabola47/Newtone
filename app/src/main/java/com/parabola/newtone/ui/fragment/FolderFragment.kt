@@ -1,202 +1,197 @@
-package com.parabola.newtone.ui.fragment;
+package com.parabola.newtone.ui.fragment
 
-import static java.util.Objects.requireNonNull;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.model.Track;
-import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.ListPopupWindowAdapter;
-import com.parabola.newtone.adapter.TrackAdapter;
-import com.parabola.newtone.databinding.ListTrackBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.FolderPresenter;
-import com.parabola.newtone.mvp.view.FolderView;
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment;
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver;
-import com.parabola.newtone.ui.dialog.SortingDialog;
-
-import java.util.List;
-
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
-
-public final class FolderFragment extends BaseSwipeToBackFragment
-        implements FolderView, Sortable, Scrollable {
-
-    @InjectPresenter FolderPresenter presenter;
-
-    private ListTrackBinding binding;
-
-    private TextView tracksCount;
-    private TextView folderNameTxt;
-
-    private final TrackAdapter tracksAdapter = new TrackAdapter();
-    private DividerItemDecoration itemDecoration;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.domain.model.Track
+import com.parabola.domain.settings.ViewSettingsInteractor.TrackItemView
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.ListPopupWindowAdapter
+import com.parabola.newtone.adapter.TrackAdapter
+import com.parabola.newtone.databinding.ListTrackBinding
+import com.parabola.newtone.mvp.presenter.FolderPresenter
+import com.parabola.newtone.mvp.view.FolderView
+import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
+import com.parabola.newtone.ui.dialog.SortingDialog
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-        binding = ListTrackBinding.inflate(inflater, container, false);
-        getRootBinding().container.addView(binding.getRoot());
-
-        folderNameTxt = getRootBinding().main;
-        tracksCount = getRootBinding().additionalInfo;
-
-        binding.tracksList.setAdapter(tracksAdapter);
-        itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-
-        tracksAdapter.setOnItemClickListener(position -> presenter.onTrackClick(tracksAdapter.getAll(), position));
-        tracksAdapter.setOnItemLongClickListener(this::showTrackContextMenu);
-        getRootBinding().actionBar.setOnClickListener(v -> smoothScrollToTop());
-
-        return root;
-    }
+private const val FOLDER_PATH_ARG_KEY = "folderPath"
 
 
-    private void showTrackContextMenu(int position) {
-        Track selectedTrack = tracksAdapter.get(position);
-        ListPopupWindowAdapter menuAdapter = new ListPopupWindowAdapter(requireContext(), R.menu.track_menu);
+class FolderFragment : BaseSwipeToBackFragment(),
+    FolderView, Sortable, Scrollable {
 
-        menuAdapter.setMenuVisibility(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.add_to_favorites:
-                    return !selectedTrack.isFavourite();
-                case R.id.remove_from_favourites:
-                    return selectedTrack.isFavourite();
-                case R.id.remove_from_playlist:
-                    return false;
-                default: return true;
-            }
-        });
+    @InjectPresenter
+    lateinit var presenter: FolderPresenter
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.track_menu_title, selectedTrack.getArtistName(), selectedTrack.getTitle()))
-                .setAdapter(menuAdapter, (d, which) ->
-                        handleSelectedMenu(menuAdapter.getItem(which), selectedTrack, position))
-                .create();
-        dialog.setOnShowListener(d -> tracksAdapter.setContextSelected(position));
-        dialog.setOnDismissListener(d -> tracksAdapter.clearContextSelected());
-        getLifecycle().addObserver(new DialogDismissLifecycleObserver(dialog));
-        dialog.show();
-    }
+    private var _binding: ListTrackBinding? = null
+    private val binding get() = _binding!!
 
-    private void handleSelectedMenu(MenuItem menuItem, Track selectedTrack, int itemPosition) {
-        switch (menuItem.getItemId()) {
-            case R.id.play:
-                List<Track> tracks = tracksAdapter.getAll();
-                presenter.onClickMenuPlay(tracks, itemPosition);
-                break;
-            case R.id.add_to_playlist:
-                presenter.onClickMenuAddToPlaylist(selectedTrack.getId());
-                break;
-            case R.id.add_to_favorites:
-                presenter.onClickMenuAddToFavourites(selectedTrack.getId());
-                break;
-            case R.id.remove_from_favourites:
-                presenter.onClickMenuRemoveFromFavourites(selectedTrack.getId());
-                break;
-            case R.id.share_track:
-                presenter.onClickMenuShareTrack(selectedTrack);
-                break;
-            case R.id.additional_info:
-                presenter.onClickMenuAdditionalInfo(selectedTrack.getId());
-                break;
-            case R.id.delete_track:
-                presenter.onClickMenuDeleteTrack(selectedTrack.getId());
-                break;
+    private lateinit var tracksCount: TextView
+    private lateinit var folderNameTxt: TextView
+
+    private val tracksAdapter = TrackAdapter()
+
+    private lateinit var itemDecoration: DividerItemDecoration
+
+
+    companion object {
+        fun newInstance(folderPath: String) = FolderFragment().apply {
+            arguments = bundleOf(FOLDER_PATH_ARG_KEY to folderPath)
         }
     }
 
 
-    @Override
-    public void refreshTracks(List<Track> tracks) {
-        tracksAdapter.replaceAll(tracks);
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
+        _binding = ListTrackBinding.inflate(inflater, container, false)
+        rootBinding.container.addView(binding.root)
 
-        String tracksCountStr = getResources()
-                .getQuantityString(R.plurals.tracks_count, tracks.size(), tracks.size());
+        folderNameTxt = rootBinding.main
+        tracksCount = rootBinding.additionalInfo
 
-        tracksCount.setText(tracksCountStr);
+        binding.tracksList.adapter = tracksAdapter
+        itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+
+        tracksAdapter.setOnItemClickListener { position ->
+            presenter.onTrackClick(tracksAdapter.all, position)
+        }
+        tracksAdapter.setOnItemLongClickListener(::showTrackContextMenu)
+        rootBinding.actionBar.setOnClickListener { smoothScrollToTop() }
+
+        return root
     }
 
-    @Override
-    public void setItemViewSettings(TrackItemView viewSettings) {
-        tracksAdapter.setViewSettings(viewSettings);
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    @Override
-    public void setItemDividerShowing(boolean showed) {
-        binding.tracksList.removeItemDecoration(itemDecoration);
+
+    private fun showTrackContextMenu(position: Int) {
+        val selectedTrack = tracksAdapter[position]
+        val menuAdapter = ListPopupWindowAdapter(requireContext(), R.menu.track_menu)
+
+        menuAdapter.setMenuVisibility { menuItem ->
+            when (menuItem.itemId) {
+                R.id.add_to_favorites -> return@setMenuVisibility !selectedTrack.isFavourite
+                R.id.remove_from_favourites -> return@setMenuVisibility selectedTrack.isFavourite
+                R.id.remove_from_playlist -> return@setMenuVisibility false
+                else -> return@setMenuVisibility true
+            }
+        }
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(
+                getString(
+                    R.string.track_menu_title,
+                    selectedTrack.artistName,
+                    selectedTrack.title
+                )
+            )
+            .setAdapter(menuAdapter) { _, which ->
+                handleSelectedMenu(
+                    menuAdapter.getItem(which),
+                    selectedTrack,
+                    position,
+                )
+            }
+            .create()
+        dialog.setOnShowListener { tracksAdapter.setContextSelected(position) }
+        dialog.setOnDismissListener { tracksAdapter.clearContextSelected() }
+        lifecycle.addObserver(DialogDismissLifecycleObserver(dialog))
+        dialog.show()
+    }
+
+    private fun handleSelectedMenu(menuItem: MenuItem, selectedTrack: Track, itemPosition: Int) {
+        when (menuItem.itemId) {
+            R.id.play -> presenter.onClickMenuPlay(tracksAdapter.all, itemPosition)
+            R.id.add_to_playlist -> presenter.onClickMenuAddToPlaylist(selectedTrack.id)
+            R.id.add_to_favorites -> presenter.onClickMenuAddToFavourites(selectedTrack.id)
+            R.id.remove_from_favourites -> presenter.onClickMenuRemoveFromFavourites(selectedTrack.id)
+            R.id.share_track -> presenter.onClickMenuShareTrack(selectedTrack)
+            R.id.additional_info -> presenter.onClickMenuAdditionalInfo(selectedTrack.id)
+            R.id.delete_track -> presenter.onClickMenuDeleteTrack(selectedTrack.id)
+        }
+    }
+
+    override fun refreshTracks(tracks: List<Track>) {
+        tracksAdapter.replaceAll(tracks)
+        val tracksCountStr = resources
+            .getQuantityString(R.plurals.tracks_count, tracks.size, tracks.size)
+        tracksCount.text = tracksCountStr
+    }
+
+    override fun setItemViewSettings(viewSettings: TrackItemView) {
+        tracksAdapter.setViewSettings(viewSettings)
+    }
+
+    override fun setItemDividerShowing(showed: Boolean) {
+        binding.tracksList.removeItemDecoration(itemDecoration)
 
         if (showed)
-            binding.tracksList.addItemDecoration(itemDecoration);
+            binding.tracksList.addItemDecoration(itemDecoration)
     }
 
-
-    @Override
-    public void setSectionShowing(boolean enable) {
-        tracksAdapter.setSectionEnabled(enable);
+    override fun setSectionShowing(enable: Boolean) {
+        tracksAdapter.setSectionEnabled(enable)
     }
 
-    @Override
-    public void setCurrentTrack(int trackId) {
-        tracksAdapter.setSelectedCondition(track -> track.getId() == trackId);
+    override fun setCurrentTrack(trackId: Int) {
+        tracksAdapter.setSelectedCondition { it.id == trackId }
     }
 
-    @Override
-    protected void onClickBackButton() {
-        presenter.onClickBack();
+    override fun onClickBackButton() {
+        presenter.onClickBack()
     }
 
-    @Override
-    protected void onEndSlidingAnimation() {
-        presenter.onEnterSlideAnimationEnded();
+    override fun onEndSlidingAnimation() {
+        presenter.onEnterSlideAnimationEnded()
     }
 
-    @Override
-    public void setFolderPath(String folderPath) {
-        folderNameTxt.setText(folderPath);
+    override fun setFolderPath(folderPath: String) {
+        folderNameTxt.text = folderPath
     }
+
 
     @ProvidePresenter
-    FolderPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        String folderPath = requireArguments().getString("folderPath");
-        return new FolderPresenter(appComponent, folderPath);
-    }
+    fun providePresenter(): FolderPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        val folderPath = requireArguments().getString(FOLDER_PATH_ARG_KEY)!!
 
-    @Override
-    public String getListType() {
-        return SortingDialog.FOLDER_TRACKS_SORTING;
+        return FolderPresenter(appComponent, folderPath)
     }
 
 
-    @Override
-    public void smoothScrollToTop() {
-        LinearLayoutManager layoutManager = requireNonNull((LinearLayoutManager) binding.tracksList.getLayoutManager());
-        int firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        int screenItemsCount = layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition();
+    override fun getListType(): String {
+        return SortingDialog.FOLDER_TRACKS_SORTING
+    }
+
+    override fun smoothScrollToTop() {
+        val layoutManager = binding.tracksList.layoutManager as LinearLayoutManager
+        val firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+        val screenItemsCount =
+            layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()
 
         if (firstItemPosition > screenItemsCount * 3) {
-            binding.tracksList.scrollToPosition(screenItemsCount * 3);
+            binding.tracksList.scrollToPosition(screenItemsCount * 3)
         }
 
-        binding.tracksList.smoothScrollToPosition(0);
+        binding.tracksList.smoothScrollToPosition(0)
     }
-
 }
