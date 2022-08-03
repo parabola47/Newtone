@@ -1,26 +1,26 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.dialog
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 
-public final class DialogDismissLifecycleObserver implements LifecycleObserver {
+class DialogDismissLifecycleObserver(dialog: AlertDialog) : LifecycleObserver {
 
-    private AlertDialog dialog;
+    private var dialog: AlertDialog?
 
-    public DialogDismissLifecycleObserver(@NonNull AlertDialog dialog) {
-        this.dialog = dialog;
+
+    init {
+        this.dialog = dialog
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    public void onDestroy(LifecycleOwner owner) {
-        owner.getLifecycle().removeObserver(this);
+    fun onDestroy(owner: LifecycleOwner) {
+        owner.lifecycle.removeObserver(this)
         if (dialog != null) {
-            dialog.dismiss();
-            dialog = null;
+            dialog!!.dismiss()
+            dialog = null
         }
     }
 
