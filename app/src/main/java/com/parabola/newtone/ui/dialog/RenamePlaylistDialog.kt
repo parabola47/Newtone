@@ -1,124 +1,115 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.dialog
 
-import static java.util.Objects.requireNonNull;
+import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.databinding.EditTextContainerBinding
+import com.parabola.newtone.mvp.presenter.RenamePlaylistPresenter
+import com.parabola.newtone.mvp.view.RenamePlaylistView
+import moxy.MvpAppCompatDialogFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+private const val PLAYLIST_BUNDLE_KEY = "playlist id"
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.databinding.EditTextContainerBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.RenamePlaylistPresenter;
-import com.parabola.newtone.mvp.view.RenamePlaylistView;
 
-import moxy.MvpAppCompatDialogFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
+class RenamePlaylistDialog : MvpAppCompatDialogFragment(),
+    RenamePlaylistView {
 
-public final class RenamePlaylistDialog extends MvpAppCompatDialogFragment
-        implements RenamePlaylistView {
+    @InjectPresenter
+    lateinit var presenter: RenamePlaylistPresenter
 
-    @InjectPresenter RenamePlaylistPresenter presenter;
+    private lateinit var playlistTitleEdt: EditText
 
-    private EditText playlistTitleEdt;
 
-    private static final String PLAYLIST_BUNDLE_KEY = "playlist id";
-
-    public RenamePlaylistDialog() {
-        setRetainInstance(true);
-    }
-
-    public static RenamePlaylistDialog newInstance(int playlistId) {
-        Bundle args = new Bundle();
-        args.putInt(PLAYLIST_BUNDLE_KEY, playlistId);
-
-        RenamePlaylistDialog fragment = new RenamePlaylistDialog();
-        fragment.setArguments(args);
-        return fragment;
+    init {
+        retainInstance = true
     }
 
 
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        EditTextContainerBinding binding = EditTextContainerBinding
-                .inflate(LayoutInflater.from(requireContext()));
-        playlistTitleEdt = binding.editTextView;
-        playlistTitleEdt.requestFocus();
+    companion object {
+        fun newInstance(playlistId: Int) = RenamePlaylistDialog().apply {
+            arguments = bundleOf(PLAYLIST_BUNDLE_KEY to playlistId)
+        }
+    }
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.rename_playlist_title)
-                .setView(binding.getRoot())
-                .setPositiveButton(R.string.dialog_rename, null)
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
 
-        dialog.setOnShowListener(d -> {
-            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(view ->
-                    presenter.onClickRenamePlaylist(playlistTitleEdt.getText().toString()));
-        });
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val binding = EditTextContainerBinding
+            .inflate(LayoutInflater.from(requireContext()))
+        playlistTitleEdt = binding.editTextView
+        playlistTitleEdt.requestFocus()
 
-        return dialog;
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.rename_playlist_title)
+            .setView(binding.root)
+            .setPositiveButton(R.string.dialog_rename, null)
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
+
+        dialog.setOnShowListener {
+            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                presenter.onClickRenamePlaylist(playlistTitleEdt.text.toString())
+            }
+        }
+
+        return dialog
+    }
+
+    override fun onDestroyView() {
+        playlistTitleEdt.clearFocus()
+        val inputMethodManager = requireContext()
+            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+        super.onDestroyView()
     }
 
 
     @ProvidePresenter
-    RenamePlaylistPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        int playlistId = requireArguments().getInt(PLAYLIST_BUNDLE_KEY);
+    fun providePresenter(): RenamePlaylistPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        val playlistId = requireArguments().getInt(PLAYLIST_BUNDLE_KEY)
 
-        return new RenamePlaylistPresenter(appComponent, playlistId);
+        return RenamePlaylistPresenter(appComponent, playlistId)
     }
 
 
-    @Override
-    public void focusOnInputField() {
-        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        requireNonNull(imm).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    override fun focusOnInputField() {
+        val imm = requireContext()
+            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
-    @Override
-    public void onDestroyView() {
-        playlistTitleEdt.clearFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        requireNonNull(inputMethodManager).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        super.onDestroyView();
+    override fun setPlaylistTitle(playlistTitle: String) {
+        playlistTitleEdt.setText(playlistTitle)
     }
 
-    @Override
-    public void setPlaylistTitle(String playlistTitle) {
-        playlistTitleEdt.setText(playlistTitle);
+    override fun setTitleSelected() {
+        playlistTitleEdt.setSelection(playlistTitleEdt.length())
+        playlistTitleEdt.selectAll()
     }
 
-    @Override
-    public void setTitleSelected() {
-        playlistTitleEdt.setSelection(playlistTitleEdt.length());
-        playlistTitleEdt.selectAll();
+    override fun showPlaylistTitleAlreadyExistsError() {
+        val errorText = getString(R.string.rename_toast_playlist_already_exist)
+        playlistTitleEdt.error = errorText
     }
 
-    @Override
-    public void showPlaylistTitleAlreadyExistsError() {
-        String errorText = getString(R.string.rename_toast_playlist_already_exist);
-        playlistTitleEdt.setError(errorText);
+    override fun closeScreen() {
+        dismiss()
     }
 
-    @Override
-    public void closeScreen() {
-        dismiss();
+    override fun showPlaylistTitleIsEmptyError() {
+        playlistTitleEdt.error = getString(R.string.error_playlist_title_is_empty)
     }
 
-    @Override
-    public void showPlaylistTitleIsEmptyError() {
-        playlistTitleEdt.setError(getString(R.string.error_playlist_title_is_empty));
-    }
 }

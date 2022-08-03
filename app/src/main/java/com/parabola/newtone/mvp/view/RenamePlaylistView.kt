@@ -1,18 +1,17 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.OneExecution;
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.OneExecution
 
 @OneExecution
-public interface RenamePlaylistView extends MvpView {
+interface RenamePlaylistView : MvpView {
+    fun focusOnInputField()
 
-    void focusOnInputField();
+    fun setPlaylistTitle(playlistTitle: String)
+    fun setTitleSelected()
 
-    void setPlaylistTitle(String playlistTitle);
-    void setTitleSelected();
+    fun closeScreen()
 
-    void closeScreen();
-
-    void showPlaylistTitleIsEmptyError();
-    void showPlaylistTitleAlreadyExistsError();
+    fun showPlaylistTitleIsEmptyError()
+    fun showPlaylistTitleAlreadyExistsError()
 }

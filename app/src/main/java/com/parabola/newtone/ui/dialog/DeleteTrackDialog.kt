@@ -2,7 +2,6 @@ package com.parabola.newtone.ui.dialog
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -60,7 +59,7 @@ class DeleteTrackDialog : MvpAppCompatDialogFragment() {
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.track_menu_delete_dialog_title)
             .setMessage(R.string.track_menu_delete_dialog_message)
-            .setPositiveButton(R.string.dialog_delete) { d: DialogInterface?, w: Int -> onClickDeleteTrack() }
+            .setPositiveButton(R.string.dialog_delete) { _, _ -> onClickDeleteTrack() }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
     }

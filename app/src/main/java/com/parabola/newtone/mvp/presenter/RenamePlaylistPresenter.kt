@@ -1,55 +1,62 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.exception.AlreadyExistsException;
-import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.RenamePlaylistView;
-
-import javax.inject.Inject;
-
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.CallbackCompletableObserver;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.exception.AlreadyExistsException
+import com.parabola.domain.repository.PlaylistRepository
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.RenamePlaylistView
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.CallbackCompletableObserver
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class RenamePlaylistPresenter extends MvpPresenter<RenamePlaylistView> {
+class RenamePlaylistPresenter(
+    appComponent: AppComponent,
+    private val playlistId: Int,
+) : MvpPresenter<RenamePlaylistView>() {
 
-    private final int playlistId;
-    @Inject PlaylistRepository playlistRepo;
+    @Inject
+    lateinit var playlistRepo: PlaylistRepository
 
 
-    public RenamePlaylistPresenter(AppComponent appComponent, int playlistId) {
-        appComponent.inject(this);
-        this.playlistId = playlistId;
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
-        getViewState().focusOnInputField();
 
+    override fun onFirstViewAttach() {
+        viewState.focusOnInputField()
         playlistRepo.getById(playlistId)
-                .subscribe(new ConsumerSingleObserver<>(
-                        playlist -> {
-                            getViewState().setPlaylistTitle(playlist.getTitle());
-                            getViewState().setTitleSelected();
-                        }, Functions.ERROR_CONSUMER));
+            .subscribe(
+                ConsumerSingleObserver(
+                    { playlist ->
+                        viewState.setPlaylistTitle(playlist.title)
+                        viewState.setTitleSelected()
+                    },
+                    Functions.ERROR_CONSUMER,
+                )
+            )
     }
 
-    public void onClickRenamePlaylist(String newPlaylistTitle) {
-        newPlaylistTitle = newPlaylistTitle.trim();
-        if (newPlaylistTitle.isEmpty()) {
-            getViewState().showPlaylistTitleIsEmptyError();
-            return;
+    fun onClickRenamePlaylist(newPlaylistTitle: String) {
+        val newPlaylistTitleFormatted = newPlaylistTitle.trim { it <= ' ' }
+        if (newPlaylistTitleFormatted.isEmpty()) {
+            viewState.showPlaylistTitleIsEmptyError()
+            return
         }
 
-        playlistRepo.rename(playlistId, newPlaylistTitle)
-                .subscribe(new CallbackCompletableObserver(
-                        error -> {
-                            if (error instanceof AlreadyExistsException)
-                                getViewState().showPlaylistTitleAlreadyExistsError();
-                        },
-                        getViewState()::closeScreen));
+        playlistRepo.rename(playlistId, newPlaylistTitleFormatted)
+            .subscribe(
+                CallbackCompletableObserver(
+                    { error ->
+                        if (error is AlreadyExistsException)
+                            viewState.showPlaylistTitleAlreadyExistsError()
+                    },
+                    { viewState.closeScreen() },
+                )
+            )
     }
+
 }
