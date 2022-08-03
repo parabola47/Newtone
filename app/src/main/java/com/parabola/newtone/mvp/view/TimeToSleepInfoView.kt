@@ -1,14 +1,13 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import moxy.MvpView;
-import moxy.viewstate.strategy.AddToEndSingleStrategy;
-import moxy.viewstate.strategy.OneExecutionStateStrategy;
-import moxy.viewstate.strategy.StateStrategyType;
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.OneExecution
 
-@StateStrategyType(AddToEndSingleStrategy.class)
-public interface TimeToSleepInfoView extends MvpView {
-    void updateTimeToEndText(String timeToEndText);
+@AddToEndSingle
+interface TimeToSleepInfoView : MvpView {
+    fun updateTimeToEndText(timeToEndText: String)
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
-    void closeScreen();
+    @OneExecution
+    fun closeScreen()
 }

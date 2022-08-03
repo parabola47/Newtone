@@ -1,67 +1,62 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.dialog
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.widget.TextView;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter;
-import com.parabola.newtone.mvp.view.TimeToSleepInfoView;
-
-import moxy.MvpAppCompatDialogFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
-
-public final class TimeToSleepInfoDialog extends MvpAppCompatDialogFragment
-        implements TimeToSleepInfoView {
-
-    @InjectPresenter TimeToSleepInfoPresenter presenter;
-
-    private TextView timeToEndTxt;
+import android.app.Dialog
+import android.os.Bundle
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.mvp.presenter.TimeToSleepInfoPresenter
+import com.parabola.newtone.mvp.view.TimeToSleepInfoView
+import moxy.MvpAppCompatDialogFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 
-    public static TimeToSleepInfoDialog newInstance() {
-        return new TimeToSleepInfoDialog();
+class TimeToSleepInfoDialog : MvpAppCompatDialogFragment(),
+    TimeToSleepInfoView {
+
+    @InjectPresenter
+    lateinit var presenter: TimeToSleepInfoPresenter
+
+    private lateinit var timeToEndTxt: TextView
+
+
+    companion object {
+        fun newInstance() = TimeToSleepInfoDialog()
     }
 
 
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        timeToEndTxt = new AppCompatTextView(requireContext());
-        int horizontalPadding = (int) getResources().getDimension(R.dimen.alert_dialog_view_horizontal_padding);
-        int verticalPadding = (int) getResources().getDimension(R.dimen.alert_dialog_top_title_padding);
-        timeToEndTxt.setPadding(horizontalPadding, verticalPadding, horizontalPadding, 0);
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        timeToEndTxt = AppCompatTextView(requireContext())
+        val horizontalPadding =
+            resources.getDimension(R.dimen.alert_dialog_view_horizontal_padding).toInt()
+        val verticalPadding = resources.getDimension(R.dimen.alert_dialog_top_title_padding).toInt()
+        timeToEndTxt.setPadding(horizontalPadding, verticalPadding, horizontalPadding, 0)
 
-        return new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.title_sleep_info_dialog)
-                .setView(timeToEndTxt)
-                .setPositiveButton(R.string.dialog_reset, (d, w) ->
-                        presenter.onClickReset())
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
+        return MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.title_sleep_info_dialog)
+            .setView(timeToEndTxt)
+            .setPositiveButton(R.string.dialog_reset) { _, _ -> presenter.onClickReset() }
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
     }
+
 
     @ProvidePresenter
-    TimeToSleepInfoPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        return new TimeToSleepInfoPresenter(appComponent);
+    fun providePresenter(): TimeToSleepInfoPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        return TimeToSleepInfoPresenter(appComponent)
     }
 
 
-    @Override
-    public void updateTimeToEndText(String timeToEndText) {
-        timeToEndTxt.setText(timeToEndText);
+    override fun updateTimeToEndText(timeToEndText: String) {
+        timeToEndTxt.text = timeToEndText
     }
 
-    @Override
-    public void closeScreen() {
-        dismiss();
+    override fun closeScreen() {
+        dismiss()
     }
 
 }

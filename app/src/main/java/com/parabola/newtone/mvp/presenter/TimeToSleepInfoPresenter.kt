@@ -1,70 +1,72 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.ResourceRepository;
-import com.parabola.newtone.R;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.TimeToSleepInfoView;
-import com.parabola.newtone.util.TimeFormatterTool;
-import com.parabola.sleep_timer_feature.SleepTimerInteractor;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.repository.ResourceRepository
+import com.parabola.newtone.R
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.TimeToSleepInfoView
+import com.parabola.newtone.util.TimeFormatterTool
+import com.parabola.sleep_timer_feature.SleepTimerInteractor
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class TimeToSleepInfoPresenter extends MvpPresenter<TimeToSleepInfoView> {
+class TimeToSleepInfoPresenter(appComponent: AppComponent) : MvpPresenter<TimeToSleepInfoView>() {
 
     @Inject
-    SleepTimerInteractor timerInteractor;
-    @Inject
-    ResourceRepository resourceRepo;
-    @Inject
-    SchedulerProvider schedulers;
+    lateinit var timerInteractor: SleepTimerInteractor
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var resourceRepo: ResourceRepository
 
-    public TimeToSleepInfoPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    @Inject
+    lateinit var schedulers: SchedulerProvider
+
+    private val disposables = CompositeDisposable()
+
+
+    init {
+        appComponent.inject(this)
     }
 
 
-    @Override
-    protected void onFirstViewAttach() {
+    override fun onFirstViewAttach() {
         disposables.addAll(
-                observeRemainingTime(),
-                closeScreenWhenTimerFinished());
+            observeRemainingTime(),
+            closeScreenWhenTimerFinished(),
+        )
+    }
+
+    override fun onDestroy() {
+        disposables.dispose()
     }
 
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
-    }
-
-
-    private Disposable observeRemainingTime() {
+    private fun observeRemainingTime(): Disposable {
         return timerInteractor.observeRemainingTimeToEnd()
-                .map(TimeFormatterTool::formatMillisecondsToMinutes)
-                .map(remainingTimeFormatted -> resourceRepo.getString(R.string.time_to_end_sleep_info_dialog, remainingTimeFormatted))
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::updateTimeToEndText);
+            .map(TimeFormatterTool::formatMillisecondsToMinutes)
+            .map { remainingTimeFormatted ->
+                resourceRepo.getString(
+                    R.string.time_to_end_sleep_info_dialog,
+                    remainingTimeFormatted,
+                )
+            }
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::updateTimeToEndText)
     }
 
-
-    private Disposable closeScreenWhenTimerFinished() {
+    private fun closeScreenWhenTimerFinished(): Disposable {
         return timerInteractor.onTimerFinished()
-                .observeOn(schedulers.ui())
-                .subscribe(i -> getViewState().closeScreen());
+            .observeOn(schedulers.ui())
+            .subscribe { viewState.closeScreen() }
     }
 
-
-    public void onClickReset() {
+    fun onClickReset() {
         timerInteractor.reset()
-                .subscribe();
+            .subscribe()
     }
 
 }
