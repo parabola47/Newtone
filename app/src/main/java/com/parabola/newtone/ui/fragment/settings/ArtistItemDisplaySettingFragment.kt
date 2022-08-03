@@ -1,6 +1,5 @@
 package com.parabola.newtone.ui.fragment.settings
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -107,7 +106,7 @@ class ArtistItemDisplaySettingFragment : BaseSwipeToBackFragment() {
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.reset_settings_dialog_title)
             .setMessage(R.string.artist_item_reset_settings_dialog_message)
-            .setPositiveButton(R.string.dialog_reset) { d: DialogInterface?, which: Int ->
+            .setPositiveButton(R.string.dialog_reset) { _, _ ->
                 binding.textSizeSeekBar.progress = 16 - TEXT_SIZE_MIN
                 binding.borderPaddingSeekBar.progress = 16 - BORDER_PADDING_MIN
             }

@@ -126,12 +126,12 @@ class FavoritesPlaylistFragment : BaseSwipeToBackFragment(),
         }
     }
 
-    override fun refreshTracks(trackList: List<Track>) {
+    override fun refreshTracks(tracks: List<Track>) {
         val tracksCount = resources
-            .getQuantityString(R.plurals.tracks_count, trackList.size, trackList.size)
+            .getQuantityString(R.plurals.tracks_count, tracks.size, tracks.size)
         rootBinding.additionalInfo.text = tracksCount
-        if (!TracklistTool.isTracklistsIdentical(trackList, tracklistAdapter.all)) {
-            tracklistAdapter.replaceAll(trackList)
+        if (!TracklistTool.isTracklistsIdentical(tracks, tracklistAdapter.all)) {
+            tracklistAdapter.replaceAll(tracks)
         }
     }
 

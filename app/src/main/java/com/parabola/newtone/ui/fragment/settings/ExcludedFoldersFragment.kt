@@ -19,6 +19,7 @@ import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem
 import com.parabola.newtone.databinding.FragmentExcludedFoldersBinding
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
 import com.parabola.newtone.ui.dialog.FolderPickerDialog
+import com.parabola.newtone.ui.dialog.ItemSelectionListener
 import com.parabola.newtone.ui.router.MainRouter
 import java.util.function.Function
 import javax.inject.Inject
@@ -110,12 +111,14 @@ class ExcludedFoldersFragment : BaseSwipeToBackFragment() {
             val dialog = FolderPickerDialog.newInstance(
                 Environment.getExternalStorageDirectory().absolutePath, tracksCountInFolderMapper
             )
-            dialog.setItemSelectionListener { folderPath ->
-                val isNew = adapter.all.stream()
-                    .noneMatch(folderPath::equals)
+            dialog.setItemSelectionListener(object : ItemSelectionListener {
+                override fun onSelectedFolderPath(folderPath: String) {
+                    val isNew = adapter.all.stream()
+                        .noneMatch(folderPath::equals)
 
-                if (isNew) adapter.add(folderPath)
-            }
+                    if (isNew) adapter.add(folderPath)
+                }
+            })
             dialog.show(requireActivity().supportFragmentManager, null)
         }
 
