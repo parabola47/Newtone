@@ -1,150 +1,140 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.dialog
 
-import static java.util.Objects.requireNonNull;
-
-import android.app.Dialog;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.newtone.R;
-import com.parabola.newtone.adapter.BaseAdapter;
-import com.parabola.newtone.adapter.FolderPickAdapter;
-import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem;
-import com.parabola.newtone.databinding.DialogFolderPickerBinding;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
+import android.app.Dialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.newtone.R
+import com.parabola.newtone.adapter.BaseAdapter
+import com.parabola.newtone.adapter.FolderPickAdapter
+import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem
+import com.parabola.newtone.databinding.DialogFolderPickerBinding
+import java.io.File
+import java.io.FileFilter
+import java.util.function.Function
 
 
-public class FolderPickerDialog extends DialogFragment
-        implements BaseAdapter.OnItemClickListener {
-
-    private DialogFolderPickerBinding binding;
-
-    private final FolderPickAdapter folderPickAdapter = new FolderPickAdapter();
-
-    @Nullable
-    private Function<FolderPickerItem, String> additionalInfoMapper;
+private const val START_DIRECTORY_ARG_KEY = "START_DIRECTORY"
 
 
-    private static final String START_DIRECTORY_ARG_KEY = "START_DIRECTORY";
-    private File startDirectory;
+class FolderPickerDialog : DialogFragment(),
+    BaseAdapter.OnItemClickListener {
 
-    private File currentDirectory;
+    private var _binding: DialogFolderPickerBinding? = null
+    private val binding get() = _binding!!
+
+    private val folderPickAdapter = FolderPickAdapter()
+
+    private lateinit var additionalInfoMapper: Function<FolderPickerItem, String>
+
+    private lateinit var startDirectory: File
+
+    private var currentDirectory: File? = null
 
 
-    public static FolderPickerDialog newInstance(String startDirectory,
-                                                 @Nullable Function<FolderPickerItem, String> additionalInfoMapper) {
-        Bundle args = new Bundle();
-        args.putString(START_DIRECTORY_ARG_KEY, startDirectory);
-
-        FolderPickerDialog fragment = new FolderPickerDialog();
-        fragment.additionalInfoMapper = additionalInfoMapper;
-        fragment.setArguments(args);
-        return fragment;
+    companion object {
+        fun newInstance(
+            startDirectory: String,
+            additionalInfoMapper: Function<FolderPickerItem, String>,
+        ) = FolderPickerDialog().apply {
+            arguments = bundleOf(START_DIRECTORY_ARG_KEY to startDirectory)
+            this.additionalInfoMapper = additionalInfoMapper
+        }
     }
 
 
-    public FolderPickerDialog() {
-        setRetainInstance(true);
+    init {
+        retainInstance = true
     }
 
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        startDirectory = new File(requireNonNull(requireArguments().getString(START_DIRECTORY_ARG_KEY)));
-        binding = DialogFolderPickerBinding.inflate(LayoutInflater.from(requireContext()));
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        startDirectory = File(requireArguments().getString(START_DIRECTORY_ARG_KEY)!!)
+        _binding = DialogFolderPickerBinding.inflate(LayoutInflater.from(requireContext()))
 
-        folderPickAdapter.setFolderAdditionalInfoMapper(additionalInfoMapper);
-        binding.foldersListView.setAdapter(folderPickAdapter);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-        binding.foldersListView.addItemDecoration(itemDecoration);
+        folderPickAdapter.setFolderAdditionalInfoMapper(additionalInfoMapper)
+        binding.foldersListView.adapter = folderPickAdapter
+        val itemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.foldersListView.addItemDecoration(itemDecoration)
 
-        folderPickAdapter.setOnFolderPickListener(folderPath -> {
-            if (itemSelectionListener != null) {
-                itemSelectionListener.onSelectedFolderPath(folderPath);
-            }
-            dismiss();
-        });
+        folderPickAdapter.setOnFolderPickListener { folderPath ->
+            itemSelectionListener?.onSelectedFolderPath(folderPath)
+            dismiss()
+        }
 
-        return new MaterialAlertDialogBuilder(requireContext())
-                .setView(binding.getRoot())
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
+        return MaterialAlertDialogBuilder(requireContext())
+            .setView(binding.root)
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
     }
 
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         if (currentDirectory == null) {
-            currentDirectory = new File(startDirectory.getAbsolutePath());
+            currentDirectory = File(startDirectory.absolutePath)
         }
-        binding.directoryPath.setText(currentDirectory.getAbsolutePath());
+        binding.directoryPath.text = currentDirectory!!.absolutePath
 
-        folderPickAdapter.replaceAll(prepareFolderListEntries(currentDirectory));
-        folderPickAdapter.setOnItemClickListener(this);
+        folderPickAdapter.replaceAll(prepareFolderListEntries(currentDirectory!!))
+        folderPickAdapter.setOnItemClickListener(this)
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
-    @Override
-    public void onItemClick(int position) {
-        FolderPickerItem item = folderPickAdapter.get(position);
-        currentDirectory = new File(item.getLocation());
-
-        binding.directoryPath.setText(currentDirectory.getAbsolutePath());
-
-        folderPickAdapter.replaceAll(prepareFolderListEntries(currentDirectory));
+    override fun onItemClick(position: Int) {
+        val item = folderPickAdapter[position]
+        currentDirectory = File(item.location)
+        binding.directoryPath.text = currentDirectory!!.absolutePath
+        folderPickAdapter.replaceAll(prepareFolderListEntries(currentDirectory!!))
     }
 
+    private fun prepareFolderListEntries(interDirectory: File): List<FolderPickerItem> {
+        val internalList = mutableListOf<FolderPickerItem>()
 
-    private List<FolderPickerItem> prepareFolderListEntries(File interDirectory) {
-        List<FolderPickerItem> internalList = new ArrayList<>();
-
-        if (!interDirectory.getName().equals(startDirectory.getName())) {
-            FolderPickerItem parent = new FolderPickerItem();
-            parent.setFilename("..");
-            parent.setLocation(requireNonNull(interDirectory.getParentFile()).getAbsolutePath());
-            internalList.add(parent);
+        if (interDirectory.name != startDirectory.name) {
+            val parent = FolderPickerItem()
+            parent.filename = ".."
+            parent.location = interDirectory.parentFile!!.absolutePath
+            internalList.add(parent)
         }
 
-        FileFilter filter = file -> file.canRead() && file.isDirectory() && !file.isHidden();
+        val filter = FileFilter { file -> file.canRead() && file.isDirectory && !file.isHidden }
 
-        for (File folder : requireNonNull(interDirectory.listFiles(filter))) {
-            FolderPickerItem item = new FolderPickerItem();
-            item.setFilename(folder.getName());
-            item.setLocation(folder.getAbsolutePath());
-            internalList.add(item);
+        for (folder in interDirectory.listFiles(filter)!!) {
+            val item = FolderPickerItem()
+            item.filename = folder.name
+            item.location = folder.absolutePath
+            internalList.add(item)
         }
-        Collections.sort(internalList);
+        internalList.sort()
 
-        return internalList;
+        return internalList
     }
 
 
-    private ItemSelectionListener itemSelectionListener;
+    private var itemSelectionListener: ItemSelectionListener? = null
 
-    public void setItemSelectionListener(ItemSelectionListener itemSelectionListener) {
-        this.itemSelectionListener = itemSelectionListener;
+    fun setItemSelectionListener(itemSelectionListener: ItemSelectionListener) {
+        this.itemSelectionListener = itemSelectionListener
     }
 
-    public interface ItemSelectionListener {
-        void onSelectedFolderPath(String folder);
-    }
+}
 
+
+interface ItemSelectionListener {
+    fun onSelectedFolderPath(folderPath: String)
 }
