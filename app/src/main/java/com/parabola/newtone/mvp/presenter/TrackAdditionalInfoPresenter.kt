@@ -1,32 +1,35 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.repository.TrackRepository;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
-
-import javax.inject.Inject;
-
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.repository.TrackRepository
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.TrackAdditionalInfoView
+import io.reactivex.internal.functions.Functions
+import io.reactivex.internal.observers.ConsumerSingleObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class TrackAdditionalInfoPresenter extends MvpPresenter<TrackAdditionalInfoView> {
+class TrackAdditionalInfoPresenter(
+    appComponent: AppComponent,
+    private val trackId: Int,
+) : MvpPresenter<TrackAdditionalInfoView>() {
 
-    private final int trackId;
+    @Inject
+    lateinit var trackRepo: TrackRepository
 
-    @Inject TrackRepository trackRepo;
-
-    public TrackAdditionalInfoPresenter(AppComponent appComponent, int trackId) {
-        this.trackId = trackId;
-        appComponent.inject(this);
+    init {
+        appComponent.inject(this)
     }
 
-    @Override
-    protected void onFirstViewAttach() {
-        trackRepo.getById(trackId).subscribe(new ConsumerSingleObserver<>(
-                getViewState()::setTrack, Functions.ERROR_CONSUMER));
+
+    override fun onFirstViewAttach() {
+        trackRepo.getById(trackId).subscribe(
+            ConsumerSingleObserver(
+                viewState::setTrack,
+                Functions.ERROR_CONSUMER
+            )
+        )
     }
 
 }

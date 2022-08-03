@@ -1,98 +1,107 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.dialog
 
-import android.app.Dialog;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.app.Dialog
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import androidx.core.os.bundleOf
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.shape.CornerFamily
+import com.parabola.domain.model.Track
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.databinding.DialogTrackAdditionInfoBinding
+import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter
+import com.parabola.newtone.mvp.view.TrackAdditionalInfoView
+import com.parabola.newtone.util.TimeFormatterTool.formatMillisecondsToMinutes
+import moxy.MvpAppCompatDialogFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.shape.CornerFamily;
-import com.parabola.domain.model.Track;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.databinding.DialogTrackAdditionInfoBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter;
-import com.parabola.newtone.mvp.view.TrackAdditionalInfoView;
-import com.parabola.newtone.util.TimeFormatterTool;
+private const val TRACK_ID_BUNDLE_KEY = "track id"
 
-import moxy.MvpAppCompatDialogFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
 
-public final class TrackAdditionalInfoDialog extends MvpAppCompatDialogFragment
-        implements TrackAdditionalInfoView {
+class TrackAdditionalInfoDialog : MvpAppCompatDialogFragment(),
+    TrackAdditionalInfoView {
 
-    @InjectPresenter TrackAdditionalInfoPresenter presenter;
+    @InjectPresenter
+    lateinit var presenter: TrackAdditionalInfoPresenter
 
-    private DialogTrackAdditionInfoBinding binding;
+    private var _binding: DialogTrackAdditionInfoBinding? = null
+    private val binding get() = _binding!!
 
-    private static final String TRACK_ID_BUNDLE_KEY = "track id";
 
-    public static TrackAdditionalInfoDialog newInstance(int trackId) {
-        Bundle args = new Bundle();
-        args.putInt(TRACK_ID_BUNDLE_KEY, trackId);
-
-        TrackAdditionalInfoDialog fragment = new TrackAdditionalInfoDialog();
-        fragment.setArguments(args);
-        return fragment;
+    companion object {
+        fun newInstance(trackId: Int) = TrackAdditionalInfoDialog().apply {
+            arguments = bundleOf(TRACK_ID_BUNDLE_KEY to trackId)
+        }
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        binding = DialogTrackAdditionInfoBinding
-                .inflate(LayoutInflater.from(requireContext()));
 
-        binding.albumCover.setShapeAppearanceModel(binding.albumCover.getShapeAppearanceModel().toBuilder()
-                .setAllCorners(CornerFamily.ROUNDED, getResources().getDimension(R.dimen.track_add_info_dialog_cover_corner_size))
-                .build());
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        _binding = DialogTrackAdditionInfoBinding
+            .inflate(LayoutInflater.from(requireContext()))
 
-        return new MaterialAlertDialogBuilder(requireContext())
-                .setView(binding.getRoot())
-                .create();
+        binding.albumCover.shapeAppearanceModel =
+            binding.albumCover.shapeAppearanceModel.toBuilder()
+                .setAllCorners(
+                    CornerFamily.ROUNDED,
+                    resources.getDimension(R.dimen.track_add_info_dialog_cover_corner_size)
+                )
+                .build()
+
+        return MaterialAlertDialogBuilder(requireContext())
+            .setView(binding.root)
+            .create()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
     @ProvidePresenter
-    TrackAdditionalInfoPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        int trackId = requireArguments().getInt(TRACK_ID_BUNDLE_KEY);
-        return new TrackAdditionalInfoPresenter(appComponent, trackId);
+    fun providePresenter(): TrackAdditionalInfoPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        val trackId = requireArguments().getInt(TRACK_ID_BUNDLE_KEY)
+
+        return TrackAdditionalInfoPresenter(appComponent, trackId)
     }
 
-    @Override
-    public void setTrack(Track track) {
-        binding.artist.setText(track.getArtistName());
-        binding.album.setText(track.getAlbumTitle());
-        binding.albumPosition.setText(String.valueOf(track.getPositionInCd()));
-        binding.title.setText(track.getTitle());
 
-        binding.duration.setText(TimeFormatterTool.formatMillisecondsToMinutes(track.getDurationMs()));
-        if (track.getGenreName().isEmpty())
-            binding.genreWrapper.setVisibility(View.GONE);
-        else
-            binding.genre.setText(track.getGenreName());
-        binding.year.setText(String.valueOf(track.getYear()));
-        binding.filepath.setText(track.getFilePath());
+    override fun setTrack(track: Track) {
+        binding.apply {
+            artist.text = track.artistName
+            album.text = track.albumTitle
+            albumPosition.text = track.positionInCd.toString()
+            title.text = track.title
 
-        binding.fileSize.setText(getString(R.string.track_add_info_file_size_format, track.getFileSizeKilobytes()));
-        binding.bitrate.setText(getString(R.string.track_add_info_bitrate_format, track.getBitrate()));
-        binding.sampleRate.setText(getString(R.string.track_add_info_sample_rate_format, track.getSampleRate()));
+            duration.text = formatMillisecondsToMinutes(track.durationMs)
 
-        Bitmap artImage = track.getArtImage();
+            if (track.genreName.isEmpty()) genreWrapper.visibility = View.GONE
+            else genre.text = track.genreName
 
-        if (artImage != null)
-            binding.albumCover.setImageBitmap(artImage);
-        else binding.albumCover.setImageResource(R.drawable.album_default);
+            year.text = track.year.toString()
+            filepath.text = track.filePath
+
+            fileSize.text =
+                getString(R.string.track_add_info_file_size_format, track.fileSizeKilobytes)
+            bitrate.text =
+                getString(R.string.track_add_info_bitrate_format, track.bitrate)
+            sampleRate.text =
+                getString(R.string.track_add_info_sample_rate_format, track.sampleRate)
+
+            val artImage = track.getArtImage<Bitmap>()
+            if (artImage != null) albumCover.setImageBitmap(artImage)
+            else albumCover.setImageResource(R.drawable.album_default)
+        }
     }
 
-    @Override
-    public void closeScreen() {
-        dismiss();
+    override fun closeScreen() {
+        dismiss()
     }
+
 }
