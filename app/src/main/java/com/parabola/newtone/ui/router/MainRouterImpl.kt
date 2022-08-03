@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -246,11 +245,7 @@ class MainRouterImpl : MainRouter {
     }
 
     override fun openFolder(folderPath: String) {
-        val args = Bundle()
-        args.putString("folderPath", folderPath)
-        val fragment = FolderFragment()
-        fragment.arguments = args
-        openFragment(fragment)
+        openFragment(FolderFragment.newInstance(folderPath))
     }
 
     override fun openArtistTracks(artistId: Int) {
