@@ -1,15 +1,14 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import moxy.MvpView;
-import moxy.viewstate.strategy.alias.OneExecution;
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.OneExecution
 
 @OneExecution
-public interface CreatePlaylistView extends MvpView {
+interface CreatePlaylistView : MvpView {
+    fun focusOnInputField()
 
-    void focusOnInputField();
+    fun showPlaylistTitleIsEmptyError()
+    fun showPlaylistTitleAlreadyExistsError()
 
-    void showPlaylistTitleIsEmptyError();
-    void showPlaylistTitleAlreadyExistsError();
-
-    void closeScreen();
+    fun closeScreen()
 }
