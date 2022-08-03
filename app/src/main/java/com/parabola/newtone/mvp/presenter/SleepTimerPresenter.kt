@@ -1,50 +1,57 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.repository.ResourceRepository;
-import com.parabola.newtone.R;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.SleepTimerView;
-import com.parabola.newtone.ui.router.MainRouter;
-import com.parabola.newtone.util.TimeFormatterTool;
-import com.parabola.sleep_timer_feature.SleepTimerInteractor;
-
-import javax.inject.Inject;
-
-import io.reactivex.internal.observers.CallbackCompletableObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.repository.ResourceRepository
+import com.parabola.newtone.R
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.SleepTimerView
+import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.util.TimeFormatterTool
+import com.parabola.sleep_timer_feature.SleepTimerInteractor
+import com.parabola.sleep_timer_feature.SleepTimerInteractor.TimerAlreadyLaunchedException
+import io.reactivex.internal.observers.CallbackCompletableObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class SleepTimerPresenter extends MvpPresenter<SleepTimerView> {
+class SleepTimerPresenter(appComponent: AppComponent) : MvpPresenter<SleepTimerView>() {
 
     @Inject
-    SleepTimerInteractor timerInteractor;
-    @Inject
-    ResourceRepository resourceRepo;
-    @Inject
-    MainRouter router;
+    lateinit var timerInteractor: SleepTimerInteractor
 
-    public SleepTimerPresenter(AppComponent appComponent) {
-        appComponent.inject(this);
+    @Inject
+    lateinit var resourceRepo: ResourceRepository
+
+    @Inject
+    lateinit var router: MainRouter
+
+
+    init {
+        appComponent.inject(this)
     }
 
 
-    public void startTimer(long timeToSleepMs) {
+    fun startTimer(timeToSleepMs: Long) {
         timerInteractor.start(timeToSleepMs)
-                .subscribe(new CallbackCompletableObserver(
-                        error -> {
-                            if (error instanceof SleepTimerInteractor.TimerAlreadyLaunchedException) {
-                                String toastText = resourceRepo.getString(R.string.toast_sleep_timer_already_launched);
-                                router.showToast(toastText);
-                            } else {
-                                throw new RuntimeException(error);
-                            }
-                        },
-                        () -> {
-                            String sleepTimeFormatted = TimeFormatterTool.formatMillisecondsToMinutes(timeToSleepMs);
-                            String toastText = resourceRepo.getString(R.string.toast_sleep_timer_on_start, sleepTimeFormatted);
-                            router.showToast(toastText);
-                        }));
+            .subscribe(CallbackCompletableObserver(
+                { error ->
+                    if (error is TimerAlreadyLaunchedException) {
+                        val toastText =
+                            resourceRepo.getString(R.string.toast_sleep_timer_already_launched)
+                        router.showToast(toastText)
+                    } else {
+                        throw RuntimeException(error)
+                    }
+                }
+            ) {
+                val sleepTimeFormatted =
+                    TimeFormatterTool.formatMillisecondsToMinutes(timeToSleepMs)
+                val toastText = resourceRepo.getString(
+                    R.string.toast_sleep_timer_on_start,
+                    sleepTimeFormatted
+                )
+                router.showToast(toastText)
+            })
     }
 
 }
