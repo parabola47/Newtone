@@ -1,16 +1,12 @@
-package com.parabola.newtone.mvp.view;
+package com.parabola.newtone.mvp.view
 
-import com.parabola.domain.model.Playlist;
+import com.parabola.domain.model.Playlist
+import moxy.MvpView
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
-import java.util.List;
+@AddToEndSingle
+interface ChoosePlaylistView : MvpView {
+    fun refreshPlaylists(playlists: List<Playlist>)
 
-import moxy.MvpView;
-import moxy.viewstate.strategy.AddToEndSingleStrategy;
-import moxy.viewstate.strategy.StateStrategyType;
-
-@StateStrategyType(AddToEndSingleStrategy.class)
-public interface ChoosePlaylistView extends MvpView {
-    void refreshPlaylists(List<Playlist> playlists);
-
-    void closeScreen();
+    fun closeScreen()
 }

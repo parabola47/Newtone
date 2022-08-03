@@ -1,151 +1,142 @@
-package com.parabola.newtone.ui.dialog;
+package com.parabola.newtone.ui.dialog
 
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.annotation.LayoutRes
+import androidx.core.os.bundleOf
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.parabola.domain.model.Playlist
+import com.parabola.domain.model.Playlist.TrackItem
+import com.parabola.newtone.MainApplication
+import com.parabola.newtone.R
+import com.parabola.newtone.databinding.DialogPlaylistChooseBinding
+import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter
+import com.parabola.newtone.mvp.view.ChoosePlaylistView
+import io.reactivex.Observable
+import moxy.MvpAppCompatDialogFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+private const val TRACK_IDS_BUNDLE_KEY = "track_ids"
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.parabola.domain.model.Playlist;
-import com.parabola.newtone.MainApplication;
-import com.parabola.newtone.R;
-import com.parabola.newtone.databinding.DialogPlaylistChooseBinding;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.presenter.ChoosePlaylistPresenter;
-import com.parabola.newtone.mvp.view.ChoosePlaylistView;
+class ChoosePlaylistDialog : MvpAppCompatDialogFragment(),
+    ChoosePlaylistView {
 
-import java.util.ArrayList;
-import java.util.List;
+    @InjectPresenter
+    lateinit var presenter: ChoosePlaylistPresenter
 
-import io.reactivex.Observable;
-import moxy.MvpAppCompatDialogFragment;
-import moxy.presenter.InjectPresenter;
-import moxy.presenter.ProvidePresenter;
-
-public final class ChoosePlaylistDialog extends MvpAppCompatDialogFragment
-        implements ChoosePlaylistView {
-
-    @InjectPresenter ChoosePlaylistPresenter presenter;
-
-    private PlaylistListViewAdapter playlistAdapter;
-
-    private static final String TRACK_IDS_BUNDLE_KEY = "track ids";
-    private int[] trackIds;
+    private var playlistAdapter: PlaylistListViewAdapter? = null
 
 
-    public ChoosePlaylistDialog() {
+    companion object {
+        fun newInstance(vararg trackIds: Int) = ChoosePlaylistDialog().apply {
+            arguments = bundleOf(TRACK_IDS_BUNDLE_KEY to trackIds)
+        }
     }
 
 
-    public static ChoosePlaylistDialog newInstance(int... trackIds) {
-        Bundle args = new Bundle();
-        args.putIntArray(TRACK_IDS_BUNDLE_KEY, trackIds);
-
-        ChoosePlaylistDialog fragment = new ChoosePlaylistDialog();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        DialogPlaylistChooseBinding binding = DialogPlaylistChooseBinding
-                .inflate(LayoutInflater.from(requireContext()));
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val binding = DialogPlaylistChooseBinding
+            .inflate(LayoutInflater.from(requireContext()))
 
         if (playlistAdapter == null)
-            playlistAdapter = new PlaylistListViewAdapter(requireContext(), R.layout.item_playlist_lv, new ArrayList<>());
-        if (binding.playlists.getAdapter() == null)
-            binding.playlists.setAdapter(playlistAdapter);
-        if (binding.playlists.getOnItemClickListener() == null)
-            binding.playlists.setOnItemClickListener((parent, view, position, id) ->
-                    presenter.onClickPlaylistItem(playlistAdapter.getItemNN(position).getId()));
+            playlistAdapter =
+                PlaylistListViewAdapter(requireContext(), R.layout.item_playlist_lv, ArrayList())
 
-        binding.createNewPlaylistButton.setOnClickListener(v -> presenter.onClickCreateNewPlaylist());
+        if (binding.playlists.adapter == null)
+            binding.playlists.adapter = playlistAdapter
+        if (binding.playlists.onItemClickListener == null)
+            binding.playlists.onItemClickListener =
+                AdapterView.OnItemClickListener { _, _, position, _ ->
+                    presenter.onClickPlaylistItem(
+                        playlistAdapter!!.getItem(position)!!.id
+                    )
+                }
 
-        return new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.choose_playlist_dialog_title)
-                .setView(binding.getRoot())
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
+        binding.createNewPlaylistButton.setOnClickListener { presenter.onClickCreateNewPlaylist() }
+
+        return MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.choose_playlist_dialog_title)
+            .setView(binding.root)
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
     }
 
 
     @ProvidePresenter
-    ChoosePlaylistPresenter providePresenter() {
-        AppComponent appComponent = ((MainApplication) requireActivity().getApplication()).getAppComponent();
-        trackIds = requireArguments().getIntArray(TRACK_IDS_BUNDLE_KEY);
-        return new ChoosePlaylistPresenter(appComponent, trackIds);
-    }
+    fun providePresenter(): ChoosePlaylistPresenter {
+        val appComponent = (requireActivity().application as MainApplication).appComponent
+        val trackIds = requireArguments().getIntArray(TRACK_IDS_BUNDLE_KEY)!!
 
-    @Override
-    public void refreshPlaylists(List<Playlist> playlists) {
-        playlistAdapter.clear();
-        playlistAdapter.addAll(playlists);
-        playlistAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void closeScreen() {
-        dismiss();
+        return ChoosePlaylistPresenter(appComponent, trackIds)
     }
 
 
-    private class PlaylistListViewAdapter extends ArrayAdapter<Playlist> {
-
-        public PlaylistListViewAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<Playlist> playlists) {
-            super(context, resource, playlists);
+    override fun refreshPlaylists(playlists: List<Playlist>) {
+        playlistAdapter?.let {
+            it.clear()
+            it.addAll(playlists)
+            it.notifyDataSetChanged()
         }
 
-        @NonNull
-        public Playlist getItemNN(int position) {
-            Playlist playlist = getItem(position);
-            if (playlist == null) {
-                throw new NullPointerException();
-            }
+    }
 
-            return playlist;
+    override fun closeScreen() {
+        dismiss()
+    }
+
+
+    private inner class PlaylistListViewAdapter(
+        context: Context,
+        @LayoutRes resource: Int,
+        playlists: List<Playlist>
+    ) : ArrayAdapter<Playlist>(context, resource, playlists) {
+
+        override fun getView(
+            position: Int,
+            convertView: View?,
+            parent: ViewGroup,
+        ): View {
+            val row = convertView
+                ?: LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_playlist_lv, parent, false)
+            val playlist = getItem(position)!!
+
+            val title = row.findViewById<TextView>(R.id.title)
+            val tracksCount = row.findViewById<TextView>(R.id.tracks_count)
+            val playlistHasTrackImg = row.findViewById<ImageView>(R.id.playlistHasTrackImg)
+
+            title.text = playlist.title
+            val trackCountStr = resources.getQuantityString(
+                R.plurals.tracks_count,
+                playlist.size(),
+                playlist.size()
+            )
+            tracksCount.text = trackCountStr
+
+            // если в плейлист добавляется один трек, и если этот трек уже есть в плейлисте,
+            // то информация о его присутствии отмечается галочкой
+            var playlistContainThisTrack = false
+            val trackIds = requireArguments().getIntArray(TRACK_IDS_BUNDLE_KEY)!!
+            if (trackIds.size == 1) {
+                playlistContainThisTrack = Observable.fromIterable(playlist.playlistTracks)
+                    .map(TrackItem::getTrackId)
+                    .any { trackId -> trackIds[0] == trackId }
+                    .blockingGet()
+            }
+            playlistHasTrackImg.visibility =
+                if (playlistContainThisTrack) View.VISIBLE else View.GONE
+
+            return row
         }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View row = convertView;
-            if (row == null) {
-                row = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_playlist_lv, parent, false);
-            }
-            Playlist playlist = getItemNN(position);
-
-            TextView title = row.findViewById(R.id.title);
-            TextView tracksCount = row.findViewById(R.id.tracks_count);
-            ImageView playlistHasTrackImg = row.findViewById(R.id.playlistHasTrackImg);
-
-            title.setText(playlist.getTitle());
-            String trackCountStr = getResources().getQuantityString(R.plurals.tracks_count, playlist.size(), playlist.size());
-            tracksCount.setText(trackCountStr);
-
-
-            boolean playlistContainThisTrack = false;
-            if (trackIds.length == 1) {
-                playlistContainThisTrack = Observable.fromIterable(playlist.getPlaylistTracks())
-                        .map(Playlist.TrackItem::getTrackId)
-                        .any(trackId -> ChoosePlaylistDialog.this.trackIds[0] == trackId)
-                        .blockingGet();
-            }
-
-            playlistHasTrackImg.setVisibility(playlistContainThisTrack ? View.VISIBLE : View.GONE);
-
-            return row;
-        }
-
     }
 
 }

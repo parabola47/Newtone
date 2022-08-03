@@ -1,63 +1,67 @@
-package com.parabola.newtone.mvp.presenter;
+package com.parabola.newtone.mvp.presenter
 
-import com.parabola.domain.executor.SchedulerProvider;
-import com.parabola.domain.repository.PlaylistRepository;
-import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.mvp.view.ChoosePlaylistView;
-import com.parabola.newtone.ui.router.MainRouter;
-
-import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.observers.CallbackCompletableObserver;
-import moxy.InjectViewState;
-import moxy.MvpPresenter;
+import com.parabola.domain.executor.SchedulerProvider
+import com.parabola.domain.repository.PlaylistRepository
+import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.mvp.view.ChoosePlaylistView
+import com.parabola.newtone.ui.router.MainRouter
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.observers.CallbackCompletableObserver
+import moxy.InjectViewState
+import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-public final class ChoosePlaylistPresenter extends MvpPresenter<ChoosePlaylistView> {
+class ChoosePlaylistPresenter(
+    appComponent: AppComponent,
+    private val trackIds: IntArray,
+) : MvpPresenter<ChoosePlaylistView>() {
 
-    @Inject PlaylistRepository playlistRepo;
-    @Inject SchedulerProvider schedulers;
+    @Inject
+    lateinit var playlistRepo: PlaylistRepository
 
-    @Inject MainRouter router;
+    @Inject
+    lateinit var schedulers: SchedulerProvider
 
-    private final int[] trackIds;
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Inject
+    lateinit var router: MainRouter
 
-    public ChoosePlaylistPresenter(AppComponent appComponent, int[] trackIds) {
-        appComponent.inject(this);
-        this.trackIds = trackIds;
-    }
+    private val disposables = CompositeDisposable()
 
-    @Override
-    protected void onFirstViewAttach() {
-        disposables.addAll(observePlaylistsUpdates());
-    }
 
-    @Override
-    public void onDestroy() {
-        disposables.dispose();
+    init {
+        appComponent.inject(this)
     }
 
 
-    private Disposable observePlaylistsUpdates() {
+    override fun onFirstViewAttach() {
+        disposables.addAll(observePlaylistsUpdates())
+    }
+
+    override fun onDestroy() {
+        disposables.dispose()
+    }
+
+
+    private fun observePlaylistsUpdates(): Disposable {
         return playlistRepo.observePlaylistsUpdates()
-                .flatMapSingle(o -> playlistRepo.getAll())
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(getViewState()::refreshPlaylists);
+            .flatMapSingle { playlistRepo.all }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(viewState::refreshPlaylists)
     }
 
 
-    public void onClickCreateNewPlaylist() {
-        router.openCreatePlaylistDialog();
+    fun onClickCreateNewPlaylist() {
+        router.openCreatePlaylistDialog()
     }
 
-    public void onClickPlaylistItem(int playlistId) {
-        playlistRepo.addTracksToPlaylist(playlistId, trackIds)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe(new CallbackCompletableObserver(getViewState()::closeScreen));
+    fun onClickPlaylistItem(playlistId: Int) {
+        playlistRepo.addTracksToPlaylist(playlistId, *trackIds)
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(CallbackCompletableObserver { viewState.closeScreen() })
     }
+
 }
