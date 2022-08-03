@@ -179,9 +179,8 @@ class ArtistTracksFragment : BaseSwipeToBackFragment(),
     }
 
 
-    override fun getListType(): String {
-        return SortingDialog.ARTIST_TRACKS_SORTING
-    }
+    override val listType = SortingDialog.ARTIST_TRACKS_SORTING
+
 
     override fun smoothScrollToTop() {
         val layoutManager = binding.tracksList.layoutManager as LinearLayoutManager

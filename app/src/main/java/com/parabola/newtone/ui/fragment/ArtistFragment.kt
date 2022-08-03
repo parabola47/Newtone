@@ -165,9 +165,9 @@ class ArtistFragment : BaseSwipeToBackFragment(),
             binding.albumsList.addItemDecoration(itemDecoration)
     }
 
-    override fun getListType(): String {
-        return SortingDialog.ARTIST_ALBUMS_SORTING
-    }
+
+    override val listType = SortingDialog.ARTIST_ALBUMS_SORTING
+
 
     override fun smoothScrollToTop() {
         (requireView().findViewById<View>(R.id.artistView) as NestedScrollView).smoothScrollTo(0, 0)

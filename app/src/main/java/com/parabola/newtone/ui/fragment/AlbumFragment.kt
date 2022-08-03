@@ -199,9 +199,9 @@ class AlbumFragment : BaseSwipeToBackFragment(),
         tracksAdapter.setSelectedCondition { track: Track -> track.id == trackId }
     }
 
-    override fun getListType(): String {
-        return SortingDialog.ALBUM_TRACKS_SORTING
-    }
+
+    override val listType = SortingDialog.ALBUM_TRACKS_SORTING
+
 
     override fun smoothScrollToTop() {
         val layoutManager = binding.tracksList.layoutManager as LinearLayoutManager

@@ -119,7 +119,7 @@ class TabArtistFragment : MvpAppCompatFragment(),
         artistsAdapter.setSectionEnabled(enable)
     }
 
-    override fun getListType(): String = SortingDialog.ALL_ARTISTS_SORTING
+    override val listType = SortingDialog.ALL_ARTISTS_SORTING
 
     override fun smoothScrollToTop() {
         val fastScrollMinimalPosition =

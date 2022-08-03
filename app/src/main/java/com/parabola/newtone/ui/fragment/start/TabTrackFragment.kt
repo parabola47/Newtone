@@ -146,7 +146,9 @@ class TabTrackFragment : MvpAppCompatFragment(),
         tracksAdapter.removeWithCondition { track: Track -> track.id == trackId }
     }
 
-    override fun getListType(): String = SortingDialog.ALL_TRACKS_SORTING
+
+    override val listType = SortingDialog.ALL_TRACKS_SORTING
+
 
     override fun smoothScrollToTop() {
         val fastScrollMinimalPosition =
@@ -154,4 +156,5 @@ class TabTrackFragment : MvpAppCompatFragment(),
         binding.tracksList.scrollUp(fastScrollMinimalPosition)
         binding.tracksList.smoothScrollToTop()
     }
+
 }

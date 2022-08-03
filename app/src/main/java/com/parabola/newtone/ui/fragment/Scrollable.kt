@@ -1,7 +1,5 @@
-package com.parabola.newtone.ui.fragment;
+package com.parabola.newtone.ui.fragment
 
-public interface Scrollable {
-
-    void smoothScrollToTop();
-
+interface Scrollable {
+    fun smoothScrollToTop()
 }

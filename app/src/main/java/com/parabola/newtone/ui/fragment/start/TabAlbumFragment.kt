@@ -130,7 +130,7 @@ class TabAlbumFragment : MvpAppCompatFragment(),
         if (showed) binding.albumsList.addItemDecoration(itemDecoration)
     }
 
-    override fun getListType(): String = SortingDialog.ALL_ALBUMS_SORTING
+    override val listType = SortingDialog.ALL_ALBUMS_SORTING
 
     override fun smoothScrollToTop() {
         val fastScrollMinimalPosition =

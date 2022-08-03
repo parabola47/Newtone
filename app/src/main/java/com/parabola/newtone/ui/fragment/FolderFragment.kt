@@ -178,9 +178,8 @@ class FolderFragment : BaseSwipeToBackFragment(),
     }
 
 
-    override fun getListType(): String {
-        return SortingDialog.FOLDER_TRACKS_SORTING
-    }
+    override val listType = SortingDialog.FOLDER_TRACKS_SORTING
+
 
     override fun smoothScrollToTop() {
         val layoutManager = binding.tracksList.layoutManager as LinearLayoutManager
