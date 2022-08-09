@@ -1,6 +1,7 @@
 package com.parabola.player_feature
 
 import android.media.audiofx.BassBoost
+import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
@@ -8,11 +9,9 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioListener
 import com.parabola.domain.interactor.player.AudioEffectsInteractor
 import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand
-import com.parabola.player_feature.effect.Effect
-import com.parabola.player_feature.effect.EqualizerEffectImpl
-import com.parabola.player_feature.effect.EqualizerEffectUnavailable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import java.util.*
 
 
 private const val DEFAULT_PLAYBACK_SPEED = 1.0f
@@ -27,13 +26,13 @@ internal class AudioEffectsInteractorImpl(
     private val savedPlaybackSpeed: BehaviorSubject<Float>
     private val playbackPitchEnabledUpdates: BehaviorSubject<Boolean>
     private val savedPlaybackPitch: BehaviorSubject<Float>
+    private val eqEnablingUpdates = BehaviorSubject.createDefault(false)
     private val savedVirtualizerLevelUpdates: BehaviorSubject<Short>
     private val savedBassBoostLevelUpdates: BehaviorSubject<Short>
 
 
-    // TODO [23.06.2022] убрать nullable у переменных, узнать как это выделяется в отдельную абстракцию
     //FXs
-    private lateinit var equalizer: Effect.EqualizerEffect
+    private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
     private var virtualizer: Virtualizer? = null
 
@@ -96,13 +95,19 @@ internal class AudioEffectsInteractorImpl(
                 }
 
                 equalizer = try {
-                    EqualizerEffectImpl(
-                        audioSessionId,
-                        enableOnStart = settings.isEqEnabled,
-                        settings.savedBandLevels,
-                    )
+                    Equalizer(0, audioSessionId).apply {
+                        enabled = settings.isEqEnabled
+                        eqEnablingUpdates.onNext(enabled)
+                        val bandLevels = settings.savedBandLevels
+                        for (bandNumber in bandLevels.indices) {
+                            setBandLevel(
+                                bandNumber.toShort(),
+                                (bandLevels[bandNumber] * 100).toShort(),
+                            )
+                        }
+                    }
                 } catch (e: RuntimeException) {
-                    EqualizerEffectUnavailable()
+                    null
                 }
             }
         })
@@ -209,35 +214,77 @@ internal class AudioEffectsInteractorImpl(
 
 
     //    EQ
-    override fun isEqAvailable() = equalizer.isAvailable
+    override fun isEqAvailable() = (equalizer?.numberOfBands ?: 0) > 0
 
     override fun setEqEnable(enable: Boolean) {
-        equalizer.isEnabled = enable
+        equalizer?.enabled = enable
+
         settings.isEqEnabled = enable
+        eqEnablingUpdates.onNext(enable)
     }
 
-    override fun getMinEqBandLevel() = equalizer.minBandLevel
+    override fun getMinEqBandLevel() =
+        if (equalizer != null) (equalizer!!.bandLevelRange[0] / 100)
+        else 0
 
-    override fun getMaxEqBandLevel() = equalizer.maxBandLevel
+    override fun getMaxEqBandLevel() =
+        if (equalizer != null) (equalizer!!.bandLevelRange[1] / 100)
+        else 0
 
-    override fun observeEqEnabling() = equalizer.enablingUpdates
+    override fun observeEqEnabling() = eqEnablingUpdates
 
     override fun setBandLevel(bandId: Int, bandLevel: Int) {
-        equalizer.setBandLevel(bandId, bandLevel)
+        if (isEqAvailable)
+            equalizer!!.setBandLevel(bandId.toShort(), (bandLevel * 100).toShort())
 
-        val bandLevels = equalizer.bands.map { it.currentLevel }
+        val bandLevels = bands.map { it.currentLevel }
         settings.saveBandLevels(bandLevels)
     }
 
-    override fun getBands(): List<EqBand> = equalizer.bands
+    override fun getBands(): List<EqBand> {
+        if (equalizer == null)
+            return emptyList()
+
+        val bands = mutableListOf<EqBand>()
+
+        for (i in 0 until equalizer!!.numberOfBands) {
+            val band = EqBand().apply {
+                id = i
+                frequency = equalizer!!.getCenterFreq(i.toShort()) / 1000
+                currentLevel = (equalizer!!.getBandLevel(i.toShort()) / 100)
+            }
+            bands.add(band)
+        }
+
+        return bands
+    }
 
     override fun usePreset(presetIndex: Int) {
-        equalizer.usePreset(presetIndex)
+        if (equalizer != null)
+            equalizer!!.usePreset(presetIndex.toShort())
 
-        val bandLevels = equalizer.bands.map { it.currentLevel }
+        val bandLevels = bands.map { it.currentLevel }
         settings.saveBandLevels(bandLevels)
     }
 
-    override fun getPresets(): List<String> = equalizer.presets
+    private var presetsCache: MutableList<String>? = null
+
+    override fun getPresets(): List<String> {
+        if (presetsCache != null)
+            return Collections.unmodifiableList(presetsCache!!)
+
+        if (equalizer == null) {
+            presetsCache = mutableListOf()
+
+            return Collections.unmodifiableList(presetsCache!!)
+        }
+
+        presetsCache = mutableListOf()
+        for (i in 0 until equalizer!!.numberOfPresets) {
+            presetsCache!!.add(equalizer!!.getPresetName(i.toShort()))
+        }
+
+        return Collections.unmodifiableList(presetsCache!!)
+    }
 
 }
