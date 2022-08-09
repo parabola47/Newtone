@@ -43,17 +43,17 @@ public interface AudioEffectsInteractor {
     void setEqEnable(boolean enable);
     Observable<Boolean> observeEqEnabling();
 
-    short getMinEqBandLevel(); // в дециБеллах
-    short getMaxEqBandLevel(); // в дециБеллах
-    void setBandLevel(int bandId, short bandLevel); // в дециБеллах
+    int getMinEqBandLevel(); // в дециБеллах
+    int getMaxEqBandLevel(); // в дециБеллах
+    void setBandLevel(int bandId, int bandLevel); // в дециБеллах
     List<EqBand> getBands();
 
-    void usePreset(short presetIndex);
+    void usePreset(int presetIndex);
     List<String> getPresets();
 
     class EqBand {
         public int id;
         public int frequency;       // в Герцах
-        public short currentLevel;  // в дециБеллах
+        public int currentLevel;  // в дециБеллах
     }
 }

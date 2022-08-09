@@ -118,8 +118,8 @@ class FxEqualizerFragment : MvpAppCompatFragment(),
                         fromUser: Boolean,
                     ) {
                         val newLevel = progress + minEqLevel
-                        band.currentLevel = newLevel.toShort()
-                        presenter.onChangeBandLevel(band.id, newLevel.toShort())
+                        band.currentLevel = newLevel
+                        presenter.onChangeBandLevel(band.id, newLevel)
 
                         holder.binding.eqDb.text = newLevel.toString()
                     }

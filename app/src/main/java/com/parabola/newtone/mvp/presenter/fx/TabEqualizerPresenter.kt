@@ -28,8 +28,8 @@ class TabEqualizerPresenter(appComponent: AppComponent) : MvpPresenter<TabEquali
 
 
     public override fun onFirstViewAttach() {
-        viewState.setMaxEqLevel(fxInteractor.maxEqBandLevel.toInt())
-        viewState.setMinEqLevel(fxInteractor.minEqBandLevel.toInt())
+        viewState.setMaxEqLevel(fxInteractor.maxEqBandLevel)
+        viewState.setMinEqLevel(fxInteractor.minEqBandLevel)
         viewState.refreshBands(fxInteractor.bands)
         disposables.addAll(observeEqEnabling())
     }
@@ -52,7 +52,7 @@ class TabEqualizerPresenter(appComponent: AppComponent) : MvpPresenter<TabEquali
         fxInteractor.setEqEnable(enabled)
     }
 
-    fun onChangeBandLevel(bandId: Int, newLevel: Short) {
+    fun onChangeBandLevel(bandId: Int, newLevel: Int) {
         fxInteractor.setBandLevel(bandId, newLevel)
     }
 
