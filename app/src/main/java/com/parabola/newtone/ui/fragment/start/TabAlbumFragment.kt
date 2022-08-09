@@ -24,6 +24,9 @@ import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.fragment.Scrollable
 import com.parabola.newtone.ui.fragment.Sortable
 import com.parabola.newtone.util.AndroidTool
+import com.parabola.newtone.util.scrollUp
+import com.parabola.newtone.util.smoothScrollToTop
+import com.parabola.newtone.util.visibleItemsCount
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -127,19 +130,12 @@ class TabAlbumFragment : MvpAppCompatFragment(),
         if (showed) binding.albumsList.addItemDecoration(itemDecoration)
     }
 
-    override fun getListType(): String = SortingDialog.ALL_ALBUMS_SORTING
+    override val listType = SortingDialog.ALL_ALBUMS_SORTING
 
     override fun smoothScrollToTop() {
-        val layoutManager = binding.albumsList.layoutManager as LinearLayoutManager
-        val firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
-        val screenItemsCount =
-            layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()
-
-        if (firstItemPosition > screenItemsCount * 3) {
-            binding.albumsList.scrollToPosition(screenItemsCount * 3)
-        }
-
-        binding.albumsList.smoothScrollToPosition(0)
+        val fastScrollMinimalPosition =
+            (binding.albumsList.layoutManager as LinearLayoutManager).visibleItemsCount() * 3
+        binding.albumsList.scrollUp(fastScrollMinimalPosition)
+        binding.albumsList.smoothScrollToTop()
     }
-
 }
