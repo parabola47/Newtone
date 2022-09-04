@@ -22,6 +22,15 @@ You can download Newtone app by following [this](https://play.google.com/store/a
     <td><img src="https://user-images.githubusercontent.com/15174509/141653251-dadc632e-20a8-4021-8752-e2a212e4d1f2.png" width="184" height="356"/></td>
   </tr>
 </table>
+
+### Technology stack
+
+• Java + Kotlin\
+• [RxJava](https://github.com/ReactiveX/RxJava)\
+• Clean Architecture\
+• MVP with [Moxy](https://github.com/moxy-community/Moxy)\
+• [Dagger](https://github.com/google/dagger)\
+• [ExoPlayer 2](https://github.com/google/ExoPlayer)
  
 ### Features
 
