@@ -16,5 +16,5 @@
     app:fastScrollThumbInactiveColor="?attr/colorPrimary"
     app:fastScrollTrackColor="@color/colorScrollbarBackground"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    tools:context=".ui.fragment.playlist.FoldersListFragment"
+    tools:context=".presentation.playlist.folderslist.FoldersListFragment"
     tools:listitem="@layout/item_folder" />

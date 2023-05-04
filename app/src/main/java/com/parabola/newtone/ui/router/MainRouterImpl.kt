@@ -13,6 +13,7 @@ import com.parabola.domain.model.Track
 import com.parabola.newtone.BuildConfig
 import com.parabola.newtone.R
 import com.parabola.newtone.presentation.playlist.favourites.FavouritesPlaylistFragment
+import com.parabola.newtone.presentation.playlist.folderslist.FoldersListFragment
 import com.parabola.newtone.presentation.playlist.playlist.PlaylistFragment
 import com.parabola.newtone.presentation.playlist.queue.QueueFragment
 import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistFragment
@@ -21,7 +22,6 @@ import com.parabola.newtone.ui.dialog.*
 import com.parabola.newtone.ui.dialog.fx.AudioEffectsDialog
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
 import com.parabola.newtone.ui.fragment.*
-import com.parabola.newtone.ui.fragment.playlist.*
 import com.parabola.newtone.ui.fragment.settings.*
 import com.parabola.newtone.ui.fragment.settings.dialog.IsaacNewtoneDialog
 import com.parabola.newtone.ui.fragment.start.StartFragment
