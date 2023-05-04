@@ -5,6 +5,7 @@ import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
 import com.parabola.newtone.presentation.playlist.favourites.FavouritesPlaylistPresenter
 import com.parabola.newtone.presentation.playlist.queue.QueuePresenter
+import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistPresenter
 import com.parabola.newtone.ui.activity.MainActivity
 import com.parabola.newtone.ui.dialog.DeleteTrackDialog
 import com.parabola.newtone.ui.dialog.SortingDialog
