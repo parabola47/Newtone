@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment.start
+package com.parabola.newtone.presentation.main
 
 import android.content.Context
 import android.content.DialogInterface
@@ -19,12 +19,13 @@ import com.google.android.material.tabs.TabLayout
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
-import com.parabola.newtone.adapter.StartFragmentPagerAdapter
 import com.parabola.newtone.databinding.FragmentStartBinding
-import com.parabola.newtone.mvp.presenter.StartPresenter
-import com.parabola.newtone.mvp.view.StartView
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
 import com.parabola.newtone.ui.fragment.Scrollable
+import com.parabola.newtone.presentation.main.albums.TabAlbumFragment
+import com.parabola.newtone.presentation.main.artists.TabArtistFragment
+import com.parabola.newtone.presentation.main.playlists.TabPlaylistFragment
+import com.parabola.newtone.presentation.main.tracks.TabTrackFragment
 import com.parabola.newtone.util.AndroidTool
 import com.parabola.newtone.util.OnTabSelectedAdapter
 import moxy.MvpAppCompatFragment

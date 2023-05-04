@@ -3,6 +3,11 @@ package com.parabola.newtone.di.app
 import com.parabola.newtone.mvp.presenter.*
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
+import com.parabola.newtone.presentation.main.StartPresenter
+import com.parabola.newtone.presentation.main.albums.TabAlbumPresenter
+import com.parabola.newtone.presentation.main.artists.TabArtistPresenter
+import com.parabola.newtone.presentation.main.playlists.TabPlaylistPresenter
+import com.parabola.newtone.presentation.main.tracks.TabTrackPresenter
 import com.parabola.newtone.presentation.playlist.favourites.FavouritesPlaylistPresenter
 import com.parabola.newtone.presentation.playlist.folderslist.FoldersListPresenter
 import com.parabola.newtone.presentation.playlist.playlist.PlaylistPresenter

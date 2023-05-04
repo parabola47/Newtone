@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment.start
+package com.parabola.newtone.presentation.main.artists
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -16,8 +16,6 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ArtistAdapter
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentTabArtistBinding
-import com.parabola.newtone.mvp.presenter.TabArtistPresenter
-import com.parabola.newtone.mvp.view.TabArtistView
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
 import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.fragment.Scrollable

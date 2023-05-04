@@ -1,9 +1,8 @@
-package com.parabola.newtone.mvp.presenter
+package com.parabola.newtone.presentation.main
 
 import com.parabola.domain.interactor.TrackInteractor
 import com.parabola.domain.repository.PermissionHandler
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.mvp.view.StartView
 import com.parabola.newtone.ui.router.MainRouter
 import io.reactivex.disposables.Disposable
 import moxy.InjectViewState
