@@ -10,7 +10,7 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:paddingBottom="16dp"
-    tools:context=".ui.fragment.PlayerFragment">
+    tools:context=".presentation.player.PlayerFragment">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/queue"
