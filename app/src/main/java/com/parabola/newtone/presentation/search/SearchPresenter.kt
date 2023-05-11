@@ -1,11 +1,10 @@
-package com.parabola.newtone.mvp.presenter
+package com.parabola.newtone.presentation.search
 
 import com.parabola.domain.executor.SchedulerProvider
 import com.parabola.domain.interactor.player.PlayerInteractor
 import com.parabola.domain.model.Track
 import com.parabola.domain.settings.ViewSettingsInteractor
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.mvp.view.SearchFragmentView
 import com.parabola.newtone.ui.router.MainRouter
 import com.parabola.search_feature.SearchInteractor
 import com.parabola.search_feature.SearchResult

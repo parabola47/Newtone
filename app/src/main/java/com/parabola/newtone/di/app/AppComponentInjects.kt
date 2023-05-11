@@ -18,6 +18,7 @@ import com.parabola.newtone.presentation.playlist.folderslist.FoldersListPresent
 import com.parabola.newtone.presentation.playlist.playlist.PlaylistPresenter
 import com.parabola.newtone.presentation.playlist.queue.QueuePresenter
 import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistPresenter
+import com.parabola.newtone.presentation.search.SearchPresenter
 import com.parabola.newtone.ui.activity.MainActivity
 import com.parabola.newtone.ui.dialog.DeleteTrackDialog
 import com.parabola.newtone.ui.dialog.SortingDialog

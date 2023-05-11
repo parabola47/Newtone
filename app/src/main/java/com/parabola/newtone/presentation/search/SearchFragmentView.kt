@@ -1,4 +1,4 @@
-package com.parabola.newtone.mvp.view
+package com.parabola.newtone.presentation.search
 
 import com.parabola.domain.model.Album
 import com.parabola.domain.model.Artist

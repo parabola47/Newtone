@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment
+package com.parabola.newtone.presentation.search
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -27,8 +27,6 @@ import com.parabola.newtone.adapter.ArtistAdapter
 import com.parabola.newtone.adapter.PlaylistAdapter
 import com.parabola.newtone.adapter.TrackAdapter
 import com.parabola.newtone.databinding.FragmentSearchBinding
-import com.parabola.newtone.mvp.presenter.SearchPresenter
-import com.parabola.newtone.mvp.view.SearchFragmentView
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter

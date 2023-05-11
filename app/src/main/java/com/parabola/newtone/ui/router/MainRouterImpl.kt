@@ -25,11 +25,11 @@ import com.parabola.newtone.ui.activity.MainActivity
 import com.parabola.newtone.ui.dialog.*
 import com.parabola.newtone.ui.dialog.fx.AudioEffectsDialog
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
-import com.parabola.newtone.ui.fragment.*
 import com.parabola.newtone.ui.fragment.settings.*
 import com.parabola.newtone.ui.fragment.settings.dialog.IsaacNewtoneDialog
 import com.parabola.newtone.presentation.main.StartFragment
 import com.parabola.newtone.presentation.player.PlayerFragment
+import com.parabola.newtone.presentation.search.SearchFragment
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
