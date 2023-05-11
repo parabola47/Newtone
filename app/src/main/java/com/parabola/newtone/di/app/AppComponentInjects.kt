@@ -6,6 +6,7 @@ import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
 import com.parabola.newtone.presentation.album.AlbumPresenter
 import com.parabola.newtone.presentation.artist.ArtistPresenter
 import com.parabola.newtone.presentation.artisttracks.ArtistTracksPresenter
+import com.parabola.newtone.presentation.folder.FolderPresenter
 import com.parabola.newtone.presentation.main.StartPresenter
 import com.parabola.newtone.presentation.main.albums.TabAlbumPresenter
 import com.parabola.newtone.presentation.main.artists.TabArtistPresenter
