@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment.settings
+package com.parabola.newtone.presentation.settings
 
 import android.os.Bundle
 import android.os.Environment

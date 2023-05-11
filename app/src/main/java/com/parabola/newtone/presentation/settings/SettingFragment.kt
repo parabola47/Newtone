@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment.settings
+package com.parabola.newtone.presentation.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,8 +8,6 @@ import com.parabola.newtone.BuildConfig
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.databinding.FragmentSettingBinding
-import com.parabola.newtone.mvp.presenter.SettingPresenter
-import com.parabola.newtone.mvp.view.SettingView
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter

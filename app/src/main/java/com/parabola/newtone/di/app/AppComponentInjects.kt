@@ -23,10 +23,11 @@ import com.parabola.newtone.ui.activity.MainActivity
 import com.parabola.newtone.ui.dialog.DeleteTrackDialog
 import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
-import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment
-import com.parabola.newtone.ui.fragment.settings.ArtistItemDisplaySettingFragment
-import com.parabola.newtone.ui.fragment.settings.ExcludedFoldersFragment
-import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
+import com.parabola.newtone.presentation.settings.SettingPresenter
+import com.parabola.newtone.presentation.settings.TrackItemDisplaySettingFragment
 
 interface AppComponentInjects {
     fun inject(activity: MainActivity)
