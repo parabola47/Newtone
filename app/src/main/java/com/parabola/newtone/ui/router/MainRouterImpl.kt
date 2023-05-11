@@ -21,12 +21,12 @@ import com.parabola.newtone.presentation.playlist.folderslist.FoldersListFragmen
 import com.parabola.newtone.presentation.playlist.playlist.PlaylistFragment
 import com.parabola.newtone.presentation.playlist.queue.QueueFragment
 import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistFragment
-import com.parabola.newtone.ui.activity.MainActivity
+import com.parabola.newtone.presentation.mainactivity.MainActivity
 import com.parabola.newtone.ui.dialog.*
 import com.parabola.newtone.ui.dialog.fx.AudioEffectsDialog
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
 import com.parabola.newtone.presentation.settings.dialog.IsaacNewtoneDialog
-import com.parabola.newtone.presentation.main.StartFragment
+import com.parabola.newtone.presentation.main.start.StartFragment
 import com.parabola.newtone.presentation.player.PlayerFragment
 import com.parabola.newtone.presentation.search.SearchFragment
 import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment

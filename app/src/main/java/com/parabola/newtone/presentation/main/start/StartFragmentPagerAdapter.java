@@ -1,4 +1,4 @@
-package com.parabola.newtone.presentation.main;
+package com.parabola.newtone.presentation.main.start;
 
 import android.content.Context;
 

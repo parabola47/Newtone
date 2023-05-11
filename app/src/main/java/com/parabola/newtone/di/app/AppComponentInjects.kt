@@ -7,7 +7,7 @@ import com.parabola.newtone.presentation.album.AlbumPresenter
 import com.parabola.newtone.presentation.artist.ArtistPresenter
 import com.parabola.newtone.presentation.artisttracks.ArtistTracksPresenter
 import com.parabola.newtone.presentation.folder.FolderPresenter
-import com.parabola.newtone.presentation.main.StartPresenter
+import com.parabola.newtone.presentation.main.start.StartPresenter
 import com.parabola.newtone.presentation.main.albums.TabAlbumPresenter
 import com.parabola.newtone.presentation.main.artists.TabArtistPresenter
 import com.parabola.newtone.presentation.main.playlists.TabPlaylistPresenter
@@ -19,7 +19,8 @@ import com.parabola.newtone.presentation.playlist.playlist.PlaylistPresenter
 import com.parabola.newtone.presentation.playlist.queue.QueuePresenter
 import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistPresenter
 import com.parabola.newtone.presentation.search.SearchPresenter
-import com.parabola.newtone.ui.activity.MainActivity
+import com.parabola.newtone.presentation.mainactivity.MainActivity
+import com.parabola.newtone.presentation.mainactivity.MainPresenter
 import com.parabola.newtone.ui.dialog.DeleteTrackDialog
 import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog

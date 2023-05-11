@@ -1,4 +1,4 @@
-package com.parabola.newtone.presentation.main
+package com.parabola.newtone.presentation.main.start
 
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle

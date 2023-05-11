@@ -3,7 +3,7 @@ package com.parabola.newtone.ui.router
 import androidx.annotation.FloatRange
 import androidx.fragment.app.Fragment
 import com.parabola.domain.model.Track
-import com.parabola.newtone.ui.activity.MainActivity
+import com.parabola.newtone.presentation.mainactivity.MainActivity
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import io.reactivex.Observable
 

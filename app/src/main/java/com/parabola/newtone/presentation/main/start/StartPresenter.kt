@@ -1,4 +1,4 @@
-package com.parabola.newtone.presentation.main
+package com.parabola.newtone.presentation.main.start
 
 import com.parabola.domain.interactor.TrackInteractor
 import com.parabola.domain.repository.PermissionHandler

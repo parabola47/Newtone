@@ -11,7 +11,7 @@
     sothree:umanoPanelHeight="68dp"
     sothree:umanoParallaxOffset="72dp"
     sothree:umanoShadowHeight="4dp"
-    tools:context=".ui.activity.MainActivity">
+    tools:context=".presentation.mainactivity.MainActivity">
 
     <FrameLayout
         android:id="@+id/nav_host_fragment"
