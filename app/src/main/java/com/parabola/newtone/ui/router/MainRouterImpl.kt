@@ -31,6 +31,7 @@ import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
 import com.parabola.newtone.presentation.settings.dialog.IsaacNewtoneDialog
 import com.parabola.newtone.presentation.main.start.StartFragment
 import com.parabola.newtone.presentation.player.PlayerFragment
+import com.parabola.newtone.presentation.player.timetosleepinfo.TimeToSleepInfoDialog
 import com.parabola.newtone.presentation.playlist.renameplaylist.RenamePlaylistDialog
 import com.parabola.newtone.presentation.search.SearchFragment
 import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
