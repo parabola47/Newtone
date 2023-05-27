@@ -16,6 +16,7 @@ import com.parabola.newtone.presentation.album.AlbumFragment
 import com.parabola.newtone.presentation.artist.ArtistFragment
 import com.parabola.newtone.presentation.artisttracks.ArtistTracksFragment
 import com.parabola.newtone.presentation.chooseplaylist.ChoosePlaylistDialog
+import com.parabola.newtone.presentation.createplaylist.CreatePlaylistDialog
 import com.parabola.newtone.presentation.folder.FolderFragment
 import com.parabola.newtone.presentation.playlist.favourites.FavouritesPlaylistFragment
 import com.parabola.newtone.presentation.playlist.folderslist.FoldersListFragment

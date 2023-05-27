@@ -7,6 +7,7 @@ import com.parabola.newtone.presentation.album.AlbumPresenter
 import com.parabola.newtone.presentation.artist.ArtistPresenter
 import com.parabola.newtone.presentation.artisttracks.ArtistTracksPresenter
 import com.parabola.newtone.presentation.chooseplaylist.ChoosePlaylistPresenter
+import com.parabola.newtone.presentation.createplaylist.CreatePlaylistPresenter
 import com.parabola.newtone.presentation.folder.FolderPresenter
 import com.parabola.newtone.presentation.main.start.StartPresenter
 import com.parabola.newtone.presentation.main.albums.TabAlbumPresenter
