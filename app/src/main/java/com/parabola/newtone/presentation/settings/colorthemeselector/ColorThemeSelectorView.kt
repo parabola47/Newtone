@@ -1,4 +1,4 @@
-package com.parabola.newtone.mvp.view
+package com.parabola.newtone.presentation.settings.colorthemeselector
 
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor

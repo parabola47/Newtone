@@ -1,6 +1,5 @@
 package com.parabola.newtone.di.app
 
-import com.parabola.newtone.mvp.presenter.*
 import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter
 import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
 import com.parabola.newtone.presentation.album.AlbumPresenter
@@ -34,6 +33,7 @@ import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragme
 import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
 import com.parabola.newtone.presentation.settings.SettingPresenter
 import com.parabola.newtone.presentation.settings.TrackItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.colorthemeselector.ColorThemeSelectorPresenter
 import com.parabola.newtone.presentation.trackadditionalinfo.TrackAdditionalInfoPresenter
 
 interface AppComponentInjects {

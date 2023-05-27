@@ -37,7 +37,7 @@ import com.parabola.newtone.presentation.playlist.renameplaylist.RenamePlaylistD
 import com.parabola.newtone.presentation.search.SearchFragment
 import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
 import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragment
-import com.parabola.newtone.presentation.settings.ColorThemeSelectorFragment
+import com.parabola.newtone.presentation.settings.colorthemeselector.ColorThemeSelectorFragment
 import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
 import com.parabola.newtone.presentation.settings.SettingFragment
 import com.parabola.newtone.presentation.settings.TrackItemDisplaySettingFragment

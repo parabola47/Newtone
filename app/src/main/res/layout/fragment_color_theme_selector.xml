@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".presentation.settings.ColorThemeSelectorFragment">
+    tools:context=".presentation.settings.colorthemeselector.ColorThemeSelectorFragment">
 
     <FrameLayout
         style="@style/SettingBlockTitleContainer"

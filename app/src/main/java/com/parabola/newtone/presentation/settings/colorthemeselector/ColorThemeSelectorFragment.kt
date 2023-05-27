@@ -1,4 +1,4 @@
-package com.parabola.newtone.presentation.settings
+package com.parabola.newtone.presentation.settings.colorthemeselector
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,6 @@ import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor.*
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.databinding.FragmentColorThemeSelectorBinding
-import com.parabola.newtone.mvp.presenter.ColorThemeSelectorPresenter
-import com.parabola.newtone.mvp.view.ColorThemeSelectorView
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter

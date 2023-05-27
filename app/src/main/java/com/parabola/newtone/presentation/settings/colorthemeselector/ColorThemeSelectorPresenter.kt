@@ -1,10 +1,9 @@
-package com.parabola.newtone.mvp.presenter
+package com.parabola.newtone.presentation.settings.colorthemeselector
 
 import com.parabola.domain.settings.ViewSettingsInteractor
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.mvp.view.ColorThemeSelectorView
 import com.parabola.newtone.ui.router.MainRouter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
