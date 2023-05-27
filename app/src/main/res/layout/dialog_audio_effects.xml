@@ -31,7 +31,7 @@
 
     </com.google.android.material.tabs.TabLayout>
 
-    <com.parabola.newtone.ui.view.WrapContentHeightViewPager
+    <com.parabola.newtone.presentation.view.WrapContentHeightViewPager
         android:id="@+id/audio_effects_pager"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

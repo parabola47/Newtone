@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.view;
+package com.parabola.newtone.presentation.view;
 
 import android.content.Context;
 import android.content.res.AssetManager;
