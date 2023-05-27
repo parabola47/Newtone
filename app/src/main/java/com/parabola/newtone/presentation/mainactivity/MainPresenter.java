@@ -7,7 +7,7 @@ import com.parabola.domain.repository.TrackRepository;
 import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.utils.EmptyItems;
 import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.ui.router.MainRouter;
+import com.parabola.newtone.presentation.router.MainRouter;
 import com.parabola.player_feature.PlayerInteractorImpl;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 

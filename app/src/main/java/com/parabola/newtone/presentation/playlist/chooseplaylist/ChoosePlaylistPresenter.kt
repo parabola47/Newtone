@@ -3,7 +3,7 @@ package com.parabola.newtone.presentation.playlist.chooseplaylist
 import com.parabola.domain.executor.SchedulerProvider
 import com.parabola.domain.repository.PlaylistRepository
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.observers.CallbackCompletableObserver

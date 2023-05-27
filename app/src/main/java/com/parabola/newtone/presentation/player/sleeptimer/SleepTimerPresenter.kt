@@ -3,7 +3,7 @@ package com.parabola.newtone.presentation.player.sleeptimer
 import com.parabola.domain.repository.ResourceRepository
 import com.parabola.newtone.R
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import com.parabola.newtone.util.TimeFormatterTool
 import com.parabola.sleep_timer_feature.SleepTimerInteractor
 import com.parabola.sleep_timer_feature.SleepTimerInteractor.TimerAlreadyLaunchedException

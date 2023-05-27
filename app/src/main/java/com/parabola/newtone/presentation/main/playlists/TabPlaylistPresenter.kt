@@ -6,7 +6,7 @@ import com.parabola.domain.repository.PlaylistRepository
 import com.parabola.domain.repository.TrackRepository
 import com.parabola.domain.settings.ViewSettingsInteractor
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.functions.Functions

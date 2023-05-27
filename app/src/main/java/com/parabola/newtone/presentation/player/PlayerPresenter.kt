@@ -8,7 +8,7 @@ import com.parabola.domain.repository.TrackRepository
 import com.parabola.domain.utils.EmptyItems
 import com.parabola.newtone.R
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import com.parabola.newtone.util.TimeFormatterTool
 import com.parabola.newtone.util.TimeFormatterTool.formatMillisecondsToMinutes
 import com.parabola.sleep_timer_feature.SleepTimerInteractor

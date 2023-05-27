@@ -35,7 +35,7 @@ import com.parabola.newtone.presentation.search.SearchFragment;
 import com.parabola.newtone.ui.fragment.Sortable;
 import com.parabola.newtone.presentation.settings.SettingFragment;
 import com.parabola.newtone.presentation.main.playlists.TabPlaylistFragment;
-import com.parabola.newtone.ui.router.MainRouter;
+import com.parabola.newtone.presentation.router.MainRouter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;

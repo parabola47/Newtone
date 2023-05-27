@@ -16,7 +16,7 @@ import com.parabola.newtone.R
 import com.parabola.newtone.databinding.FragmentTrackItemDisplaySettingBinding
 import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import com.parabola.newtone.util.AndroidTool.convertDpToPixel
 import com.parabola.newtone.util.SeekBarChangeAdapter
 import javax.inject.Inject

@@ -9,7 +9,7 @@ import com.parabola.domain.executor.SchedulerProvider
 import com.parabola.domain.repository.TrackRepository
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.internal.functions.Functions
 import io.reactivex.internal.observers.ConsumerSingleObserver
 import moxy.MvpAppCompatDialogFragment

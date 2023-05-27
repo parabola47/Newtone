@@ -12,7 +12,7 @@ import com.parabola.domain.settings.ViewSettingsInteractor
 import com.parabola.domain.utils.EmptyItems
 import com.parabola.newtone.R
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import moxy.InjectViewState

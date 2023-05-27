@@ -5,7 +5,7 @@ import com.parabola.domain.repository.PlaylistRepository
 import com.parabola.domain.repository.ResourceRepository
 import com.parabola.newtone.R
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.internal.observers.BiConsumerSingleObserver
 import moxy.InjectViewState
 import moxy.MvpPresenter

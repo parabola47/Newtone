@@ -3,7 +3,7 @@ package com.parabola.newtone.presentation.main.start
 import com.parabola.domain.interactor.TrackInteractor
 import com.parabola.domain.repository.PermissionHandler
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.disposables.Disposable
 import moxy.InjectViewState
 import moxy.MvpPresenter

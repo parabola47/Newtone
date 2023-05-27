@@ -2,7 +2,7 @@ package com.parabola.newtone.presentation.audioeffects.equalizer
 
 import com.parabola.domain.interactor.player.AudioEffectsInteractor
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.ui.router.MainRouter
+import com.parabola.newtone.presentation.router.MainRouter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import moxy.InjectViewState
