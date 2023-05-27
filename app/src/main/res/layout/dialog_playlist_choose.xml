@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/alert_dialog_view_horizontal_padding"
     android:paddingVertical="@dimen/alert_dialog_top_title_padding"
-    tools:context=".presentation.chooseplaylist.ChoosePlaylistDialog">
+    tools:context=".presentation.playlist.chooseplaylist.ChoosePlaylistDialog">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/createNewPlaylistButton"

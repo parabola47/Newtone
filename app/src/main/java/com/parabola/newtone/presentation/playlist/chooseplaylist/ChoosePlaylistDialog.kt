@@ -1,4 +1,4 @@
-package com.parabola.newtone.presentation.chooseplaylist
+package com.parabola.newtone.presentation.playlist.chooseplaylist
 
 import android.app.Dialog
 import android.content.Context

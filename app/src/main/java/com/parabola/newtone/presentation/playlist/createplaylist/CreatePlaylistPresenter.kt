@@ -1,4 +1,4 @@
-package com.parabola.newtone.presentation.createplaylist
+package com.parabola.newtone.presentation.playlist.createplaylist
 
 import com.parabola.domain.exception.AlreadyExistsException
 import com.parabola.domain.repository.PlaylistRepository
