@@ -1,8 +1,7 @@
-package com.parabola.newtone.mvp.presenter
+package com.parabola.newtone.presentation.trackadditionalinfo
 
 import com.parabola.domain.repository.TrackRepository
 import com.parabola.newtone.di.app.AppComponent
-import com.parabola.newtone.mvp.view.TrackAdditionalInfoView
 import io.reactivex.internal.functions.Functions
 import io.reactivex.internal.observers.ConsumerSingleObserver
 import moxy.InjectViewState

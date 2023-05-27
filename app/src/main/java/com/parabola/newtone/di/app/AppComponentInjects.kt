@@ -34,6 +34,7 @@ import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragme
 import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
 import com.parabola.newtone.presentation.settings.SettingPresenter
 import com.parabola.newtone.presentation.settings.TrackItemDisplaySettingFragment
+import com.parabola.newtone.presentation.trackadditionalinfo.TrackAdditionalInfoPresenter
 
 interface AppComponentInjects {
     fun inject(activity: MainActivity)

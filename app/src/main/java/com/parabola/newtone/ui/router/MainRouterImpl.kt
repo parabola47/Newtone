@@ -41,6 +41,7 @@ import com.parabola.newtone.presentation.settings.ColorThemeSelectorFragment
 import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
 import com.parabola.newtone.presentation.settings.SettingFragment
 import com.parabola.newtone.presentation.settings.TrackItemDisplaySettingFragment
+import com.parabola.newtone.presentation.trackadditionalinfo.TrackAdditionalInfoDialog
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject

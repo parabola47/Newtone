@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.dialog
+package com.parabola.newtone.presentation.trackadditionalinfo
 
 import android.app.Dialog
 import android.graphics.Bitmap
@@ -12,8 +12,6 @@ import com.parabola.domain.model.Track
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.databinding.DialogTrackAdditionInfoBinding
-import com.parabola.newtone.mvp.presenter.TrackAdditionalInfoPresenter
-import com.parabola.newtone.mvp.view.TrackAdditionalInfoView
 import com.parabola.newtone.util.TimeFormatterTool.formatMillisecondsToMinutes
 import moxy.MvpAppCompatDialogFragment
 import moxy.presenter.InjectPresenter

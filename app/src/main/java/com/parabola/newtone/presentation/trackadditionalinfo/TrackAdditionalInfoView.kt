@@ -1,4 +1,4 @@
-package com.parabola.newtone.mvp.view
+package com.parabola.newtone.presentation.trackadditionalinfo
 
 import com.parabola.domain.model.Track
 import moxy.MvpView
