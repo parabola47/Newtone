@@ -1,7 +1,7 @@
 package com.parabola.newtone.di.app
 
-import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter
-import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
+import com.parabola.newtone.presentation.audioeffects.settings.FxAudioSettingsPresenter
+import com.parabola.newtone.presentation.audioeffects.equalizer.FxEqualizerPresenter
 import com.parabola.newtone.presentation.album.AlbumPresenter
 import com.parabola.newtone.presentation.artist.ArtistPresenter
 import com.parabola.newtone.presentation.artisttracks.ArtistTracksPresenter
@@ -27,7 +27,7 @@ import com.parabola.newtone.presentation.player.sleeptimer.SleepTimerPresenter
 import com.parabola.newtone.presentation.player.timetosleepinfo.TimeToSleepInfoPresenter
 import com.parabola.newtone.presentation.playlist.renameplaylist.RenamePlaylistPresenter
 import com.parabola.newtone.ui.dialog.SortingDialog
-import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
+import com.parabola.newtone.presentation.audioeffects.EqPresetsSelectorDialog
 import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
 import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragment
 import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
@@ -80,6 +80,6 @@ interface AppComponentInjects {
     fun inject(dialog: DeleteTrackDialog)
 
     //    FXs
-    fun inject(presenter: TabEqualizerPresenter)
+    fun inject(presenter: FxEqualizerPresenter)
     fun inject(presenter: FxAudioSettingsPresenter)
 }

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:padding="4dp"
-    tools:context=".ui.dialog.fx.FxEqualizerFragment">
+    tools:context=".presentation.audioeffects.equalizer.FxEqualizerFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

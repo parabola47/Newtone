@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:paddingVertical="4dp"
-    tools:context=".ui.dialog.fx.FxAudioSettingsFragment">
+    tools:context=".presentation.audioeffects.settings.FxAudioSettingsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
