@@ -18,7 +18,7 @@ import com.parabola.newtone.adapter.AlbumAdapter
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentTabAlbumBinding
 import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.dialog.SortingDialog
+import com.parabola.newtone.presentation.SortingDialog
 import com.parabola.newtone.ui.fragment.Scrollable
 import com.parabola.newtone.ui.fragment.Sortable
 import com.parabola.newtone.util.AndroidTool

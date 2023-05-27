@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/alert_dialog_view_horizontal_padding"
     android:paddingTop="@dimen/alert_dialog_top_title_padding"
-    tools:context=".ui.dialog.SortingDialog">
+    tools:context=".presentation.SortingDialog">
 
     <RadioGroup
         android:id="@+id/sorting_radio"

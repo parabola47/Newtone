@@ -26,7 +26,7 @@ import com.parabola.newtone.presentation.DeleteTrackDialog
 import com.parabola.newtone.presentation.player.sleeptimer.SleepTimerPresenter
 import com.parabola.newtone.presentation.player.timetosleepinfo.TimeToSleepInfoPresenter
 import com.parabola.newtone.presentation.playlist.renameplaylist.RenamePlaylistPresenter
-import com.parabola.newtone.ui.dialog.SortingDialog
+import com.parabola.newtone.presentation.SortingDialog
 import com.parabola.newtone.presentation.audioeffects.EqPresetsSelectorDialog
 import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
 import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragment

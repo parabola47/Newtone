@@ -13,6 +13,7 @@ import com.parabola.domain.model.Track
 import com.parabola.newtone.BuildConfig
 import com.parabola.newtone.R
 import com.parabola.newtone.presentation.DeleteTrackDialog
+import com.parabola.newtone.presentation.SortingDialog
 import com.parabola.newtone.presentation.album.AlbumFragment
 import com.parabola.newtone.presentation.artist.ArtistFragment
 import com.parabola.newtone.presentation.artisttracks.ArtistTracksFragment
@@ -25,7 +26,6 @@ import com.parabola.newtone.presentation.playlist.playlist.PlaylistFragment
 import com.parabola.newtone.presentation.playlist.queue.QueueFragment
 import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistFragment
 import com.parabola.newtone.presentation.mainactivity.MainActivity
-import com.parabola.newtone.ui.dialog.*
 import com.parabola.newtone.presentation.audioeffects.AudioEffectsDialog
 import com.parabola.newtone.presentation.audioeffects.EqPresetsSelectorDialog
 import com.parabola.newtone.presentation.settings.dialog.IsaacNewtoneDialog
