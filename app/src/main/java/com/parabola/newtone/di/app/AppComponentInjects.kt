@@ -24,6 +24,7 @@ import com.parabola.newtone.presentation.search.SearchPresenter
 import com.parabola.newtone.presentation.mainactivity.MainActivity
 import com.parabola.newtone.presentation.mainactivity.MainPresenter
 import com.parabola.newtone.presentation.DeleteTrackDialog
+import com.parabola.newtone.presentation.playlist.renameplaylist.RenamePlaylistPresenter
 import com.parabola.newtone.ui.dialog.SortingDialog
 import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
 import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
