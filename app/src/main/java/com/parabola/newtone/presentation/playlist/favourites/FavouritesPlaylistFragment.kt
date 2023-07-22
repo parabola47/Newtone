@@ -24,9 +24,9 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.adapter.TrackAdapter
 import com.parabola.newtone.databinding.ListTrackBinding
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.fragment.Scrollable
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
 import com.parabola.newtone.util.scrollUp
 import com.parabola.newtone.util.smoothScrollToTop
 import com.parabola.newtone.util.visibleItemsCount
@@ -187,6 +187,7 @@ class FavouritesPlaylistFragment : BaseSwipeToBackFragment(),
                 val tracks = tracklistAdapter.all
                 presenter.onClickMenuPlay(tracks, itemPosition)
             }
+
             R.id.add_to_playlist -> presenter.onClickMenuAddToPlaylist(selectedTrack.id)
             R.id.remove_from_favourites -> presenter.onClickMenuRemoveFromFavourites(selectedTrack.id)
             R.id.share_track -> presenter.onClickMenuShareTrack(selectedTrack)

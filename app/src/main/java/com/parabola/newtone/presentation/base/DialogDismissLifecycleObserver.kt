@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.dialog
+package com.parabola.newtone.presentation.base
 
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle

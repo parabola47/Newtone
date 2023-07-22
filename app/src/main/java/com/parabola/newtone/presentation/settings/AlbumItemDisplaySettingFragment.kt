@@ -13,10 +13,12 @@ import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumVi
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.databinding.FragmentAlbumItemDisplaySettingBinding
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
 import com.parabola.newtone.presentation.router.MainRouter
-import com.parabola.newtone.util.AndroidTool.*
+import com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount
+import com.parabola.newtone.util.AndroidTool.convertDpToPixel
+import com.parabola.newtone.util.AndroidTool.getScreenWidthPx
 import com.parabola.newtone.util.SeekBarChangeAdapter
 import javax.inject.Inject
 

@@ -12,7 +12,7 @@ import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.adapter.TrackAdapter
 import com.parabola.newtone.databinding.ListTrackBinding
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 

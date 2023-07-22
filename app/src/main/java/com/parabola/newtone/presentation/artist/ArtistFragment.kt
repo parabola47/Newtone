@@ -18,11 +18,11 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.AlbumAdapter
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentArtistBinding
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
 import com.parabola.newtone.presentation.SortingDialog
-import com.parabola.newtone.ui.fragment.Scrollable
-import com.parabola.newtone.ui.fragment.Sortable
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
+import com.parabola.newtone.presentation.base.Sortable
 import com.parabola.newtone.util.AndroidTool.calculateAlbumColumnCount
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter

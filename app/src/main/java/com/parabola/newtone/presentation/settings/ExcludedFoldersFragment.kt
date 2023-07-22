@@ -19,7 +19,7 @@ import com.parabola.newtone.adapter.FolderPickAdapter.FolderPickerItem
 import com.parabola.newtone.databinding.FragmentExcludedFoldersBinding
 import com.parabola.newtone.presentation.FolderPickerDialog
 import com.parabola.newtone.presentation.ItemSelectionListener
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
 import com.parabola.newtone.presentation.router.MainRouter
 import java.util.function.Function
 import javax.inject.Inject

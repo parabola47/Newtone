@@ -17,9 +17,9 @@ import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.adapter.PlaylistAdapter
 import com.parabola.newtone.databinding.FragmentTabPlaylistBinding
 import com.parabola.newtone.databinding.ItemSystemPlaylistBinding
-import com.parabola.newtone.ui.base.BaseDialogFragment
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.fragment.Scrollable
+import com.parabola.newtone.presentation.base.BaseDialogFragment
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
 import com.parabola.newtone.presentation.main.playlists.TabPlaylistFragment.SystemPlaylistAdapter.SystemPlaylistViewHolder
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -144,21 +144,25 @@ class TabPlaylistFragment : MvpAppCompatFragment(),
                     holder.binding.title.setText(R.string.playlist_favourites)
                     holder.binding.root.setOnClickListener { presenter.onClickFavourites() }
                 }
+
                 1 -> {
                     holder.binding.icon.setImageResource(R.drawable.ic_recent_add)
                     holder.binding.title.setText(R.string.playlist_recently_added)
                     holder.binding.root.setOnClickListener { presenter.onClickRecentlyAdded() }
                 }
+
                 2 -> {
                     holder.binding.icon.setImageResource(R.drawable.ic_queue)
                     holder.binding.title.setText(R.string.playlist_queue)
                     holder.binding.root.setOnClickListener { presenter.onClickQueue() }
                 }
+
                 3 -> {
                     holder.binding.icon.setImageResource(R.drawable.ic_folder)
                     holder.binding.title.setText(R.string.playlist_folders)
                     holder.binding.root.setOnClickListener { presenter.onClickFolders() }
                 }
+
                 else -> {}
             }
         }

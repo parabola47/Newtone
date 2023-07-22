@@ -17,10 +17,10 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.AlbumAdapter
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentTabAlbumBinding
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
 import com.parabola.newtone.presentation.SortingDialog
-import com.parabola.newtone.ui.fragment.Scrollable
-import com.parabola.newtone.ui.fragment.Sortable
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
+import com.parabola.newtone.presentation.base.Sortable
 import com.parabola.newtone.util.AndroidTool
 import com.parabola.newtone.util.scrollUp
 import com.parabola.newtone.util.smoothScrollToTop

@@ -20,8 +20,8 @@ import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentStartBinding
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.fragment.Scrollable
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
 import com.parabola.newtone.presentation.main.albums.TabAlbumFragment
 import com.parabola.newtone.presentation.main.artists.TabArtistFragment
 import com.parabola.newtone.presentation.main.playlists.TabPlaylistFragment

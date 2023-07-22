@@ -16,10 +16,10 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.ArtistAdapter
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentTabArtistBinding
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
 import com.parabola.newtone.presentation.SortingDialog
-import com.parabola.newtone.ui.fragment.Scrollable
-import com.parabola.newtone.ui.fragment.Sortable
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
+import com.parabola.newtone.presentation.base.Sortable
 import com.parabola.newtone.util.scrollUp
 import com.parabola.newtone.util.smoothScrollToTop
 import com.parabola.newtone.util.visibleItemsCount

@@ -8,10 +8,10 @@ import com.parabola.newtone.BuildConfig
 import com.parabola.newtone.MainApplication
 import com.parabola.newtone.R
 import com.parabola.newtone.databinding.FragmentSettingBinding
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import java.util.*
+import java.util.Locale
 
 class SettingFragment : BaseSwipeToBackFragment(), SettingView {
 

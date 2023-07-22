@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.fragment
+package com.parabola.newtone.presentation.base
 
 interface Scrollable {
     fun smoothScrollToTop()

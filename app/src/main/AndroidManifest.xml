@@ -30,7 +30,7 @@
         </activity>
 
         <receiver
-            android:name=".ui.HomeScreenWidget"
+            android:name=".presentation.HomeScreenWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name">
             <intent-filter>

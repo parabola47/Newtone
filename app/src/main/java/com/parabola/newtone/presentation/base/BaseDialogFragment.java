@@ -1,4 +1,4 @@
-package com.parabola.newtone.ui.base;
+package com.parabola.newtone.presentation.base;
 
 import android.app.Dialog;
 import android.os.Bundle;

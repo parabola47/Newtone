@@ -16,9 +16,9 @@ import com.parabola.newtone.R
 import com.parabola.newtone.adapter.FolderAdapter
 import com.parabola.newtone.adapter.ListPopupWindowAdapter
 import com.parabola.newtone.databinding.FragmentFoldersListBinding
-import com.parabola.newtone.ui.base.BaseSwipeToBackFragment
-import com.parabola.newtone.ui.dialog.DialogDismissLifecycleObserver
-import com.parabola.newtone.ui.fragment.Scrollable
+import com.parabola.newtone.presentation.base.BaseSwipeToBackFragment
+import com.parabola.newtone.presentation.base.DialogDismissLifecycleObserver
+import com.parabola.newtone.presentation.base.Scrollable
 import com.parabola.newtone.util.scrollUp
 import com.parabola.newtone.util.smoothScrollToTop
 import com.parabola.newtone.util.visibleItemsCount

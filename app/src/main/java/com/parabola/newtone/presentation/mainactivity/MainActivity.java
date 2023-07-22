@@ -32,7 +32,7 @@ import com.parabola.newtone.adapter.ListPopupWindowAdapter;
 import com.parabola.newtone.databinding.ActivityMainBinding;
 import com.parabola.newtone.di.app.AppComponent;
 import com.parabola.newtone.presentation.search.SearchFragment;
-import com.parabola.newtone.ui.fragment.Sortable;
+import com.parabola.newtone.presentation.base.Sortable;
 import com.parabola.newtone.presentation.settings.SettingFragment;
 import com.parabola.newtone.presentation.main.playlists.TabPlaylistFragment;
 import com.parabola.newtone.presentation.router.MainRouter;
