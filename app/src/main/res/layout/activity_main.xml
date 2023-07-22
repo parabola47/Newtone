@@ -11,7 +11,7 @@
     sothree:umanoPanelHeight="68dp"
     sothree:umanoParallaxOffset="72dp"
     sothree:umanoShadowHeight="4dp"
-    tools:context=".ui.activity.MainActivity">
+    tools:context=".presentation.mainactivity.MainActivity">
 
     <FrameLayout
         android:id="@+id/nav_host_fragment"
@@ -31,7 +31,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/player_fragment"
-            android:name="com.parabola.newtone.ui.fragment.PlayerFragment"
+            android:name="com.parabola.newtone.presentation.player.PlayerFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/fragment_player" />

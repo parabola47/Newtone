@@ -16,5 +16,5 @@
     app:fastScrollThumbInactiveColor="?attr/colorPrimary"
     app:fastScrollTrackColor="@color/colorScrollbarBackground"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    tools:context=".ui.fragment.start.TabArtistFragment"
+    tools:context=".presentation.main.artists.TabArtistFragment"
     tools:listitem="@layout/item_artist" />

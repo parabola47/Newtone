@@ -1,16 +1,40 @@
 package com.parabola.newtone.di.app
 
-import com.parabola.newtone.mvp.presenter.*
-import com.parabola.newtone.mvp.presenter.fx.FxAudioSettingsPresenter
-import com.parabola.newtone.mvp.presenter.fx.TabEqualizerPresenter
-import com.parabola.newtone.ui.activity.MainActivity
-import com.parabola.newtone.ui.dialog.DeleteTrackDialog
-import com.parabola.newtone.ui.dialog.SortingDialog
-import com.parabola.newtone.ui.dialog.fx.EqPresetsSelectorDialog
-import com.parabola.newtone.ui.fragment.settings.AlbumItemDisplaySettingFragment
-import com.parabola.newtone.ui.fragment.settings.ArtistItemDisplaySettingFragment
-import com.parabola.newtone.ui.fragment.settings.ExcludedFoldersFragment
-import com.parabola.newtone.ui.fragment.settings.TrackItemDisplaySettingFragment
+import com.parabola.newtone.presentation.audioeffects.settings.FxAudioSettingsPresenter
+import com.parabola.newtone.presentation.audioeffects.equalizer.FxEqualizerPresenter
+import com.parabola.newtone.presentation.album.AlbumPresenter
+import com.parabola.newtone.presentation.artist.ArtistPresenter
+import com.parabola.newtone.presentation.artisttracks.ArtistTracksPresenter
+import com.parabola.newtone.presentation.playlist.chooseplaylist.ChoosePlaylistPresenter
+import com.parabola.newtone.presentation.playlist.createplaylist.CreatePlaylistPresenter
+import com.parabola.newtone.presentation.folder.FolderPresenter
+import com.parabola.newtone.presentation.main.start.StartPresenter
+import com.parabola.newtone.presentation.main.albums.TabAlbumPresenter
+import com.parabola.newtone.presentation.main.artists.TabArtistPresenter
+import com.parabola.newtone.presentation.main.playlists.TabPlaylistPresenter
+import com.parabola.newtone.presentation.main.tracks.TabTrackPresenter
+import com.parabola.newtone.presentation.player.PlayerPresenter
+import com.parabola.newtone.presentation.playlist.favourites.FavouritesPlaylistPresenter
+import com.parabola.newtone.presentation.playlist.folderslist.FoldersListPresenter
+import com.parabola.newtone.presentation.playlist.playlist.PlaylistPresenter
+import com.parabola.newtone.presentation.playlist.queue.QueuePresenter
+import com.parabola.newtone.presentation.playlist.recentlyadded.RecentlyAddedPlaylistPresenter
+import com.parabola.newtone.presentation.search.SearchPresenter
+import com.parabola.newtone.presentation.mainactivity.MainActivity
+import com.parabola.newtone.presentation.mainactivity.MainPresenter
+import com.parabola.newtone.presentation.DeleteTrackDialog
+import com.parabola.newtone.presentation.player.sleeptimer.SleepTimerPresenter
+import com.parabola.newtone.presentation.player.timetosleepinfo.TimeToSleepInfoPresenter
+import com.parabola.newtone.presentation.playlist.renameplaylist.RenamePlaylistPresenter
+import com.parabola.newtone.presentation.SortingDialog
+import com.parabola.newtone.presentation.audioeffects.EqPresetsSelectorDialog
+import com.parabola.newtone.presentation.settings.AlbumItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.ArtistItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.ExcludedFoldersFragment
+import com.parabola.newtone.presentation.settings.SettingPresenter
+import com.parabola.newtone.presentation.settings.TrackItemDisplaySettingFragment
+import com.parabola.newtone.presentation.settings.colorthemeselector.ColorThemeSelectorPresenter
+import com.parabola.newtone.presentation.trackadditionalinfo.TrackAdditionalInfoPresenter
 
 interface AppComponentInjects {
     fun inject(activity: MainActivity)
@@ -56,6 +80,6 @@ interface AppComponentInjects {
     fun inject(dialog: DeleteTrackDialog)
 
     //    FXs
-    fun inject(presenter: TabEqualizerPresenter)
+    fun inject(presenter: FxEqualizerPresenter)
     fun inject(presenter: FxAudioSettingsPresenter)
 }

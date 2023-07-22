@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:paddingHorizontal="16dp"
     android:paddingVertical="8dp"
-    tools:context=".ui.dialog.TrackAdditionalInfoDialog">
+    tools:context=".presentation.trackadditionalinfo.TrackAdditionalInfoDialog">
 
 
     <com.google.android.material.imageview.ShapeableImageView

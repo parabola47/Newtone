@@ -17,5 +17,5 @@
     app:fastScrollTrackColor="@color/colorScrollbarBackground"
     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
     app:spanCount="2"
-    tools:context=".ui.fragment.start.TabAlbumFragment"
+    tools:context=".presentation.main.albums.TabAlbumFragment"
     tools:listitem="@layout/item_album_grid" />

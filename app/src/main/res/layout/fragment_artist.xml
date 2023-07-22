@@ -5,7 +5,7 @@
     android:id="@+id/artistView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.ArtistFragment">
+    tools:context=".presentation.artist.ArtistFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -19,7 +19,7 @@ import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
 import com.parabola.newtone.di.ComponentFactory;
 import com.parabola.newtone.di.app.AppComponent;
-import com.parabola.newtone.ui.HomeScreenWidget;
+import com.parabola.newtone.presentation.HomeScreenWidget;
 import com.parabola.player_feature.PlayerInteractorImpl;
 import com.parabola.sleep_timer_feature.SleepTimerInteractor;
 
@@ -49,12 +49,12 @@ public final class MainApplication extends MultiDexApplication {
         ViewSettingsInteractor viewSettingsInteractor = appComponent.provideViewSettingsInteractor();
 
         Observable.combineLatest(
-                playerInteractor.onChangeCurrentTrackId(),
-                playerInteractor.onChangePlayingState(),
-                playerInteractor.onRepeatModeChange(),
-                playerInteractor.onShuffleModeChange(),
-                viewSettingsInteractor.observePrimaryColor(),
-                (i, b1, b2, b3, c) -> Irrelevant.INSTANCE)
+                        playerInteractor.onChangeCurrentTrackId(),
+                        playerInteractor.onChangePlayingState(),
+                        playerInteractor.onRepeatModeChange(),
+                        playerInteractor.onShuffleModeChange(),
+                        viewSettingsInteractor.observePrimaryColor(),
+                        (i, b1, b2, b3, c) -> Irrelevant.INSTANCE)
                 .subscribe(ConsumerObserver.fromConsumer(
                         irrelevant -> HomeScreenWidget.updateHomeScreenWidget(MainApplication.this)));
         //если приходит оповещение от таймера об окончании, то останавливаем плеер

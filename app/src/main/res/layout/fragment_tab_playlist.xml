@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:overScrollMode="always"
-    tools:context=".ui.fragment.start.TabPlaylistFragment">
+    tools:context=".presentation.main.playlists.TabPlaylistFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
