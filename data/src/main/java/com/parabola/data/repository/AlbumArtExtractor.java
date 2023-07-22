@@ -1,5 +1,8 @@
 package com.parabola.data.repository;
 
+import static android.provider.BaseColumns._ID;
+import static android.provider.MediaStore.Audio.AlbumColumns.ALBUM_ART;
+
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -20,21 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static android.provider.BaseColumns._ID;
-import static android.provider.MediaStore.Audio.AlbumColumns.ALBUM_ART;
-
 final class AlbumArtExtractor {
 
     private final ContentResolver contentResolver;
     private final List<Track> tracks;
-    private Size targetCoverSize;
+    private final Size targetCoverSize;
 
     AlbumArtExtractor(ContentResolver contentResolver, List<Track> tracks) {
         this.contentResolver = contentResolver;
         this.tracks = tracks;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            targetCoverSize = new Size(700, 700);
-        }
+        targetCoverSize = new Size(700, 700);
     }
 
 

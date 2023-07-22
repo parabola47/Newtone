@@ -8,13 +8,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.WindowManager;
 
 import androidx.annotation.AttrRes;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.parabola.domain.settings.ViewSettingsInteractor.PrimaryColor;
@@ -31,14 +29,22 @@ public final class AndroidTool {
 
     public static int getColorByTheme(Context context, PrimaryColor primaryColor) {
         switch (primaryColor) {
-            case NEWTONE: return context.getResources().getColor(R.color.colorNewtonePrimary);
-            case ARIUM: return context.getResources().getColor(R.color.colorAriumPrimary);
-            case BLUES: return context.getResources().getColor(R.color.colorBluesPrimary);
-            case FLOYD: return context.getResources().getColor(R.color.colorFloydPrimary);
-            case PURPLE: return context.getResources().getColor(R.color.colorPurplePrimary);
-            case PASSION: return context.getResources().getColor(R.color.colorPassionPrimary);
-            case SKY: return context.getResources().getColor(R.color.colorSkyPrimary);
-            default: throw new IllegalArgumentException();
+            case NEWTONE:
+                return context.getResources().getColor(R.color.colorNewtonePrimary);
+            case ARIUM:
+                return context.getResources().getColor(R.color.colorAriumPrimary);
+            case BLUES:
+                return context.getResources().getColor(R.color.colorBluesPrimary);
+            case FLOYD:
+                return context.getResources().getColor(R.color.colorFloydPrimary);
+            case PURPLE:
+                return context.getResources().getColor(R.color.colorPurplePrimary);
+            case PASSION:
+                return context.getResources().getColor(R.color.colorPassionPrimary);
+            case SKY:
+                return context.getResources().getColor(R.color.colorSkyPrimary);
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
@@ -102,9 +108,6 @@ public final class AndroidTool {
 
     public static Bitmap getBitmapFromVectorDrawable(Resources resources, int drawableId, int width, int height) {
         Drawable drawable = requireNonNull(VectorDrawableCompat.create(resources, drawableId, null));
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

@@ -2,7 +2,6 @@ package com.r0adkll.slidr;
 
 import android.animation.ArgbEvaluator;
 import android.app.Activity;
-import android.os.Build;
 
 import androidx.annotation.ColorInt;
 
@@ -45,7 +44,7 @@ class ColorPanelSlideListener implements SliderPanel.OnPanelSlideListener {
 
     @Override
     public void onSlideChange(float percent) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && areColorsValid()){
+        if (areColorsValid()) {
             int newColor = (int) evaluator.evaluate(percent, getPrimaryColor(), getSecondaryColor());
             activity.getWindow().setStatusBarColor(newColor);
         }
@@ -62,7 +61,7 @@ class ColorPanelSlideListener implements SliderPanel.OnPanelSlideListener {
     }
 
 
-    protected boolean areColorsValid() {
+    private boolean areColorsValid() {
         return getPrimaryColor() != -1 && getSecondaryColor() != -1;
     }
 }
