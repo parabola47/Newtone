@@ -114,7 +114,7 @@
         app:layout_constraintRight_toRightOf="@+id/track_settings"
         app:layout_constraintTop_toTopOf="@+id/track_settings" />
 
-    <com.parabola.newtone.presentation.view.LockableViewPager
+    <com.parabola.newtone.uikit.LockableViewPager
         android:id="@+id/album_cover_container"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -54,14 +54,13 @@ dependencies {
     implementation project(path: ':sleep_timer_feature')
     implementation project(path: ':search_feature')
     implementation project(path: ':Slidr')      //  Swipe to back support
-
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':ui-kit')
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.material:material:1.3.0-alpha03'
+    implementation 'com.google.android.material:material:1.3.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
