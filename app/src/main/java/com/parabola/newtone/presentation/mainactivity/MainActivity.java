@@ -253,6 +253,9 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
 
     private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 1;
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private static final String[] STORAGE_PERMISSIONS_TIRAMISU_AND_ABOVE = {Manifest.permission.READ_MEDIA_AUDIO};
     private static final String[] STORAGE_PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final int DELETE_TRACK_REQUEST_CODE = 2;
@@ -273,7 +276,11 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
 
     @Override
     public void requestStoragePermissionDialog() {
-        ActivityCompat.requestPermissions(this, STORAGE_PERMISSIONS, STORAGE_PERMISSIONS_REQUEST_CODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this, STORAGE_PERMISSIONS_TIRAMISU_AND_ABOVE, STORAGE_PERMISSIONS_REQUEST_CODE);
+        } else {
+            ActivityCompat.requestPermissions(this, STORAGE_PERMISSIONS, STORAGE_PERMISSIONS_REQUEST_CODE);
+        }
     }
 
     @Override

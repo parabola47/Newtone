@@ -47,13 +47,17 @@ public final class PermissionHandlerImpl implements PermissionHandler {
     @Override
     public Observable<Boolean> observePermissionUpdates(Type type) {
         switch (type) {
-            case FILE_STORAGE: return fileStorageAccessObservable;
-            default: throw new IllegalArgumentException();
+            case FILE_STORAGE:
+                return fileStorageAccessObservable;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     private boolean hasExternalStorageAccess() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return context.checkSelfPermission(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         } else {
             return true;

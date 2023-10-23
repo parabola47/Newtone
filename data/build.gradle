@@ -1,15 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion '30.0.2'
+    namespace 'com.parabola.data'
+
+    compileSdkVersion 33
 
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 33
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,8 +24,8 @@ android {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
 
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
 }

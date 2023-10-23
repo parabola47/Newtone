@@ -3,22 +3,21 @@ package com.parabola.player_feature
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.audio.AudioListener
 import com.parabola.domain.interactor.player.AudioEffectsInteractor
 import com.parabola.domain.interactor.player.AudioEffectsInteractor.EqBand
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import java.util.*
+import java.util.Collections
 
 
 private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 private const val DEFAULT_PLAYBACK_PITCH = 1.0f
 
 internal class AudioEffectsInteractorImpl(
-    private val exoPlayer: SimpleExoPlayer,
+    private val exoPlayer: ExoPlayer,
     private val settings: PlayerSettingSaver,
 ) : AudioEffectsInteractor {
 
@@ -74,8 +73,8 @@ internal class AudioEffectsInteractorImpl(
             }
         })
 
-        exoPlayer.addAudioListener(object : AudioListener {
-            override fun onAudioSessionId(audioSessionId: Int) {
+        exoPlayer.addListener(object : Player.Listener {
+            override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 bassBoost = try {
                     BassBoost(0, audioSessionId).apply {
                         enabled = settings.isBassBoostEnabled

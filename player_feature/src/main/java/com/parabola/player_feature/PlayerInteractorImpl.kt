@@ -2,13 +2,21 @@ package com.parabola.player_feature
 
 import android.app.Notification
 import android.app.PendingIntent
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -41,12 +49,6 @@ private const val NOTIFICATION_CHANNEL_ID =
     "com.parabola.player_feature.PlayerInteractorImpl.NOTIFICATION_CHANNEL_ID"
 private const val NOTIFICATION_ID = 47
 
-private const val CUSTOM_ACTION_ADD_TO_FAVORITES =
-    "com.parabola.player_feature.PlayerInteractorImpl.ADD_TO_FAVORITES"
-private const val CUSTOM_ACTION_REMOVE_FROM_FAVORITES =
-    "com.parabola.player_feature.PlayerInteractorImpl.REMOVE_FROM_FAVORITES"
-
-
 class PlayerInteractorImpl(
     private val context: Context,
     preferences: SharedPreferences,
@@ -62,11 +64,10 @@ class PlayerInteractorImpl(
 
 
     //    ExoPlayer
-    private val exoPlayer: SimpleExoPlayer =
-        SimpleExoPlayer.Builder(context, AudioRenderersFactory(context))
-            .setTrackSelector(DefaultTrackSelector(context))
-            .build()
-    private val defaultControlDispatcher = DefaultControlDispatcher(0, 0)
+    private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context, AudioRenderersFactory(context))
+        .setTrackSelector(DefaultTrackSelector(context))
+        .build()
+
     private val notificationManager: PlayerNotificationManager
 
 
@@ -120,6 +121,7 @@ class PlayerInteractorImpl(
 
         //  Исключаем трек из плейлиста если он был удалён с устройства
         trackRepo.observeTrackDeleting()
+            .observeOn(AndroidSchedulers.from(exoPlayer.applicationLooper))
             .subscribe(ConsumerObserver(this::removeAllById))
         trackRepo.observeFavouritesChanged()
             .subscribe(ConsumerObserver { notificationManager.invalidate() })
@@ -190,20 +192,20 @@ class PlayerInteractorImpl(
             0,
             NotificationUtil.IMPORTANCE_LOW
         )
-
-        return PlayerNotificationManager(
-            context, NOTIFICATION_CHANNEL_ID, NOTIFICATION_ID,
-            PlayerMediaDescriptorAdapter(),
-            playerNotificationListener,
-            PlayerCustomActionReceiver(),
-        ).apply {
-            setMediaSessionToken(mediaSession.sessionToken)
-            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            setUseNavigationActionsInCompactView(true)
-            setPriority(NotificationCompat.PRIORITY_MAX)
-            setUseChronometer(false)
-            setControlDispatcher(defaultControlDispatcher)
-        }
+        return PlayerNotificationManager.Builder(
+            context,
+            NOTIFICATION_ID,
+            NOTIFICATION_CHANNEL_ID,
+        )
+            .setMediaDescriptionAdapter(PlayerMediaDescriptorAdapter())
+            .setNotificationListener(playerNotificationListener)
+            .build()
+            .apply {
+                setMediaSessionToken(mediaSession.sessionToken)
+                setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                setPriority(NotificationCompat.PRIORITY_MAX)
+                setUseChronometer(false)
+            }
     }
 
 
@@ -566,7 +568,12 @@ class PlayerInteractorImpl(
             getCurrentTrack(player).title
 
         override fun createCurrentContentIntent(player: Player): PendingIntent =
-            PendingIntent.getActivity(context, 0, notificationClickIntent, 0)
+            PendingIntent.getActivity(
+                context,
+                0,
+                notificationClickIntent,
+                PendingIntent.FLAG_MUTABLE,
+            )
 
         override fun getCurrentContentText(player: Player): String =
             getCurrentTrack(player).run { "$artistName - $albumTitle" }
@@ -581,57 +588,6 @@ class PlayerInteractorImpl(
 
             val track = getCurrentTrack(player)
             return track.getArtImage<Bitmap>() ?: defaultNotificationAlbumArt
-        }
-    }
-
-    private inner class PlayerCustomActionReceiver :
-        PlayerNotificationManager.CustomActionReceiver {
-
-
-        private fun createBroadcastIntent(action: String, instanceId: Int): PendingIntent {
-            val intent = Intent(action)
-                .setPackage(context.packageName)
-                .putExtra(PlayerNotificationManager.EXTRA_INSTANCE_ID, instanceId)
-
-            return PendingIntent.getBroadcast(context, instanceId, intent, 0)
-        }
-
-        override fun createCustomActions(
-            context: Context,
-            instanceId: Int,
-        ): Map<String, NotificationCompat.Action> = mapOf(
-            CUSTOM_ACTION_ADD_TO_FAVORITES to NotificationCompat.Action(
-                R.drawable.ic_notification_not_favourite,
-                context.getString(R.string.notification_action_add_to_favourites),
-                createBroadcastIntent(CUSTOM_ACTION_ADD_TO_FAVORITES, instanceId)
-            ),
-            CUSTOM_ACTION_REMOVE_FROM_FAVORITES to NotificationCompat.Action(
-                R.drawable.ic_notification_favourite,
-                context.getString(R.string.notification_action_remove_from_favourites),
-                createBroadcastIntent(CUSTOM_ACTION_REMOVE_FROM_FAVORITES, instanceId)
-            )
-        )
-
-        // возвращается экшн с добавлением/удалением трека в/из избранное
-        // конкретный экшн зависит от того, находится ли этот трек в избранном
-        override fun getCustomActions(player: Player): List<String> =
-            listOf(
-                if (trackRepo.isFavourite(currentTrackId()))
-                    CUSTOM_ACTION_REMOVE_FROM_FAVORITES
-                else CUSTOM_ACTION_ADD_TO_FAVORITES
-            )
-
-        override fun onCustomAction(
-            player: Player,
-            action: String,
-            intent: Intent,
-        ) {
-            when (action) {
-                CUSTOM_ACTION_ADD_TO_FAVORITES ->
-                    trackRepo.addToFavourites(currentTrackId())
-                CUSTOM_ACTION_REMOVE_FROM_FAVORITES ->
-                    trackRepo.removeFromFavourites(currentTrackId())
-            }
         }
     }
 
