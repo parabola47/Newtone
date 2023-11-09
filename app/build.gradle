@@ -14,8 +14,8 @@ android {
         applicationId "com.parabola.newtone"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 35
-        versionName "1.0.10"
+        versionCode 36
+        versionName "1.0.11"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
