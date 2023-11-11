@@ -81,6 +81,7 @@ class PlayerInteractorImpl(
 
     init {
         exoPlayer.apply {
+            setThrowsWhenUsingWrongThread(false)
             prepare()
 
             val audioAttributes = AudioAttributes.Builder()
