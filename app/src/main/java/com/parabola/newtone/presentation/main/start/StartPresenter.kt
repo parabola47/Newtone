@@ -1,16 +1,16 @@
 package com.parabola.newtone.presentation.main.start
 
-import com.parabola.domain.interactor.TrackInteractor
 import com.parabola.domain.repository.PermissionHandler
 import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.presentation.base.BasePresenter
 import com.parabola.newtone.presentation.router.MainRouter
-import io.reactivex.disposables.Disposable
 import moxy.InjectViewState
-import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class StartPresenter(appComponent: AppComponent) : MvpPresenter<StartView>() {
+class StartPresenter(
+    appComponent: AppComponent,
+) : BasePresenter<StartView>() {
 
     @Inject
     lateinit var router: MainRouter
@@ -19,9 +19,7 @@ class StartPresenter(appComponent: AppComponent) : MvpPresenter<StartView>() {
     lateinit var accessRepo: PermissionHandler
 
     @Inject
-    lateinit var trackInteractor: TrackInteractor
-
-    private lateinit var storagePermissionObserver: Disposable
+    lateinit var useCases: StartScreenUseCases
 
 
     init {
@@ -30,13 +28,12 @@ class StartPresenter(appComponent: AppComponent) : MvpPresenter<StartView>() {
 
 
     override fun onFirstViewAttach() {
-        storagePermissionObserver =
-            accessRepo.observePermissionUpdates(PermissionHandler.Type.FILE_STORAGE)
-                .subscribe { viewState.setPermissionPanelVisibility(!it) }
-    }
-
-    override fun onDestroy() {
-        storagePermissionObserver.dispose()
+        accessRepo.observePermissionUpdates(PermissionHandler.Type.FILE_STORAGE)
+            .schedule(
+                onNext = { isFileStoragePermissionGranted ->
+                    viewState.setPermissionPanelVisibility(!isFileStoragePermissionGranted)
+                },
+            )
     }
 
 
@@ -45,7 +42,8 @@ class StartPresenter(appComponent: AppComponent) : MvpPresenter<StartView>() {
     }
 
     fun onClickMenuShuffleAll() {
-        trackInteractor.shuffleAll()
+        useCases.shuffleAll()
+            .schedule()
     }
 
     fun onClickMenuExcludedFolders() {

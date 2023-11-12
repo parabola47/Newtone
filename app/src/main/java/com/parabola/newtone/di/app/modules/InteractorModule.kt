@@ -62,23 +62,18 @@ class InteractorModule {
     fun provideTrackInteractor(
         trackRepo: TrackRepository,
         repositoryInteractor: RepositoryInteractor,
-        playerInteractor: PlayerInteractor,
         trackSortingRepo: SortingRepository,
     ): TrackInteractor =
-        TrackInteractor(trackRepo, repositoryInteractor, playerInteractor, trackSortingRepo)
+        TrackInteractor(trackRepo, repositoryInteractor, trackSortingRepo)
 
     @Singleton
     @Provides
     fun provideAlbumInteractor(
         albumRepo: AlbumRepository,
-        trackRepo: TrackRepository,
-        playerInteractor: PlayerInteractor,
         repositoryInteractor: RepositoryInteractor,
         sortingRepo: SortingRepository,
     ): AlbumInteractor = AlbumInteractor(
         albumRepo,
-        trackRepo,
-        playerInteractor,
         repositoryInteractor,
         sortingRepo
     )
@@ -87,24 +82,13 @@ class InteractorModule {
     @Provides
     fun provideArtistInteractor(
         artistRepo: ArtistRepository,
-        trackRepo: TrackRepository,
-        playerInteractor: PlayerInteractor,
         repositoryInteractor: RepositoryInteractor,
         sortingRepo: SortingRepository,
     ): ArtistInteractor = ArtistInteractor(
         artistRepo,
-        trackRepo,
-        playerInteractor,
         repositoryInteractor,
         sortingRepo
     )
-
-    @Singleton
-    @Provides
-    fun provideFolderInteractor(
-        trackRepo: TrackRepository,
-        playerInteractor: PlayerInteractor,
-    ): FolderInteractor = FolderInteractor(trackRepo, playerInteractor)
 
     @Singleton
     @Provides

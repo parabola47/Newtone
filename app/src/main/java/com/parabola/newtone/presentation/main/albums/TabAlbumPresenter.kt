@@ -1,8 +1,6 @@
 package com.parabola.newtone.presentation.main.albums
 
-import com.parabola.domain.executor.SchedulerProvider
 import com.parabola.domain.interactor.AlbumInteractor
-import com.parabola.domain.interactor.type.Irrelevant
 import com.parabola.domain.model.Track
 import com.parabola.domain.repository.AlbumRepository
 import com.parabola.domain.repository.SortingRepository
@@ -10,18 +8,17 @@ import com.parabola.domain.repository.TrackRepository
 import com.parabola.domain.settings.ViewSettingsInteractor
 import com.parabola.domain.settings.ViewSettingsInteractor.AlbumItemView.AlbumViewType
 import com.parabola.newtone.di.app.AppComponent
+import com.parabola.newtone.presentation.base.BasePresenter
 import com.parabola.newtone.presentation.router.MainRouter
+import com.parabola.newtone.util.Observables
 import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.internal.functions.Functions
-import io.reactivex.internal.observers.ConsumerSingleObserver
 import moxy.InjectViewState
-import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>() {
+class TabAlbumPresenter(
+    appComponent: AppComponent,
+) : BasePresenter<TabAlbumView>() {
 
     @Inject
     lateinit var router: MainRouter
@@ -36,13 +33,10 @@ class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>
     lateinit var trackRepo: TrackRepository
 
     @Inject
-    lateinit var viewSettingsInteractor: ViewSettingsInteractor
+    lateinit var useCases: TabAlbumScreenUseCases
 
     @Inject
-    lateinit var schedulers: SchedulerProvider
-
-    private val disposables = CompositeDisposable()
-
+    lateinit var viewSettingsInteractor: ViewSettingsInteractor
 
     init {
         appComponent.inject(this)
@@ -50,59 +44,51 @@ class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>
 
 
     override fun onFirstViewAttach() {
-        disposables.addAll(
-            observerAllAlbums(),
-            observeAllAlbumsSorting(),
-            observeAlbumItemViewUpdates(),
-            observeTrackDeleting()
-        )
-    }
-
-    override fun onDestroy() {
-        disposables.dispose()
+        observerAllAlbums()
+        observeAllAlbumsSorting()
+        observeAlbumItemViewUpdates()
+        observeTrackDeleting()
     }
 
 
-    private fun observerAllAlbums(): Disposable {
-        return albumInteractor.observeAllAlbumsUpdates()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-            .subscribe(viewState::refreshAlbums)
+    private fun observerAllAlbums() {
+        albumInteractor.observeAllAlbumsUpdates()
+            .schedule(onNext = viewState::refreshAlbums)
     }
 
-    private fun observeAllAlbumsSorting(): Disposable {
-        return sortingRepo.observeAllAlbumsSorting() //включаем/отключаем показ секции в списке, если отсортирован по названию
-            .map { it == AlbumRepository.Sorting.BY_TITLE }
-            .subscribe(viewState::setSectionShowing)
+    private fun observeAllAlbumsSorting() {
+        sortingRepo.observeAllAlbumsSorting() //включаем/отключаем показ секции в списке, если отсортирован по названию
+            .map { sorting -> sorting == AlbumRepository.Sorting.BY_TITLE }
+            .schedule(onNext = viewState::setSectionShowing)
     }
 
-    private fun observeTrackDeleting(): Disposable {
-        return trackRepo.observeTrackDeleting()
+    private fun observeTrackDeleting() {
+        trackRepo.observeTrackDeleting()
             .flatMapSingle { albumInteractor.all }
-            .observeOn(schedulers.ui())
-            .subscribe(viewState::refreshAlbums)
+            .schedule(onNext = viewState::refreshAlbums)
     }
 
-    private fun observeAlbumItemViewUpdates(): Disposable {
-        return Observable.combineLatest(
-            viewSettingsInteractor.observeAlbumItemViewUpdates(),
-            viewSettingsInteractor.observeIsItemDividerShowed()
-        ) { albumItemView, isItemDividerShowed ->
-            viewState.setAlbumViewSettings(albumItemView)
-            viewState.setItemDividerShowing(isItemDividerShowed && albumItemView.viewType == AlbumViewType.LIST)
-
-            return@combineLatest Irrelevant.INSTANCE
-        }
-            .subscribe()
+    private fun observeAlbumItemViewUpdates() {
+        Observables
+            .combineLatest(
+                viewSettingsInteractor.observeAlbumItemViewUpdates(),
+                viewSettingsInteractor.observeIsItemDividerShowed(),
+            )
+            .schedule(
+                onNext = { (albumItemView, isItemDividerShowed) ->
+                    viewState.setAlbumViewSettings(albumItemView)
+                    viewState.setItemDividerShowing(isItemDividerShowed && albumItemView.viewType == AlbumViewType.LIST)
+                },
+            )
     }
-
 
     fun onItemClick(albumId: Int) {
         router.openAlbum(albumId)
     }
 
     fun onClickMenuShuffle(albumId: Int) {
-        albumInteractor.shuffleAlbum(albumId)
+        useCases.shuffleAlbum(albumId)
+            .schedule()
     }
 
     fun onClickMenuAddToPlaylist(albumId: Int) {
@@ -111,12 +97,7 @@ class TabAlbumPresenter(appComponent: AppComponent) : MvpPresenter<TabAlbumView>
             .map(Track::getId)
             .toList()
             .map { trackIds -> trackIds.toIntArray() }
-            .subscribe(
-                ConsumerSingleObserver(
-                    router::openAddToPlaylistDialog,
-                    Functions.ERROR_CONSUMER
-                )
-            )
+            .schedule(onSuccess = router::openAddToPlaylistDialog)
     }
 
 }

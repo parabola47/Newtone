@@ -20,6 +20,7 @@ import javax.inject.Singleton
         DataModule::class,
         NavigationModule::class,
         ConfigModule::class,
+        PresentationUseCasesModule::class,
     ]
 )
 interface AppComponent : AppComponentInjects {
