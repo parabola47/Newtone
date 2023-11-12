@@ -1,4 +1,4 @@
-package com.parabola.player_feature
+package com.parabola.newtone.player_feature
 
 import android.content.Context
 import android.os.Handler

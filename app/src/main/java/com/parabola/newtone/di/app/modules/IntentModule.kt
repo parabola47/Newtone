@@ -2,8 +2,8 @@ package com.parabola.newtone.di.app.modules
 
 import android.content.Context
 import android.content.Intent
+import com.parabola.newtone.player_feature.PlayerService
 import com.parabola.newtone.presentation.mainactivity.MainActivity
-import com.parabola.player_feature.PlayerService
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named

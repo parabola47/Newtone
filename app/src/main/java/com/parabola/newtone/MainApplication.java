@@ -19,8 +19,8 @@ import com.parabola.domain.settings.ViewSettingsInteractor;
 import com.parabola.domain.settings.ViewSettingsInteractor.ColorTheme;
 import com.parabola.newtone.di.ComponentFactory;
 import com.parabola.newtone.di.app.AppComponent;
+import com.parabola.newtone.player_feature.PlayerInteractorImpl;
 import com.parabola.newtone.presentation.HomeScreenWidget;
-import com.parabola.player_feature.PlayerInteractorImpl;
 import com.parabola.sleep_timer_feature.SleepTimerInteractor;
 
 import io.reactivex.Observable;

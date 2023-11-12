@@ -9,7 +9,7 @@ import com.parabola.domain.interactor.player.AudioEffectsInteractor
 import com.parabola.domain.interactor.player.PlayerInteractor
 import com.parabola.domain.interactor.player.PlayerSetting
 import com.parabola.domain.repository.*
-import com.parabola.player_feature.PlayerInteractorImpl
+import com.parabola.newtone.player_feature.PlayerInteractorImpl
 import com.parabola.search_feature.SearchInteractor
 import com.parabola.search_feature.SearchInteractorImpl
 import com.parabola.sleep_timer_feature.SleepTimerImpl

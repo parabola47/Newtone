@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    namespace 'com.parabola.player_feature'
+    namespace 'com.parabola.newtone.player_feature'
 
     compileSdkVersion 33
 

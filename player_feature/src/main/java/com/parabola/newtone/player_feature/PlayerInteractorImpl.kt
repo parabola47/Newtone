@@ -1,4 +1,4 @@
-package com.parabola.player_feature
+package com.parabola.newtone.player_feature
 
 import android.app.Notification
 import android.app.PendingIntent

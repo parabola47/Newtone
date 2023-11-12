@@ -67,7 +67,7 @@
         </receiver>
 
         <service
-            android:name="com.parabola.player_feature.PlayerService"
+            android:name="com.parabola.newtone.player_feature.PlayerService"
             android:foregroundServiceType="mediaPlayback" />
     </application>
 
