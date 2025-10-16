@@ -1,4 +1,5 @@
 [versions]
+java = "17"
 kotlin = "1.8.22"
 coreKtx = "1.10.0"
 appcompat = "1.2.0"

@@ -10,6 +10,7 @@ dependencies {
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    var jv = JavaVersion.toVersion(libs.versions.java.get())
+    sourceCompatibility = jv
+    targetCompatibility = jv
 }
