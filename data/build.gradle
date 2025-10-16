@@ -35,9 +35,7 @@ dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':search_feature')
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
-
-    //    RxJava
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation(libs.androidx.appcompat)
+    coreLibraryDesugaring(libs.android.desugar.jdk)
+    implementation(libs.rxAndroid)
 }

@@ -11,5 +11,5 @@ java {
 dependencies {
     implementation project(path: ':domain')
 
-    implementation 'com.github.mpkorstanje:simmetrics-core:4.1.1'
+    implementation(libs.simmetrics)
 }

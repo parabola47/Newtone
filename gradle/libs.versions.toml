@@ -1,0 +1,71 @@
+[versions]
+kotlin = "1.8.22"
+coreKtx = "1.10.0"
+appcompat = "1.2.0"
+dagger = "2.48"
+exoplayer = "2.16.1"
+moxy = "2.2.2"
+
+
+[libraries]
+
+# Kotlin
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+
+
+# Android
+android-desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version = "1.0.10" }
+android-material = { module = "com.google.android.material:material", version = "1.3.0-alpha03" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.0.4" }
+androidx-legacy-support = { module = "androidx.legacy:legacy-support-v4", version = "1.0.0" }
+androidx-multidex = { module = "androidx.multidex:multidex", version = "2.0.1" }
+
+
+# Dagger
+dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
+dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
+dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
+dagger-android-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+
+
+# ExoPlayer
+exoplayer-core = { module = "com.google.android.exoplayer:exoplayer-core", version.ref = "exoplayer" }
+# для автоматической привязки медиа сессии
+exoplayer-mediasession = { module = "com.google.android.exoplayer:extension-mediasession", version.ref = "exoplayer" }
+# для вывода уведомлений
+exoplayer-ui = { module = "com.google.android.exoplayer:exoplayer-ui", version.ref = "exoplayer" }
+
+
+# Moxy
+moxy = { module = "com.github.moxy-community:moxy", version.ref = "moxy" }
+moxy-androidx = { module = "com.github.moxy-community:moxy-androidx", version.ref = "moxy" }
+moxy-compiler = { module = "com.github.moxy-community:moxy-compiler", version.ref = "moxy" }
+
+
+# RxJava
+rxJava = { module = "io.reactivex.rxjava2:rxjava", version = "2.2.19" }
+rxAndroid = { module = "io.reactivex.rxjava2:rxandroid", version = "2.1.1" }
+
+
+# Firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "26.0.0" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-perf = { module = "com.google.firebase:firebase-perf" }
+
+
+#other
+fastScrollRecyclerView = { module = 'com.simplecityapps:recyclerview-fastscroll', version = "2.0.1" }
+simmetrics = { module = "com.github.mpkorstanje:simmetrics-core", version = "4.1.1" }
+slidingUpPanel = { module = "com.sothree.slidinguppanel:library", version = "3.4.0" }
+verticalseekbar = { module = "com.h6ah4i.android.widget.verticalseekbar:verticalseekbar", version = "1.0.0" }
+
+
+[bundles]
+exoplayer = [
+    "exoplayer-core",
+    "exoplayer-mediasession",
+    "exoplayer-ui",
+]
